@@ -1,0 +1,91 @@
+plugins {
+	id "org.springframework.boot" version "latest.release"
+	id "io.spring.dependency-management" version "latest.release"
+	id "io.freefair.lombok" version "latest.release"
+	id "java"
+	id "war"
+	id "maven-publish"
+}
+
+group = "com.example"
+sourceCompatibility = "1.8"
+
+repositories {
+	mavenCentral()
+	maven { 
+		url "${repoUrlPrefix}public/" 
+		allowInsecureProtocol true
+	}
+}
+
+configurations {
+    all {
+        exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
+    }
+}
+
+dependencies {
+	ext {
+		swaggerVersion = "3.0.0"
+	}
+	implementation "org.springframework.boot:spring-boot-starter-web"
+	implementation "org.springframework.boot:spring-boot-starter-data-jpa"
+	implementation "org.springframework.boot:spring-boot-starter-validation"
+	implementation "org.springframework.boot:spring-boot-starter-security"
+	implementation "org.springframework.boot:spring-boot-starter-actuator"
+	implementation "io.springfox:springfox-boot-starter:$swaggerVersion"
+	implementation "io.springfox:springfox-swagger-ui:$swaggerVersion"
+    implementation 'org.springframework.boot:spring-boot-starter-log4j2'
+	runtimeOnly "mysql:mysql-connector-java"
+	
+	testImplementation "org.springframework.boot:spring-boot-starter-test"
+	testRuntimeOnly "com.h2database:h2"
+}
+
+test {
+	useJUnitPlatform()
+}
+
+java {
+	withSourcesJar()
+}
+
+configurations {
+	[apiElements, runtimeElements].each {
+		it.outgoing.artifacts.removeIf {
+			it.buildDependencies.getDependencies(null).contains(jar)
+		}
+		it.outgoing.artifact(bootJar)
+	}
+}
+
+publishing {
+	publications {
+		maven(MavenPublication) {
+			from components.java
+			versionMapping {
+				usage("java-api") {
+					fromResolutionOf("runtimeClasspath")
+				}
+				usage("java-runtime") {
+					fromResolutionResult()
+				}
+			}
+		}
+	}
+	repositories {
+		maven {
+			if(version.endsWith("-SNAPSHOT")) {
+				url "${repoUrlPrefix}snapshots/"
+			} else {
+				url "${repoUrlPrefix}releases/"
+			}
+			allowInsecureProtocol true
+			credentials {
+				username repoUser
+				password repoPassword
+			}
+		}
+	}
+	
+}
