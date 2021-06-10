@@ -24,9 +24,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		PasswordEncoder encoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
 		if (env.acceptsProfiles(Profiles.of("test"))) {
 			auth.inMemoryAuthentication().withUser("user").password(encoder.encode("password")).roles("USER").and()
-					.withUser("admin").password(encoder.encode("admin")).roles("USER", "ADMIN");
+					.withUser("admin").password(encoder.encode("password")).roles("USER", "ADMIN");
 		} else {
-			// TODO
+			// TODO change it
+			auth.inMemoryAuthentication().withUser("user").password(encoder.encode("password")).roles("USER").and()
+					.withUser("admin").password(encoder.encode("password")).roles("USER", "ADMIN");
 		}
 	}
 
@@ -41,8 +43,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		if (env.acceptsProfiles(Profiles.of("test")))
 			http.httpBasic();
 		else
-			http.formLogin().loginPage("/login").loginProcessingUrl("/perform_login").usernameParameter("username")
-					.passwordParameter("password").permitAll().successForwardUrl("/home").and().logout()
+			http.formLogin().loginPage("/login").loginProcessingUrl("/login").usernameParameter("username")
+					.passwordParameter("password").permitAll().defaultSuccessUrl("/home").and().logout()
 					.logoutUrl("/logout").permitAll();
 	}
 
