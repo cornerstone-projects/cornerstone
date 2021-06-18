@@ -14,7 +14,7 @@ import org.springframework.test.context.ActiveProfiles;
 @Target(ElementType.TYPE)
 @SpringBootTest
 @ActiveProfiles
-public @interface MyApplicationTest {
+public @interface SpringApplicationTest {
 
 	@AliasFor(annotation = SpringBootTest.class)
 	String[] value() default {};
