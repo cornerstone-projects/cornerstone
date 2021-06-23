@@ -13,7 +13,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.example.demo.model.AbstractEntity;
+import com.example.demo.core.hibernate.domain.AbstractEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.Getter;
@@ -22,7 +22,7 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-public class User extends AbstractEntity<Long> implements UserDetails {
+public class User extends AbstractEntity implements UserDetails {
 
 	private static final long serialVersionUID = 1L;
 
