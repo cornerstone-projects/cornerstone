@@ -24,13 +24,15 @@ management.endpoints.web.exposure.include: health
 springfox.documentation.enabled: false
 
 ---
-spring.config.activate.on-profile: dev|test
+spring:
+  config.activate.on-profile: dev|test
+  devtools.livereload.enabled: false
+  jackson.serialization.indent_output: true
+  jpa:
+    hibernate.ddl-auto: update
+    properties.hibernate:
+      hbm2ddl.default_constraint_mode: NO_CONSTRAINT
 springfox.documentation.enabled: true
 management.endpoints.web.exposure.include: "*"
-spring.jackson.serialization.indent_output: true
-spring.jpa:
-  hibernate.ddl-auto: update
-  properties.hibernate:
-    hbm2ddl.default_constraint_mode: NO_CONSTRAINT
 logging.level.sql: TRACE
 

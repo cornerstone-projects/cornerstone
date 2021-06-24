@@ -1,4 +1,4 @@
-package com.example.demo.ui;
+package com.example.demo;
 
 import static com.example.demo.Application.ADMIN_ROLE;
 
