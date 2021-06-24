@@ -34,7 +34,8 @@ public class UserController {
 	@GetMapping("/users")
 	public ResultPage<User> list(@Min(1) @RequestParam(required = false, defaultValue = "1") int pageNo,
 			@Min(10) @Max(100) @RequestParam(required = false, defaultValue = "10") int pageSize) {
-		return ResultPage.of(userRepository.findAll(PageRequest.of(pageNo - 1, pageSize, Sort.by("username"))));
+		return ResultPage.of(userRepository.findAll(
+				PageRequest.of(pageNo - 1, pageSize, Sort.sort(User.class).by(User::getUsername).ascending())));
 	}
 
 	@GetMapping("/user/{id}")
