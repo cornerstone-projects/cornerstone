@@ -11,16 +11,20 @@ spring.datasource:
     connectionTimeout: 30000
     maxLifetime: 1800000
 
-spring.jpa.hibernate.use-new-id-generator-mappings: false
+spring.jpa:
+  open-in-view: false
+  hibernate.use-new-id-generator-mappings: false
 
 spring.jackson:
   default-property-inclusion: non_null
+
+logging.group.sql: org.hibernate.SQL,org.hibernate.type.descriptor.sql.BasicBinder,org.springframework.jdbc.core
 
 management.endpoints.web.exposure.include: health
 springfox.documentation.enabled: false
 
 ---
-spring.config.activate.on-profile: dev
+spring.config.activate.on-profile: dev|test
 springfox.documentation.enabled: true
 management.endpoints.web.exposure.include: "*"
 spring.jackson.serialization.indent_output: true
@@ -28,3 +32,5 @@ spring.jpa:
   hibernate.ddl-auto: update
   properties.hibernate:
     hbm2ddl.default_constraint_mode: NO_CONSTRAINT
+logging.level.sql: TRACE
+
