@@ -7,7 +7,8 @@ import javax.validation.constraints.Min;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -33,7 +34,7 @@ public class UserController {
 	@GetMapping("/users")
 	public ResultPage<User> list(@Min(1) @RequestParam(required = false, defaultValue = "1") int pageNo,
 			@Min(10) @Max(100) @RequestParam(required = false, defaultValue = "10") int pageSize) {
-		return ResultPage.of(userRepository.findAll(Pageable.ofSize(pageSize).withPage(pageNo - 1)));
+		return ResultPage.of(userRepository.findAll(PageRequest.of(pageNo - 1, pageSize, Sort.by("username"))));
 	}
 
 	@GetMapping("/user/{id}")
