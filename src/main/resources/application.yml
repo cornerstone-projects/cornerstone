@@ -24,4 +24,7 @@ spring.config.activate.on-profile: dev
 springfox.documentation.enabled: true
 management.endpoints.web.exposure.include: "*"
 spring.jackson.serialization.indent_output: true
-spring.jpa.hibernate.ddl-auto: update
+spring.jpa:
+  hibernate.ddl-auto: update
+  properties.hibernate:
+    hbm2ddl.default_constraint_mode: NO_CONSTRAINT
