@@ -38,8 +38,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 		if (env.acceptsProfiles(Profiles.of("test")))
 			http.httpBasic();
 		else
-			http.formLogin().loginPage("/login").permitAll().defaultSuccessUrl("/home").and().logout()
-					.logoutUrl("/logout").permitAll();
+			http.formLogin().loginPage("/login").permitAll();
 	}
 
 	@Bean

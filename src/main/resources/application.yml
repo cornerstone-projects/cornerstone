@@ -1,5 +1,8 @@
 spring.application.name: ${name}
 
+server:
+  shutdown: graceful
+
 spring.datasource:
   url: jdbc:mysql:///${spring.application.name}?createDatabaseIfNotExist=true
   username: root
