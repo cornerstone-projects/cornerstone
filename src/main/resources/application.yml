@@ -1,4 +1,4 @@
-spring.application.name: ${name}
+spring.application.name: demo
 
 server:
   shutdown: graceful
@@ -21,7 +21,9 @@ spring.jpa:
 spring.jackson:
   default-property-inclusion: non_null
 
-logging.group.sql: org.hibernate.SQL,org.hibernate.type.descriptor.sql.BasicBinder,org.springframework.jdbc.core
+logging:
+  config: classpath:log4j2.xml
+  group.SQL: org.hibernate.SQL,org.hibernate.type.descriptor.sql.BasicBinder,org.springframework.jdbc.core
 
 management.endpoints.web.exposure.include: health
 springfox.documentation.enabled: false
@@ -37,5 +39,12 @@ spring:
       hbm2ddl.default_constraint_mode: NO_CONSTRAINT
 springfox.documentation.enabled: true
 management.endpoints.web.exposure.include: "*"
-logging.level.sql: TRACE
+logging:
+  level.SQL: TRACE
+
+---
+spring:
+  config.activate.on-profile: prod
+logging:
+  config: classpath:log4j2-with-kafka.xml
 

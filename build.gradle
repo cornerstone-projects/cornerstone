@@ -21,7 +21,6 @@ repositories {
 
 configurations {
     all {
-        exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
         resolutionStrategy.cacheChangingModulesFor 5, 'minutes'
         resolutionStrategy.cacheDynamicVersionsFor 24, 'hours'
     }
@@ -40,6 +39,12 @@ dependencies {
 	implementation "io.springfox:springfox-boot-starter:$swaggerVersion"
 	implementation "io.springfox:springfox-swagger-ui:$swaggerVersion"
     implementation "org.springframework.boot:spring-boot-starter-log4j2"
+	modules {
+		module("org.springframework.boot:spring-boot-starter-logging") {
+			replacedBy("org.springframework.boot:spring-boot-starter-log4j2", "Use Log4j2 instead of Logback")
+		}
+	}
+    implementation "org.springframework.kafka:spring-kafka"
     developmentOnly "org.springframework.boot:spring-boot-devtools"
 	runtimeOnly "mysql:mysql-connector-java"
 	

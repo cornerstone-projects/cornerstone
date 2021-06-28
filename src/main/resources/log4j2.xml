@@ -1,0 +1,74 @@
+<?xml version="1.0"?>
+<!DOCTYPE Configuration>
+<Configuration>
+	<Appenders>
+		<Console name="CONSOLE" target="SYSTEM_OUT">
+			<PatternLayout
+				pattern="%style{%d %25.25t %60.60c{1.}}{cyan} %highlight{%p %m}%n%throwable" />
+		</Console>
+		<RollingFile name="APPLICATION"
+			fileName="./logs/application.log"
+			filePattern="./logs/application.log.%d{yyyy-MM-dd}">
+			<PatternLayout
+				pattern="%d %c %t%X{request}%X{url} %p %m%n%throwable{10}"
+				charset="UTF-8" />
+			<TimeBasedTriggeringPolicy />
+		</RollingFile>
+		<RollingFile name="ERROR"
+			fileName="./logs/application-error.log"
+			filePattern="./logs/application-error.log.%d{yyyy-MM-dd}">
+			<ThresholdFilter level="ERROR" />
+			<PatternLayout
+				pattern="%d %c %t%X{request}%X{url} %p %m%n" charset="UTF-8" />
+			<TimeBasedTriggeringPolicy />
+		</RollingFile>
+		<RollingFile name="SQL" fileName="./logs/sql.log"
+			filePattern="./logs/sql.log.%d{yyyy-MM-dd}">
+			<ThresholdFilter level="ALL" />
+			<PatternLayout
+				pattern="%d %c %t%X{request}%X{url} %p %m%n" charset="UTF-8" />
+			<TimeBasedTriggeringPolicy />
+		</RollingFile>
+		<RollingFile name="ACCESS" fileName="./logs/access.log"
+			filePattern="./logs/access.log.%d{yyyy-MM-dd}">
+			<PatternLayout
+				pattern="%d %X{username}@%X{remoteAddr} %X{method}%X{url}%X{userAgent}%X{referer}%X{request}%X{responseTime}%n"
+				charset="UTF-8" />
+			<TimeBasedTriggeringPolicy />
+		</RollingFile>
+		<RollingFile name="ACCESS-WARN"
+			fileName="./logs/access-warn.log"
+			filePattern="./logs/access-warn.log.%d{yyyy-MM-dd}">
+			<ThresholdFilter level="WARN" />
+			<PatternLayout
+				pattern="%d %X{username}@%X{remoteAddr} %X{method}%X{url}%X{userAgent}%X{referer}%X{request} %m%n"
+				charset="UTF-8" />
+			<TimeBasedTriggeringPolicy />
+		</RollingFile>
+	</Appenders>
+
+	<Loggers>
+		<Logger name="org.hibernate.SQL" additivity="false">
+			<AppenderRef ref="SQL" />
+		</Logger>
+		<Logger name="org.hibernate.type.descriptor.sql.BasicBinder"
+			additivity="false">
+			<AppenderRef ref="SQL" />
+		</Logger>
+		<Logger name="org.springframework.jdbc.core" additivity="false">
+			<AppenderRef ref="SQL" />
+		</Logger>
+		<Logger name="access" level="INFO" additivity="false">
+			<AppenderRef ref="ACCESS" />
+		</Logger>
+		<Logger name="access-warn" level="WARN" additivity="false">
+			<AppenderRef ref="ACCESS-WARN" />
+		</Logger>
+		<Root level="INFO">
+			<AppenderRef ref="CONSOLE" />
+			<AppenderRef ref="APPLICATION" />
+			<AppenderRef ref="ERROR" />
+		</Root>
+	</Loggers>
+
+</Configuration>
