@@ -1,6 +1,7 @@
 package com.example.demo.core.servlet;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 import javax.servlet.Filter;
@@ -24,6 +25,8 @@ import org.springframework.util.StringUtils;
 import com.example.demo.core.Application;
 import com.example.demo.core.util.CodecUtils;
 
+import io.micrometer.core.instrument.Metrics;
+import io.micrometer.core.instrument.Tag;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -120,6 +123,8 @@ public class AccessFilter implements Filter {
 				StringBuilder msg = new StringBuilder();
 				msg.append(request.getQueryString()).append(" response time:").append(responseTime).append("ms");
 				accesWarnLog.warn(msg.toString());
+				Metrics.timer("http.access.slow", Arrays.asList(Tag.of("uri", uri))).record(responseTime,
+						TimeUnit.MILLISECONDS);
 			}
 		} catch (ServletException e) {
 			log.error(e.getMessage(), e);
@@ -129,6 +134,7 @@ public class AccessFilter implements Filter {
 				long responseTime = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start);
 				MDC.put("responseTime", " responseTime:" + responseTime);
 				accessLog.info("");
+				Metrics.timer("http.access").record(responseTime, TimeUnit.MILLISECONDS);
 			}
 			MDC.clear();
 		}

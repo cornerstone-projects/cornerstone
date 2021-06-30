@@ -27,6 +27,10 @@ logging:
   group.SQL: org.hibernate.SQL,org.hibernate.type.descriptor.sql.BasicBinder,org.springframework.jdbc.core
 
 management.endpoints.web.exposure.include: health
+management.metrics.export.influx:
+  enabled: false
+  db: metrics
+  step: 10s
 springfox.documentation.enabled: false
 
 opentracing.jaeger:
@@ -55,7 +59,7 @@ spring:
   config.activate.on-profile: prod
 logging:
   config: classpath:log4j2-with-kafka.xml
-
+management.metrics.export.influx.enabled: true
 opentracing.jaeger:
   enabled: true
   const-sampler.decision: false
