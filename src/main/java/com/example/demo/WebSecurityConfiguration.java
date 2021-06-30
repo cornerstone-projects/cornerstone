@@ -18,7 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import com.example.demo.user.User;
 import com.example.demo.user.UserRepository;
 
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true, proxyTargetClass = true)
 public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
@@ -42,12 +42,12 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 	}
 
 	@Bean
-	public PasswordEncoder passwordEncoder() {
+	PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
 
 	@Bean
-	public UserDetailsService userDetailsService(UserRepository userRepository) {
+	UserDetailsService userDetailsService(UserRepository userRepository) {
 		return username -> userRepository.findByUsername(username)
 				.orElseThrow(() -> new UsernameNotFoundException(username));
 	}

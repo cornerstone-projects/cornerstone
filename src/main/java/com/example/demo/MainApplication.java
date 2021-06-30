@@ -1,5 +1,10 @@
 package com.example.demo;
 
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.util.Enumeration;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -7,29 +12,58 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.AbstractEnvironment;
-import org.springframework.core.env.Profiles;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.util.ClassUtils;
 
+import com.example.demo.core.Application;
 import com.example.demo.user.User;
 import com.example.demo.user.UserRepository;
-import com.zaxxer.hikari.HikariDataSource;
 
-import lombok.extern.slf4j.Slf4j;
+import lombok.Getter;
 
 @SpringBootApplication
 @EnableJpaRepositories
 @EntityScan
-@Slf4j
-public class Application implements CommandLineRunner {
+public class MainApplication implements Application, CommandLineRunner {
+
+	private static String hostName = "localhost";
+
+	private static String hostAddress = "127.0.0.1";
 
 	@Autowired
-	private ApplicationContext applicationContext;
+	@Getter
+	private ApplicationContext context;
 
-	public static void main(String[] args) {
+	@Override
+	public String getHostName() {
+		return hostName;
+	}
+
+	@Override
+	public String getHostAddress() {
+		return hostAddress;
+	}
+
+	public static void main(String[] args) throws Exception {
+		hostName = InetAddress.getLocalHost().getHostName();
+		Enumeration<NetworkInterface> e = NetworkInterface.getNetworkInterfaces();
+		loop: while (e.hasMoreElements()) {
+			NetworkInterface n = e.nextElement();
+			Enumeration<InetAddress> ee = n.getInetAddresses();
+			while (ee.hasMoreElements()) {
+				InetAddress addr = ee.nextElement();
+				if (addr.isLoopbackAddress())
+					continue;
+				if (addr.isSiteLocalAddress() && addr instanceof Inet4Address) {
+					hostAddress = addr.getHostAddress();
+					break loop;
+				}
+			}
+		}
+
 		if (ClassUtils.isPresent("org.springframework.boot.devtools.RemoteSpringApplication",
-				Application.class.getClassLoader())) {
+				MainApplication.class.getClassLoader())) {
 			String profiles = System.getProperty(AbstractEnvironment.ACTIVE_PROFILES_PROPERTY_NAME);
 			if (profiles == null) {
 				profiles = System
@@ -38,16 +72,14 @@ public class Application implements CommandLineRunner {
 					System.setProperty(AbstractEnvironment.ACTIVE_PROFILES_PROPERTY_NAME, "dev");
 			}
 		}
-		SpringApplication.run(Application.class, args);
+		SpringApplication.run(MainApplication.class, args);
 	}
 
 	@Override
 	public void run(String... args) throws Exception {
-		if (applicationContext.getEnvironment().acceptsProfiles(Profiles.of("dev|test"))) {
-			HikariDataSource hds = applicationContext.getBean(HikariDataSource.class);
-			log.info("application: {}, jdbc url: {}", applicationContext.getId(), hds.getJdbcUrl());
-			UserRepository userRepository = applicationContext.getBean(UserRepository.class);
-			PasswordEncoder passwordEncoder = applicationContext.getBean(PasswordEncoder.class);
+		if (isDevelopment() || isUnitTest()) {
+			UserRepository userRepository = context.getBean(UserRepository.class);
+			PasswordEncoder passwordEncoder = context.getBean(PasswordEncoder.class);
 			if (userRepository.count() == 0) {
 				User user = new User();
 				user.setUsername(USER_USERNAME);

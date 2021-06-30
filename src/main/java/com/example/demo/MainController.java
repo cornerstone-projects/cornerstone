@@ -1,6 +1,6 @@
 package com.example.demo;
 
-import static com.example.demo.Application.ADMIN_ROLE;
+import static com.example.demo.MainApplication.ADMIN_ROLE;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;

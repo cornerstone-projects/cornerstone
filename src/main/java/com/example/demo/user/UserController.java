@@ -1,6 +1,6 @@
 package com.example.demo.user;
 
-import static com.example.demo.Application.ADMIN_ROLE;
+import static com.example.demo.MainApplication.ADMIN_ROLE;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
