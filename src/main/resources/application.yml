@@ -29,6 +29,13 @@ logging:
 management.endpoints.web.exposure.include: health
 springfox.documentation.enabled: false
 
+opentracing.jaeger:
+  enabled: false
+  enable-w3c-propagation: true
+  http-sender.url: http://localhost:14268/api/traces
+  const-sampler.decision: true
+  log-spans: false
+
 ---
 spring:
   config.activate.on-profile: dev|test
@@ -48,4 +55,9 @@ spring:
   config.activate.on-profile: prod
 logging:
   config: classpath:log4j2-with-kafka.xml
+
+opentracing.jaeger:
+  enabled: true
+  const-sampler.decision: false
+  probabilistic-sampler.sampling-rate: 0.01
 
