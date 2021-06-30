@@ -4,15 +4,16 @@ server:
   shutdown: graceful
 
 spring.datasource:
-  url: jdbc:mysql:///${spring.application.name}?createDatabaseIfNotExist=true
+  url: jdbc:mysql:///${spring.application.name}?createDatabaseIfNotExist=true&serverTimezone=Asia/Shanghai&autoReconnectForPools=true&useUnicode=true&useServerPrepStmts=true&cachePrepStmts=true&tinyInt1isBit=false&socketTimeout=60000&sslMode=DISABLED&allowPublicKeyRetrieval=true
   username: root
   password:
   hikari:
-    maximumPoolSize: 10
-    minimumIdle: 2
-    idleTimeout: 600000
-    connectionTimeout: 30000
-    maxLifetime: 1800000
+    maximumPoolSize: 100
+    minimumIdle: 5
+    idleTimeout: 1800000
+    connectionTimeout: 10000
+    maxLifetime: 7200000
+    autoCommit: false
 
 spring.jpa:
   open-in-view: false
