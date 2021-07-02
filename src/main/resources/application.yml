@@ -19,6 +19,8 @@ spring.jpa:
   open-in-view: false
   hibernate.use-new-id-generator-mappings: false
 
+spring.cache.redis.time-to-live: 300s
+
 spring.jackson:
   default-property-inclusion: non_null
 

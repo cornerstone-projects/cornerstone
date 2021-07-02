@@ -32,11 +32,16 @@ dependencies {
 	}
 	implementation "org.springframework.boot:spring-boot-starter-web"
 	implementation "org.springframework.boot:spring-boot-starter-freemarker"
+	implementation "org.springframework.boot:spring-boot-starter-cache"
+	implementation "org.springframework.boot:spring-boot-starter-data-redis"
 	implementation "org.springframework.boot:spring-boot-starter-data-jpa"
 	implementation "org.springframework.boot:spring-boot-starter-validation"
 	implementation "org.springframework.boot:spring-boot-starter-security"
 	implementation "org.springframework.boot:spring-boot-starter-actuator"
-	implementation "io.springfox:springfox-boot-starter:$swaggerVersion"
+    implementation "org.springframework.kafka:spring-kafka"
+    implementation "io.opentracing.contrib:opentracing-spring-jaeger-web-starter:latest.release"
+    implementation "io.opentracing.contrib:opentracing-jdbc:latest.release"
+    implementation "io.springfox:springfox-boot-starter:$swaggerVersion"
 	implementation "io.springfox:springfox-swagger-ui:$swaggerVersion"
     implementation "org.springframework.boot:spring-boot-starter-log4j2"
 	modules {
@@ -44,9 +49,6 @@ dependencies {
 			replacedBy("org.springframework.boot:spring-boot-starter-log4j2", "Use Log4j2 instead of Logback")
 		}
 	}
-    implementation "org.springframework.kafka:spring-kafka"
-    implementation "io.opentracing.contrib:opentracing-spring-jaeger-web-starter:latest.release"
-    implementation "io.opentracing.contrib:opentracing-jdbc:latest.release"
     developmentOnly "org.springframework.boot:spring-boot-devtools"
 	runtimeOnly "mysql:mysql-connector-java"
 	

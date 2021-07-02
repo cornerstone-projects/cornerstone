@@ -62,7 +62,9 @@ public class UserController {
 	@DeleteMapping("/user/{id}")
 	@PreAuthorize("hasRole('" + ADMIN_ROLE + "')")
 	public void delete(@Min(1) @PathVariable Long id) {
-		userRepository.deleteById(id);
+		// do not use deleteById, not annotated by @Cacheable
+		userRepository.delete(userRepository.findById(id)
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "ID not found: " + id)));
 	}
 
 }
