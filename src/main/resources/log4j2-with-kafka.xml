@@ -32,6 +32,13 @@
 				pattern="%d %c %t%X{request}%X{url} %p %m%n" charset="UTF-8" />
 			<TimeBasedTriggeringPolicy />
 		</RollingFile>
+		<RollingFile name="REST" fileName="./logs/rest.log"
+			filePattern="./logs/rest.log.%d{yyyy-MM-dd}">
+			<ThresholdFilter level="ALL" />
+			<PatternLayout
+				pattern="%d %t%X{request} %X{method}%X{url} %m%n" charset="UTF-8" />
+			<TimeBasedTriggeringPolicy />
+		</RollingFile>
 		<RollingFile name="ACCESS" fileName="./logs/access.log"
 			filePattern="./logs/access.log.%d{yyyy-MM-dd}">
 			<PatternLayout
@@ -49,6 +56,12 @@
 			<TimeBasedTriggeringPolicy />
 		</RollingFile>
 
+		<Kafka name="KAFKA-REST" topic="app.logs.rest">
+			<PatternLayout
+				pattern="%d %t%X{request}%X{server} %X{method}%X{url} %m%n"
+				charset="UTF-8" />
+			<Property name="bootstrap.servers">${sys:logs.kafka.bootstrap.servers}</Property>
+		</Kafka>
 		<Kafka name="KAFKA-ACCESS" topic="app.logs.access">
 			<PatternLayout
 				pattern="%d %X{username}@%X{remoteAddr} %X{method}%X{url}%X{userAgent}%X{referer}%X{request}%X{server}%X{responseTime}"
@@ -73,6 +86,10 @@
 		</Logger>
 		<Logger name="org.springframework.jdbc.core" additivity="false">
 			<AppenderRef ref="SQL" />
+		</Logger>
+		<Logger name="rest" additivity="false">
+			<AppenderRef ref="REST" />
+			<AppenderRef ref="KAFKA-REST" />
 		</Logger>
 		<Logger name="access" level="INFO" additivity="false">
 			<AppenderRef ref="ACCESS" />
