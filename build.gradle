@@ -39,6 +39,7 @@ dependencies {
 	implementation "org.springframework.boot:spring-boot-starter-security"
 	implementation "org.springframework.boot:spring-boot-starter-actuator"
     implementation "org.springframework.kafka:spring-kafka"
+    implementation "org.springframework.session:spring-session-data-redis"
     implementation "io.opentracing.contrib:opentracing-spring-jaeger-web-starter:latest.release"
     implementation "io.opentracing.contrib:opentracing-jdbc:latest.release"
     implementation "io.springfox:springfox-boot-starter:$swaggerVersion"
