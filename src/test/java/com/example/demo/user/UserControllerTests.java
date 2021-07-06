@@ -1,9 +1,13 @@
 package com.example.demo.user;
 
-import static com.example.demo.user.UserController.PATH_LIST;
+import static com.example.demo.MainApplication.ADMIN_USERNAME;
+import static com.example.demo.MainApplication.DEFAULT_PASSWORD;
 import static com.example.demo.user.UserController.PATH_DETAIL;
+import static com.example.demo.user.UserController.PATH_LIST;
+import static com.example.demo.user.UserController.PATH_PASSWORD;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 import static org.springframework.http.HttpStatus.OK;
 
 import java.net.URI;
@@ -82,6 +86,42 @@ class UserControllerTests extends ControllerTestBase {
 		assertThat(page.getPageSize()).isEqualTo(10);
 		assertThat(page.getTotalPages()).isEqualTo(1);
 		assertThat(page.getTotalElements()).isEqualTo(1);
+	}
+
+	@Test
+	void changePassword() {
+		TestRestTemplate restTemplate = adminRestTemplate();
+		PasswordChangeRequest pcr = new PasswordChangeRequest();
+		pcr.setPassword("iamtest");
+		pcr.setConfirmedPassword("iamtest2");
+		User admin = restTemplate
+				.exchange(RequestEntity.method(HttpMethod.GET, URI.create(PATH_LIST + "?query=admin")).build(),
+						new ParameterizedTypeReference<ResultPage<User>>() {
+						})
+				.getBody().getResult().get(0);
+		ResponseEntity<?> response = restTemplate
+				.exchange(RequestEntity.method(HttpMethod.PUT, PATH_PASSWORD, admin.getId()).body(pcr), void.class);
+		assertThat(response.getStatusCode()).isNotSameAs(OK); // caused by wrong confirmed password
+
+		pcr.setConfirmedPassword(pcr.getPassword());
+		response = restTemplate.exchange(RequestEntity.method(HttpMethod.PUT, PATH_PASSWORD, admin.getId()).body(pcr),
+				void.class);
+		assertThat(response.getStatusCode()).isSameAs(OK);
+
+		response = restTemplate.exchange(RequestEntity.method(HttpMethod.GET, URI.create(PATH_LIST)).build(),
+				new ParameterizedTypeReference<ResultPage<User>>() {
+				});
+		assertThat(response.getStatusCode()).isSameAs(UNAUTHORIZED); // caused by password changed
+
+		restTemplate = restTemplate.withBasicAuth(ADMIN_USERNAME, pcr.getPassword());
+		response = restTemplate.exchange(RequestEntity.method(HttpMethod.GET, URI.create(PATH_LIST)).build(),
+				new ParameterizedTypeReference<ResultPage<User>>() {
+				});
+		assertThat(response.getStatusCode()).isSameAs(OK);
+
+		pcr.setPassword(DEFAULT_PASSWORD);
+		pcr.setConfirmedPassword(pcr.getPassword());
+		restTemplate.put(PATH_PASSWORD, pcr, admin.getId()); // change password back
 	}
 
 	@Data

@@ -15,6 +15,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.example.demo.core.hibernate.domain.AbstractEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -32,12 +33,22 @@ public class User extends AbstractEntity implements UserDetails {
 	@Column(nullable = false)
 	private String name;
 
-	@JsonIgnore
 	private String password;
 
 	private boolean enabled = true;
 
 	private Set<String> roles = new LinkedHashSet<>();
+
+	@Override
+	@JsonIgnore
+	public String getPassword() {
+		return password;
+	}
+
+	@JsonProperty
+	public void setPassword(String password) {
+		this.password = password;
+	}
 
 	@JsonIgnore
 	@Override

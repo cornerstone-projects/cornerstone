@@ -2,7 +2,9 @@ package com.example.demo.user;
 
 import static com.example.demo.MainApplication.ADMIN_ROLE;
 import static com.example.demo.Messages.NOT_FOUND;
+import static com.example.demo.Messages.WRONG_CONFIRMED_PASSWORD;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 
@@ -15,6 +17,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,8 +39,13 @@ public class UserController {
 
 	public static final String PATH_DETAIL = "/user/{id}";
 
+	public static final String PATH_PASSWORD = PATH_DETAIL + "/password";
+
 	@Autowired
 	private UserRepository userRepository;
+
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 
 	@Autowired
 	private MessageSource messageSource;
@@ -62,6 +70,8 @@ public class UserController {
 	@PostMapping(PATH_LIST)
 	@PreAuthorize("hasRole('" + ADMIN_ROLE + "')")
 	public User save(@RequestBody User user) {
+		if (user.getPassword() != null)
+			user.setPassword(passwordEncoder.encode(user.getPassword()));
 		return userRepository.save(user);
 	}
 
@@ -76,6 +86,18 @@ public class UserController {
 	public void update(@Min(1) @PathVariable Long id, @RequestBody User user) {
 		userRepository.findById(id).map(u -> {
 			BeanUtils.copyProperties(user, u, "id", "username", "password");
+			return userRepository.save(u);
+		}).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+				messageSource.getMessage(NOT_FOUND, new Object[] { id }, null)));
+	}
+
+	@PutMapping(PATH_PASSWORD)
+	@PreAuthorize("hasRole('" + ADMIN_ROLE + "')")
+	public void changePassword(@Min(1) @PathVariable Long id, @RequestBody @Valid PasswordChangeRequest request) {
+		if (request.isWrongConfirmedPassword())
+			throw new IllegalArgumentException(messageSource.getMessage(WRONG_CONFIRMED_PASSWORD, null, null));
+		userRepository.findById(id).map(u -> {
+			u.setPassword(passwordEncoder.encode(request.getPassword()));
 			return userRepository.save(u);
 		}).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
 				messageSource.getMessage(NOT_FOUND, new Object[] { id }, null)));
