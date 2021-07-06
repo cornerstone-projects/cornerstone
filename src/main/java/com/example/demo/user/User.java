@@ -26,8 +26,11 @@ public class User extends AbstractEntity implements UserDetails {
 
 	private static final long serialVersionUID = 1L;
 
-	@Column(unique = true, updatable = false)
+	@Column(nullable = false, unique = true, updatable = false)
 	private String username;
+
+	@Column(nullable = false)
+	private String name;
 
 	@JsonIgnore
 	private String password;

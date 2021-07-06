@@ -83,10 +83,12 @@ public class MainApplication implements Application, CommandLineRunner {
 			if (userRepository.count() == 0) {
 				User user = new User();
 				user.setUsername(USER_USERNAME);
+				user.setName(user.getUsername());
 				user.setPassword(passwordEncoder.encode(DEFAULT_PASSWORD));
 				userRepository.save(user);
 				User admin = new User();
 				admin.setUsername(ADMIN_USERNAME);
+				admin.setName(user.getUsername());
 				admin.setPassword(passwordEncoder.encode(DEFAULT_PASSWORD));
 				admin.getRoles().add(ADMIN_ROLE);
 				userRepository.save(admin);

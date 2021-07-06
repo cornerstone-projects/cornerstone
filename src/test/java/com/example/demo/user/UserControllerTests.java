@@ -87,6 +87,17 @@ class UserControllerTests extends ControllerTestBase {
 		assertThat(page.getPageSize()).isEqualTo(10);
 		assertThat(page.getTotalPages()).isEqualTo(1);
 		assertThat(page.getTotalElements()).isEqualTo(2);
+
+		response = restTemplate.exchange(RequestEntity.method(HttpMethod.GET, URI.create("/users?query=adm")).build(),
+				new ParameterizedTypeReference<ResultPage<User>>() {
+				});
+		assertThat(response.getStatusCode()).isSameAs(OK);
+		page = response.getBody();
+		assertThat(page.getResult().size()).isEqualTo(1);
+		assertThat(page.getPageNo()).isEqualTo(1);
+		assertThat(page.getPageSize()).isEqualTo(10);
+		assertThat(page.getTotalPages()).isEqualTo(1);
+		assertThat(page.getTotalElements()).isEqualTo(1);
 	}
 
 	@Data
@@ -97,6 +108,8 @@ class UserControllerTests extends ControllerTestBase {
 
 		private String username;
 
+		private String name;
+
 		private String password;
 
 		private boolean enabled;
@@ -105,6 +118,7 @@ class UserControllerTests extends ControllerTestBase {
 
 		public User(String username) {
 			this.username = username;
+			this.name = username;
 		}
 
 	}

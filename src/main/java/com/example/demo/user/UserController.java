@@ -7,8 +7,10 @@ import javax.validation.constraints.Min;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -33,9 +35,19 @@ public class UserController {
 
 	@GetMapping("/users")
 	public ResultPage<User> list(@Min(1) @RequestParam(required = false, defaultValue = "1") int pageNo,
-			@Min(10) @Max(100) @RequestParam(required = false, defaultValue = "10") int pageSize) {
-		return ResultPage.of(userRepository.findAll(
-				PageRequest.of(pageNo - 1, pageSize, Sort.sort(User.class).by(User::getUsername).ascending())));
+			@Min(10) @Max(100) @RequestParam(required = false, defaultValue = "10") int pageSize,
+			@RequestParam(required = false) String query) {
+		PageRequest pageRequest = PageRequest.of(pageNo - 1, pageSize, Sort.by("username").ascending());
+		String q = '%' + query + '%';
+		Page<User> page;
+		if (query != null && !query.trim().isEmpty()) {
+			Specification<User> spec = (root, cq, cb) -> cb.or(cb.like(root.get("username"), q),
+					cb.like(root.get("name"), q));
+			page = userRepository.findAll(spec, pageRequest);
+		} else {
+			page = userRepository.findAll(pageRequest);
+		}
+		return ResultPage.of(page);
 	}
 
 	@GetMapping("/user/{id}")
