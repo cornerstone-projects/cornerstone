@@ -1,7 +1,6 @@
 package com.example.demo.user;
 
 import java.util.Collection;
-import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -12,6 +11,7 @@ import javax.persistence.Entity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.util.CollectionUtils;
 
 import com.example.demo.core.hibernate.domain.AbstractEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -33,28 +33,26 @@ public class User extends AbstractEntity implements UserDetails {
 	@Column(nullable = false)
 	private String name;
 
+	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	private String password;
 
-	private boolean enabled = true;
+	private Boolean disabled;
 
-	private Set<String> roles = new LinkedHashSet<>();
-
-	@Override
-	@JsonIgnore
-	public String getPassword() {
-		return password;
-	}
-
-	@JsonProperty
-	public void setPassword(String password) {
-		this.password = password;
-	}
+	private Set<String> roles;
 
 	@JsonIgnore
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return Stream.concat(Stream.of(getClass().getSimpleName().toUpperCase()), roles.stream())
-				.map(r -> new SimpleGrantedAuthority("ROLE_" + r)).collect(Collectors.toList());
+		Stream<String> stream = Stream.of(getClass().getSimpleName().toUpperCase());
+		if (!CollectionUtils.isEmpty(roles))
+			stream = Stream.concat(stream, roles.stream());
+		return stream.map(r -> new SimpleGrantedAuthority("ROLE_" + r)).collect(Collectors.toList());
+	}
+
+	@JsonIgnore
+	@Override
+	public boolean isEnabled() {
+		return disabled == null || !disabled;
 	}
 
 	@JsonIgnore

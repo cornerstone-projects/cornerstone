@@ -3,6 +3,7 @@ package com.example.demo;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
+import java.util.Collections;
 import java.util.Enumeration;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,7 +91,7 @@ public class MainApplication implements Application, CommandLineRunner {
 				admin.setUsername(ADMIN_USERNAME);
 				admin.setName(user.getUsername());
 				admin.setPassword(passwordEncoder.encode(DEFAULT_PASSWORD));
-				admin.getRoles().add(ADMIN_ROLE);
+				admin.setRoles(Collections.singleton(ADMIN_ROLE));
 				userRepository.save(admin);
 			}
 		}

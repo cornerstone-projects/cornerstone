@@ -7,11 +7,10 @@ import static com.example.demo.user.UserController.PATH_LIST;
 import static com.example.demo.user.UserController.PATH_PASSWORD;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
-import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
 import java.net.URI;
-import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.junit.jupiter.api.Test;
@@ -33,27 +32,34 @@ class UserControllerTests extends ControllerTestBase {
 	void crud() {
 		TestRestTemplate restTemplate = adminRestTemplate();
 		User u = new User("test");
-		u.setEnabled(true);
+		u.setDisabled(true);
 		ResponseEntity<User> response = restTemplate.postForEntity(PATH_LIST, u, User.class);
 		assertThat(response.getStatusCode()).isSameAs(OK);
 		User user = response.getBody();
 		Long id = user.getId();
 		assertThat(id).isNotNull();
 		assertThat(user.getUsername()).isEqualTo(u.getUsername());
-		assertThat(user.isEnabled()).isTrue();
+		assertThat(user.getDisabled()).isEqualTo(u.getDisabled());
 
 		// get
 		response = restTemplate.getForEntity(PATH_DETAIL, User.class, id);
 		assertThat(response.getStatusCode()).isSameAs(OK);
 		assertThat(response.getBody()).isEqualTo(user);
 
-		// update
+		// partial update
 		User u2 = new User("other");
-		u2.setEnabled(false);
-		restTemplate.put(PATH_DETAIL, u2, id);
-		User u3 = restTemplate.getForEntity(PATH_DETAIL, User.class, id).getBody();
-		assertThat(u3.isEnabled()).isEqualTo(u2.isEnabled());
+		u2.setDisabled(false);
+		User u3 = restTemplate.patchForObject(PATH_DETAIL, u2, User.class, id);
+		assertThat(u3.getDisabled()).isEqualTo(u2.getDisabled());
 		assertThat(u3.getUsername()).isEqualTo(user.getUsername()); // username not updatable
+		// full update
+		u2.setName("name");
+		u2.setDisabled(true);
+		restTemplate.put(PATH_DETAIL, u2, id);
+		User u4 = restTemplate.getForEntity(PATH_DETAIL, User.class, id).getBody();
+		assertThat(u4.getDisabled()).isEqualTo(u2.getDisabled());
+		assertThat(u4.getName()).isEqualTo(u2.getName());
+		assertThat(u4.getUsername()).isEqualTo(user.getUsername()); // username not updatable
 
 		// delete
 		restTemplate.delete(PATH_DETAIL, id);
@@ -136,9 +142,9 @@ class UserControllerTests extends ControllerTestBase {
 
 		private String password;
 
-		private boolean enabled;
+		private Boolean disabled;
 
-		private Set<String> roles = new LinkedHashSet<>();
+		private Set<String> roles;
 
 		public User(String username) {
 			this.username = username;
