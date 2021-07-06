@@ -32,13 +32,17 @@ import com.example.demo.core.hibernate.domain.ResultPage;
 @Validated
 public class UserController {
 
+	public static final String PATH_LIST = "/users";
+
+	public static final String PATH_DETAIL = "/user/{id}";
+
 	@Autowired
 	private UserRepository userRepository;
 
 	@Autowired
 	private MessageSource messageSource;
 
-	@GetMapping("/users")
+	@GetMapping(PATH_LIST)
 	public ResultPage<User> list(@Min(1) @RequestParam(required = false, defaultValue = "1") int pageNo,
 			@Min(10) @Max(100) @RequestParam(required = false, defaultValue = "10") int pageSize,
 			@RequestParam(required = false) String query) {
@@ -55,19 +59,19 @@ public class UserController {
 		return ResultPage.of(page);
 	}
 
-	@GetMapping("/user/{id}")
-	public User get(@Min(1) @PathVariable Long id) {
-		return userRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-				messageSource.getMessage(NOT_FOUND, new Object[] { id }, null)));
-	}
-
-	@PostMapping("/users")
+	@PostMapping(PATH_LIST)
 	@PreAuthorize("hasRole('" + ADMIN_ROLE + "')")
 	public User save(@RequestBody User user) {
 		return userRepository.save(user);
 	}
 
-	@PutMapping("/user/{id}")
+	@GetMapping(PATH_DETAIL)
+	public User get(@Min(1) @PathVariable Long id) {
+		return userRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+				messageSource.getMessage(NOT_FOUND, new Object[] { id }, null)));
+	}
+
+	@PutMapping(PATH_DETAIL)
 	@PreAuthorize("hasRole('" + ADMIN_ROLE + "')")
 	public void update(@Min(1) @PathVariable Long id, @RequestBody User user) {
 		userRepository.findById(id).map(u -> {
@@ -77,7 +81,7 @@ public class UserController {
 				messageSource.getMessage(NOT_FOUND, new Object[] { id }, null)));
 	}
 
-	@DeleteMapping("/user/{id}")
+	@DeleteMapping(PATH_DETAIL)
 	@PreAuthorize("hasRole('" + ADMIN_ROLE + "')")
 	public void delete(@Min(1) @PathVariable Long id) {
 		// do not use deleteById, not annotated by @Cacheable

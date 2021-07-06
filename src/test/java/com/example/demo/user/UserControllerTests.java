@@ -1,10 +1,10 @@
 package com.example.demo.user;
 
+import static com.example.demo.user.UserController.PATH_LIST;
+import static com.example.demo.user.UserController.PATH_DETAIL;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.OK;
-import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
 import java.net.URI;
 import java.util.LinkedHashSet;
@@ -26,28 +26,11 @@ import lombok.NoArgsConstructor;
 class UserControllerTests extends ControllerTestBase {
 
 	@Test
-	void saveWithAuthenticationFailure() {
-		TestRestTemplate restTemplate = testRestTemplate;
-		User u = new User("test");
-		ResponseEntity<User> response = restTemplate.withBasicAuth("invalid_user", "*******").postForEntity("/users", u,
-				User.class);
-		assertThat(response.getStatusCode()).isSameAs(UNAUTHORIZED);
-	}
-
-	@Test
-	void saveWithAccessDenied() {
-		TestRestTemplate restTemplate = userRestTemplate();
-		User u = new User("test");
-		ResponseEntity<User> response = restTemplate.postForEntity("/users", u, User.class);
-		assertThat(response.getStatusCode()).isSameAs(FORBIDDEN);
-	}
-
-	@Test
 	void crud() {
 		TestRestTemplate restTemplate = adminRestTemplate();
 		User u = new User("test");
 		u.setEnabled(true);
-		ResponseEntity<User> response = restTemplate.postForEntity("/users", u, User.class);
+		ResponseEntity<User> response = restTemplate.postForEntity(PATH_LIST, u, User.class);
 		assertThat(response.getStatusCode()).isSameAs(OK);
 		User user = response.getBody();
 		Long id = user.getId();
@@ -56,28 +39,28 @@ class UserControllerTests extends ControllerTestBase {
 		assertThat(user.isEnabled()).isTrue();
 
 		// get
-		response = restTemplate.getForEntity("/user/{id}", User.class, id);
+		response = restTemplate.getForEntity(PATH_DETAIL, User.class, id);
 		assertThat(response.getStatusCode()).isSameAs(OK);
 		assertThat(response.getBody()).isEqualTo(user);
 
 		// update
 		User u2 = new User("other");
 		u2.setEnabled(false);
-		restTemplate.put("/user/{id}", u2, id);
-		User u3 = restTemplate.getForEntity("/user/{id}", User.class, id).getBody();
+		restTemplate.put(PATH_DETAIL, u2, id);
+		User u3 = restTemplate.getForEntity(PATH_DETAIL, User.class, id).getBody();
 		assertThat(u3.isEnabled()).isEqualTo(u2.isEnabled());
 		assertThat(u3.getUsername()).isEqualTo(user.getUsername()); // username not updatable
 
 		// delete
-		restTemplate.delete("/user/{id}", id);
-		assertThat(restTemplate.getForEntity("/user/{id}", User.class, id).getStatusCode()).isSameAs(NOT_FOUND);
+		restTemplate.delete(PATH_DETAIL, id);
+		assertThat(restTemplate.getForEntity(PATH_DETAIL, User.class, id).getStatusCode()).isSameAs(NOT_FOUND);
 	}
 
 	@Test
 	void list() {
 		TestRestTemplate restTemplate = userRestTemplate();
 		ResponseEntity<ResultPage<User>> response = restTemplate.exchange(
-				RequestEntity.method(HttpMethod.GET, URI.create("/users")).build(),
+				RequestEntity.method(HttpMethod.GET, URI.create(PATH_LIST)).build(),
 				new ParameterizedTypeReference<ResultPage<User>>() {
 				});
 		assertThat(response.getStatusCode()).isSameAs(OK);
@@ -88,7 +71,8 @@ class UserControllerTests extends ControllerTestBase {
 		assertThat(page.getTotalPages()).isEqualTo(1);
 		assertThat(page.getTotalElements()).isEqualTo(2);
 
-		response = restTemplate.exchange(RequestEntity.method(HttpMethod.GET, URI.create("/users?query=adm")).build(),
+		response = restTemplate.exchange(
+				RequestEntity.method(HttpMethod.GET, URI.create(PATH_LIST + "?query=adm")).build(),
 				new ParameterizedTypeReference<ResultPage<User>>() {
 				});
 		assertThat(response.getStatusCode()).isSameAs(OK);
