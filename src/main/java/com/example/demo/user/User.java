@@ -14,6 +14,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.util.CollectionUtils;
 
 import com.example.demo.core.hibernate.domain.AbstractEntity;
+import com.example.demo.core.validation.constraints.MobilePhoneNumber;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -32,7 +33,8 @@ public class User extends AbstractEntity implements UserDetails {
 
 	@Column(nullable = false)
 	private String name;
-	
+
+	@MobilePhoneNumber
 	private String phone;
 
 	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)

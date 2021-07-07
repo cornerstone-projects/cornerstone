@@ -12,11 +12,11 @@ public class PasswordChangeRequest implements Serializable {
 
 	private static final long serialVersionUID = 7840779509938663757L;
 
-	private @Size(min = 6) String currentPassword;
+	private @Size(min = 6, max = 50) String currentPassword;
 
-	private @NotEmpty @Size(min = 6) String password;
+	private @NotEmpty @Size(min = 6, max = 50) String password;
 
-	private @NotEmpty @Size(min = 6) String confirmedPassword;
+	private @NotEmpty @Size(min = 6, max = 50) String confirmedPassword;
 
 	public boolean isWrongConfirmedPassword() {
 		return !password.equals(confirmedPassword);

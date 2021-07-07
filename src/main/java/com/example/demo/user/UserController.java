@@ -38,7 +38,6 @@ import com.example.demo.core.web.AbstractRestController;
 
 import springfox.documentation.annotations.ApiIgnore;
 
-
 @RestController
 @Validated
 @PreAuthorize("hasRole('" + ADMIN_ROLE + "')")
@@ -78,7 +77,7 @@ public class UserController extends AbstractRestController {
 	}
 
 	@PostMapping(PATH_LIST)
-	public User save(@RequestBody User user) {
+	public User save(@RequestBody @Valid User user) {
 		encodePassword(user);
 		return userRepository.save(user);
 	}
@@ -89,7 +88,7 @@ public class UserController extends AbstractRestController {
 	}
 
 	@PutMapping(PATH_DETAIL)
-	public void update(@Min(1) @PathVariable Long id, @RequestBody User user) {
+	public void update(@Min(1) @PathVariable Long id, @RequestBody @Valid User user) {
 		encodePassword(user);
 		userRepository.findById(id).map(u -> {
 			BeanUtils.copyProperties(user, u);
@@ -98,7 +97,7 @@ public class UserController extends AbstractRestController {
 	}
 
 	@PatchMapping(PATH_DETAIL)
-	public User updatePartial(@Min(1) @PathVariable Long id, @RequestBody User user) {
+	public User updatePartial(@Min(1) @PathVariable Long id, @RequestBody @Valid User user) {
 		user.setUsername(null); // username not updatable
 		encodePassword(user);
 		BeanWrapper bw = new BeanWrapperImpl(user);

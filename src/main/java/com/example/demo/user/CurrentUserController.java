@@ -37,7 +37,7 @@ public class CurrentUserController extends AbstractRestController {
 
 	@PatchMapping(PATH_PROFILE)
 	public User update(@AuthenticationPrincipal(expression = "username") @ApiIgnore String username,
-			@RequestBody User user) {
+			@RequestBody @Valid User user) {
 		return userRepository.findByUsername(username).map(currentUser -> {
 			if (user.getName() != null)
 				currentUser.setName(user.getName());

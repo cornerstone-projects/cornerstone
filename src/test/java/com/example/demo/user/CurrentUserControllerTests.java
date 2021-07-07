@@ -33,7 +33,7 @@ class CurrentUserControllerTests extends ControllerTestBase {
 		User user = new User();
 		user.setUsername("other");// not editable
 		user.setName("new name");
-		user.setPhone("12345678");
+		user.setPhone("13111111111");
 		user.setPassword("iampassword"); // not editable
 		User u = restTemplate.patchForObject(PATH_PROFILE, user, User.class);
 		assertThat(u.getName()).isEqualTo(user.getName());
@@ -41,6 +41,10 @@ class CurrentUserControllerTests extends ControllerTestBase {
 		assertThat(u.getUsername()).isEqualTo(USER_USERNAME); // username not editable
 		// assert password not changed
 		assertThat(restTemplate.getForEntity(PATH_PROFILE, User.class).getStatusCode()).isSameAs(OK);
+
+		user.setPhone("123456");
+		assertThat(restTemplate.exchange(RequestEntity.method(HttpMethod.PATCH, PATH_PROFILE).body(user), User.class)
+				.getStatusCode()).isSameAs(BAD_REQUEST);
 	}
 
 	@Test
