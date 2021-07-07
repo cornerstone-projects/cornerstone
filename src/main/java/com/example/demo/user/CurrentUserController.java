@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.core.web.AbstractRestController;
 
+import springfox.documentation.annotations.ApiIgnore;
+
 @RestController
 @Validated
 public class CurrentUserController extends AbstractRestController {
@@ -29,12 +31,13 @@ public class CurrentUserController extends AbstractRestController {
 	private PasswordEncoder passwordEncoder;
 
 	@GetMapping(PATH_PROFILE)
-	public User get(@AuthenticationPrincipal User currentUser) {
+	public User get(@AuthenticationPrincipal @ApiIgnore User currentUser) {
 		return currentUser;
 	}
 
 	@PatchMapping(PATH_PROFILE)
-	public User update(@AuthenticationPrincipal(expression = "username") String username, @RequestBody User user) {
+	public User update(@AuthenticationPrincipal(expression = "username") @ApiIgnore String username,
+			@RequestBody User user) {
 		return userRepository.findByUsername(username).map(currentUser -> {
 			if (user.getName() != null)
 				currentUser.setName(user.getName());
@@ -46,7 +49,7 @@ public class CurrentUserController extends AbstractRestController {
 	}
 
 	@PutMapping(PATH_PASSWORD)
-	public void changePassword(@AuthenticationPrincipal User currentUser,
+	public void changePassword(@AuthenticationPrincipal @ApiIgnore User currentUser,
 			@RequestBody @Valid PasswordChangeRequest request) {
 		if (request.isWrongConfirmedPassword())
 			throw invalidParam(messageSource.getMessage("wrong.confirmed.password", null, null));

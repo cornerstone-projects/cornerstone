@@ -36,6 +36,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.demo.core.hibernate.domain.ResultPage;
 import com.example.demo.core.web.AbstractRestController;
 
+import springfox.documentation.annotations.ApiIgnore;
+
+
 @RestController
 @Validated
 @PreAuthorize("hasRole('" + ADMIN_ROLE + "')")
@@ -56,7 +59,7 @@ public class UserController extends AbstractRestController {
 	@GetMapping(PATH_LIST)
 	public ResultPage<User> list(@Min(1) @RequestParam(required = false, defaultValue = "1") int pageNo,
 			@Min(10) @Max(100) @RequestParam(required = false, defaultValue = "10") int pageSize,
-			@RequestParam(required = false) String query, User user) {
+			@RequestParam(required = false) String query, @ApiIgnore User user) {
 		PageRequest pageRequest = PageRequest.of(pageNo - 1, pageSize, Sort.by("username").ascending());
 		Page<User> page;
 		if (StringUtils.hasText(query)) {
