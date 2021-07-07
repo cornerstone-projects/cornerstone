@@ -38,11 +38,12 @@ import com.example.demo.core.web.AbstractRestController;
 
 @RestController
 @Validated
+@PreAuthorize("hasRole('" + ADMIN_ROLE + "')")
 public class UserController extends AbstractRestController {
 
 	public static final String PATH_LIST = "/users";
 
-	public static final String PATH_DETAIL = "/user/{id}";
+	public static final String PATH_DETAIL = "/user/{id:\\d+}";
 
 	public static final String PATH_PASSWORD = PATH_DETAIL + "/password";
 
@@ -74,7 +75,6 @@ public class UserController extends AbstractRestController {
 	}
 
 	@PostMapping(PATH_LIST)
-	@PreAuthorize("hasRole('" + ADMIN_ROLE + "')")
 	public User save(@RequestBody User user) {
 		encodePassword(user);
 		return userRepository.save(user);
@@ -86,7 +86,6 @@ public class UserController extends AbstractRestController {
 	}
 
 	@PutMapping(PATH_DETAIL)
-	@PreAuthorize("hasRole('" + ADMIN_ROLE + "')")
 	public void update(@Min(1) @PathVariable Long id, @RequestBody User user) {
 		encodePassword(user);
 		userRepository.findById(id).map(u -> {
@@ -96,7 +95,6 @@ public class UserController extends AbstractRestController {
 	}
 
 	@PatchMapping(PATH_DETAIL)
-	@PreAuthorize("hasRole('" + ADMIN_ROLE + "')")
 	public User updatePartial(@Min(1) @PathVariable Long id, @RequestBody User user) {
 		user.setUsername(null); // username not updatable
 		encodePassword(user);
@@ -110,7 +108,6 @@ public class UserController extends AbstractRestController {
 	}
 
 	@PutMapping(PATH_PASSWORD)
-	@PreAuthorize("hasRole('" + ADMIN_ROLE + "')")
 	public void changePassword(@Min(1) @PathVariable Long id, @RequestBody @Valid PasswordChangeRequest request) {
 		if (request.isWrongConfirmedPassword())
 			throw invalidParam(messageSource.getMessage("wrong.confirmed.password", null, null));
@@ -122,7 +119,6 @@ public class UserController extends AbstractRestController {
 	}
 
 	@DeleteMapping(PATH_DETAIL)
-	@PreAuthorize("hasRole('" + ADMIN_ROLE + "')")
 	public void delete(@Min(1) @PathVariable Long id) {
 		// do NOT use deleteById, not annotated by @Cacheable
 		userRepository.delete(userRepository.findById(id).orElseThrow(() -> notFound(id)));

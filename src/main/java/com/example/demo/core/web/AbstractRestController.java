@@ -22,4 +22,13 @@ public abstract class AbstractRestController {
 				messageSource.getMessage("invalid.param", new Object[] { detail }, null));
 	}
 
+	protected ResponseStatusException missingParam(String name) {
+		return new ResponseStatusException(BAD_REQUEST,
+				messageSource.getMessage("missing.param", new Object[] { name }, null));
+	}
+
+	protected RuntimeException shouldNeverHappen() {
+		return new RuntimeException("This should never happen!!!");
+	}
+
 }

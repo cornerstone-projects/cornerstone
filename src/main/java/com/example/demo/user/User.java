@@ -32,6 +32,8 @@ public class User extends AbstractEntity implements UserDetails {
 
 	@Column(nullable = false)
 	private String name;
+	
+	private String phone;
 
 	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	private String password;

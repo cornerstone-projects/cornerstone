@@ -11,7 +11,6 @@ import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
 import java.net.URI;
-import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -23,15 +22,14 @@ import org.springframework.http.ResponseEntity;
 import com.example.demo.ControllerTestBase;
 import com.example.demo.core.hibernate.domain.ResultPage;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
 class UserControllerTests extends ControllerTestBase {
 
 	@Test
 	void crud() {
 		TestRestTemplate restTemplate = adminRestTemplate();
-		User u = new User("test");
+		User u = new User();
+		u.setUsername("test");
+		u.setName("test");
 		u.setDisabled(true);
 		ResponseEntity<User> response = restTemplate.postForEntity(PATH_LIST, u, User.class);
 		assertThat(response.getStatusCode()).isSameAs(OK);
@@ -47,7 +45,9 @@ class UserControllerTests extends ControllerTestBase {
 		assertThat(response.getBody()).isEqualTo(user);
 
 		// partial update
-		User u2 = new User("other");
+		User u2 = new User();
+		u2.setUsername("other");
+		u2.setName("new name");
 		u2.setDisabled(false);
 		User u3 = restTemplate.patchForObject(PATH_DETAIL, u2, User.class, id);
 		assertThat(u3.getDisabled()).isEqualTo(u2.getDisabled());
@@ -68,7 +68,7 @@ class UserControllerTests extends ControllerTestBase {
 
 	@Test
 	void list() {
-		TestRestTemplate restTemplate = userRestTemplate();
+		TestRestTemplate restTemplate = adminRestTemplate();
 		ResponseEntity<ResultPage<User>> response = restTemplate.exchange(
 				RequestEntity.method(HttpMethod.GET, URI.create(PATH_LIST)).build(),
 				new ParameterizedTypeReference<ResultPage<User>>() {
@@ -128,29 +128,6 @@ class UserControllerTests extends ControllerTestBase {
 		pcr.setPassword(DEFAULT_PASSWORD);
 		pcr.setConfirmedPassword(pcr.getPassword());
 		restTemplate.put(PATH_PASSWORD, pcr, admin.getId()); // change password back
-	}
-
-	@Data
-	@NoArgsConstructor
-	static class User {
-
-		private Long id;
-
-		private String username;
-
-		private String name;
-
-		private String password;
-
-		private Boolean disabled;
-
-		private Set<String> roles;
-
-		public User(String username) {
-			this.username = username;
-			this.name = username;
-		}
-
 	}
 
 }
