@@ -1,11 +1,8 @@
 package com.example.demo.user;
 
 import static com.example.demo.MainApplication.ADMIN_ROLE;
-import static com.example.demo.Messages.NOT_FOUND;
-import static com.example.demo.Messages.WRONG_CONFIRMED_PASSWORD;
 
 import java.beans.FeatureDescriptor;
-import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import javax.validation.Valid;
@@ -16,14 +13,12 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.util.StringUtils;
@@ -37,13 +32,13 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 
 import com.example.demo.core.hibernate.domain.ResultPage;
+import com.example.demo.core.web.AbstractRestController;
 
 @RestController
 @Validated
-public class UserController {
+public class UserController extends AbstractRestController {
 
 	public static final String PATH_LIST = "/users";
 
@@ -56,9 +51,6 @@ public class UserController {
 
 	@Autowired
 	private PasswordEncoder passwordEncoder;
-
-	@Autowired
-	private MessageSource messageSource;
 
 	@GetMapping(PATH_LIST)
 	public ResultPage<User> list(@Min(1) @RequestParam(required = false, defaultValue = "1") int pageNo,
@@ -90,7 +82,7 @@ public class UserController {
 
 	@GetMapping(PATH_DETAIL)
 	public User get(@Min(1) @PathVariable Long id) {
-		return userRepository.findById(id).orElseThrow(notFound(id));
+		return userRepository.findById(id).orElseThrow(() -> notFound(id));
 	}
 
 	@PutMapping(PATH_DETAIL)
@@ -100,7 +92,7 @@ public class UserController {
 		userRepository.findById(id).map(u -> {
 			BeanUtils.copyProperties(user, u);
 			return userRepository.save(u);
-		}).orElseThrow(notFound(id));
+		}).orElseThrow(() -> notFound(id));
 	}
 
 	@PatchMapping(PATH_DETAIL)
@@ -114,36 +106,31 @@ public class UserController {
 		return userRepository.findById(id).map(u -> {
 			BeanUtils.copyProperties(user, u, ignoreProperties);
 			return userRepository.save(u);
-		}).orElseThrow(notFound(id));
+		}).orElseThrow(() -> notFound(id));
 	}
 
 	@PutMapping(PATH_PASSWORD)
 	@PreAuthorize("hasRole('" + ADMIN_ROLE + "')")
 	public void changePassword(@Min(1) @PathVariable Long id, @RequestBody @Valid PasswordChangeRequest request) {
 		if (request.isWrongConfirmedPassword())
-			throw new IllegalArgumentException(messageSource.getMessage(WRONG_CONFIRMED_PASSWORD, null, null));
+			throw invalidParam(messageSource.getMessage("wrong.confirmed.password", null, null));
 		userRepository.findById(id).map(user -> {
 			user.setPassword(request.getPassword());
 			encodePassword(user);
 			return userRepository.save(user);
-		}).orElseThrow(notFound(id));
+		}).orElseThrow(() -> notFound(id));
 	}
 
 	@DeleteMapping(PATH_DETAIL)
 	@PreAuthorize("hasRole('" + ADMIN_ROLE + "')")
 	public void delete(@Min(1) @PathVariable Long id) {
-		// do not use deleteById, not annotated by @Cacheable
-		userRepository.delete(userRepository.findById(id).orElseThrow(notFound(id)));
+		// do NOT use deleteById, not annotated by @Cacheable
+		userRepository.delete(userRepository.findById(id).orElseThrow(() -> notFound(id)));
 	}
 
 	private void encodePassword(User user) {
 		if (StringUtils.hasLength(user.getPassword()))
 			user.setPassword(passwordEncoder.encode(user.getPassword()));
-	}
-
-	private Supplier<ResponseStatusException> notFound(Long id) {
-		return () -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-				messageSource.getMessage(NOT_FOUND, new Object[] { id }, null));
 	}
 
 }
