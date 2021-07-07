@@ -17,6 +17,8 @@ import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -61,7 +63,7 @@ public class UserController {
 	@GetMapping(PATH_LIST)
 	public ResultPage<User> list(@Min(1) @RequestParam(required = false, defaultValue = "1") int pageNo,
 			@Min(10) @Max(100) @RequestParam(required = false, defaultValue = "10") int pageSize,
-			@RequestParam(required = false) String query) {
+			@RequestParam(required = false) String query, User user) {
 		PageRequest pageRequest = PageRequest.of(pageNo - 1, pageSize, Sort.by("username").ascending());
 		Page<User> page;
 		if (StringUtils.hasText(query)) {
@@ -70,7 +72,11 @@ public class UserController {
 					cb.like(root.get("name"), q));
 			page = userRepository.findAll(spec, pageRequest);
 		} else {
-			page = userRepository.findAll(pageRequest);
+			ExampleMatcher matcher = ExampleMatcher.matching().withIgnorePaths("password", "roles")
+					.withMatcher("username", match -> match.contains().ignoreCase())
+					.withMatcher("name", match -> match.contains());
+			Example<User> example = Example.of(user, matcher);
+			page = userRepository.findAll(example, pageRequest);
 		}
 		return ResultPage.of(page);
 	}
