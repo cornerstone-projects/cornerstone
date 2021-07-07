@@ -10,10 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.AbstractEnvironment;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.util.ClassUtils;
 
@@ -24,8 +22,6 @@ import com.example.demo.user.UserRepository;
 import lombok.Getter;
 
 @SpringBootApplication
-@EnableJpaRepositories
-@EntityScan
 public class MainApplication implements Application, CommandLineRunner {
 
 	private static String hostName = "localhost";
