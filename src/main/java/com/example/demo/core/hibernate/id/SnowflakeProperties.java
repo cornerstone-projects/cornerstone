@@ -45,6 +45,8 @@ public class SnowflakeProperties {
 						continue;
 					if (addr.isSiteLocalAddress() && addr instanceof Inet4Address) {
 						workerId = addr.getAddress()[3];
+						if (workerId < 0)
+							workerId += 256;
 						log.info(
 								"Extract snowflake workerId {} from host address {}, please configure {}.worker-id if multiple instances running in the same host",
 								workerId, addr.getHostAddress(), PREFIX);
