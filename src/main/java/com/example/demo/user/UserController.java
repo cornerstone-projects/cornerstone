@@ -63,8 +63,9 @@ public class UserController extends AbstractRestController {
 		Page<User> page;
 		if (StringUtils.hasText(query)) {
 			String q = '%' + query + '%';
-			Specification<User> spec = (root, cq, cb) -> cb.or(cb.like(root.get("username"), q),
-					cb.like(root.get("name"), q));
+			Specification<User> spec = (root, cq, cb) -> cb.or(
+					cb.or(cb.like(root.get("username"), q), cb.like(root.get("name"), q)),
+					cb.equal(root.get("phone"), query));
 			page = userRepository.findAll(spec, pageRequest);
 		} else {
 			ExampleMatcher matcher = ExampleMatcher.matching().withIgnorePaths("password", "roles")
