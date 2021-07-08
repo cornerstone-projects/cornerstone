@@ -1,16 +1,22 @@
 package com.example.demo.user;
 
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
 
 import com.example.demo.core.web.AbstractRestController;
 
@@ -36,15 +42,28 @@ public class CurrentUserController extends AbstractRestController {
 	}
 
 	@PatchMapping(PATH_PROFILE)
-	public User update(@AuthenticationPrincipal(expression = "username") @ApiIgnore String username,
-			@RequestBody @Valid User user) {
-		return userRepository.findByUsername(username).map(currentUser -> {
+	@Transactional
+	public User update(@AuthenticationPrincipal @ApiIgnore User currentUser, @RequestBody @Valid User user) {
+		return userRepository.findByUsername(currentUser.getUsername()).map(u -> {
 			if (user.getName() != null)
-				currentUser.setName(user.getName());
+				u.setName(user.getName());
 			if (user.getPhone() != null)
-				currentUser.setPhone(user.getPhone());
-			// add more editable property if necessary
-			return userRepository.save(currentUser);
+				u.setPhone(user.getPhone()); // add more editable property if necessary
+			// synchronize user in session
+			TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+				public void afterCommit() {
+					if (user.getName() != null)
+						currentUser.setName(user.getName());
+					if (user.getPhone() != null)
+						currentUser.setPhone(user.getPhone());
+					RequestAttributes attrs = RequestContextHolder.currentRequestAttributes();
+					String key = HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY;
+					// trigger session save to store
+					attrs.setAttribute(key, attrs.getAttribute(key, RequestAttributes.SCOPE_SESSION),
+							RequestAttributes.SCOPE_SESSION);
+				}
+			});
+			return userRepository.save(u);
 		}).orElseThrow(this::shouldNeverHappen);
 	}
 
