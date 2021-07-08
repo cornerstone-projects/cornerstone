@@ -28,6 +28,17 @@ spring.data.redis.repositories.enabled: false
 
 spring.cache.redis.time-to-live: 300s
 
+spring.task:
+  execution:
+    pool.maxSize: 100
+    pool.queueCapacity: 10000
+    shutdown.awaitTermination: true
+    shutdown.awaitTerminationPeriod: 30s
+  scheduling:
+    pool.size: 5
+    shutdown.awaitTermination: true
+    shutdown.awaitTerminationPeriod: 30s
+
 spring.jackson:
   default-property-inclusion: non_null
 
