@@ -39,6 +39,10 @@ class CurrentUserControllerTests extends ControllerTestBase {
 		assertThat(u.getName()).isEqualTo(user.getName());
 		assertThat(u.getPhone()).isEqualTo(user.getPhone());
 		assertThat(u.getUsername()).isEqualTo(USER_USERNAME); // username not editable
+		User u2 = restTemplate.getForObject(PATH_PROFILE, User.class);
+		assertThat(u2.getName()).isEqualTo(u.getName());
+		assertThat(u2.getPhone()).isEqualTo(u.getPhone());
+
 		// assert password not changed
 		assertThat(restTemplate.getForEntity(PATH_PROFILE, User.class).getStatusCode()).isSameAs(OK);
 
@@ -72,7 +76,7 @@ class CurrentUserControllerTests extends ControllerTestBase {
 
 		restTemplate = restTemplate.withBasicAuth(USER_USERNAME, pcr.getPassword());
 		User u = restTemplate.getForObject(PATH_PROFILE, User.class);
-		assertThat(u.getUsername()).isEqualTo(USER_USERNAME);
+		assertThat(u.getUsername()).isEqualTo(USER_USERNAME); // verify password changed
 
 		pcr.setCurrentPassword(pcr.getPassword());
 		pcr.setPassword(DEFAULT_PASSWORD);
