@@ -17,6 +17,7 @@ import com.example.demo.core.hibernate.domain.AbstractEntity;
 import com.example.demo.core.validation.constraints.MobilePhoneNumber;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonView;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -29,19 +30,25 @@ public class User extends AbstractEntity implements UserDetails {
 	private static final long serialVersionUID = 1L;
 
 	@Column(nullable = false, unique = true, updatable = false)
+	@JsonView({ View.Createable.class, View.Profile.class })
 	private String username;
 
 	@Column(nullable = false)
+	@JsonView(View.EditableProfile.class)
 	private String name;
 
 	@MobilePhoneNumber
+	@JsonView(View.EditableProfile.class)
 	private String phone;
 
+	@JsonView(View.AdminEditable.class)
 	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	private String password;
 
+	@JsonView(View.AdminEditable.class)
 	private Boolean disabled;
 
+	@JsonView(View.AdminEditable.class)
 	private Set<String> roles;
 
 	@JsonIgnore
@@ -77,4 +84,27 @@ public class User extends AbstractEntity implements UserDetails {
 		return true;
 	}
 
+	interface View {
+
+		interface EditableProfile {
+
+		}
+
+		interface Profile extends EditableProfile {
+
+		}
+
+		interface AdminEditable extends EditableProfile {
+
+		}
+
+		interface Createable extends AdminEditable {
+
+		}
+
+		interface Updatable extends AdminEditable {
+
+		}
+
+	}
 }

@@ -18,7 +18,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 
+import com.example.demo.core.util.BeanUtils;
 import com.example.demo.core.web.AbstractRestController;
+import com.fasterxml.jackson.annotation.JsonView;
 
 import springfox.documentation.annotations.ApiIgnore;
 
@@ -37,25 +39,22 @@ public class CurrentUserController extends AbstractRestController {
 	private PasswordEncoder passwordEncoder;
 
 	@GetMapping(PATH_PROFILE)
+	@JsonView({ User.View.Profile.class })
 	public User get(@AuthenticationPrincipal @ApiIgnore User currentUser) {
 		return currentUser;
 	}
 
 	@PatchMapping(PATH_PROFILE)
 	@Transactional
-	public User update(@AuthenticationPrincipal @ApiIgnore User currentUser, @RequestBody @Valid User user) {
+	@JsonView(User.View.Profile.class)
+	public User update(@AuthenticationPrincipal @ApiIgnore User currentUser,
+			@RequestBody @JsonView(User.View.EditableProfile.class) @Valid User user) {
 		return userRepository.findByUsername(currentUser.getUsername()).map(u -> {
-			if (user.getName() != null)
-				u.setName(user.getName());
-			if (user.getPhone() != null)
-				u.setPhone(user.getPhone()); // add more editable property if necessary
+			BeanUtils.copyNonNullProperties(user, u);
 			// synchronize user in session
 			TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
 				public void afterCommit() {
-					if (user.getName() != null)
-						currentUser.setName(user.getName());
-					if (user.getPhone() != null)
-						currentUser.setPhone(user.getPhone());
+					BeanUtils.copyNonNullProperties(user, currentUser);
 					RequestAttributes attrs = RequestContextHolder.currentRequestAttributes();
 					String key = HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY;
 					// trigger session save to store

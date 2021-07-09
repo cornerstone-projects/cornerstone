@@ -2,16 +2,10 @@ package com.example.demo.user;
 
 import static com.example.demo.MainApplication.ADMIN_ROLE;
 
-import java.beans.FeatureDescriptor;
-import java.util.stream.Stream;
-
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.BeanWrapper;
-import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
@@ -34,7 +28,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.core.hibernate.domain.ResultPage;
+import com.example.demo.core.util.BeanUtils;
 import com.example.demo.core.web.AbstractRestController;
+import com.fasterxml.jackson.annotation.JsonView;
 
 import springfox.documentation.annotations.ApiIgnore;
 
@@ -78,7 +74,7 @@ public class UserController extends AbstractRestController {
 	}
 
 	@PostMapping(PATH_LIST)
-	public User save(@RequestBody @Valid User user) {
+	public User save(@RequestBody @JsonView(User.View.Createable.class) @Valid User user) {
 		encodePassword(user);
 		return userRepository.save(user);
 	}
@@ -89,29 +85,28 @@ public class UserController extends AbstractRestController {
 	}
 
 	@PutMapping(PATH_DETAIL)
-	public void update(@Min(1) @PathVariable Long id, @RequestBody @Valid User user) {
+	public void update(@Min(1) @PathVariable Long id,
+			@RequestBody @JsonView(User.View.Updatable.class) @Valid User user) {
 		encodePassword(user);
 		userRepository.findById(id).map(u -> {
-			BeanUtils.copyProperties(user, u);
+			BeanUtils.copyNonNullProperties(user, u);
 			return userRepository.save(u);
 		}).orElseThrow(() -> notFound(id));
 	}
 
 	@PatchMapping(PATH_DETAIL)
-	public User updatePartial(@Min(1) @PathVariable Long id, @RequestBody @Valid User user) {
-		user.setUsername(null); // username not updatable
+	public User updatePartial(@Min(1) @PathVariable Long id,
+			@RequestBody @JsonView(User.View.Updatable.class) @Valid User user) {
 		encodePassword(user);
-		BeanWrapper bw = new BeanWrapperImpl(user);
-		String[] ignoreProperties = Stream.of(bw.getPropertyDescriptors()).map(FeatureDescriptor::getName)
-				.filter(name -> bw.getPropertyValue(name) == null).toArray(String[]::new);
 		return userRepository.findById(id).map(u -> {
-			BeanUtils.copyProperties(user, u, ignoreProperties);
+			BeanUtils.copyNonNullProperties(user, u);
 			return userRepository.save(u);
 		}).orElseThrow(() -> notFound(id));
 	}
 
 	@PutMapping(PATH_PASSWORD)
-	public void changePassword(@Min(1) @PathVariable Long id, @RequestBody @Valid PasswordChangeRequest request) {
+	public void changePassword(@Min(1) @PathVariable Long id,
+			@RequestBody @JsonView(UserController.class) @Valid PasswordChangeRequest request) {
 		if (request.isWrongConfirmedPassword())
 			throw badRequest("wrong.confirmed.password");
 		userRepository.findById(id).map(user -> {

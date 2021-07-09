@@ -16,6 +16,7 @@ import org.springframework.lang.Nullable;
 
 import com.example.demo.core.hibernate.type.JsonType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonView;
 
 @TypeDefs({ @TypeDef(name = "json", typeClass = JsonType.class) })
 @MappedSuperclass
@@ -26,6 +27,7 @@ public abstract class AbstractEntity implements Persistable<Long>, Serializable 
 	@Id
 	@GeneratedValue(generator = "snowflake")
 	@GenericGenerator(name = "snowflake", strategy = "com.example.demo.core.hibernate.id.SnowflakeIdentifierGenerator")
+	@JsonView(Persistable.class)
 	private @Nullable Long id;
 
 	@Nullable
