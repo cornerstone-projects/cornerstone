@@ -27,8 +27,11 @@ configurations {
 }
 
 dependencies {
-	ext {
-		swaggerVersion = "3.0.0"
+    implementation "org.springframework.boot:spring-boot-starter-log4j2"
+	modules {
+		module("org.springframework.boot:spring-boot-starter-logging") {
+			replacedBy("org.springframework.boot:spring-boot-starter-log4j2", "Use Log4j2 instead of Logback")
+		}
 	}
 	implementation "org.springframework.boot:spring-boot-starter-web"
 	implementation "org.springframework.boot:spring-boot-starter-cache"
@@ -41,17 +44,9 @@ dependencies {
     implementation "org.springframework.session:spring-session-data-redis"
     implementation "io.opentracing.contrib:opentracing-spring-jaeger-web-starter:latest.release"
     implementation "io.opentracing.contrib:opentracing-jdbc:latest.release"
-    implementation "io.springfox:springfox-boot-starter:$swaggerVersion"
-	implementation "io.springfox:springfox-swagger-ui:$swaggerVersion"
-    implementation "org.springframework.boot:spring-boot-starter-log4j2"
-	modules {
-		module("org.springframework.boot:spring-boot-starter-logging") {
-			replacedBy("org.springframework.boot:spring-boot-starter-log4j2", "Use Log4j2 instead of Logback")
-		}
-	}
+    implementation "io.springfox:springfox-boot-starter:latest.release"
     developmentOnly "org.springframework.boot:spring-boot-devtools"
 	runtimeOnly "mysql:mysql-connector-java"
-	
 	testImplementation "org.springframework.boot:spring-boot-starter-test"
 	testImplementation "org.springframework.security:spring-security-test"
 	testRuntimeOnly "com.h2database:h2"
