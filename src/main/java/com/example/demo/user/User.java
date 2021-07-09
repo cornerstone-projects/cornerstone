@@ -7,6 +7,7 @@ import java.util.stream.Stream;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Version;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -50,6 +51,10 @@ public class User extends AbstractEntity implements UserDetails {
 
 	@JsonView(View.AdminEditable.class)
 	private Set<String> roles;
+
+	@JsonView(View.Updatable.class)
+	@Version
+	private Integer version;
 
 	@JsonIgnore
 	@Override

@@ -6,6 +6,7 @@ import static com.example.demo.user.UserController.PATH_DETAIL;
 import static com.example.demo.user.UserController.PATH_LIST;
 import static com.example.demo.user.UserController.PATH_PASSWORD;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.http.HttpStatus.CONFLICT;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
@@ -128,6 +129,20 @@ class UserControllerTests extends ControllerTestBase {
 		pcr.setPassword(DEFAULT_PASSWORD);
 		pcr.setConfirmedPassword(pcr.getPassword());
 		restTemplate.put(PATH_PASSWORD, pcr, admin.getId()); // change password back
+	}
+
+	@Test
+	void conflictVersion() {
+		TestRestTemplate restTemplate = adminRestTemplate();
+		User user = restTemplate.exchange(RequestEntity.method(HttpMethod.GET, URI.create(PATH_LIST)).build(),
+				new ParameterizedTypeReference<ResultPage<User>>() {
+				}).getBody().getResult().get(0);
+		assertThat(user.getVersion()).isNotNull();
+		user.setName(user.getName() + "2");
+		user.setVersion(user.getVersion() + 1);
+		ResponseEntity<User> response = restTemplate
+				.exchange(RequestEntity.method(HttpMethod.PATCH, PATH_DETAIL, user.getId()).body(user), User.class);
+		assertThat(response.getStatusCode()).isSameAs(CONFLICT);
 	}
 
 }
