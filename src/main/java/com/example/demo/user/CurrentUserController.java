@@ -71,11 +71,11 @@ public class CurrentUserController extends AbstractRestController {
 	public void changePassword(@AuthenticationPrincipal @ApiIgnore User currentUser,
 			@RequestBody @Valid PasswordChangeRequest request) {
 		if (request.isWrongConfirmedPassword())
-			throw invalidParam(messageSource.getMessage("wrong.confirmed.password", null, null));
+			throw badRequest("wrong.confirmed.password");
 		if (request.getCurrentPassword() == null)
 			throw missingParam("currentPassword");
 		if (!passwordEncoder.matches(request.getCurrentPassword(), currentUser.getPassword()))
-			throw invalidParam(messageSource.getMessage("wrong.current.password", null, null));
+			throw badRequest("wrong.current.password");
 		userRepository.findByUsername(currentUser.getUsername()).map(user -> {
 			user.setPassword(passwordEncoder.encode(request.getPassword()));
 			return userRepository.save(user);

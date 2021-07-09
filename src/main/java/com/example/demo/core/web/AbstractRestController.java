@@ -14,12 +14,16 @@ public abstract class AbstractRestController {
 
 	protected ResponseStatusException notFound(Object subject) {
 		return new ResponseStatusException(NOT_FOUND,
-				messageSource.getMessage("not.found", new Object[] { subject }, null));
+				messageSource.getMessage("not.found", new Object[] { String.valueOf(subject) }, null));
 	}
 
-	protected ResponseStatusException invalidParam(String detail) {
+	protected ResponseStatusException badRequest(String reason) {
+		return new ResponseStatusException(BAD_REQUEST, reason);
+	}
+
+	protected ResponseStatusException invalidParam(String name) {
 		return new ResponseStatusException(BAD_REQUEST,
-				messageSource.getMessage("invalid.param", new Object[] { detail }, null));
+				messageSource.getMessage("invalid.param", new Object[] { name }, null));
 	}
 
 	protected ResponseStatusException missingParam(String name) {
