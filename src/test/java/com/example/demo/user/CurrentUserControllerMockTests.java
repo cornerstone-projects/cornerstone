@@ -49,40 +49,39 @@ class CurrentUserControllerMockTests extends ControllerMockTestBase {
 
 	@Test
 	void changePassword() throws Exception {
-		PasswordChangeRequest pcr = new PasswordChangeRequest();
-		pcr.setPassword("iamtest");
-		pcr.setConfirmedPassword("iamtest2");
+		ChangePasswordRequest changePasswordRequest = new ChangePasswordRequest();
+		changePasswordRequest.setPassword("iamtest");
+		changePasswordRequest.setConfirmedPassword("iamtest2");
 
-		mockMvc.perform(put(PATH_PASSWORD).with(user()).contentType(MediaType.APPLICATION_JSON).content(toJson(pcr)))
-				.andExpect(status().isBadRequest());
+		mockMvc.perform(put(PATH_PASSWORD).with(user()).contentType(MediaType.APPLICATION_JSON)
+				.content(toJson(changePasswordRequest))).andExpect(status().isBadRequest());
 		// caused by wrong confirmed password
 
-		pcr.setConfirmedPassword(pcr.getPassword());
-		mockMvc.perform(put(PATH_PASSWORD).with(user()).contentType(MediaType.APPLICATION_JSON).content(toJson(pcr)))
-				.andExpect(status().isBadRequest());
+		changePasswordRequest.setConfirmedPassword(changePasswordRequest.getPassword());
+		mockMvc.perform(put(PATH_PASSWORD).with(user()).contentType(MediaType.APPLICATION_JSON)
+				.content(toJson(changePasswordRequest))).andExpect(status().isBadRequest());
 		// caused by missing current password
 
-		pcr.setCurrentPassword("******");
-		mockMvc.perform(put(PATH_PASSWORD).with(user()).contentType(MediaType.APPLICATION_JSON).content(toJson(pcr)))
-				.andExpect(status().isBadRequest());
+		changePasswordRequest.setCurrentPassword("******");
+		mockMvc.perform(put(PATH_PASSWORD).with(user()).contentType(MediaType.APPLICATION_JSON)
+				.content(toJson(changePasswordRequest))).andExpect(status().isBadRequest());
 		// caused by wrong current password
 
-		pcr.setCurrentPassword(DEFAULT_PASSWORD);
-		mockMvc.perform(put(PATH_PASSWORD).with(user()).contentType(MediaType.APPLICATION_JSON).content(toJson(pcr)))
-				.andExpect(status().isOk());
+		changePasswordRequest.setCurrentPassword(DEFAULT_PASSWORD);
+		mockMvc.perform(put(PATH_PASSWORD).with(user()).contentType(MediaType.APPLICATION_JSON)
+				.content(toJson(changePasswordRequest))).andExpect(status().isOk());
 
-		RequestPostProcessor newPassword = httpBasic(USER_USERNAME, pcr.getPassword());
+		RequestPostProcessor newPassword = httpBasic(USER_USERNAME, changePasswordRequest.getPassword());
 
 		// verify password changed
 		mockMvc.perform(get(PATH_PROFILE).with(newPassword).contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk()).andExpect(jsonPath("$.username").value(USER_USERNAME));
 
-		pcr.setCurrentPassword(pcr.getPassword());
-		pcr.setPassword(DEFAULT_PASSWORD);
-		pcr.setConfirmedPassword(pcr.getPassword());
-		mockMvc.perform(
-				put(PATH_PASSWORD).with(newPassword).contentType(MediaType.APPLICATION_JSON).content(toJson(pcr)))
-				.andExpect(status().isOk()); // change password back
+		changePasswordRequest.setCurrentPassword(changePasswordRequest.getPassword());
+		changePasswordRequest.setPassword(DEFAULT_PASSWORD);
+		changePasswordRequest.setConfirmedPassword(changePasswordRequest.getPassword());
+		mockMvc.perform(put(PATH_PASSWORD).with(newPassword).contentType(MediaType.APPLICATION_JSON)
+				.content(toJson(changePasswordRequest))).andExpect(status().isOk()); // change password back
 	}
 
 }

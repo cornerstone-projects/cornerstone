@@ -107,8 +107,7 @@ public class UserController extends AbstractRestController {
 	}
 
 	@PutMapping(PATH_PASSWORD)
-	public void changePassword(@Min(1) @PathVariable Long id,
-			@RequestBody @JsonView(UserController.class) @Valid PasswordChangeRequest request) {
+	public void updatePassword(@Min(1) @PathVariable Long id, @RequestBody @Valid UpdatePasswordRequest request) {
 		if (request.isWrongConfirmedPassword())
 			throw badRequest("wrong.confirmed.password");
 		userRepository.findById(id).map(user -> {

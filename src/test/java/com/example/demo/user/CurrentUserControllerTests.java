@@ -54,34 +54,37 @@ class CurrentUserControllerTests extends ControllerTestBase {
 	@Test
 	void changePassword() {
 		TestRestTemplate restTemplate = userRestTemplate();
-		PasswordChangeRequest pcr = new PasswordChangeRequest();
-		pcr.setPassword("iamtest");
-		pcr.setConfirmedPassword("iamtest2");
+		ChangePasswordRequest changePasswordRequest = new ChangePasswordRequest();
+		changePasswordRequest.setPassword("iamtest");
+		changePasswordRequest.setConfirmedPassword("iamtest2");
 
 		ResponseEntity<?> response = restTemplate
-				.exchange(RequestEntity.method(HttpMethod.PUT, PATH_PASSWORD).body(pcr), void.class);
+				.exchange(RequestEntity.method(HttpMethod.PUT, PATH_PASSWORD).body(changePasswordRequest), void.class);
 		assertThat(response.getStatusCode()).isSameAs(BAD_REQUEST); // caused by wrong confirmed password
 
-		pcr.setConfirmedPassword(pcr.getPassword());
-		response = restTemplate.exchange(RequestEntity.method(HttpMethod.PUT, PATH_PASSWORD).body(pcr), void.class);
+		changePasswordRequest.setConfirmedPassword(changePasswordRequest.getPassword());
+		response = restTemplate
+				.exchange(RequestEntity.method(HttpMethod.PUT, PATH_PASSWORD).body(changePasswordRequest), void.class);
 		assertThat(response.getStatusCode()).isSameAs(BAD_REQUEST); // caused by missing current password
 
-		pcr.setCurrentPassword("******");
-		response = restTemplate.exchange(RequestEntity.method(HttpMethod.PUT, PATH_PASSWORD).body(pcr), void.class);
+		changePasswordRequest.setCurrentPassword("******");
+		response = restTemplate
+				.exchange(RequestEntity.method(HttpMethod.PUT, PATH_PASSWORD).body(changePasswordRequest), void.class);
 		assertThat(response.getStatusCode()).isSameAs(BAD_REQUEST); // caused by wrong current password
 
-		pcr.setCurrentPassword(DEFAULT_PASSWORD);
-		response = restTemplate.exchange(RequestEntity.method(HttpMethod.PUT, PATH_PASSWORD).body(pcr), void.class);
+		changePasswordRequest.setCurrentPassword(DEFAULT_PASSWORD);
+		response = restTemplate
+				.exchange(RequestEntity.method(HttpMethod.PUT, PATH_PASSWORD).body(changePasswordRequest), void.class);
 		assertThat(response.getStatusCode()).isSameAs(OK);
 
-		restTemplate = restTemplate.withBasicAuth(USER_USERNAME, pcr.getPassword());
+		restTemplate = restTemplate.withBasicAuth(USER_USERNAME, changePasswordRequest.getPassword());
 		User u = restTemplate.getForObject(PATH_PROFILE, User.class);
 		assertThat(u.getUsername()).isEqualTo(USER_USERNAME); // verify password changed
 
-		pcr.setCurrentPassword(pcr.getPassword());
-		pcr.setPassword(DEFAULT_PASSWORD);
-		pcr.setConfirmedPassword(pcr.getPassword());
-		restTemplate.put(PATH_PASSWORD, pcr); // change password back
+		changePasswordRequest.setCurrentPassword(changePasswordRequest.getPassword());
+		changePasswordRequest.setPassword(DEFAULT_PASSWORD);
+		changePasswordRequest.setConfirmedPassword(changePasswordRequest.getPassword());
+		restTemplate.put(PATH_PASSWORD, changePasswordRequest); // change password back
 	}
 
 }

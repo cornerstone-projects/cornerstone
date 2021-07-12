@@ -68,11 +68,9 @@ public class CurrentUserController extends AbstractRestController {
 
 	@PutMapping(PATH_PASSWORD)
 	public void changePassword(@AuthenticationPrincipal @ApiIgnore User currentUser,
-			@RequestBody @Valid PasswordChangeRequest request) {
+			@RequestBody @Valid ChangePasswordRequest request) {
 		if (request.isWrongConfirmedPassword())
 			throw badRequest("wrong.confirmed.password");
-		if (request.getCurrentPassword() == null)
-			throw missingParam("currentPassword");
 		if (!passwordEncoder.matches(request.getCurrentPassword(), currentUser.getPassword()))
 			throw badRequest("wrong.current.password");
 		userRepository.findByUsername(currentUser.getUsername()).map(user -> {

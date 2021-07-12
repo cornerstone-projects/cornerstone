@@ -96,22 +96,24 @@ class UserControllerTests extends ControllerTestBase {
 	}
 
 	@Test
-	void changePassword() {
+	void updatePassword() {
 		TestRestTemplate restTemplate = adminRestTemplate();
-		PasswordChangeRequest pcr = new PasswordChangeRequest();
-		pcr.setPassword("iamtest");
-		pcr.setConfirmedPassword("iamtest2");
+		UpdatePasswordRequest updatePasswordRequest = new UpdatePasswordRequest();
+		updatePasswordRequest.setPassword("iamtest");
+		updatePasswordRequest.setConfirmedPassword("iamtest2");
 		User admin = restTemplate
 				.exchange(RequestEntity.method(HttpMethod.GET, URI.create(PATH_LIST + "?query=admin")).build(),
 						new ParameterizedTypeReference<ResultPage<User>>() {
 						})
 				.getBody().getResult().get(0);
-		ResponseEntity<?> response = restTemplate
-				.exchange(RequestEntity.method(HttpMethod.PUT, PATH_PASSWORD, admin.getId()).body(pcr), void.class);
+		ResponseEntity<?> response = restTemplate.exchange(
+				RequestEntity.method(HttpMethod.PUT, PATH_PASSWORD, admin.getId()).body(updatePasswordRequest),
+				void.class);
 		assertThat(response.getStatusCode()).isNotSameAs(OK); // caused by wrong confirmed password
 
-		pcr.setConfirmedPassword(pcr.getPassword());
-		response = restTemplate.exchange(RequestEntity.method(HttpMethod.PUT, PATH_PASSWORD, admin.getId()).body(pcr),
+		updatePasswordRequest.setConfirmedPassword(updatePasswordRequest.getPassword());
+		response = restTemplate.exchange(
+				RequestEntity.method(HttpMethod.PUT, PATH_PASSWORD, admin.getId()).body(updatePasswordRequest),
 				void.class);
 		assertThat(response.getStatusCode()).isSameAs(OK);
 
@@ -120,15 +122,15 @@ class UserControllerTests extends ControllerTestBase {
 				});
 		assertThat(response.getStatusCode()).isSameAs(UNAUTHORIZED); // caused by password changed
 
-		restTemplate = restTemplate.withBasicAuth(ADMIN_USERNAME, pcr.getPassword());
+		restTemplate = restTemplate.withBasicAuth(ADMIN_USERNAME, updatePasswordRequest.getPassword());
 		response = restTemplate.exchange(RequestEntity.method(HttpMethod.GET, URI.create(PATH_LIST)).build(),
 				new ParameterizedTypeReference<ResultPage<User>>() {
 				});
 		assertThat(response.getStatusCode()).isSameAs(OK);
 
-		pcr.setPassword(DEFAULT_PASSWORD);
-		pcr.setConfirmedPassword(pcr.getPassword());
-		restTemplate.put(PATH_PASSWORD, pcr, admin.getId()); // change password back
+		updatePasswordRequest.setPassword(DEFAULT_PASSWORD);
+		updatePasswordRequest.setConfirmedPassword(updatePasswordRequest.getPassword());
+		restTemplate.put(PATH_PASSWORD, updatePasswordRequest, admin.getId()); // change password back
 	}
 
 	@Test

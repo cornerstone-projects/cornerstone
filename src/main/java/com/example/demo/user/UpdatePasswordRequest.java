@@ -6,21 +6,16 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonView;
 
 import lombok.Data;
 
 @Data
-public class PasswordChangeRequest implements Serializable {
+public class UpdatePasswordRequest implements Serializable {
 
-	private static final long serialVersionUID = 7840779509938663757L;
+	private static final long serialVersionUID = 3567315541647375541L;
 
-	private @Size(min = 6, max = 50) String currentPassword;
-
-	@JsonView(UserController.class)
 	private @NotEmpty @Size(min = 6, max = 50) String password;
 
-	@JsonView(UserController.class)
 	private @NotEmpty @Size(min = 6, max = 50) String confirmedPassword;
 
 	@JsonIgnore
