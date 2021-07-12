@@ -75,6 +75,8 @@ public class UserController extends AbstractRestController {
 
 	@PostMapping(PATH_LIST)
 	public User save(@RequestBody @JsonView(User.View.Createable.class) @Valid User user) {
+		if (userRepository.findByUsername(user.getUsername()).isPresent())
+			throw badRequest("username.already.exists");
 		encodePassword(user);
 		return userRepository.save(user);
 	}
