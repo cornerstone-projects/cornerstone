@@ -14,7 +14,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.util.CollectionUtils;
 
-import com.example.demo.core.hibernate.domain.AbstractEntity;
+import com.example.demo.core.hibernate.domain.AbstractAuditableEntity;
 import com.example.demo.core.validation.constraints.MobilePhoneNumber;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -26,7 +26,7 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-public class User extends AbstractEntity implements UserDetails {
+public class User extends AbstractAuditableEntity implements UserDetails {
 
 	private static final long serialVersionUID = 1L;
 
