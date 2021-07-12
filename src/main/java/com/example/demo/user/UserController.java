@@ -91,7 +91,8 @@ public class UserController extends AbstractRestController {
 			@RequestBody @JsonView(User.View.Updatable.class) @Valid User user) {
 		encodePassword(user);
 		userRepository.findById(id).map(u -> {
-			BeanUtils.copyNonNullProperties(user, u);
+			BeanUtils.copyPropertiesInJsonView(user, u,
+					user.getVersion() == null ? User.View.AdminEditable.class : User.View.Updatable.class);
 			return userRepository.save(u);
 		}).orElseThrow(() -> notFound(id));
 	}

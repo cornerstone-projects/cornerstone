@@ -54,12 +54,12 @@ class UserControllerTests extends ControllerTestBase {
 		assertThat(u3.getDisabled()).isEqualTo(u2.getDisabled());
 		assertThat(u3.getUsername()).isEqualTo(user.getUsername()); // username not updatable
 		// full update
-		u2.setName("name");
-		u2.setDisabled(true);
-		restTemplate.put(PATH_DETAIL, u2, id);
+		u3.setName("name");
+		u3.setDisabled(true);
+		restTemplate.put(PATH_DETAIL, u3, id);
 		User u4 = restTemplate.getForEntity(PATH_DETAIL, User.class, id).getBody();
-		assertThat(u4.getDisabled()).isEqualTo(u2.getDisabled());
-		assertThat(u4.getName()).isEqualTo(u2.getName());
+		assertThat(u4.getDisabled()).isEqualTo(u3.getDisabled());
+		assertThat(u4.getName()).isEqualTo(u3.getName());
 		assertThat(u4.getUsername()).isEqualTo(user.getUsername()); // username not updatable
 
 		// delete
