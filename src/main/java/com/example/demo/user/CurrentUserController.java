@@ -22,8 +22,6 @@ import com.example.demo.core.util.BeanUtils;
 import com.example.demo.core.web.AbstractRestController;
 import com.fasterxml.jackson.annotation.JsonView;
 
-import springfox.documentation.annotations.ApiIgnore;
-
 @RestController
 @Validated
 public class CurrentUserController extends AbstractRestController {
@@ -40,14 +38,14 @@ public class CurrentUserController extends AbstractRestController {
 
 	@GetMapping(PATH_PROFILE)
 	@JsonView({ User.View.Profile.class })
-	public User get(@AuthenticationPrincipal @ApiIgnore User currentUser) {
+	public User get(@AuthenticationPrincipal User currentUser) {
 		return currentUser;
 	}
 
 	@PatchMapping(PATH_PROFILE)
 	@Transactional
 	@JsonView(User.View.Profile.class)
-	public User update(@AuthenticationPrincipal @ApiIgnore User currentUser,
+	public User update(@AuthenticationPrincipal User currentUser,
 			@RequestBody @JsonView(User.View.EditableProfile.class) @Valid User user) {
 		return userRepository.findByUsername(currentUser.getUsername()).map(u -> {
 			BeanUtils.copyNonNullProperties(user, u);
@@ -67,7 +65,7 @@ public class CurrentUserController extends AbstractRestController {
 	}
 
 	@PutMapping(PATH_PASSWORD)
-	public void changePassword(@AuthenticationPrincipal @ApiIgnore User currentUser,
+	public void changePassword(@AuthenticationPrincipal User currentUser,
 			@RequestBody @Valid ChangePasswordRequest request) {
 		if (request.isWrongConfirmedPassword())
 			throw badRequest("wrong.confirmed.password");
