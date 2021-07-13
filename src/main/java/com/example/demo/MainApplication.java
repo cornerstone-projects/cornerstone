@@ -1,5 +1,7 @@
 package com.example.demo;
 
+import static org.springframework.core.env.AbstractEnvironment.ACTIVE_PROFILES_PROPERTY_NAME;
+
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -11,7 +13,6 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
-import org.springframework.core.env.AbstractEnvironment;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.util.ClassUtils;
 
@@ -61,12 +62,11 @@ public class MainApplication implements Application, CommandLineRunner {
 
 		if (ClassUtils.isPresent("org.springframework.boot.devtools.RemoteSpringApplication",
 				MainApplication.class.getClassLoader())) {
-			String profiles = System.getProperty(AbstractEnvironment.ACTIVE_PROFILES_PROPERTY_NAME);
+			String profiles = System.getProperty(ACTIVE_PROFILES_PROPERTY_NAME);
 			if (profiles == null) {
-				profiles = System
-						.getenv(AbstractEnvironment.ACTIVE_PROFILES_PROPERTY_NAME.replaceAll("\\.", "_").toUpperCase());
+				profiles = System.getenv(ACTIVE_PROFILES_PROPERTY_NAME.replaceAll("\\.", "_").toUpperCase());
 				if (profiles == null)
-					System.setProperty(AbstractEnvironment.ACTIVE_PROFILES_PROPERTY_NAME, "dev");
+					System.setProperty(ACTIVE_PROFILES_PROPERTY_NAME, "dev");
 			}
 		}
 		SpringApplication.run(MainApplication.class, args);

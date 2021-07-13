@@ -6,6 +6,9 @@ import static com.example.demo.user.UserController.PATH_DETAIL;
 import static com.example.demo.user.UserController.PATH_LIST;
 import static com.example.demo.user.UserController.PATH_PASSWORD;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.http.HttpMethod.GET;
+import static org.springframework.http.HttpMethod.PATCH;
+import static org.springframework.http.HttpMethod.PUT;
 import static org.springframework.http.HttpStatus.CONFLICT;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.OK;
@@ -16,7 +19,6 @@ import java.net.URI;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 
@@ -71,7 +73,7 @@ class UserControllerTests extends ControllerTestBase {
 	void list() {
 		TestRestTemplate restTemplate = adminRestTemplate();
 		ResponseEntity<ResultPage<User>> response = restTemplate.exchange(
-				RequestEntity.method(HttpMethod.GET, URI.create(PATH_LIST)).build(),
+				RequestEntity.method(GET, URI.create(PATH_LIST)).build(),
 				new ParameterizedTypeReference<ResultPage<User>>() {
 				});
 		assertThat(response.getStatusCode()).isSameAs(OK);
@@ -82,8 +84,7 @@ class UserControllerTests extends ControllerTestBase {
 		assertThat(page.getTotalPages()).isEqualTo(1);
 		assertThat(page.getTotalElements()).isEqualTo(2);
 
-		response = restTemplate.exchange(
-				RequestEntity.method(HttpMethod.GET, URI.create(PATH_LIST + "?query=adm")).build(),
+		response = restTemplate.exchange(RequestEntity.method(GET, URI.create(PATH_LIST + "?query=adm")).build(),
 				new ParameterizedTypeReference<ResultPage<User>>() {
 				});
 		assertThat(response.getStatusCode()).isSameAs(OK);
@@ -101,29 +102,25 @@ class UserControllerTests extends ControllerTestBase {
 		UpdatePasswordRequest updatePasswordRequest = new UpdatePasswordRequest();
 		updatePasswordRequest.setPassword("iamtest");
 		updatePasswordRequest.setConfirmedPassword("iamtest2");
-		User admin = restTemplate
-				.exchange(RequestEntity.method(HttpMethod.GET, URI.create(PATH_LIST + "?query=admin")).build(),
-						new ParameterizedTypeReference<ResultPage<User>>() {
-						})
-				.getBody().getResult().get(0);
+		User admin = restTemplate.exchange(RequestEntity.method(GET, URI.create(PATH_LIST + "?query=admin")).build(),
+				new ParameterizedTypeReference<ResultPage<User>>() {
+				}).getBody().getResult().get(0);
 		ResponseEntity<?> response = restTemplate.exchange(
-				RequestEntity.method(HttpMethod.PUT, PATH_PASSWORD, admin.getId()).body(updatePasswordRequest),
-				void.class);
+				RequestEntity.method(PUT, PATH_PASSWORD, admin.getId()).body(updatePasswordRequest), void.class);
 		assertThat(response.getStatusCode()).isNotSameAs(OK); // caused by wrong confirmed password
 
 		updatePasswordRequest.setConfirmedPassword(updatePasswordRequest.getPassword());
 		response = restTemplate.exchange(
-				RequestEntity.method(HttpMethod.PUT, PATH_PASSWORD, admin.getId()).body(updatePasswordRequest),
-				void.class);
+				RequestEntity.method(PUT, PATH_PASSWORD, admin.getId()).body(updatePasswordRequest), void.class);
 		assertThat(response.getStatusCode()).isSameAs(OK);
 
-		response = restTemplate.exchange(RequestEntity.method(HttpMethod.GET, URI.create(PATH_LIST)).build(),
+		response = restTemplate.exchange(RequestEntity.method(GET, URI.create(PATH_LIST)).build(),
 				new ParameterizedTypeReference<ResultPage<User>>() {
 				});
 		assertThat(response.getStatusCode()).isSameAs(UNAUTHORIZED); // caused by password changed
 
 		restTemplate = restTemplate.withBasicAuth(ADMIN_USERNAME, updatePasswordRequest.getPassword());
-		response = restTemplate.exchange(RequestEntity.method(HttpMethod.GET, URI.create(PATH_LIST)).build(),
+		response = restTemplate.exchange(RequestEntity.method(GET, URI.create(PATH_LIST)).build(),
 				new ParameterizedTypeReference<ResultPage<User>>() {
 				});
 		assertThat(response.getStatusCode()).isSameAs(OK);
@@ -136,14 +133,14 @@ class UserControllerTests extends ControllerTestBase {
 	@Test
 	void conflictVersion() {
 		TestRestTemplate restTemplate = adminRestTemplate();
-		User user = restTemplate.exchange(RequestEntity.method(HttpMethod.GET, URI.create(PATH_LIST)).build(),
+		User user = restTemplate.exchange(RequestEntity.method(GET, URI.create(PATH_LIST)).build(),
 				new ParameterizedTypeReference<ResultPage<User>>() {
 				}).getBody().getResult().get(0);
 		assertThat(user.getVersion()).isNotNull();
 		user.setName(user.getName() + "2");
 		user.setVersion(user.getVersion() + 1);
 		ResponseEntity<User> response = restTemplate
-				.exchange(RequestEntity.method(HttpMethod.PATCH, PATH_DETAIL, user.getId()).body(user), User.class);
+				.exchange(RequestEntity.method(PATCH, PATH_DETAIL, user.getId()).body(user), User.class);
 		assertThat(response.getStatusCode()).isSameAs(CONFLICT);
 	}
 

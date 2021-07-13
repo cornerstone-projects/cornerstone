@@ -1,12 +1,14 @@
 package com.example.demo.user;
 
+import static org.springframework.security.web.context.HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY;
+import static org.springframework.web.context.request.RequestAttributes.SCOPE_SESSION;
+
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.validation.annotation.Validated;
@@ -54,10 +56,9 @@ public class CurrentUserController extends AbstractRestController {
 				public void afterCommit() {
 					BeanUtils.copyNonNullProperties(user, currentUser);
 					RequestAttributes attrs = RequestContextHolder.currentRequestAttributes();
-					String key = HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY;
 					// trigger session save to store
-					attrs.setAttribute(key, attrs.getAttribute(key, RequestAttributes.SCOPE_SESSION),
-							RequestAttributes.SCOPE_SESSION);
+					attrs.setAttribute(SPRING_SECURITY_CONTEXT_KEY,
+							attrs.getAttribute(SPRING_SECURITY_CONTEXT_KEY, SCOPE_SESSION), SCOPE_SESSION);
 				}
 			});
 			return userRepository.save(u);

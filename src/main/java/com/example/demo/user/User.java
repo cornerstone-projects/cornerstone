@@ -1,8 +1,9 @@
 package com.example.demo.user;
 
+import static java.util.stream.Collectors.toList;
+
 import java.util.Collection;
 import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.persistence.Column;
@@ -62,7 +63,7 @@ public class User extends AbstractAuditableEntity implements UserDetails {
 		Stream<String> stream = Stream.of(getClass().getSimpleName().toUpperCase());
 		if (!CollectionUtils.isEmpty(roles))
 			stream = Stream.concat(stream, roles.stream());
-		return stream.map(r -> new SimpleGrantedAuthority("ROLE_" + r)).collect(Collectors.toList());
+		return stream.map(r -> new SimpleGrantedAuthority("ROLE_" + r)).collect(toList());
 	}
 
 	@JsonIgnore

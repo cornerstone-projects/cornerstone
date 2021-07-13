@@ -5,12 +5,13 @@ import static com.example.demo.MainApplication.USER_USERNAME;
 import static com.example.demo.user.CurrentUserController.PATH_PASSWORD;
 import static com.example.demo.user.CurrentUserController.PATH_PROFILE;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.http.HttpMethod.PATCH;
+import static org.springframework.http.HttpMethod.PUT;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.OK;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 
@@ -47,8 +48,9 @@ class CurrentUserControllerTests extends ControllerTestBase {
 		assertThat(restTemplate.getForEntity(PATH_PROFILE, User.class).getStatusCode()).isSameAs(OK);
 
 		user.setPhone("123456");
-		assertThat(restTemplate.exchange(RequestEntity.method(HttpMethod.PATCH, PATH_PROFILE).body(user), User.class)
-				.getStatusCode()).isSameAs(BAD_REQUEST);
+		assertThat(
+				restTemplate.exchange(RequestEntity.method(PATCH, PATH_PROFILE).body(user), User.class).getStatusCode())
+						.isSameAs(BAD_REQUEST);
 	}
 
 	@Test
@@ -59,22 +61,22 @@ class CurrentUserControllerTests extends ControllerTestBase {
 		changePasswordRequest.setConfirmedPassword("iamtest2");
 
 		ResponseEntity<?> response = restTemplate
-				.exchange(RequestEntity.method(HttpMethod.PUT, PATH_PASSWORD).body(changePasswordRequest), void.class);
+				.exchange(RequestEntity.method(PUT, PATH_PASSWORD).body(changePasswordRequest), void.class);
 		assertThat(response.getStatusCode()).isSameAs(BAD_REQUEST); // caused by wrong confirmed password
 
 		changePasswordRequest.setConfirmedPassword(changePasswordRequest.getPassword());
-		response = restTemplate
-				.exchange(RequestEntity.method(HttpMethod.PUT, PATH_PASSWORD).body(changePasswordRequest), void.class);
+		response = restTemplate.exchange(RequestEntity.method(PUT, PATH_PASSWORD).body(changePasswordRequest),
+				void.class);
 		assertThat(response.getStatusCode()).isSameAs(BAD_REQUEST); // caused by missing current password
 
 		changePasswordRequest.setCurrentPassword("******");
-		response = restTemplate
-				.exchange(RequestEntity.method(HttpMethod.PUT, PATH_PASSWORD).body(changePasswordRequest), void.class);
+		response = restTemplate.exchange(RequestEntity.method(PUT, PATH_PASSWORD).body(changePasswordRequest),
+				void.class);
 		assertThat(response.getStatusCode()).isSameAs(BAD_REQUEST); // caused by wrong current password
 
 		changePasswordRequest.setCurrentPassword(DEFAULT_PASSWORD);
-		response = restTemplate
-				.exchange(RequestEntity.method(HttpMethod.PUT, PATH_PASSWORD).body(changePasswordRequest), void.class);
+		response = restTemplate.exchange(RequestEntity.method(PUT, PATH_PASSWORD).body(changePasswordRequest),
+				void.class);
 		assertThat(response.getStatusCode()).isSameAs(OK);
 
 		restTemplate = restTemplate.withBasicAuth(USER_USERNAME, changePasswordRequest.getPassword());
