@@ -10,7 +10,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
-import org.springframework.web.context.WebApplicationContext;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -18,9 +17,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @SpringApplicationTest(webEnvironment = WebEnvironment.MOCK)
 @AutoConfigureMockMvc
 public abstract class ControllerMockTestBase {
-
-	@Autowired
-	protected WebApplicationContext webApplicationContext;
 
 	@Autowired
 	protected ObjectMapper objectMapper;
