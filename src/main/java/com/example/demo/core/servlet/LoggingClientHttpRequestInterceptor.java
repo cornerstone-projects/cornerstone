@@ -16,7 +16,7 @@ import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.util.FastByteArrayOutputStream;
 
-import com.example.demo.core.util.JsonDesensitizer;
+import com.example.demo.core.json.JsonDesensitizer;
 
 public class LoggingClientHttpRequestInterceptor implements ClientHttpRequestInterceptor {
 

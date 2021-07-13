@@ -14,7 +14,7 @@ import org.slf4j.Logger;
 import org.springframework.util.FastByteArrayOutputStream;
 import org.springframework.web.util.WebUtils;
 
-import com.example.demo.core.util.JsonDesensitizer;
+import com.example.demo.core.json.JsonDesensitizer;
 
 /**
  * @See org.springframework.web.util.ContentCachingRequestWrapper

@@ -1,4 +1,4 @@
-package com.example.demo.core.util;
+package com.example.demo.core.json;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
