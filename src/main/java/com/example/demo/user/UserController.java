@@ -52,6 +52,7 @@ public class UserController extends AbstractRestController {
 	private PasswordEncoder passwordEncoder;
 
 	@GetMapping(PATH_LIST)
+	@JsonView({ User.View.List.class })
 	public ResultPage<User> list(@Min(1) @RequestParam(required = false, defaultValue = "1") int pageNo,
 			@Min(10) @Max(100) @RequestParam(required = false, defaultValue = "10") int pageSize,
 			@RequestParam(required = false) String query, @ApiIgnore User user) {
@@ -74,7 +75,7 @@ public class UserController extends AbstractRestController {
 	}
 
 	@PostMapping(PATH_LIST)
-	public User save(@RequestBody @JsonView(User.View.Createable.class) @Valid User user) {
+	public User save(@RequestBody @JsonView(User.View.Creation.class) @Valid User user) {
 		if (userRepository.existsByUsername(user.getUsername()))
 			throw badRequest("username.already.exists");
 		encodePassword(user);
@@ -87,18 +88,17 @@ public class UserController extends AbstractRestController {
 	}
 
 	@PutMapping(PATH_DETAIL)
-	public void update(@PathVariable Long id, @RequestBody @JsonView(User.View.Updatable.class) @Valid User user) {
+	public void update(@PathVariable Long id, @RequestBody @JsonView(User.View.Update.class) @Valid User user) {
 		encodePassword(user);
 		userRepository.findById(id).map(u -> {
 			BeanUtils.copyPropertiesInJsonView(user, u,
-					user.getVersion() == null ? User.View.AdminEditable.class : User.View.Updatable.class);
+					user.getVersion() == null ? User.View.AdminEditable.class : User.View.Update.class);
 			return userRepository.save(u);
 		}).orElseThrow(() -> notFound(id));
 	}
 
 	@PatchMapping(PATH_DETAIL)
-	public User updatePartial(@PathVariable Long id,
-			@RequestBody @JsonView(User.View.Updatable.class) @Valid User user) {
+	public User updatePartial(@PathVariable Long id, @RequestBody @JsonView(User.View.Update.class) @Valid User user) {
 		encodePassword(user);
 		return userRepository.findById(id).map(u -> {
 			BeanUtils.copyNonNullProperties(user, u);

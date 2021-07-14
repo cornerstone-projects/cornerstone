@@ -102,6 +102,7 @@ class UserControllerTests extends ControllerTestBase {
 		assertThat(page.getPageSize()).isEqualTo(10);
 		assertThat(page.getTotalPages()).isEqualTo(1);
 		assertThat(page.getTotalElements()).isEqualTo(2);
+		assertThat(page.getResult().get(0).getCreatedDate()).isNull(); // User.View.List view
 
 		response = restTemplate.exchange(RequestEntity.method(GET, URI.create(PATH_LIST + "?query=admin")).build(),
 				new ParameterizedTypeReference<ResultPage<User>>() {
@@ -113,8 +114,9 @@ class UserControllerTests extends ControllerTestBase {
 		assertThat(page.getPageSize()).isEqualTo(10);
 		assertThat(page.getTotalPages()).isEqualTo(1);
 		assertThat(page.getTotalElements()).isEqualTo(1);
-		
-		ResponseEntity<ResultPage<User>> response2 = restTemplate.exchange(RequestEntity.method(GET, URI.create(PATH_LIST + "?username=admin")).build(),
+
+		ResponseEntity<ResultPage<User>> response2 = restTemplate.exchange(
+				RequestEntity.method(GET, URI.create(PATH_LIST + "?username=admin")).build(),
 				new ParameterizedTypeReference<ResultPage<User>>() {
 				});
 		assertThat(response2.getBody()).isEqualTo(response.getBody());
