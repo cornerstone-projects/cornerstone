@@ -82,13 +82,12 @@ public class UserController extends AbstractRestController {
 	}
 
 	@GetMapping(PATH_DETAIL)
-	public User get(@Min(1) @PathVariable Long id) {
+	public User get(@PathVariable Long id) {
 		return userRepository.findById(id).orElseThrow(() -> notFound(id));
 	}
 
 	@PutMapping(PATH_DETAIL)
-	public void update(@Min(1) @PathVariable Long id,
-			@RequestBody @JsonView(User.View.Updatable.class) @Valid User user) {
+	public void update(@PathVariable Long id, @RequestBody @JsonView(User.View.Updatable.class) @Valid User user) {
 		encodePassword(user);
 		userRepository.findById(id).map(u -> {
 			BeanUtils.copyPropertiesInJsonView(user, u,
@@ -98,7 +97,7 @@ public class UserController extends AbstractRestController {
 	}
 
 	@PatchMapping(PATH_DETAIL)
-	public User updatePartial(@Min(1) @PathVariable Long id,
+	public User updatePartial(@PathVariable Long id,
 			@RequestBody @JsonView(User.View.Updatable.class) @Valid User user) {
 		encodePassword(user);
 		return userRepository.findById(id).map(u -> {
@@ -108,7 +107,7 @@ public class UserController extends AbstractRestController {
 	}
 
 	@PutMapping(PATH_PASSWORD)
-	public void updatePassword(@Min(1) @PathVariable Long id, @RequestBody @Valid UpdatePasswordRequest request) {
+	public void updatePassword(@PathVariable Long id, @RequestBody @Valid UpdatePasswordRequest request) {
 		if (request.isWrongConfirmedPassword())
 			throw badRequest("wrong.confirmed.password");
 		userRepository.findById(id).map(user -> {
@@ -119,7 +118,7 @@ public class UserController extends AbstractRestController {
 	}
 
 	@DeleteMapping(PATH_DETAIL)
-	public void delete(@Min(1) @PathVariable Long id) {
+	public void delete(@PathVariable Long id) {
 		// do NOT use deleteById, not annotated by @Cacheable
 		userRepository.delete(userRepository.findById(id).orElseThrow(() -> notFound(id)));
 	}

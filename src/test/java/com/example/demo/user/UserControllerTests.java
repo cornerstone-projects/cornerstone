@@ -84,7 +84,7 @@ class UserControllerTests extends ControllerTestBase {
 		assertThat(page.getTotalPages()).isEqualTo(1);
 		assertThat(page.getTotalElements()).isEqualTo(2);
 
-		response = restTemplate.exchange(RequestEntity.method(GET, URI.create(PATH_LIST + "?query=adm")).build(),
+		response = restTemplate.exchange(RequestEntity.method(GET, URI.create(PATH_LIST + "?query=admin")).build(),
 				new ParameterizedTypeReference<ResultPage<User>>() {
 				});
 		assertThat(response.getStatusCode()).isSameAs(OK);
@@ -94,6 +94,11 @@ class UserControllerTests extends ControllerTestBase {
 		assertThat(page.getPageSize()).isEqualTo(10);
 		assertThat(page.getTotalPages()).isEqualTo(1);
 		assertThat(page.getTotalElements()).isEqualTo(1);
+		
+		ResponseEntity<ResultPage<User>> response2 = restTemplate.exchange(RequestEntity.method(GET, URI.create(PATH_LIST + "?username=admin")).build(),
+				new ParameterizedTypeReference<ResultPage<User>>() {
+				});
+		assertThat(response2.getBody()).isEqualTo(response.getBody());
 	}
 
 	@Test
