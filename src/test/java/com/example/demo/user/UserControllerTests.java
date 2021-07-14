@@ -6,10 +6,12 @@ import static com.example.demo.user.UserController.PATH_DETAIL;
 import static com.example.demo.user.UserController.PATH_LIST;
 import static com.example.demo.user.UserController.PATH_PASSWORD;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.http.HttpMethod.DELETE;
 import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpMethod.PATCH;
 import static org.springframework.http.HttpMethod.PUT;
 import static org.springframework.http.HttpStatus.CONFLICT;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
@@ -51,13 +53,13 @@ class UserControllerTests extends ControllerTestBase {
 		User u2 = new User();
 		u2.setUsername("other");
 		u2.setName("new name");
-		u2.setDisabled(false);
+		u2.setDisabled(true);
 		User u3 = restTemplate.patchForObject(PATH_DETAIL, u2, User.class, id);
 		assertThat(u3.getDisabled()).isEqualTo(u2.getDisabled());
 		assertThat(u3.getUsername()).isEqualTo(user.getUsername()); // username not updatable
 		// full update
 		u3.setName("name");
-		u3.setDisabled(true);
+		u3.setDisabled(false);
 		restTemplate.put(PATH_DETAIL, u3, id);
 		User u4 = restTemplate.getForEntity(PATH_DETAIL, User.class, id).getBody();
 		assertThat(u4.getDisabled()).isEqualTo(u3.getDisabled());
@@ -65,7 +67,12 @@ class UserControllerTests extends ControllerTestBase {
 		assertThat(u4.getUsername()).isEqualTo(user.getUsername()); // username not updatable
 
 		// delete
-		restTemplate.delete(PATH_DETAIL, id);
+		assertThat(restTemplate.exchange(RequestEntity.method(DELETE, PATH_DETAIL, id).build(), void.class)
+				.getStatusCode()).isSameAs(BAD_REQUEST);
+		u4.setDisabled(true);
+		restTemplate.put(PATH_DETAIL, u4, id);
+		assertThat(restTemplate.exchange(RequestEntity.method(DELETE, PATH_DETAIL, id).build(), void.class)
+				.getStatusCode()).isSameAs(OK);
 		assertThat(restTemplate.getForEntity(PATH_DETAIL, User.class, id).getStatusCode()).isSameAs(NOT_FOUND);
 	}
 
@@ -112,7 +119,7 @@ class UserControllerTests extends ControllerTestBase {
 				}).getBody().getResult().get(0);
 		ResponseEntity<?> response = restTemplate.exchange(
 				RequestEntity.method(PUT, PATH_PASSWORD, admin.getId()).body(updatePasswordRequest), void.class);
-		assertThat(response.getStatusCode()).isNotSameAs(OK); // caused by wrong confirmed password
+		assertThat(response.getStatusCode()).isSameAs(BAD_REQUEST); // caused by wrong confirmed password
 
 		updatePasswordRequest.setConfirmedPassword(updatePasswordRequest.getPassword());
 		response = restTemplate.exchange(

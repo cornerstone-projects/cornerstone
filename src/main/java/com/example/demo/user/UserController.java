@@ -119,8 +119,10 @@ public class UserController extends AbstractRestController {
 
 	@DeleteMapping(PATH_DETAIL)
 	public void delete(@PathVariable Long id) {
-		// do NOT use deleteById, not annotated by @Cacheable
-		userRepository.delete(userRepository.findById(id).orElseThrow(() -> notFound(id)));
+		User user = userRepository.findById(id).orElseThrow(() -> notFound(id));
+		if (user.isEnabled())
+			throw badRequest("disable.before.delete");
+		userRepository.delete(user);
 	}
 
 	private void encodePassword(User user) {
