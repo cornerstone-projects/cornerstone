@@ -65,7 +65,7 @@ public class User extends AbstractAuditableEntity implements UserDetails {
 		Stream<String> stream = Stream.of(getClass().getSimpleName().toUpperCase());
 		if (!CollectionUtils.isEmpty(roles))
 			stream = Stream.concat(stream, roles.stream());
-		return stream.map(r -> new SimpleGrantedAuthority("ROLE_" + r)).collect(toList());
+		return stream.map(r -> new SimpleGrantedAuthority(r)).collect(toList());
 	}
 
 	@JsonIgnore

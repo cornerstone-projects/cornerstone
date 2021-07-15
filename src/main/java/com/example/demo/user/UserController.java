@@ -13,7 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
@@ -36,7 +36,7 @@ import springfox.documentation.annotations.ApiIgnore;
 
 @RestController
 @Validated
-@PreAuthorize("hasRole('" + ADMIN_ROLE + "')")
+@Secured(ADMIN_ROLE)
 public class UserController extends AbstractRestController {
 
 	public static final String PATH_LIST = "/users";
