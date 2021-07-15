@@ -9,6 +9,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -24,6 +25,13 @@ public class GlobalExceptionHandler {
 		response.sendError(HttpServletResponse.SC_CONFLICT,
 				messageSource.getMessage("optimistic.locking.failure", null, null));
 		// see DefaultHandlerExceptionResolver
+	}
+
+	@ExceptionHandler
+	public void handleMaxUploadSizeExceeded(HttpServletRequest request, HttpServletResponse response,
+			MaxUploadSizeExceededException ex) throws IOException {
+		response.sendError(HttpServletResponse.SC_REQUEST_ENTITY_TOO_LARGE,
+				messageSource.getMessage("max.upload.size.exceeded", new Object[] { ex.getMaxUploadSize() }, null));
 	}
 
 }
