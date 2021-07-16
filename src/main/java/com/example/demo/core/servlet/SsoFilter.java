@@ -47,6 +47,8 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import com.example.demo.core.util.RequestUtils;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -225,6 +227,11 @@ public class SsoFilter implements Filter {
 	}
 
 	protected void redirect(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		if (RequestUtils.isRequestedFromApi(request)) {
+			// see WebSecurityConfiguration::authenticationFailureHandler
+			response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+			return;
+		}
 		StringBuffer sb = request.getRequestURL();
 		String queryString = request.getQueryString();
 		if (queryString != null)
