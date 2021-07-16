@@ -41,7 +41,7 @@ public class ConvertTests {
 		entity.setTestComponentList(Arrays.asList(new TestComponent("a", 1, new BigDecimal("10.1")),
 				new TestComponent("b", 2, new BigDecimal("10.2")), new TestComponent("c", 3, new BigDecimal("10.3"))));
 		repository.save(entity);
-		TestEntity savedEntity = repository.findById(entity.getId()).orElseThrow(() -> new IllegalArgumentException());
+		TestEntity savedEntity = repository.findById(entity.getId()).orElseThrow(IllegalStateException::new);
 		assertThat(savedEntity).isNotSameAs(entity);
 		assertThat(savedEntity).isEqualTo(entity);
 	}

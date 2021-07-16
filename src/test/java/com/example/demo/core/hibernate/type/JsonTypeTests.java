@@ -24,7 +24,7 @@ public class JsonTypeTests {
 				new DummyComponent("b", 2, new BigDecimal("10.2")),
 				new DummyComponent("c", 3, new BigDecimal("10.3"))));
 		repository.save(entity);
-		DummyEntity savedEntity = repository.findById(entity.getId()).orElseThrow(() -> new IllegalArgumentException());
+		DummyEntity savedEntity = repository.findById(entity.getId()).orElseThrow(IllegalStateException::new);
 		assertThat(savedEntity).isNotSameAs(entity);
 		assertThat(savedEntity).isEqualTo(entity);
 	}

@@ -22,6 +22,7 @@ import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
@@ -46,15 +47,16 @@ class UserControllerTests extends ControllerTestBase {
 				});
 		assertThat(resp.getStatusCode()).isSameAs(BAD_REQUEST);
 		assertThat(resp.getBody().get("message"))
-				.isEqualTo(messageSource.getMessage("username.already.exists", null, null));
+				.isEqualTo(messageSource.getMessage("username.already.exists", null, LocaleContextHolder.getLocale()));
 		u.setUsername("test");
 		ResponseEntity<User> response = restTemplate.postForEntity(PATH_LIST, u, User.class);
 		assertThat(response.getStatusCode()).isSameAs(OK);
 		User user = response.getBody();
-		Long id = user.getId();
-		assertThat(id).isNotNull();
+		assertThat(user).isNotNull();
+		assertThat(user.getId()).isNotNull();
 		assertThat(user.getUsername()).isEqualTo(u.getUsername());
 		assertThat(user.getDisabled()).isEqualTo(u.getDisabled());
+		Long id = user.getId();
 
 		// read
 		response = restTemplate.getForEntity(PATH_DETAIL, User.class, id);
@@ -74,6 +76,7 @@ class UserControllerTests extends ControllerTestBase {
 		u3.setDisabled(false);
 		restTemplate.put(PATH_DETAIL, u3, id);
 		User u4 = restTemplate.getForEntity(PATH_DETAIL, User.class, id).getBody();
+		assertThat(u4).isNotNull();
 		assertThat(u4.getDisabled()).isEqualTo(u3.getDisabled());
 		assertThat(u4.getName()).isEqualTo(u3.getName());
 		assertThat(u4.getUsername()).isEqualTo(user.getUsername()); // username not updatable
@@ -97,6 +100,7 @@ class UserControllerTests extends ControllerTestBase {
 				});
 		assertThat(response.getStatusCode()).isSameAs(OK);
 		ResultPage<User> page = response.getBody();
+		assertThat(page).isNotNull();
 		assertThat(page.getResult().size()).isEqualTo(2);
 		assertThat(page.getPageNo()).isEqualTo(1);
 		assertThat(page.getPageSize()).isEqualTo(10);
@@ -109,6 +113,7 @@ class UserControllerTests extends ControllerTestBase {
 				});
 		assertThat(response.getStatusCode()).isSameAs(OK);
 		page = response.getBody();
+		assertThat(page).isNotNull();
 		assertThat(page.getResult().size()).isEqualTo(1);
 		assertThat(page.getPageNo()).isEqualTo(1);
 		assertThat(page.getPageSize()).isEqualTo(10);
@@ -128,9 +133,13 @@ class UserControllerTests extends ControllerTestBase {
 		UpdatePasswordRequest updatePasswordRequest = new UpdatePasswordRequest();
 		updatePasswordRequest.setPassword("iamtest");
 		updatePasswordRequest.setConfirmedPassword("iamtest2");
-		User admin = restTemplate.exchange(RequestEntity.method(GET, URI.create(PATH_LIST + "?query=admin")).build(),
-				new ParameterizedTypeReference<ResultPage<User>>() {
-				}).getBody().getResult().get(0);
+		ResultPage<User> page = restTemplate
+				.exchange(RequestEntity.method(GET, URI.create(PATH_LIST + "?query=admin")).build(),
+						new ParameterizedTypeReference<ResultPage<User>>() {
+						})
+				.getBody();
+		assertThat(page).isNotNull();
+		User admin = page.getResult().get(0);
 		ResponseEntity<?> response = restTemplate.exchange(
 				RequestEntity.method(PUT, PATH_PASSWORD, admin.getId()).body(updatePasswordRequest), void.class);
 		assertThat(response.getStatusCode()).isSameAs(BAD_REQUEST); // caused by wrong confirmed password
@@ -159,9 +168,12 @@ class UserControllerTests extends ControllerTestBase {
 	@Test
 	void conflictVersion() {
 		TestRestTemplate restTemplate = adminRestTemplate();
-		User user = restTemplate.exchange(RequestEntity.method(GET, URI.create(PATH_LIST)).build(),
+		ResultPage<User> page = restTemplate.exchange(RequestEntity.method(GET, URI.create(PATH_LIST)).build(),
 				new ParameterizedTypeReference<ResultPage<User>>() {
-				}).getBody().getResult().get(0);
+				}).getBody();
+		assertThat(page).isNotNull();
+		assertThat(page.getResult()).isNotEmpty();
+		User user = page.getResult().get(0);
 		assertThat(user.getVersion()).isNotNull();
 		user.setName(user.getName() + "2");
 		user.setVersion(user.getVersion() + 1);

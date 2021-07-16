@@ -73,13 +73,13 @@ public abstract class AbstractEntity implements Persistable<Long>, Serializable 
 			return false;
 		}
 		AbstractEntity that = (AbstractEntity) obj;
-		return null == this.getId() ? false : this.getId().equals(that.getId());
+		return this.id == null ? false : id.equals(that.id);
 	}
 
 	@Override
 	public int hashCode() {
 		int hashCode = 17;
-		hashCode += null == getId() ? 0 : getId().hashCode() * 31;
+		hashCode += id == null ? 0 : id.hashCode() * 31;
 		return hashCode;
 	}
 }

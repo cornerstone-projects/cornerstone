@@ -46,7 +46,7 @@ public class IntegratedEntityTests {
 				new IntegratedEntity.AnotherComponent("c", 3, new BigDecimal("10.3"))));
 		repository.save(entity);
 		assertThat(entity.getId()).isGreaterThan(100000000L);
-		IntegratedEntity savedEntity = repository.findById(entity.getId()).orElseThrow(() -> new IllegalArgumentException());
+		IntegratedEntity savedEntity = repository.findById(entity.getId()).orElseThrow(IllegalStateException::new);
 		assertThat(savedEntity).isNotSameAs(entity);
 		assertThat(savedEntity).isEqualTo(entity);
 

@@ -200,6 +200,8 @@ public class SsoFilter implements Filter {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	protected UserDetails map(SimpleUser userFromApi) {
+		if (userFromApi == null)
+			throw new AccessDeniedException("user not found");
 		try {
 			UserDetails user = userDetailsService.loadUserByUsername(userFromApi.getUsername());
 			// reset passwordModifyDate to avoid CredentialsExpiredException

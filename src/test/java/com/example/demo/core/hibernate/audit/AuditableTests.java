@@ -19,7 +19,7 @@ public class AuditableTests {
 	@WithMockUser(username = "admin")
 	public void test() {
 		AuditableEntity entity = repository.save(new AuditableEntity());
-		entity = repository.findById(entity.getId()).get();
+		entity = repository.findById(entity.getId()).orElseThrow(IllegalStateException::new);
 		assertThat(entity.getCreatedDate()).isNotNull();
 		assertThat(entity.getCreatedBy()).isEqualTo("admin");
 		assertThat(entity.getLastModifiedDate()).isNull();
