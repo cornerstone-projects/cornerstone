@@ -6,9 +6,13 @@ import static com.example.demo.MainApplication.USER_USERNAME;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.context.MessageSource;
 
 @SpringApplicationTest
 public abstract class ControllerTestBase {
+
+	@Autowired
+	protected MessageSource messageSource;
 
 	@Autowired
 	protected TestRestTemplate testRestTemplate;
