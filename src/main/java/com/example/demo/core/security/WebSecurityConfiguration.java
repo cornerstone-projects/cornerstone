@@ -25,6 +25,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.Http403ForbiddenEntryPoint;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.security.web.savedrequest.RequestCache;
 
@@ -59,7 +60,8 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity http) throws Exception {
 		http.csrf().disable().authorizeRequests()
 				.antMatchers(properties.getLoginPage(), properties.getLoginProcessingUrl(), properties.getLogoutUrl())
-				.permitAll().anyRequest().authenticated();
+				.permitAll().anyRequest().authenticated().and().exceptionHandling().defaultAuthenticationEntryPointFor(
+						new Http403ForbiddenEntryPoint(), RequestUtils::isRequestedFromApi);
 		http.formLogin().loginPage(properties.getLoginPage()).loginProcessingUrl(properties.getLoginProcessingUrl())
 				.successHandler(authenticationSuccessHandler(http.getSharedObject(RequestCache.class)))
 				.failureHandler(authenticationFailureHandler()).and().logout().logoutUrl(properties.getLogoutUrl())

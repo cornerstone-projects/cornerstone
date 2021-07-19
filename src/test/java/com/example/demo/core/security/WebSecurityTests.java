@@ -21,6 +21,7 @@ import static org.springframework.http.MediaType.TEXT_HTML_VALUE;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.util.Map;
+import java.util.function.Function;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -84,6 +85,7 @@ class WebSecurityTests extends ControllerTestBase {
 		assertThat(response.getStatusCode()).isSameAs(UNAUTHORIZED);
 		assertThat(response.getBody().get("status")).isEqualTo(UNAUTHORIZED.value());
 		assertThat(response.getBody().get("message")).isNotEqualTo(UNAUTHORIZED.getReasonPhrase());
+		assertThat(response.getBody().get("path")).isEqualTo(TEST_LOGIN_PROCESSING_URL);
 	}
 
 	@Test
@@ -92,6 +94,35 @@ class WebSecurityTests extends ControllerTestBase {
 		assertThat(response.getStatusCode()).isSameAs(OK);
 		assertThat(response.getBody().get("status")).isEqualTo(OK.value());
 		assertThat(response.getBody().get("message")).isEqualTo(OK.getReasonPhrase());
+		assertThat(response.getBody().get("path")).isEqualTo(TEST_LOGIN_PROCESSING_URL);
+	}
+
+	@Test
+	void testAccessWithUnauthenticated() {
+		ResponseEntity<String> response = executeWithNoRedirects(template -> template.exchange(
+				RequestEntity.method(POST, URI.create(testRestTemplate.getRootUri() + TEST_DEFAULT_SUCCESS_URL))
+						.header(ACCEPT, TEXT_HTML_VALUE).build(),
+				String.class));
+		// GET always follow redirects
+		assertThat(response.getStatusCode()).isSameAs(FOUND);
+		assertThat(response.getHeaders().getLocation()).hasPath(TEST_LOGIN_PAGE);
+	}
+
+	@Test
+	void testRestfulAccessWithUnauthenticated() {
+		ResponseEntity<Map<String, Object>> response = executeWithNoRedirects(
+				template -> template
+						.exchange(
+								RequestEntity
+										.method(POST,
+												URI.create(testRestTemplate.getRootUri() + TEST_DEFAULT_SUCCESS_URL))
+										.header(ACCEPT, APPLICATION_JSON_VALUE).build(),
+								new ParameterizedTypeReference<Map<String, Object>>() {
+								}));
+		assertThat(response.getStatusCode()).isSameAs(FORBIDDEN);
+		assertThat(response.getBody().get("status")).isEqualTo(FORBIDDEN.value());
+		assertThat(response.getBody().get("message")).isEqualTo("Access Denied");
+		assertThat(response.getBody().get("path")).isEqualTo(TEST_DEFAULT_SUCCESS_URL);
 	}
 
 	private ResponseEntity<Map<String, Object>> restfulFormLogin(String username, String password) {
@@ -103,15 +134,11 @@ class WebSecurityTests extends ControllerTestBase {
 	}
 
 	private ResponseEntity<String> formLogin(String username, String password) {
-		// disable follow redirects
-		HttpURLConnection.setFollowRedirects(false);
-		RestTemplate template = new RestTemplate(new SimpleClientHttpRequestFactory());
-		template.setErrorHandler(testRestTemplate.getRestTemplate().getErrorHandler());
-		return template.exchange(
+		return executeWithNoRedirects(template -> template.exchange(
 				RequestEntity.method(POST, URI.create(testRestTemplate.getRootUri() + TEST_LOGIN_PROCESSING_URL))
 						.header(ACCEPT, TEXT_HTML_VALUE).header(CONTENT_TYPE, APPLICATION_FORM_URLENCODED_VALUE)
 						.body(formData(username, password)),
-				String.class);
+				String.class));
 	}
 
 	private MultiValueMap<String, String> formData(String username, String password) {
@@ -119,5 +146,17 @@ class WebSecurityTests extends ControllerTestBase {
 		data.add("username", username);
 		data.add("password", password);
 		return data;
+	}
+
+	private <T> T executeWithNoRedirects(Function<RestTemplate, T> function) {
+		// disable follow redirects
+		HttpURLConnection.setFollowRedirects(false);
+		try {
+			RestTemplate template = new RestTemplate(new SimpleClientHttpRequestFactory());
+			template.setErrorHandler(testRestTemplate.getRestTemplate().getErrorHandler());
+			return function.apply(template);
+		} finally {
+			HttpURLConnection.setFollowRedirects(true); // restore defaults
+		}
 	}
 }
