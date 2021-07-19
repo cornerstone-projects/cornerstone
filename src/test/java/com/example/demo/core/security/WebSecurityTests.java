@@ -20,6 +20,7 @@ import static org.springframework.http.MediaType.TEXT_HTML_VALUE;
 
 import java.net.HttpURLConnection;
 import java.net.URI;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -126,26 +127,27 @@ class WebSecurityTests extends ControllerTestBase {
 	}
 
 	private ResponseEntity<Map<String, Object>> restfulFormLogin(String username, String password) {
-		return testRestTemplate.exchange(
-				RequestEntity.method(POST, URI.create(TEST_LOGIN_PROCESSING_URL)).header(ACCEPT, APPLICATION_JSON_VALUE)
-						.header(CONTENT_TYPE, APPLICATION_FORM_URLENCODED_VALUE).body(formData(username, password)),
+		Map<String, String> data = new LinkedHashMap<>();
+		data.put("username", username);
+		data.put("password", password);
+		return testRestTemplate.exchange(RequestEntity.method(POST, URI.create(TEST_LOGIN_PROCESSING_URL)).body(data),
 				new ParameterizedTypeReference<Map<String, Object>>() {
 				});
 	}
 
 	private ResponseEntity<String> formLogin(String username, String password) {
-		return executeWithNoRedirects(template -> template.exchange(
-				RequestEntity.method(POST, URI.create(testRestTemplate.getRootUri() + TEST_LOGIN_PROCESSING_URL))
-						.header(ACCEPT, TEXT_HTML_VALUE).header(CONTENT_TYPE, APPLICATION_FORM_URLENCODED_VALUE)
-						.body(formData(username, password)),
-				String.class));
-	}
-
-	private MultiValueMap<String, String> formData(String username, String password) {
 		MultiValueMap<String, String> data = new LinkedMultiValueMap<>();
 		data.add("username", username);
 		data.add("password", password);
-		return data;
+		return executeWithNoRedirects(
+				template -> template
+						.exchange(
+								RequestEntity
+										.method(POST,
+												URI.create(testRestTemplate.getRootUri() + TEST_LOGIN_PROCESSING_URL))
+										.header(ACCEPT, TEXT_HTML_VALUE)
+										.header(CONTENT_TYPE, APPLICATION_FORM_URLENCODED_VALUE).body(data),
+								String.class));
 	}
 
 	private <T> T executeWithNoRedirects(Function<RestTemplate, T> function) {

@@ -2,6 +2,7 @@ package com.example.demo.core.security;
 
 import static javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -15,11 +16,15 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.BeanIds;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.annotation.web.configurers.AbstractAuthenticationFilterConfigurer;
+import org.springframework.security.config.annotation.web.configurers.FormLoginConfigurer;
 import org.springframework.security.config.core.GrantedAuthorityDefaults;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -27,6 +32,7 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.Http403ForbiddenEntryPoint;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.savedrequest.RequestCache;
 
 import com.example.demo.core.Application;
@@ -62,6 +68,8 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 				.antMatchers(properties.getLoginPage(), properties.getLoginProcessingUrl(), properties.getLogoutUrl())
 				.permitAll().anyRequest().authenticated().and().exceptionHandling().defaultAuthenticationEntryPointFor(
 						new Http403ForbiddenEntryPoint(), RequestUtils::isRequestedFromApi);
+		setAuthenticationFilter(http.formLogin(),
+				new RestfulUsernamePasswordAuthenticationFilter(authenticationManager(), objectMapper));
 		http.formLogin().loginPage(properties.getLoginPage()).loginProcessingUrl(properties.getLoginProcessingUrl())
 				.successHandler(authenticationSuccessHandler(http.getSharedObject(RequestCache.class)))
 				.failureHandler(authenticationFailureHandler()).and().logout().logoutUrl(properties.getLogoutUrl())
@@ -103,6 +111,19 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 				// Method Not Allowed for LOGIN_PAGE
 			}
 		};
+	}
+
+	private void setAuthenticationFilter(FormLoginConfigurer<HttpSecurity> formLogin,
+			UsernamePasswordAuthenticationFilter authFilter) throws Exception {
+		Field f = AbstractAuthenticationFilterConfigurer.class.getDeclaredField("authFilter");
+		f.setAccessible(true); // AbstractAuthenticationFilterConfigurer::setAuthenticationFilter not visible
+		f.set(formLogin, authFilter);
+	}
+
+	@Bean(name = BeanIds.AUTHENTICATION_MANAGER)
+	@Override
+	public AuthenticationManager authenticationManagerBean() throws Exception {
+		return super.authenticationManagerBean(); // Expose AuthenticationManager as Bean
 	}
 
 	@Bean
