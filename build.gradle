@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "com.example"
-version = "0.0.4-SNAPSHOT"
+version = "1.0.0-SNAPSHOT"
 sourceCompatibility = "1.8"
 
 repositories {
@@ -21,7 +21,7 @@ repositories {
 
 configurations {
     all {
-        resolutionStrategy.cacheChangingModulesFor 5, 'minutes'
+        resolutionStrategy.cacheChangingModulesFor 24, 'hours'
         resolutionStrategy.cacheDynamicVersionsFor 24, 'hours'
     }
 }
@@ -43,6 +43,7 @@ dependencies {
 	implementation "org.springframework.boot:spring-boot-starter-actuator"
     implementation "org.springframework.kafka:spring-kafka"
     implementation "org.springframework.session:spring-session-data-redis"
+    implementation "io.github.resilience4j:resilience4j-spring-boot2:latest.release"
     implementation "io.opentracing.contrib:opentracing-spring-jaeger-web-starter:latest.release"
     implementation "io.opentracing.contrib:opentracing-jdbc:latest.release"
     implementation "io.springfox:springfox-boot-starter:latest.release"

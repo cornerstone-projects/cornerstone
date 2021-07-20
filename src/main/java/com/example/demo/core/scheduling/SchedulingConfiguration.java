@@ -14,6 +14,8 @@ import org.springframework.scheduling.config.TaskManagementConfigUtils;
 
 import com.example.demo.core.util.RunnableWithRequestId;
 
+import io.github.resilience4j.bulkhead.BulkheadFullException;
+import io.github.resilience4j.ratelimiter.RequestNotPermitted;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -39,9 +41,7 @@ public class SchedulingConfiguration {
 	@Bean
 	TaskSchedulerCustomizer taskSchedulerCustomizer() {
 		return taskScheduler -> taskScheduler.setErrorHandler(ex -> {
-			String className = ex.getClass().getName();
-			if (className.equals("io.github.resilience4j.bulkhead.BulkheadFullException")
-					|| className.equals("io.github.resilience4j.ratelimiter.RequestNotPermitted"))
+			if (ex instanceof BulkheadFullException || ex instanceof RequestNotPermitted)
 				log.warn("Error occurred in scheduled task: {}", ex.getLocalizedMessage());
 			else
 				log.error("Unexpected error occurred in scheduled task", ex);
