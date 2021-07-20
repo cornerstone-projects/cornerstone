@@ -18,7 +18,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.BeanIds;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -41,7 +40,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Configuration(proxyBeanMethods = false)
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true, proxyTargetClass = true)
 @EnableConfigurationProperties(SecurityProperties.class)
 public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
@@ -56,18 +54,27 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 	@Override
 	public void configure(WebSecurity web) {
-		List<String> patterns = new ArrayList<>();
-		patterns.addAll(Arrays.asList("/error", "/actuator/**", "/assets/**"));
-		patterns.addAll(properties.getIgnoringPathPatterns());
-		web.ignoring().antMatchers(patterns.toArray(new String[patterns.size()]));
+		List<String> ignoringPathPatterns = new ArrayList<>();
+		ignoringPathPatterns.addAll(Arrays.asList("/error", "/actuator/**", "/assets/**"));
+		ignoringPathPatterns.addAll(properties.getIgnoringPathPatterns());
+		web.ignoring().antMatchers(ignoringPathPatterns.toArray(new String[ignoringPathPatterns.size()]));
 	}
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http.csrf().disable().authorizeRequests()
-				.antMatchers(properties.getLoginPage(), properties.getLoginProcessingUrl(), properties.getLogoutUrl())
-				.permitAll().anyRequest().authenticated().and().exceptionHandling().defaultAuthenticationEntryPointFor(
-						new Http403ForbiddenEntryPoint(), RequestUtils::isRequestedFromApi);
+		String[] permitAllPathPatterns;
+		if (properties.isProtecting()) {
+			List<String> patterns = new ArrayList<>();
+			patterns.addAll(Arrays.asList(properties.getLoginPage(), properties.getLoginProcessingUrl(),
+					properties.getLogoutUrl()));
+			patterns.addAll(properties.getPermitAllPathPatterns());
+			permitAllPathPatterns = patterns.toArray(new String[patterns.size()]);
+		} else {
+			permitAllPathPatterns = new String[] { "/**" };
+		}
+		http.csrf().disable().authorizeRequests().antMatchers(permitAllPathPatterns).permitAll().anyRequest()
+				.authenticated().and().exceptionHandling()
+				.defaultAuthenticationEntryPointFor(new Http403ForbiddenEntryPoint(), RequestUtils::isRequestedFromApi);
 		setAuthenticationFilter(http.formLogin(),
 				new RestfulUsernamePasswordAuthenticationFilter(authenticationManager(), objectMapper));
 		http.formLogin().loginPage(properties.getLoginPage()).loginProcessingUrl(properties.getLoginProcessingUrl())

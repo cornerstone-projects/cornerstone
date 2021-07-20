@@ -26,6 +26,10 @@ public class SecurityProperties {
 
 	private String logoutUrl = DEFAULT_LOGOUT_URL;
 
+	private boolean protecting = true;
+
 	private List<String> ignoringPathPatterns = Collections.emptyList();
+
+	private List<String> permitAllPathPatterns = Collections.emptyList();
 
 }
