@@ -41,6 +41,8 @@ spring.task:
 
 spring.jackson:
   default-property-inclusion: non_null
+  date-format: yyyy-MM-dd'T'HH:mm:ss.SSS
+  time-zone: Asia/Shanghai
 
 logging:
   config: classpath:log4j2.xml
