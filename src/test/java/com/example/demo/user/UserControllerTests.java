@@ -17,13 +17,24 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 
@@ -101,7 +112,7 @@ class UserControllerTests extends ControllerTestBase {
 		assertThat(response.getStatusCode()).isSameAs(OK);
 		ResultPage<User> page = response.getBody();
 		assertThat(page).isNotNull();
-		assertThat(page.getResult().size()).isEqualTo(2);
+		assertThat(page.getResult()).hasSize(2);
 		assertThat(page.getPageNo()).isEqualTo(1);
 		assertThat(page.getPageSize()).isEqualTo(10);
 		assertThat(page.getTotalPages()).isEqualTo(1);
@@ -114,7 +125,7 @@ class UserControllerTests extends ControllerTestBase {
 		assertThat(response.getStatusCode()).isSameAs(OK);
 		page = response.getBody();
 		assertThat(page).isNotNull();
-		assertThat(page.getResult().size()).isEqualTo(1);
+		assertThat(page.getResult()).hasSize(1);
 		assertThat(page.getPageNo()).isEqualTo(1);
 		assertThat(page.getPageSize()).isEqualTo(10);
 		assertThat(page.getTotalPages()).isEqualTo(1);
@@ -180,6 +191,49 @@ class UserControllerTests extends ControllerTestBase {
 		ResponseEntity<User> response = restTemplate
 				.exchange(RequestEntity.method(PATCH, PATH_DETAIL, user.getId()).body(user), User.class);
 		assertThat(response.getStatusCode()).isSameAs(CONFLICT);
+	}
+
+	@Test
+	void download() throws IOException {
+		TestRestTemplate restTemplate = adminRestTemplate();
+		ResponseEntity<Resource> response = restTemplate.getForEntity(PATH_LIST + ".csv", Resource.class);
+		assertThat(response.getHeaders().getContentType().getSubtype()).isEqualTo("csv");
+		assertThat(response.getStatusCode()).isSameAs(OK);
+		try (InputStream is = response.getBody().getInputStream();
+				BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
+			List<String> lines = reader.lines().collect(Collectors.toList());
+			assertThat(lines).hasSize(3);
+			assertThat(lines).element(1).asString().contains(",admin,");
+		}
+	}
+
+	@Test
+	void upload() throws IOException {
+		TestRestTemplate restTemplate = adminRestTemplate();
+		String body = "test1,xxx,13111111111,A B C,true\ntest2,xxx,13222222222,,true";
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.parseMediaType("text/csv"));
+		HttpEntity<String> entity = new HttpEntity<>(body, headers);
+		assertThat(restTemplate.postForEntity(PATH_LIST, entity, void.class).getStatusCode()).isSameAs(OK);
+
+		ResponseEntity<ResultPage<User>> response = restTemplate.exchange(
+				RequestEntity.method(GET, URI.create(PATH_LIST + "?name=xxx")).build(),
+				new ParameterizedTypeReference<ResultPage<User>>() {
+				});
+		assertThat(response.getStatusCode()).isSameAs(OK);
+		ResultPage<User> page = response.getBody();
+		assertThat(page).isNotNull();
+		assertThat(page.getResult()).hasSize(2);
+		assertThat(page.getResult().get(0).getUsername()).isEqualTo("test1");
+		assertThat(page.getResult().get(0).getRoles()).containsExactly("A", "B", "C");
+		assertThat(page.getResult().get(0).getDisabled()).isSameAs(Boolean.TRUE);
+		assertThat(page.getResult().get(1).getUsername()).isEqualTo("test2");
+		assertThat(page.getResult().get(1).getRoles()).isNullOrEmpty();
+		assertThat(page.getResult().get(1).getDisabled()).isSameAs(Boolean.TRUE);
+		page.getResult().forEach(u -> {
+			restTemplate.delete(PATH_DETAIL, u.getId());
+		});
+
 	}
 
 }

@@ -1,6 +1,7 @@
 package com.example.demo.user;
 
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -32,7 +33,9 @@ public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificat
 
 	@Cacheable(CACHE_NAME)
 	Optional<User> findByUsername(String username);
-	
+
 	boolean existsByUsername(String username);
+
+	Stream<User> findByOrderByUsernameAsc();
 
 }

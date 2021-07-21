@@ -3,3 +3,7 @@ spring:
   autoconfigure:
     exclude:
       - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
+
+spring.jpa.properties.hibernate:
+  show_sql: true
+  generate_statistics: true

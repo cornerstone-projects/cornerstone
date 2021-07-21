@@ -4,18 +4,18 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.web.server.ResponseStatusException;
 
 public abstract class AbstractRestController {
 
 	@Autowired
-	protected MessageSource messageSource;
+	protected ApplicationContext applicationContext;
 
 	protected ResponseStatusException notFound(Object subject) {
 		return new ResponseStatusException(NOT_FOUND,
-				messageSource.getMessage("not.found", new Object[] { String.valueOf(subject) }, LocaleContextHolder.getLocale()));
+				applicationContext.getMessage("not.found", new Object[] { String.valueOf(subject) }, LocaleContextHolder.getLocale()));
 	}
 
 	protected ResponseStatusException badRequest(String reason) {
@@ -24,12 +24,12 @@ public abstract class AbstractRestController {
 
 	protected ResponseStatusException invalidParam(String name) {
 		return new ResponseStatusException(BAD_REQUEST,
-				messageSource.getMessage("invalid.param", new Object[] { name }, LocaleContextHolder.getLocale()));
+				applicationContext.getMessage("invalid.param", new Object[] { name }, LocaleContextHolder.getLocale()));
 	}
 
 	protected ResponseStatusException missingParam(String name) {
 		return new ResponseStatusException(BAD_REQUEST,
-				messageSource.getMessage("missing.param", new Object[] { name }, LocaleContextHolder.getLocale()));
+				applicationContext.getMessage("missing.param", new Object[] { name }, LocaleContextHolder.getLocale()));
 	}
 
 	protected RuntimeException shouldNeverHappen() {

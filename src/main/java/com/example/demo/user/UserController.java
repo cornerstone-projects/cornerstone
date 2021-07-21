@@ -1,11 +1,26 @@
 package com.example.demo.user;
 
 import static com.example.demo.MainApplication.ADMIN_ROLE;
+import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.stream.Stream;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 
+import org.hibernate.cfg.AvailableSettings;
+import org.hibernate.dialect.Dialect;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
@@ -15,6 +30,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -123,6 +139,55 @@ public class UserController extends AbstractRestController {
 		if (user.isEnabled())
 			throw badRequest("disable.before.delete");
 		userRepository.delete(user);
+	}
+
+	@GetMapping(value = PATH_LIST + ".csv", produces = "text/csv")
+	@Transactional(readOnly = true)
+	public void download(HttpServletResponse response) throws IOException {
+		response.setCharacterEncoding(StandardCharsets.UTF_8.displayName());
+		response.setHeader(CONTENT_TYPE, "text/csv");
+		PrintWriter writer = response.getWriter();
+		writer.write("id,username,name,phone,roles,disabled");
+		try (Stream<User> all = userRepository.findByOrderByUsernameAsc()) {
+			// streaming instead of query all into List
+			all.map(u -> String.format("%s,%s,%s,%s,%s,%b", String.valueOf(u.getId()), u.getUsername(), u.getName(),
+					u.getPhone(), u.getRoles() != null ? String.join(" ", u.getRoles()) : "", u.getDisabled()))
+					.forEach(line -> {
+						writer.write('\n');
+						writer.write(line);
+					});
+		}
+	}
+
+	@PostMapping(value = PATH_LIST, consumes = "text/csv")
+	public void upload(HttpServletRequest request) throws IOException {
+		BufferedReader reader = request.getReader();
+		int batchSize = applicationContext.getEnvironment().getProperty(
+				"spring.jpa.properties." + AvailableSettings.STATEMENT_BATCH_SIZE, Integer.class,
+				Integer.valueOf(Dialect.DEFAULT_BATCH_SIZE));
+		String line;
+		List<User> batch = new ArrayList<>();
+		while ((line = reader.readLine()) != null) {
+			String[] arr = line.split(",");
+			User user = new User();
+			user.setUsername(arr[0]);
+			user.setName(arr[1]);
+			user.setPhone(arr[2]);
+			String roles = arr[3];
+			if (roles.startsWith("\"") && roles.endsWith("\""))
+				roles = roles.substring(1, roles.length() - 1);
+			if (!roles.isEmpty())
+				user.setRoles(new LinkedHashSet<>(Arrays.asList(roles.split(" "))));
+			user.setDisabled(Boolean.valueOf(arr[4]));
+			batch.add(user);
+			if (batch.size() == batchSize) {
+				userRepository.saveAll(batch);
+				batch.clear();
+			}
+		}
+		if (!batch.isEmpty()) {
+			userRepository.saveAll(batch);
+		}
 	}
 
 	private void encodePassword(User user) {

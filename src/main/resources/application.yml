@@ -23,6 +23,9 @@ spring.datasource:
 spring.jpa:
   open-in-view: false
   hibernate.use-new-id-generator-mappings: false
+  properties.hibernate:
+    jdbc.batch_size: 50
+    order_inserts: true
 
 spring.data.redis.repositories.enabled: false
 
