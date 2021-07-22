@@ -27,6 +27,12 @@ spring.jpa:
     jdbc.batch_size: 50
     order_inserts: true
 
+spring.data.web:
+  pageable:
+    default-page-size: 10
+    max-page-size: 100
+    one-indexed-parameters: true
+
 spring.data.redis.repositories.enabled: false
 
 spring.cache.redis.time-to-live: 300s

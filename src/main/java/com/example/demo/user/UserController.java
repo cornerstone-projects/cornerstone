@@ -1,6 +1,7 @@
 package com.example.demo.user;
 
 import static com.example.demo.user.UserSetup.ADMIN_ROLE;
+import static org.springframework.data.domain.Sort.Direction.ASC;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 
 import java.io.BufferedReader;
@@ -16,8 +17,6 @@ import java.util.stream.Stream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
 
 import org.hibernate.cfg.AvailableSettings;
 import org.hibernate.dialect.Dialect;
@@ -25,9 +24,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.SortDefault;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
@@ -69,23 +70,20 @@ public class UserController extends AbstractRestController {
 
 	@GetMapping(PATH_LIST)
 	@JsonView({ User.View.List.class })
-	public ResultPage<User> list(@Min(1) @RequestParam(required = false, defaultValue = "1") int pageNo,
-			@Min(10) @Max(100) @RequestParam(required = false, defaultValue = "10") int pageSize,
-			@RequestParam(required = false) String query, @ApiIgnore User user) {
-		PageRequest pageRequest = PageRequest.of(pageNo - 1, pageSize, Sort.by("username").ascending());
+	public ResultPage<User> list(@PageableDefault(sort = "username", direction = ASC) Pageable pageable,
+			@RequestParam(required = false) String query, @ApiIgnore User example) {
 		Page<User> page;
 		if (StringUtils.hasText(query)) {
 			String q = '%' + query + '%';
 			Specification<User> spec = (root, cq, cb) -> cb.or(
 					cb.or(cb.like(root.get("username"), q), cb.like(root.get("name"), q)),
 					cb.equal(root.get("phone"), query));
-			page = userRepository.findAll(spec, pageRequest);
+			page = userRepository.findAll(spec, pageable);
 		} else {
 			ExampleMatcher matcher = ExampleMatcher.matching().withIgnorePaths("password", "roles")
 					.withMatcher("username", match -> match.contains().ignoreCase())
 					.withMatcher("name", match -> match.contains());
-			Example<User> example = Example.of(user, matcher);
-			page = userRepository.findAll(example, pageRequest);
+			page = userRepository.findAll(Example.of(example, matcher), pageable);
 		}
 		return ResultPage.of(page);
 	}
@@ -143,12 +141,12 @@ public class UserController extends AbstractRestController {
 
 	@GetMapping(value = PATH_LIST + ".csv", produces = "text/csv")
 	@Transactional(readOnly = true)
-	public void download(HttpServletResponse response) throws IOException {
+	public void download(HttpServletResponse response, @SortDefault(sort = "id") Sort sort) throws IOException {
 		response.setCharacterEncoding(StandardCharsets.UTF_8.displayName());
 		response.setHeader(CONTENT_TYPE, "text/csv");
 		PrintWriter writer = response.getWriter();
 		writer.write("id,username,name,phone,roles,disabled");
-		try (Stream<User> all = userRepository.findByOrderByUsernameAsc()) {
+		try (Stream<User> all = userRepository.findBy(sort)) {
 			// streaming instead of query all into List
 			all.map(u -> String.format("%s,%s,%s,%s,%s,%b", String.valueOf(u.getId()), u.getUsername(), u.getName(),
 					u.getPhone(), u.getRoles() != null ? String.join(" ", u.getRoles()) : "", u.getDisabled()))

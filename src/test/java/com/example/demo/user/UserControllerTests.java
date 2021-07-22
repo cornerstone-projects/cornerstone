@@ -113,11 +113,22 @@ class UserControllerTests extends ControllerTestBase {
 		ResultPage<User> page = response.getBody();
 		assertThat(page).isNotNull();
 		assertThat(page.getResult()).hasSize(2);
-		assertThat(page.getPageNo()).isEqualTo(1);
-		assertThat(page.getPageSize()).isEqualTo(10);
+		assertThat(page.getPage()).isEqualTo(1);
+		assertThat(page.getSize()).isEqualTo(10);
 		assertThat(page.getTotalPages()).isEqualTo(1);
 		assertThat(page.getTotalElements()).isEqualTo(2);
 		assertThat(page.getResult().get(0).getCreatedDate()).isNull(); // User.View.List view
+		response = restTemplate.exchange(
+				RequestEntity.method(GET, URI.create(PATH_LIST + "?page=2&size=1&sort=username,desc")).build(),
+				new ParameterizedTypeReference<ResultPage<User>>() {
+				});
+		assertThat(response.getStatusCode()).isSameAs(OK);
+		page = response.getBody();
+		assertThat(page).isNotNull();
+		assertThat(page.getResult()).hasSize(1);
+		assertThat(page.getPage()).isEqualTo(2);
+		assertThat(page.getSize()).isEqualTo(1);
+		assertThat(page.getResult().get(0).getUsername()).isEqualTo(ADMIN_USERNAME);
 
 		response = restTemplate.exchange(RequestEntity.method(GET, URI.create(PATH_LIST + "?query=admin")).build(),
 				new ParameterizedTypeReference<ResultPage<User>>() {
@@ -126,8 +137,8 @@ class UserControllerTests extends ControllerTestBase {
 		page = response.getBody();
 		assertThat(page).isNotNull();
 		assertThat(page.getResult()).hasSize(1);
-		assertThat(page.getPageNo()).isEqualTo(1);
-		assertThat(page.getPageSize()).isEqualTo(10);
+		assertThat(page.getPage()).isEqualTo(1);
+		assertThat(page.getSize()).isEqualTo(10);
 		assertThat(page.getTotalPages()).isEqualTo(1);
 		assertThat(page.getTotalElements()).isEqualTo(1);
 
@@ -196,7 +207,7 @@ class UserControllerTests extends ControllerTestBase {
 	@Test
 	void download() throws IOException {
 		TestRestTemplate restTemplate = adminRestTemplate();
-		ResponseEntity<Resource> response = restTemplate.getForEntity(PATH_LIST + ".csv", Resource.class);
+		ResponseEntity<Resource> response = restTemplate.getForEntity(PATH_LIST + ".csv?sort=username", Resource.class);
 		assertThat(response.getHeaders().getContentType().getSubtype()).isEqualTo("csv");
 		assertThat(response.getStatusCode()).isSameAs(OK);
 		try (InputStream is = response.getBody().getInputStream();

@@ -16,10 +16,10 @@ public class ResultPage<T> {
 	private List<T> result;
 
 	@JsonView(Pageable.class)
-	private int pageNo;
+	private int page;
 
 	@JsonView(Pageable.class)
-	private int pageSize;
+	private int size;
 
 	@JsonView(Pageable.class)
 	private int totalPages;
@@ -30,8 +30,8 @@ public class ResultPage<T> {
 	public static <E> ResultPage<E> of(Page<E> page) {
 		ResultPage<E> resultPage = new ResultPage<>();
 		resultPage.setResult(page.getContent());
-		resultPage.setPageNo(page.getNumber() + 1);
-		resultPage.setPageSize(page.getSize());
+		resultPage.setPage(page.getNumber() + 1);
+		resultPage.setSize(page.getSize());
 		resultPage.setTotalPages(page.getTotalPages());
 		resultPage.setTotalElements(page.getTotalElements());
 		return resultPage;
