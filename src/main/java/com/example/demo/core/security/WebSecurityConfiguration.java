@@ -10,6 +10,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -29,7 +31,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.security.web.authentication.Http403ForbiddenEntryPoint;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.savedrequest.RequestCache;
@@ -74,7 +75,9 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 		}
 		http.csrf().disable().authorizeRequests().antMatchers(permitAllPathPatterns).permitAll().anyRequest()
 				.authenticated().and().exceptionHandling()
-				.defaultAuthenticationEntryPointFor(new Http403ForbiddenEntryPoint(), RequestUtils::isRequestedFromApi);
+				.defaultAuthenticationEntryPointFor((request, response, ex) -> response
+						.sendError(HttpServletResponse.SC_UNAUTHORIZED, ex.getLocalizedMessage()),
+						RequestUtils::isRequestedFromApi);
 		setAuthenticationFilter(http.formLogin(),
 				new RestfulUsernamePasswordAuthenticationFilter(authenticationManager(), objectMapper));
 		http.formLogin().loginPage(properties.getLoginPage()).loginProcessingUrl(properties.getLoginProcessingUrl())

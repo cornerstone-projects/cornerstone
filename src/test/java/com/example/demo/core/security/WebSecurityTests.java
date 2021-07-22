@@ -26,6 +26,7 @@ import java.util.function.Function;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
@@ -120,9 +121,10 @@ class WebSecurityTests extends ControllerTestBase {
 										.header(ACCEPT, APPLICATION_JSON_VALUE).build(),
 								new ParameterizedTypeReference<Map<String, Object>>() {
 								}));
-		assertThat(response.getStatusCode()).isSameAs(FORBIDDEN);
-		assertThat(response.getBody().get("status")).isEqualTo(FORBIDDEN.value());
-		assertThat(response.getBody().get("message")).isEqualTo("Access Denied");
+		assertThat(response.getStatusCode()).isSameAs(UNAUTHORIZED);
+		assertThat(response.getBody().get("status")).isEqualTo(UNAUTHORIZED.value());
+		assertThat(response.getBody().get("message")).isEqualTo(messageSource.getMessage(
+				"ExceptionTranslationFilter.insufficientAuthentication", null, LocaleContextHolder.getLocale()));
 		assertThat(response.getBody().get("path")).isEqualTo(TEST_DEFAULT_SUCCESS_URL);
 	}
 
@@ -154,7 +156,9 @@ class WebSecurityTests extends ControllerTestBase {
 		// disable follow redirects
 		HttpURLConnection.setFollowRedirects(false);
 		try {
-			RestTemplate template = new RestTemplate(new SimpleClientHttpRequestFactory());
+			SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
+			requestFactory.setOutputStreaming(false);
+			RestTemplate template = new RestTemplate(requestFactory);
 			template.setErrorHandler(testRestTemplate.getRestTemplate().getErrorHandler());
 			return function.apply(template);
 		} finally {

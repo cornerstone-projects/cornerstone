@@ -16,17 +16,17 @@ import lombok.experimental.UtilityClass;
 public class RequestUtils {
 
 	public static boolean isRequestedFromApi(HttpServletRequest request) {
+		if (request.getHeader("X-Requested-With") != null)
+			return true;
 		String contentType = request.getContentType();
-		if (contentType != null) {
-			if (MediaType.parseMediaType(contentType).isCompatibleWith(APPLICATION_JSON)) {
-				return true;
-			}
-		}
+		if (contentType != null && MediaType.parseMediaType(contentType).isCompatibleWith(APPLICATION_JSON))
+			return true;
 		List<MediaType> accepts = MediaType.parseMediaTypes(request.getHeader(ACCEPT));
-		if (accepts.isEmpty())
-			return false;
-		MediaType accept = accepts.get(0);
-		return !accept.equals(ALL) && accept.isCompatibleWith(APPLICATION_JSON);
+		if (!accepts.isEmpty()) {
+			MediaType accept = accepts.get(0);
+			return !accept.equals(ALL) && accept.isCompatibleWith(APPLICATION_JSON);
+		}
+		return false;
 	}
 
 }

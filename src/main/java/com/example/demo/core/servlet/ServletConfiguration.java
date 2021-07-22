@@ -10,6 +10,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.boot.web.client.RestTemplateCustomizer;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -52,8 +53,9 @@ public class ServletConfiguration {
 
 	@Bean
 	@ConditionalOnProperty(prefix = "portal", name = "baseUrl")
-	SsoFilter ssoFilter(RestTemplateBuilder builder, UserDetailsService userDetailsService) {
-		return new SsoFilter(builder, userDetailsService);
+	SsoFilter ssoFilter(RestTemplateBuilder builder, UserDetailsService userDetailsService,
+			MessageSource messageSource) {
+		return new SsoFilter(builder, userDetailsService, messageSource);
 	}
 
 	@Bean

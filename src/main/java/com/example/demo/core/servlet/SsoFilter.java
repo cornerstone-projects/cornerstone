@@ -28,6 +28,8 @@ import org.slf4j.MDC;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
@@ -64,6 +66,8 @@ public class SsoFilter implements Filter {
 
 	private final UserDetailsService userDetailsService;
 
+	private final MessageSource messageSource;
+
 	@Value("${portal.baseUrl}")
 	private String portalBaseUrl;
 
@@ -81,9 +85,10 @@ public class SsoFilter implements Filter {
 
 	private AntPathMatcher antPathMatcher = new AntPathMatcher();
 
-	public SsoFilter(RestTemplateBuilder builder, UserDetailsService userDetailsService) {
+	public SsoFilter(RestTemplateBuilder builder, UserDetailsService userDetailsService, MessageSource messageSource) {
 		this.restTemplate = builder.build();
 		this.userDetailsService = userDetailsService;
+		this.messageSource = messageSource;
 	}
 
 	@Override
@@ -231,7 +236,8 @@ public class SsoFilter implements Filter {
 	protected void redirect(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		if (RequestUtils.isRequestedFromApi(request)) {
 			// see WebSecurityConfiguration::authenticationFailureHandler
-			response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+			response.sendError(HttpServletResponse.SC_UNAUTHORIZED, messageSource.getMessage(
+					"ExceptionTranslationFilter.insufficientAuthentication", null, LocaleContextHolder.getLocale()));
 			return;
 		}
 		StringBuffer sb = request.getRequestURL();
