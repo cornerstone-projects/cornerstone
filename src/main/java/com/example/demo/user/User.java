@@ -52,7 +52,7 @@ public class User extends AbstractAuditableEntity implements UserDetails {
 	@JsonView(View.AdminEditable.class)
 	private Boolean disabled;
 
-	@JsonView(View.AdminEditable.class)
+	@JsonView({ View.AdminEditable.class, View.Profile.class })
 	private Set<String> roles;
 
 	@JsonView(View.Update.class)
