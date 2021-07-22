@@ -1,11 +1,11 @@
 package com.example.demo.core.security;
 
-import static com.example.demo.MainApplication.DEFAULT_PASSWORD;
-import static com.example.demo.MainApplication.USER_USERNAME;
 import static com.example.demo.core.security.WebSecurityTests.TEST_DEFAULT_SUCCESS_URL;
 import static com.example.demo.core.security.WebSecurityTests.TEST_LOGIN_PAGE;
 import static com.example.demo.core.security.WebSecurityTests.TEST_LOGIN_PROCESSING_URL;
 import static com.example.demo.user.UserController.PATH_LIST;
+import static com.example.demo.user.UserSetup.DEFAULT_PASSWORD;
+import static com.example.demo.user.UserSetup.USER_USERNAME;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpHeaders.ACCEPT;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;

@@ -5,25 +5,20 @@ import static org.springframework.core.env.AbstractEnvironment.ACTIVE_PROFILES_P
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
-import java.util.Collections;
 import java.util.Enumeration;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.util.ClassUtils;
 
 import com.example.demo.core.Application;
-import com.example.demo.user.User;
-import com.example.demo.user.UserRepository;
 
 import lombok.Getter;
 
 @SpringBootApplication
-public class MainApplication implements Application, CommandLineRunner {
+public class MainApplication implements Application {
 
 	private static String hostName = "localhost";
 
@@ -72,29 +67,4 @@ public class MainApplication implements Application, CommandLineRunner {
 		SpringApplication.run(MainApplication.class, args);
 	}
 
-	@Override
-	public void run(String... args) throws Exception {
-		if (isDevelopment() || isUnitTest()) {
-			UserRepository userRepository = context.getBean(UserRepository.class);
-			PasswordEncoder passwordEncoder = context.getBean(PasswordEncoder.class);
-			if (userRepository.count() == 0) {
-				User user = new User();
-				user.setUsername(USER_USERNAME);
-				user.setName(user.getUsername());
-				user.setPassword(passwordEncoder.encode(DEFAULT_PASSWORD));
-				userRepository.save(user);
-				User admin = new User();
-				admin.setUsername(ADMIN_USERNAME);
-				admin.setName(user.getUsername());
-				admin.setPassword(passwordEncoder.encode(DEFAULT_PASSWORD));
-				admin.setRoles(Collections.singleton(ADMIN_ROLE));
-				userRepository.save(admin);
-			}
-		}
-	}
-
-	public static final String DEFAULT_PASSWORD = "password";
-	public static final String USER_USERNAME = "user";
-	public static final String ADMIN_USERNAME = "admin";
-	public static final String ADMIN_ROLE = "ADMIN";
 }

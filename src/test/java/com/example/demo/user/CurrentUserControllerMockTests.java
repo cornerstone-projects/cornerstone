@@ -1,9 +1,9 @@
 package com.example.demo.user;
 
-import static com.example.demo.MainApplication.DEFAULT_PASSWORD;
-import static com.example.demo.MainApplication.USER_USERNAME;
 import static com.example.demo.user.CurrentUserController.PATH_PASSWORD;
 import static com.example.demo.user.CurrentUserController.PATH_PROFILE;
+import static com.example.demo.user.UserSetup.DEFAULT_PASSWORD;
+import static com.example.demo.user.UserSetup.USER_USERNAME;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;

@@ -1,8 +1,8 @@
 package com.example.demo;
 
-import static com.example.demo.MainApplication.ADMIN_USERNAME;
-import static com.example.demo.MainApplication.DEFAULT_PASSWORD;
-import static com.example.demo.MainApplication.USER_USERNAME;
+import static com.example.demo.user.UserSetup.ADMIN_USERNAME;
+import static com.example.demo.user.UserSetup.DEFAULT_PASSWORD;
+import static com.example.demo.user.UserSetup.USER_USERNAME;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.client.TestRestTemplate;

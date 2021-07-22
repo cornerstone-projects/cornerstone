@@ -1,6 +1,6 @@
 package com.example.demo.user;
 
-import static com.example.demo.MainApplication.ADMIN_ROLE;
+import static com.example.demo.user.UserSetup.ADMIN_ROLE;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 
 import java.io.BufferedReader;
