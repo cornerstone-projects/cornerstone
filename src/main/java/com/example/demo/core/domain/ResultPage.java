@@ -1,4 +1,4 @@
-package com.example.demo.core.hibernate.domain;
+package com.example.demo.core.domain;
 
 import java.util.List;
 

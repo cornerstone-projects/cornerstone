@@ -44,7 +44,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.demo.core.hibernate.domain.ResultPage;
+import com.example.demo.core.domain.ResultPage;
 import com.example.demo.core.util.BeanUtils;
 import com.example.demo.core.web.AbstractRestController;
 import com.fasterxml.jackson.annotation.JsonView;

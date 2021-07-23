@@ -39,7 +39,7 @@ import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 
 import com.example.demo.ControllerTestBase;
-import com.example.demo.core.hibernate.domain.ResultPage;
+import com.example.demo.core.domain.ResultPage;
 
 class UserControllerTests extends ControllerTestBase {
 
