@@ -21,12 +21,12 @@ import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 
 import com.example.demo.core.util.BeanUtils;
-import com.example.demo.core.web.AbstractRestController;
+import com.example.demo.core.web.BaseRestController;
 import com.fasterxml.jackson.annotation.JsonView;
 
 @RestController
 @Validated
-public class CurrentUserController extends AbstractRestController {
+public class CurrentUserController extends BaseRestController {
 
 	public static final String PATH_PROFILE = "/user/@self";
 

@@ -49,7 +49,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.core.domain.ResultPage;
 import com.example.demo.core.util.BeanUtils;
-import com.example.demo.core.web.AbstractRestController;
+import com.example.demo.core.web.BaseRestController;
 import com.fasterxml.jackson.annotation.JsonView;
 
 import springfox.documentation.annotations.ApiIgnore;
@@ -57,7 +57,7 @@ import springfox.documentation.annotations.ApiIgnore;
 @RestController
 @Validated
 @Secured(ADMIN_ROLE)
-public class UserController extends AbstractRestController {
+public class UserController extends BaseRestController {
 
 	public static final String PATH_LIST = "/users";
 

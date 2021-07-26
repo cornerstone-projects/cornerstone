@@ -8,7 +8,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.web.server.ResponseStatusException;
 
-public abstract class AbstractRestController {
+public abstract class BaseRestController {
 
 	@Autowired
 	protected ApplicationContext applicationContext;
