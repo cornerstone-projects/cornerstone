@@ -2,10 +2,13 @@ package com.example.demo.user;
 
 import static com.example.demo.user.UserSetup.ADMIN_ROLE;
 import static org.springframework.data.domain.Sort.Direction.ASC;
-import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -14,13 +17,13 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.stream.Stream;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.hibernate.cfg.AvailableSettings;
 import org.hibernate.dialect.Dialect;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;
@@ -141,50 +144,61 @@ public class UserController extends AbstractRestController {
 
 	@GetMapping(value = PATH_LIST + ".csv", produces = "text/csv")
 	@Transactional(readOnly = true)
-	public void download(HttpServletResponse response, @SortDefault(sort = "id") Sort sort) throws IOException {
-		response.setCharacterEncoding(StandardCharsets.UTF_8.displayName());
-		response.setHeader(CONTENT_TYPE, "text/csv");
-		PrintWriter writer = response.getWriter();
-		writer.write("id,username,name,phone,roles,disabled");
-		try (Stream<User> all = userRepository.findBy(sort)) {
-			// streaming instead of query all into List
-			all.map(u -> String.format("%s,%s,%s,%s,%s,%b", String.valueOf(u.getId()), u.getUsername(), u.getName(),
-					u.getPhone(), u.getRoles() != null ? String.join(" ", u.getRoles()) : "", u.getDisabled()))
-					.forEach(line -> {
-						writer.write('\n');
-						writer.write(line);
-					});
+	// use Resource instead of InputStreamResource for feign
+	public Resource download(@SortDefault(sort = "id") Sort sort) {
+		try {
+			PipedInputStream is = new PipedInputStream();
+			PipedOutputStream os = new PipedOutputStream(is);
+			try (PrintWriter writer = new PrintWriter(new OutputStreamWriter(os, StandardCharsets.UTF_8))) {
+				writer.write("id,username,name,phone,roles,disabled");
+				try (Stream<User> all = userRepository.findBy(sort)) {
+					// streaming instead of query all into List
+					all.map(u -> String.format("%s,%s,%s,%s,%s,%b", String.valueOf(u.getId()), u.getUsername(),
+							u.getName(), u.getPhone(), u.getRoles() != null ? String.join(" ", u.getRoles()) : "",
+							u.getDisabled())).forEach(line -> {
+								writer.write('\n');
+								writer.write(line);
+							});
+				}
+			}
+			return new InputStreamResource(is);
+		} catch (IOException ex) {
+			throw new RuntimeException(ex.getMessage(), ex);
 		}
 	}
 
 	@PostMapping(value = PATH_LIST, consumes = "text/csv")
-	public void upload(HttpServletRequest request) throws IOException {
-		BufferedReader reader = request.getReader();
-		int batchSize = applicationContext.getEnvironment().getProperty(
-				"spring.jpa.properties." + AvailableSettings.STATEMENT_BATCH_SIZE, Integer.class,
-				Integer.valueOf(Dialect.DEFAULT_BATCH_SIZE));
-		String line;
-		List<User> batch = new ArrayList<>();
-		while ((line = reader.readLine()) != null) {
-			String[] arr = line.split(",");
-			User user = new User();
-			user.setUsername(arr[0]);
-			user.setName(arr[1]);
-			user.setPhone(arr[2]);
-			String roles = arr[3];
-			if (roles.startsWith("\"") && roles.endsWith("\""))
-				roles = roles.substring(1, roles.length() - 1);
-			if (!roles.isEmpty())
-				user.setRoles(new LinkedHashSet<>(Arrays.asList(roles.split(" "))));
-			user.setDisabled(Boolean.valueOf(arr[4]));
-			batch.add(user);
-			if (batch.size() == batchSize) {
-				userRepository.saveAll(batch);
-				batch.clear();
+	public void upload(@RequestBody InputStreamResource input) {
+		try (BufferedReader reader = new BufferedReader(
+				new InputStreamReader(input.getInputStream(), StandardCharsets.UTF_8))) {
+			int batchSize = applicationContext.getEnvironment().getProperty(
+					"spring.jpa.properties." + AvailableSettings.STATEMENT_BATCH_SIZE, Integer.class,
+					Integer.valueOf(Dialect.DEFAULT_BATCH_SIZE));
+			String line;
+			List<User> batch = new ArrayList<>();
+			while ((line = reader.readLine()) != null) {
+				String[] arr = line.split(",");
+				User user = new User();
+				user.setUsername(arr[0]);
+				user.setName(arr[1]);
+				user.setPhone(arr[2]);
+				String roles = arr[3];
+				if (roles.startsWith("\"") && roles.endsWith("\""))
+					roles = roles.substring(1, roles.length() - 1);
+				if (!roles.isEmpty())
+					user.setRoles(new LinkedHashSet<>(Arrays.asList(roles.split(" "))));
+				user.setDisabled(Boolean.valueOf(arr[4]));
+				batch.add(user);
+				if (batch.size() == batchSize) {
+					userRepository.saveAll(batch);
+					batch.clear();
+				}
 			}
-		}
-		if (!batch.isEmpty()) {
-			userRepository.saveAll(batch);
+			if (!batch.isEmpty()) {
+				userRepository.saveAll(batch);
+			}
+		} catch (IOException ex) {
+			throw new RuntimeException(ex.getMessage(), ex);
 		}
 	}
 
