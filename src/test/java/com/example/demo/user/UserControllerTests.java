@@ -225,7 +225,7 @@ class UserControllerTests extends ControllerTestBase {
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.parseMediaType("text/csv"));
 		HttpEntity<String> entity = new HttpEntity<>(body, headers);
-		assertThat(restTemplate.postForEntity(PATH_LIST, entity, void.class).getStatusCode()).isSameAs(OK);
+		assertThat(restTemplate.postForEntity(PATH_LIST + ".csv", entity, void.class).getStatusCode()).isSameAs(OK);
 
 		ResponseEntity<ResultPage<User>> response = restTemplate.exchange(
 				RequestEntity.method(GET, URI.create(PATH_LIST + "?name=xxx")).build(),

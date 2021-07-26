@@ -167,7 +167,7 @@ public class UserController extends BaseRestController {
 		}
 	}
 
-	@PostMapping(value = PATH_LIST, consumes = "text/csv")
+	@PostMapping(value = PATH_LIST + ".csv", consumes = "text/csv")
 	public void upload(@RequestBody InputStreamResource input) {
 		try (BufferedReader reader = new BufferedReader(
 				new InputStreamReader(input.getInputStream(), StandardCharsets.UTF_8))) {
