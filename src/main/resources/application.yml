@@ -9,7 +9,7 @@ server:
     include-stacktrace: never
 
 spring.datasource:
-  url: jdbc:mysql:///${spring.application.name}?createDatabaseIfNotExist=true&serverTimezone=Asia/Shanghai&autoReconnectForPools=true&useUnicode=true&useServerPrepStmts=true&cachePrepStmts=true&tinyInt1isBit=false&socketTimeout=60000&sslMode=DISABLED&allowPublicKeyRetrieval=true
+  url: jdbc:mysql://${mysql.host}:${mysql.port}/${spring.application.name}?createDatabaseIfNotExist=true&serverTimezone=Asia/Shanghai&autoReconnectForPools=true&useUnicode=true&useServerPrepStmts=true&cachePrepStmts=true&tinyInt1isBit=false&socketTimeout=60000&sslMode=DISABLED&allowPublicKeyRetrieval=true
   username: root
   password:
   hikari:
@@ -70,6 +70,11 @@ opentracing.jaeger:
   http-sender.url: http://localhost:14268/api/traces
   const-sampler.decision: true
   log-spans: false
+
+# user defined variables to expand
+mysql:
+  host: localhost
+  port: 3306
 
 ---
 spring:
