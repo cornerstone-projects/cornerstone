@@ -207,14 +207,27 @@ class UserControllerTests extends ControllerTestBase {
 	@Test
 	void download() throws IOException {
 		TestRestTemplate restTemplate = adminRestTemplate();
-		ResponseEntity<Resource> response = restTemplate.getForEntity(PATH_LIST + ".csv?sort=username", Resource.class);
+		int size = 10;
+		for (int i = 0; i < size; i++) {
+			User u = new User();
+			u.setUsername("test" + i);
+			u.setName("test");
+			u.setDisabled(true);
+			restTemplate.postForObject(PATH_LIST, u, void.class);
+		}
+		ResponseEntity<Resource> response = restTemplate.getForEntity(PATH_LIST + ".csv?sort=createdDate",
+				Resource.class);
 		assertThat(response.getHeaders().getContentType().getSubtype()).isEqualTo("csv");
 		assertThat(response.getStatusCode()).isSameAs(OK);
 		try (InputStream is = response.getBody().getInputStream();
 				BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
 			List<String> lines = reader.lines().collect(Collectors.toList());
-			assertThat(lines).hasSize(3);
-			assertThat(lines).element(1).asString().contains(",admin,");
+			assertThat(lines).hasSize(size + 3);
+			assertThat(lines).element(4).asString().contains(",test,");
+			for (int i = 3; i < size + 3; i++) {
+				String[] arr = lines.get(i).split(",");
+				restTemplate.delete(PATH_DETAIL, arr[0]);
+			}
 		}
 	}
 

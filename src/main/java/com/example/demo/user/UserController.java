@@ -6,9 +6,6 @@ import static org.springframework.data.domain.Sort.Direction.ASC;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -17,13 +14,13 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.stream.Stream;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.hibernate.cfg.AvailableSettings;
 import org.hibernate.dialect.Dialect;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
-import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;
@@ -144,26 +141,18 @@ public class UserController extends BaseRestController {
 
 	@GetMapping(value = PATH_LIST + ".csv", produces = "text/csv")
 	@Transactional(readOnly = true)
-	// use Resource instead of InputStreamResource for feign
-	public Resource download(@SortDefault(sort = "id") Sort sort) {
-		try {
-			PipedInputStream is = new PipedInputStream();
-			PipedOutputStream os = new PipedOutputStream(is);
-			try (PrintWriter writer = new PrintWriter(new OutputStreamWriter(os, StandardCharsets.UTF_8))) {
-				writer.write("id,username,name,phone,roles,disabled");
-				try (Stream<User> all = userRepository.findBy(sort)) {
-					// streaming instead of query all into List
-					all.map(u -> String.format("%s,%s,%s,%s,%s,%b", String.valueOf(u.getId()), u.getUsername(),
-							u.getName(), u.getPhone(), u.getRoles() != null ? String.join(" ", u.getRoles()) : "",
-							u.getDisabled())).forEach(line -> {
-								writer.write('\n');
-								writer.write(line);
-							});
-				}
-			}
-			return new InputStreamResource(is);
-		} catch (IOException ex) {
-			throw new RuntimeException(ex.getMessage(), ex);
+	public void download(HttpServletResponse response, @SortDefault(sort = "id") Sort sort) throws IOException {
+		response.setContentType("text/csv;charset=utf-8");
+		PrintWriter writer = response.getWriter();
+		writer.write("id,username,name,phone,roles,disabled");
+		try (Stream<User> all = userRepository.findBy(sort)) {
+			// streaming instead of query all into List
+			all.map(u -> String.format("%s,%s,%s,%s,%s,%b", String.valueOf(u.getId()), u.getUsername(), u.getName(),
+					u.getPhone(), u.getRoles() != null ? String.join(" ", u.getRoles()) : "", u.getDisabled()))
+					.forEach(line -> {
+						writer.write('\n');
+						writer.write(line);
+					});
 		}
 	}
 
