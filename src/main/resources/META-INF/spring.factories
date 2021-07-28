@@ -1,7 +1,0 @@
-org.springframework.boot.env.EnvironmentPostProcessor=\
-com.example.demo.core.DefaultPropertiesPostProcessor
-
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-com.example.demo.core.CoreAutoConfiguration,\
-com.example.demo.fs.FileStorageAutoConfiguration,\
-com.example.demo.user.UserAutoConfiguration\

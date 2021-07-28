@@ -1,0 +1,37 @@
+plugins {
+	id 'io.cornerstone.java-common-conventions'
+	id 'java-library'
+	id 'maven-publish'
+}
+
+publishing {
+	publications {
+		maven(MavenPublication) {
+			from components.java
+			versionMapping {
+				usage("java-api") {
+					fromResolutionOf("runtimeClasspath")
+				}
+				usage("java-runtime") {
+					fromResolutionResult()
+				}
+			}
+			suppressAllPomMetadataWarnings()
+		}
+	}
+	repositories {
+		maven {
+			if(version.endsWith("-SNAPSHOT")) {
+				url "${repoUrlPrefix}snapshots/"
+			} else {
+				url "${repoUrlPrefix}releases/"
+			}
+			allowInsecureProtocol true
+			credentials {
+				username repoUser
+				password repoPassword
+			}
+		}
+	}
+	
+}

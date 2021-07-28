@@ -1,0 +1,11 @@
+plugins {
+	id 'io.cornerstone.java-library-conventions'
+}
+
+dependencies {
+	api project(":cornerstone-core")
+	api "org.apache.commons:commons-pool2"
+	api "commons-net:commons-net:latest.release"
+	api "com.amazonaws:aws-java-sdk-s3:latest.release"
+	testImplementation(testFixtures(project(":cornerstone-core")))
+}

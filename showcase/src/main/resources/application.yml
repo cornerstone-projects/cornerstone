@@ -1,0 +1,22 @@
+### edit it according to your environment
+spring.application.name: demo
+
+mysql:
+  host: localhost #shortcut for spring.datasource.url
+  port: 3306
+
+spring.redis:
+  host: localhost
+  port: 6379
+
+spring.kafka.bootstrap-servers:
+  - localhost:9092
+
+management.metrics.export.influx:
+  uri: http://localhost:8086
+  db: metrics # org,bucket for V2
+
+jaeger.host: localhost #shortcut for opentracing.jaeger.http-sender.url
+
+#file-storage:
+#  uri: ftp://admin:admin@localhost/temp

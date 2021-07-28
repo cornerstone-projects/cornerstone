@@ -1,1 +1,2 @@
-rootProject.name = 'demo'
+rootProject.name = 'cornerstone'
+include('cornerstone-core', 'cornerstone-fs', 'cornerstone-user', 'showcase')

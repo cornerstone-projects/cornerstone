@@ -1,0 +1,11 @@
+plugins {
+	id 'io.cornerstone.java-common-conventions'
+	id 'org.springframework.boot' version 'latest.release'
+	id 'war'
+}
+
+dependencies {
+	implementation(project(":cornerstone-user"))
+	developmentOnly "org.springframework.boot:spring-boot-devtools"
+	runtimeOnly "mysql:mysql-connector-java"
+}
