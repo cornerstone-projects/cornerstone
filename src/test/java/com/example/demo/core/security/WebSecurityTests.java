@@ -3,9 +3,7 @@ package com.example.demo.core.security;
 import static com.example.demo.core.security.WebSecurityTests.TEST_DEFAULT_SUCCESS_URL;
 import static com.example.demo.core.security.WebSecurityTests.TEST_LOGIN_PAGE;
 import static com.example.demo.core.security.WebSecurityTests.TEST_LOGIN_PROCESSING_URL;
-import static com.example.demo.user.UserController.PATH_LIST;
-import static com.example.demo.user.UserSetup.DEFAULT_PASSWORD;
-import static com.example.demo.user.UserSetup.USER_USERNAME;
+import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpHeaders.ACCEPT;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
@@ -26,22 +24,37 @@ import java.util.function.Function;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 import com.example.demo.ControllerTestBase;
-import com.example.demo.user.User;
+
+import io.vavr.collection.Stream;
 
 @TestPropertySource(properties = { "security.login-page=" + TEST_LOGIN_PAGE,
 		"security.login-processing-url=" + TEST_LOGIN_PROCESSING_URL,
 		"security.default-success-url=" + TEST_DEFAULT_SUCCESS_URL })
+@ContextConfiguration(classes = WebSecurityTests.Config.class)
 class WebSecurityTests extends ControllerTestBase {
 
 	public static final String TEST_LOGIN_PROCESSING_URL = "/test";
@@ -53,17 +66,15 @@ class WebSecurityTests extends ControllerTestBase {
 	@Test
 	void testAuthenticationFailure() {
 		TestRestTemplate restTemplate = testRestTemplate;
-		User u = new User();
-		ResponseEntity<User> response = restTemplate.withBasicAuth("invalid_user", "*******").postForEntity(PATH_LIST,
-				u, User.class);
+		ResponseEntity<String> response = restTemplate.withBasicAuth("invalid_user", "*******")
+				.getForEntity(TEST_DEFAULT_SUCCESS_URL, String.class);
 		assertThat(response.getStatusCode()).isSameAs(UNAUTHORIZED);
 	}
 
 	@Test
 	void testAccessDenied() {
 		TestRestTemplate restTemplate = userRestTemplate();
-		User u = new User();
-		ResponseEntity<User> response = restTemplate.postForEntity(PATH_LIST, u, User.class);
+		ResponseEntity<String> response = restTemplate.getForEntity(TEST_DEFAULT_SUCCESS_URL, String.class);
 		assertThat(response.getStatusCode()).isSameAs(FORBIDDEN);
 	}
 
@@ -163,6 +174,37 @@ class WebSecurityTests extends ControllerTestBase {
 			return function.apply(template);
 		} finally {
 			HttpURLConnection.setFollowRedirects(true); // restore defaults
+		}
+	}
+
+	@RestController
+	@Secured(ADMIN_ROLE)
+	static class TestController {
+
+		@GetMapping(TEST_DEFAULT_SUCCESS_URL)
+		public String get() {
+			return "test";
+		}
+	}
+
+	@ComponentScan
+	static class Config {
+
+		@Bean
+		AuthenticationProvider authenticationProvider(PasswordEncoder passwordEncoder) {
+			// see InitializeAuthenticationProviderManagerConfigurer.getBeanOrNull()
+			UserDetailsService uds = new InMemoryUserDetailsManager(
+					createUser(USER_USERNAME, passwordEncoder.encode(DEFAULT_PASSWORD)),
+					createUser(ADMIN_USERNAME, passwordEncoder.encode(DEFAULT_PASSWORD), ADMIN_ROLE));
+			DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+			provider.setUserDetailsService(uds);
+			provider.setPasswordEncoder(passwordEncoder);
+			return provider;
+		}
+
+		private User createUser(String username, String password, String... roles) {
+			return new User(username, password,
+					Stream.of(roles).map(r -> new SimpleGrantedAuthority(r)).collect(toList()));
 		}
 	}
 }

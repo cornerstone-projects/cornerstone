@@ -18,8 +18,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.BeanIds;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -128,12 +126,6 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 		Field f = AbstractAuthenticationFilterConfigurer.class.getDeclaredField("authFilter");
 		f.setAccessible(true); // AbstractAuthenticationFilterConfigurer::setAuthenticationFilter not visible
 		f.set(formLogin, authFilter);
-	}
-
-	@Bean(name = BeanIds.AUTHENTICATION_MANAGER)
-	@Override
-	public AuthenticationManager authenticationManagerBean() throws Exception {
-		return super.authenticationManagerBean(); // Expose AuthenticationManager as Bean
 	}
 
 	@Bean

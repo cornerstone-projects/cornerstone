@@ -12,12 +12,10 @@ import java.util.LinkedHashSet;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 
-import com.example.demo.SpringApplicationTest;
+import com.example.demo.SpringApplicationTestBase;
 
-@SpringApplicationTest(webEnvironment = WebEnvironment.NONE)
-public class ConvertTests {
+public class ConvertTests extends SpringApplicationTestBase {
 
 	@Autowired
 	TestEntityRepository repository;

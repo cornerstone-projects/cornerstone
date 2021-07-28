@@ -12,12 +12,10 @@ import java.util.LinkedHashSet;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 
-import com.example.demo.SpringApplicationTest;
+import com.example.demo.SpringApplicationTestBase;
 
-@SpringApplicationTest(webEnvironment = WebEnvironment.NONE)
-public class IntegratedEntityTests {
+public class IntegratedEntityTests extends SpringApplicationTestBase {
 
 	@Autowired
 	IntegratedEntityRepository repository;
@@ -41,9 +39,10 @@ public class IntegratedEntityTests {
 		entity.setTestComponentList(Arrays.asList(new IntegratedEntity.TestComponent("a", 1, new BigDecimal("10.1")),
 				new IntegratedEntity.TestComponent("b", 2, new BigDecimal("10.2")),
 				new IntegratedEntity.TestComponent("c", 3, new BigDecimal("10.3"))));
-		entity.setAnotherComponentList(Arrays.asList(new IntegratedEntity.AnotherComponent("a", 1, new BigDecimal("10.1")),
-				new IntegratedEntity.AnotherComponent("b", 2, new BigDecimal("10.2")),
-				new IntegratedEntity.AnotherComponent("c", 3, new BigDecimal("10.3"))));
+		entity.setAnotherComponentList(
+				Arrays.asList(new IntegratedEntity.AnotherComponent("a", 1, new BigDecimal("10.1")),
+						new IntegratedEntity.AnotherComponent("b", 2, new BigDecimal("10.2")),
+						new IntegratedEntity.AnotherComponent("c", 3, new BigDecimal("10.3"))));
 		repository.save(entity);
 		assertThat(entity.getId()).isGreaterThan(100000000L);
 		IntegratedEntity savedEntity = repository.findById(entity.getId()).orElseThrow(IllegalStateException::new);

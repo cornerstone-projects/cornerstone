@@ -1,7 +1,5 @@
 package com.example.demo.user;
 
-import static com.example.demo.user.UserSetup.ADMIN_USERNAME;
-import static com.example.demo.user.UserSetup.DEFAULT_PASSWORD;
 import static com.example.demo.user.UserController.PATH_DETAIL;
 import static com.example.demo.user.UserController.PATH_LIST;
 import static com.example.demo.user.UserController.PATH_PASSWORD;

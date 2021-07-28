@@ -1,15 +1,11 @@
 package com.example.demo;
 
-import static com.example.demo.user.UserSetup.ADMIN_USERNAME;
-import static com.example.demo.user.UserSetup.DEFAULT_PASSWORD;
-import static com.example.demo.user.UserSetup.USER_USERNAME;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.context.MessageSource;
 
 @SpringApplicationTest
-public abstract class ControllerTestBase {
+public abstract class ControllerTestBase extends SpringApplicationTestBase {
 
 	@Autowired
 	protected MessageSource messageSource;

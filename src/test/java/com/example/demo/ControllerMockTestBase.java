@@ -1,8 +1,5 @@
 package com.example.demo;
 
-import static com.example.demo.user.UserSetup.ADMIN_USERNAME;
-import static com.example.demo.user.UserSetup.DEFAULT_PASSWORD;
-import static com.example.demo.user.UserSetup.USER_USERNAME;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +13,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 @SpringApplicationTest(webEnvironment = WebEnvironment.MOCK)
 @AutoConfigureMockMvc
-public abstract class ControllerMockTestBase {
+public abstract class ControllerMockTestBase extends SpringApplicationTestBase {
 
 	@Autowired
 	protected ObjectMapper objectMapper;

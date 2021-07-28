@@ -2,8 +2,6 @@ package com.example.demo.user;
 
 import static com.example.demo.user.CurrentUserController.PATH_PASSWORD;
 import static com.example.demo.user.CurrentUserController.PATH_PROFILE;
-import static com.example.demo.user.UserSetup.DEFAULT_PASSWORD;
-import static com.example.demo.user.UserSetup.USER_USERNAME;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpMethod.PATCH;
 import static org.springframework.http.HttpMethod.PUT;

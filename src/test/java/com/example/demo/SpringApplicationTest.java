@@ -20,6 +20,9 @@ public @interface SpringApplicationTest {
 	String[] value() default {};
 
 	@AliasFor(annotation = SpringBootTest.class)
+	Class<?>[] classes() default {};
+
+	@AliasFor(annotation = SpringBootTest.class)
 	WebEnvironment webEnvironment() default WebEnvironment.RANDOM_PORT;
 
 	@AliasFor(annotation = ActiveProfiles.class, attribute = "profiles")
