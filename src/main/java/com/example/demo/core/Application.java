@@ -2,8 +2,10 @@ package com.example.demo.core;
 
 import javax.servlet.ServletContext;
 
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Profiles;
+import org.springframework.util.ClassUtils;
 
 public interface Application {
 
@@ -18,7 +20,14 @@ public interface Application {
 	}
 
 	default String getServerInfo() {
-		return getContext().getBean(ServletContext.class).getServerInfo();
+		if (ClassUtils.isPresent("javax.servlet.ServletContext", Application.class.getClassLoader())) {
+			try {
+				return getContext().getBean(ServletContext.class).getServerInfo();
+			} catch (NoSuchBeanDefinitionException e) {
+
+			}
+		}
+		return null;
 	}
 
 	default int getServerPort() {
