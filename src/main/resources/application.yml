@@ -92,6 +92,12 @@ logging:
 
 ---
 spring:
+  config.activate.on-profile: test
+logging:
+  config: classpath:log4j2-test.xml
+
+---
+spring:
   config.activate.on-profile: prod
 logging:
   config: classpath:log4j2-with-kafka.xml
