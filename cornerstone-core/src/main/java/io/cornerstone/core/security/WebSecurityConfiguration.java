@@ -2,6 +2,7 @@ package io.cornerstone.core.security;
 
 import static javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -10,6 +11,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +29,7 @@ import org.springframework.security.config.annotation.web.configurers.FormLoginC
 import org.springframework.security.config.core.GrantedAuthorityDefaults;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.DefaultRedirectStrategy;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
@@ -89,25 +92,31 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 	}
 
 	AuthenticationSuccessHandler authenticationSuccessHandler(RequestCache requestCache) {
-		SavedRequestAwareAuthenticationSuccessHandler defaultSuccessHandler = new SavedRequestAwareAuthenticationSuccessHandler();
-		defaultSuccessHandler.setDefaultTargetUrl(properties.getDefaultSuccessUrl());
+		SavedRequestAwareAuthenticationSuccessHandler handler = new SavedRequestAwareAuthenticationSuccessHandler();
+		handler.setDefaultTargetUrl(properties.getDefaultSuccessUrl());
 		if (requestCache != null) {
-			defaultSuccessHandler.setRequestCache(requestCache);
+			handler.setRequestCache(requestCache);
 		}
-		return (request, response, authentication) -> {
-			if (RequestUtils.isRequestedFromApi(request)) {
-				response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-				Map<String, Object> map = new LinkedHashMap<>();
-				map.put("timestamp", new Date());
-				map.put("status", HttpStatus.OK.value());
-				map.put("message", HttpStatus.OK.getReasonPhrase());
-				map.put("path", properties.getLoginProcessingUrl());
-				objectMapper.writeValue(response.getWriter(), map);
-				// see DefaultErrorAttributes::getErrorAttributes
-			} else {
-				defaultSuccessHandler.onAuthenticationSuccess(request, response, authentication);
+		handler.setRedirectStrategy(new DefaultRedirectStrategy() {
+			@Override
+			public void sendRedirect(HttpServletRequest request, HttpServletResponse response, String url)
+					throws IOException {
+				if (RequestUtils.isRequestedFromApi(request)) {
+					response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+					Map<String, Object> map = new LinkedHashMap<>();
+					map.put("timestamp", new Date());
+					map.put("status", HttpStatus.OK.value());
+					map.put("message", HttpStatus.OK.getReasonPhrase());
+					map.put("path", properties.getLoginProcessingUrl());
+					map.put("targetUrl", url);
+					objectMapper.writeValue(response.getWriter(), map);
+					// see DefaultErrorAttributes::getErrorAttributes
+				} else {
+					super.sendRedirect(request, response, url);
+				}
 			}
-		};
+		});
+		return handler;
 	}
 
 	AuthenticationFailureHandler authenticationFailureHandler() {

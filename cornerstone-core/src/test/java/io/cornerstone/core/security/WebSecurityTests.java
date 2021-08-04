@@ -108,6 +108,7 @@ class WebSecurityTests extends ControllerTestBase {
 		assertThat(response.getBody().get("status")).isEqualTo(OK.value());
 		assertThat(response.getBody().get("message")).isEqualTo(OK.getReasonPhrase());
 		assertThat(response.getBody().get("path")).isEqualTo(TEST_LOGIN_PROCESSING_URL);
+		assertThat(response.getBody().get("targetUrl")).isEqualTo(TEST_DEFAULT_SUCCESS_URL);
 	}
 
 	@Test
