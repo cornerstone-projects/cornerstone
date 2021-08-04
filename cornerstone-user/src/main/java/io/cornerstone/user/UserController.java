@@ -2,19 +2,20 @@ package io.cornerstone.user;
 
 import static io.cornerstone.user.UserSetup.ADMIN_ROLE;
 import static org.springframework.data.domain.Sort.Direction.ASC;
+import static org.springframework.http.HttpStatus.OK;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.stream.Stream;
 
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.hibernate.cfg.AvailableSettings;
@@ -29,9 +30,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.SortDefault;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -43,6 +45,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import com.fasterxml.jackson.annotation.JsonView;
 
@@ -140,20 +143,20 @@ public class UserController extends BaseRestController {
 	}
 
 	@GetMapping(value = PATH_LIST + ".csv", produces = "text/csv")
-	@Transactional(readOnly = true)
-	public void download(HttpServletResponse response, @SortDefault(sort = "id") Sort sort) throws IOException {
-		response.setContentType("text/csv;charset=utf-8");
-		PrintWriter writer = response.getWriter();
-		writer.write("id,username,name,phone,roles,disabled");
-		try (Stream<User> all = userRepository.findBy(sort)) {
-			// streaming instead of query all into List
-			all.map(u -> String.format("%s,%s,%s,%s,%s,%b", String.valueOf(u.getId()), u.getUsername(), u.getName(),
-					u.getPhone(), u.getRoles() != null ? String.join(" ", u.getRoles()) : "", u.getDisabled()))
-					.forEach(line -> {
-						writer.write('\n');
-						writer.write(line);
-					});
-		}
+	public ResponseEntity<StreamingResponseBody> download(@SortDefault(sort = "id") Sort sort,
+			@RequestParam(required = false) Charset charset) {
+		Charset cs = (charset != null ? charset : StandardCharsets.UTF_8);
+		return ResponseEntity.status(OK).contentType(new MediaType("text", "csv", cs)).body(os -> {
+			try (PrintWriter writer = new PrintWriter(new OutputStreamWriter(os, cs), true)) {
+				writer.write("id,username,name,phone,roles,disabled");
+				userRepository.iterate(sort, u -> {
+					writer.write('\n');
+					writer.write(String.format("%s,%s,%s,%s,%s,%b", String.valueOf(u.getId()), u.getUsername(),
+							u.getName(), u.getPhone(), u.getRoles() != null ? String.join(" ", u.getRoles()) : "",
+							u.getDisabled()));
+				});
+			}
+		});
 	}
 
 	@PostMapping(value = PATH_LIST + ".csv", consumes = "text/csv")
