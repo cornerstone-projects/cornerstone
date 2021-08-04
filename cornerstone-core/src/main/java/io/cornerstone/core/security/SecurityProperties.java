@@ -2,6 +2,7 @@ package io.cornerstone.core.security;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -31,5 +32,7 @@ public class SecurityProperties {
 	private List<String> ignoringPathPatterns = Collections.emptyList();
 
 	private List<String> permitAllPathPatterns = Collections.emptyList();
+
+	private Map<String, String> authorizeRequestsMapping = Collections.emptyMap();
 
 }

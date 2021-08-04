@@ -25,6 +25,7 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.configurers.AbstractAuthenticationFilterConfigurer;
+import org.springframework.security.config.annotation.web.configurers.ExpressionUrlAuthorizationConfigurer;
 import org.springframework.security.config.annotation.web.configurers.FormLoginConfigurer;
 import org.springframework.security.config.core.GrantedAuthorityDefaults;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -75,11 +76,19 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 		} else {
 			permitAllPathPatterns = new String[] { "/**" };
 		}
-		http.csrf().disable().authorizeRequests().antMatchers(permitAllPathPatterns).permitAll().anyRequest()
-				.authenticated().and().exceptionHandling()
+		ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry registry = http
+				.authorizeRequests();
+		registry.antMatchers(permitAllPathPatterns).permitAll();
+		properties.getAuthorizeRequestsMapping().forEach((k, v) -> {
+			registry.antMatchers(k).hasAnyAuthority(v.split("\\s*,\\s*"));
+		});
+		registry.anyRequest().authenticated();
+
+		http.exceptionHandling()
 				.defaultAuthenticationEntryPointFor((request, response, ex) -> response
 						.sendError(HttpServletResponse.SC_UNAUTHORIZED, ex.getLocalizedMessage()),
 						RequestUtils::isRequestedFromApi);
+
 		setAuthenticationFilter(http.formLogin(),
 				new RestfulUsernamePasswordAuthenticationFilter(authenticationManager(), objectMapper));
 		http.formLogin().loginPage(properties.getLoginPage()).loginProcessingUrl(properties.getLoginProcessingUrl())
@@ -89,6 +98,8 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 		if (application.isUnitTest()) {
 			http.httpBasic();
 		}
+
+		http.csrf().disable();
 	}
 
 	AuthenticationSuccessHandler authenticationSuccessHandler(RequestCache requestCache) {

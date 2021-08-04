@@ -53,7 +53,8 @@ import io.vavr.collection.Stream;
 
 @TestPropertySource(properties = { "security.login-page=" + TEST_LOGIN_PAGE,
 		"security.login-processing-url=" + TEST_LOGIN_PROCESSING_URL,
-		"security.default-success-url=" + TEST_DEFAULT_SUCCESS_URL })
+		"security.default-success-url=" + TEST_DEFAULT_SUCCESS_URL,
+		"security.authorize-requests-mapping[/admin/**]=ADMIN" })
 @ContextConfiguration(classes = WebSecurityTests.Config.class)
 class WebSecurityTests extends ControllerTestBase {
 
@@ -62,6 +63,8 @@ class WebSecurityTests extends ControllerTestBase {
 	public static final String TEST_LOGIN_PAGE = "/test.html";
 
 	public static final String TEST_DEFAULT_SUCCESS_URL = "/index.html";
+
+	public static final String TEST_ADMIN_HOME = "/admin/home.html";
 
 	@Test
 	void testAuthenticationFailure() {
@@ -140,6 +143,14 @@ class WebSecurityTests extends ControllerTestBase {
 		assertThat(response.getBody().get("path")).isEqualTo(TEST_DEFAULT_SUCCESS_URL);
 	}
 
+	@Test
+	void testAuthorizeRequestsMapping() {
+		ResponseEntity<String> response = userRestTemplate().getForEntity(TEST_ADMIN_HOME, String.class);
+		assertThat(response.getStatusCode()).isSameAs(FORBIDDEN);
+		response = adminRestTemplate().getForEntity(TEST_ADMIN_HOME, String.class);
+		assertThat(response.getStatusCode()).isSameAs(OK);
+	}
+
 	private ResponseEntity<Map<String, Object>> restfulFormLogin(String username, String password) {
 		Map<String, String> data = new LinkedHashMap<>();
 		data.put("username", username);
@@ -185,6 +196,11 @@ class WebSecurityTests extends ControllerTestBase {
 		@GetMapping(TEST_DEFAULT_SUCCESS_URL)
 		public String get() {
 			return "test";
+		}
+
+		@GetMapping(TEST_ADMIN_HOME)
+		public String home() {
+			return "home";
 		}
 	}
 
