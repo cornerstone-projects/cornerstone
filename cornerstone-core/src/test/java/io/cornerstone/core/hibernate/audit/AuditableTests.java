@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.test.context.support.WithMockUser;
 
-import io.cornerstone.SpringApplicationTestBase;
+import io.cornerstone.test.SpringApplicationTestBase;
 
 public class AuditableTests extends SpringApplicationTestBase {
 

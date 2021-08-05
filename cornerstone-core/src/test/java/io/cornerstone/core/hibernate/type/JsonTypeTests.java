@@ -8,7 +8,7 @@ import java.util.Arrays;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import io.cornerstone.SpringApplicationTestBase;
+import io.cornerstone.test.SpringApplicationTestBase;
 
 public class JsonTypeTests extends SpringApplicationTestBase {
 

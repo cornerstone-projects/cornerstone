@@ -1,4 +1,4 @@
-package io.cornerstone;
+package io.cornerstone.test;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 

@@ -36,9 +36,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 
-import io.cornerstone.ControllerTestBase;
-
 import io.cornerstone.core.domain.ResultPage;
+import io.cornerstone.test.ControllerTestBase;
 
 class UserControllerTests extends ControllerTestBase {
 

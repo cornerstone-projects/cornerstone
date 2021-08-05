@@ -13,7 +13,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import org.junit.jupiter.api.Test;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
 
-import io.cornerstone.ControllerMockTestBase;
+import io.cornerstone.test.ControllerMockTestBase;
 
 class CurrentUserControllerMockTests extends ControllerMockTestBase {
 

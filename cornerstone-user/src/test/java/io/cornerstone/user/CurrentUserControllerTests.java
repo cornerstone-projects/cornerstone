@@ -13,7 +13,7 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 
-import io.cornerstone.ControllerTestBase;
+import io.cornerstone.test.ControllerTestBase;
 
 class CurrentUserControllerTests extends ControllerTestBase {
 

@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 
-import io.cornerstone.SpringApplicationTest;
+import io.cornerstone.test.SpringApplicationTest;
 
 @SpringApplicationTest(classes = FileStorageAutoConfiguration.class, webEnvironment = WebEnvironment.NONE)
 public abstract class FileStorageTestBase {

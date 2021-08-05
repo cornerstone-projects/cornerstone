@@ -47,8 +47,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
-import io.cornerstone.ControllerTestBase;
-
+import io.cornerstone.test.ControllerTestBase;
 import io.vavr.collection.Stream;
 
 @TestPropertySource(properties = { "security.login-page=" + TEST_LOGIN_PAGE,

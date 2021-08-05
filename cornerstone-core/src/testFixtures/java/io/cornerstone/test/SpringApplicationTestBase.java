@@ -1,8 +1,10 @@
-package io.cornerstone;
+package io.cornerstone.test;
 
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.context.annotation.Primary;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.test.context.ContextConfiguration;
 
 import io.cornerstone.core.DefaultApplication;
@@ -16,7 +18,9 @@ public abstract class SpringApplicationTestBase {
 	public static final String DEFAULT_PASSWORD = "password";
 	public static final String ADMIN_ROLE = "ADMIN";
 
-	@SpringBootApplication
+	@SpringBootApplication(scanBasePackageClasses = DefaultApplication.class)
+	@EnableJpaRepositories(basePackageClasses = DefaultApplication.class)
+	@EntityScan(basePackageClasses = DefaultApplication.class)
 	@Primary
 	static class Config extends DefaultApplication {
 
