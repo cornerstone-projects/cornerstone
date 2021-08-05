@@ -4,6 +4,8 @@ spring.application.name: demo
 mysql:
   host: localhost #shortcut for spring.datasource.url
   port: 3306
+  username: root #alias to spring.datasource.username
+  password:
 
 spring.redis:
   host: localhost
