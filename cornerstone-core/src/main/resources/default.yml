@@ -24,6 +24,7 @@ spring.jpa:
   properties.hibernate:
     jdbc.batch_size: 50
     order_inserts: true
+    xml_mapping_enabled: false
 
 spring.data.web:
   pageable:

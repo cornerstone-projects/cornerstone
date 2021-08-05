@@ -29,6 +29,8 @@ dependencies {
 
 configurations.all {
 	exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
+	exclude group: 'com.google.code.gson', module: 'gson' // introduced by jaeger-client
+	exclude group: 'org.glassfish.jaxb', module: 'jaxb-runtime' // introduced by hibernate-core
 }
 
 test {
