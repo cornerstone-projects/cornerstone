@@ -2,12 +2,14 @@ plugins {
 	id 'groovy-gradle-plugin'
 }
 
-if (!project.hasProperty('repoUrlPrefix')) {
-	Properties projectProperties = new Properties()
-	try (FileInputStream fis = new FileInputStream("$rootDir/../gradle.properties")) {
-		projectProperties.load(fis)
+Properties projectProperties = new Properties()
+try (FileInputStream fis = new FileInputStream("$rootDir/../gradle.properties")) {
+	projectProperties.load(fis)
+}
+for (Map.Entry<String,String> entry : projectProperties.entrySet()) {
+	if (!project.hasProperty(entry.getKey())) {
+		ext[entry.getKey()] = entry.getValue()
 	}
-	ext.repoUrlPrefix = projectProperties.repoUrlPrefix
 }
 
 repositories {
@@ -19,6 +21,7 @@ repositories {
 }
 
 dependencies {
-	implementation "io.freefair.lombok:io.freefair.lombok.gradle.plugin:latest.release"
-	implementation "io.spring.dependency-management:io.spring.dependency-management.gradle.plugin:latest.release"
+	implementation "io.freefair.lombok:io.freefair.lombok.gradle.plugin:${project.properties['lombok-plugin.version']?:'latest.release'}"
+	implementation "io.spring.dependency-management:io.spring.dependency-management.gradle.plugin:${project.properties['dependency-management-plugin.version']?:'latest.release'}"
+	implementation "org.springframework.boot:org.springframework.boot.gradle.plugin:${project.properties['spring-boot.version']?:'latest.release'}"
 }

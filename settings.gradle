@@ -1,7 +1,4 @@
 pluginManagement {
-	plugins {
-		id 'org.springframework.boot' version 'latest.release'
-	}
 	repositories {
 		gradlePluginPortal()
 		maven {
