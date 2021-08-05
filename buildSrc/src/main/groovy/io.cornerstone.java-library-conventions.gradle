@@ -22,9 +22,9 @@ publishing {
 	repositories {
 		maven {
 			if(version.endsWith("-SNAPSHOT")) {
-				url "${repoUrlPrefix}snapshots/"
+				url "${repoUrlPrefix}/maven-snapshots/"
 			} else {
-				url "${repoUrlPrefix}releases/"
+				url "${repoUrlPrefix}/maven-releases/"
 			}
 			allowInsecureProtocol true
 			credentials {

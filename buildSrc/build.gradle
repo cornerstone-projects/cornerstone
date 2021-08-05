@@ -2,8 +2,20 @@ plugins {
 	id 'groovy-gradle-plugin'
 }
 
+if (!project.hasProperty('repoUrlPrefix')) {
+	Properties projectProperties = new Properties()
+	try (FileInputStream fis = new FileInputStream("$rootDir/../gradle.properties")) {
+		projectProperties.load(fis)
+	}
+	ext.repoUrlPrefix = projectProperties.repoUrlPrefix
+}
+
 repositories {
 	gradlePluginPortal()
+	maven {
+		url "${repoUrlPrefix}/gradle-plugins/"
+		allowInsecureProtocol true
+	}
 }
 
 dependencies {

@@ -1,2 +1,15 @@
+pluginManagement {
+	plugins {
+		id 'org.springframework.boot' version 'latest.release'
+	}
+	repositories {
+		gradlePluginPortal()
+		maven {
+			url "${repoUrlPrefix}/gradle-plugins/"
+			allowInsecureProtocol true
+		}
+	}
+}
+
 rootProject.name = 'cornerstone'
 include('cornerstone-core', 'cornerstone-fs', 'cornerstone-user', 'showcase')
