@@ -1,4 +1,4 @@
-package io.cornerstone.core.hibernate.type;
+package io.cornerstone.core.hibernate.converter;
 
 import java.math.BigDecimal;
 
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class DummyComponent {
+public class TestComponent {
 
 	private String string;
 

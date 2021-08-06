@@ -1,4 +1,4 @@
-package io.cornerstone.core.hibernate.convert;
+package io.cornerstone.core.hibernate.type;
 
 import org.springframework.data.repository.CrudRepository;
 

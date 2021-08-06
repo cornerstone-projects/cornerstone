@@ -9,7 +9,7 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-public class AuditableEntity extends AbstractAuditableEntity {
+public class TestEntity extends AbstractAuditableEntity {
 
 	private static final long serialVersionUID = -4902047633960048660L;
 	

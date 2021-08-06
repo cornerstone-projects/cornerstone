@@ -1,8 +1,8 @@
-package io.cornerstone.core.hibernate.convert;
+package io.cornerstone.core.hibernate.converter;
 
-import static io.cornerstone.core.hibernate.convert.TestEnum.A;
-import static io.cornerstone.core.hibernate.convert.TestEnum.B;
-import static io.cornerstone.core.hibernate.convert.TestEnum.C;
+import static io.cornerstone.core.hibernate.converter.TestEnum.A;
+import static io.cornerstone.core.hibernate.converter.TestEnum.B;
+import static io.cornerstone.core.hibernate.converter.TestEnum.C;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.math.BigDecimal;
@@ -12,10 +12,14 @@ import java.util.LinkedHashSet;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
-import io.cornerstone.test.SpringApplicationTestBase;
+import io.cornerstone.test.DataJpaTestBase;
 
-public class ConvertTests extends SpringApplicationTestBase {
+@EnableJpaRepositories(basePackageClasses = TestEntityRepository.class)
+@EntityScan(basePackageClasses = TestEntity.class)
+public class ConvertersTests extends DataJpaTestBase {
 
 	@Autowired
 	TestEntityRepository repository;

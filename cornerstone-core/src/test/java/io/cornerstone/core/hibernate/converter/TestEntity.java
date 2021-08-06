@@ -1,4 +1,4 @@
-package io.cornerstone.core.hibernate.convert;
+package io.cornerstone.core.hibernate.converter;
 
 import java.util.List;
 import java.util.Map;
@@ -10,6 +10,10 @@ import javax.persistence.Entity;
 
 import org.springframework.data.jpa.domain.AbstractPersistable;
 
+import io.cornerstone.core.hibernate.convert.EnumArrayConverter;
+import io.cornerstone.core.hibernate.convert.EnumListConverter;
+import io.cornerstone.core.hibernate.convert.EnumSetConverter;
+import io.cornerstone.core.hibernate.convert.JsonConverter;
 import lombok.Getter;
 import lombok.Setter;
 

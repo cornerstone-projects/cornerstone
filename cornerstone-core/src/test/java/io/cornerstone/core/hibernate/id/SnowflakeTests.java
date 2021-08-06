@@ -4,21 +4,25 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
-import io.cornerstone.test.SpringApplicationTestBase;
+import io.cornerstone.test.DataJpaTestBase;
 
-public class SnowflakeTests extends SpringApplicationTestBase {
+@EnableJpaRepositories(basePackageClasses = TestEntityRepository.class)
+@EntityScan(basePackageClasses = TestEntity.class)
+public class SnowflakeTests extends DataJpaTestBase {
 
 	@Autowired
-	SimpleEntityRepository repository;
+	TestEntityRepository repository;
 
 	@Autowired
 	SnowflakeProperties snowflakeProperties;
 
 	@Test
 	public void test() {
-		Long id1 = repository.save(new SimpleEntity()).getId();
-		Long id2 = repository.save(new SimpleEntity()).getId();
+		Long id1 = repository.save(new TestEntity()).getId();
+		Long id2 = repository.save(new TestEntity()).getId();
 		assertThat(id1).isGreaterThan(100000000);
 		assertThat(id2).isGreaterThan(id1);
 		Snowflake sf = snowflakeProperties.build();

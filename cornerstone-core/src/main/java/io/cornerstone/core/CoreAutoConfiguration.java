@@ -6,9 +6,11 @@ import org.springframework.boot.autoconfigure.task.TaskExecutionAutoConfiguratio
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
+import io.cornerstone.core.hibernate.convert.AbstractArrayConverter;
+
 @Configuration(proxyBeanMethods = false)
 @ComponentScan
-@EntityScan
+@EntityScan(basePackageClasses = AbstractArrayConverter.class)
 @AutoConfigureBefore(TaskExecutionAutoConfiguration.class)
 public class CoreAutoConfiguration {
 

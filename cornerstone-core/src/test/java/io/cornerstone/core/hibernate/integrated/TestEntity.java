@@ -35,7 +35,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @EqualsAndHashCode
-public class IntegratedEntity implements Persistable<Long> {
+public class TestEntity implements Persistable<Long> {
 
 	@Id
 	@GeneratedValue(generator = "snowflake")
