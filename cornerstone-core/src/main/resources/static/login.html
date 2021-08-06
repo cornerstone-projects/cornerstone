@@ -5,26 +5,78 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<title>请登录</title>
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
-		integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-	<link href="https://getbootstrap.com/docs/4.0/examples/signin/signin.css" rel="stylesheet"
-		crossorigin="anonymous" />
+	<link href="//cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet"
+		integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+	<script src="//cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+	<style>
+		body {
+			padding-top: 40px;
+			background-color: #eee;
+		}
+
+		.form-signin {
+			max-width: 330px;
+			padding: 15px;
+			margin: 0 auto;
+		}
+
+		.form-signin .form-control {
+			padding: 10px;
+		}
+	</style>
+	<script>
+		$(function () {
+			$('.form-signin').on('submit', function (e) {
+				var f = $(this);
+				var btn = $(':input:submit:focus', f);
+				$.ajax({
+					url: f.attr('action'),
+					method: f.attr('method'),
+					data: f.serialize(),
+					beforeSend: function () {
+						$('.is-invalid').removeClass('is-invalid');
+						$('.invalid-feedback').remove();
+						btn.prop('disabled', true);
+					},
+					success: function (data) {
+						document.location.href = data.targetUrl;
+					},
+					error: function (jqXHR) {
+						var data = jqXHR.responseJSON;
+						if (jqXHR.status == 401) {
+							var message = data.message;
+							$('#' + (message.indexOf($('#password').attr('placeholder')) != -1 ? 'password' : 'username')).addClass('is-invalid').after('<span class="invalid-feedback"></span>').next().text(message);
+						} else {
+							console.log(data);
+							alert(data.message);
+						}
+					},
+					complete: function () {
+						btn.prop('disabled', false);
+					}
+				});
+				return false;
+			});
+		});
+	</script>
 </head>
 
 <body>
 	<div class="container">
 		<form class="form-signin" method="post" action="/login">
-			<h2 class="form-signin-heading text-center">请登录</h2>
+			<h3 class="form-signin-heading text-center">请登录</h3>
 			<p>
-				<label for="username" class="sr-only">用户</label>
+				<label for="username" class="visually-hidden">用户</label>
 				<input type="text" id="username" name="username" class="form-control" placeholder="用户" required
 					autofocus>
 			</p>
 			<p>
-				<label for="password" class="sr-only">密码</label>
+				<label for="password" class="visually-hidden">密码</label>
 				<input type="password" id="password" name="password" class="form-control" placeholder="密码" required>
 			</p>
-			<button class="btn btn-lg btn-primary btn-block" type="submit">登录</button>
+			<p class="d-grid gap-2">
+				<button class="btn btn-lg btn-primary btn-block" type="submit">登录</button>
+			</p>
 		</form>
 	</div>
 </body>
