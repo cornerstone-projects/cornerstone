@@ -1,5 +1,5 @@
 ### edit it according to your environment
-spring.application.name: demo
+spring.application.name: showcase
 
 mysql:
   host: localhost #shortcut for spring.datasource.url
