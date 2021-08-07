@@ -46,7 +46,7 @@ public abstract class AbstractEntity implements Persistable<Long>, Serializable 
 	@Nullable
 	@JsonProperty("id")
 	@JsonView(Persistable.class)
-	public String getIdAsString() {
+	protected String getIdAsString() {
 		return id != null ? String.valueOf(id) : null;
 	}
 
