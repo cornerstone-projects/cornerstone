@@ -16,21 +16,26 @@ public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificat
 
 	String CACHE_NAME = "user";
 
+	@Override
 	@Caching(evict = { @CacheEvict(cacheNames = CACHE_NAME, key = "#user.id"),
 			@CacheEvict(cacheNames = CACHE_NAME, key = "#user.username") })
 	<S extends User> S save(S user);
 
+	@Override
 	@Caching(evict = { @CacheEvict(cacheNames = CACHE_NAME, key = "#user.id"),
 			@CacheEvict(cacheNames = CACHE_NAME, key = "#user.username") })
 	<S extends User> S saveAndFlush(S user);
 
+	@Override
 	@Caching(evict = { @CacheEvict(cacheNames = CACHE_NAME, key = "#user.id"),
 			@CacheEvict(cacheNames = CACHE_NAME, key = "#user.username") })
 	void delete(User user);
 
+	@Override
 	@Cacheable(CACHE_NAME)
 	User getById(Long id);
 
+	@Override
 	@Cacheable(CACHE_NAME)
 	Optional<User> findById(Long id);
 

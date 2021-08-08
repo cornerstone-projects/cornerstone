@@ -42,7 +42,7 @@ public class JsonTypeDescriptor extends AbstractTypeDescriptor<Object> implement
 	}
 
 	public JsonTypeDescriptor() {
-		super(Object.class, new MutableMutabilityPlan<Object>() {
+		super(Object.class, new MutableMutabilityPlan<>() {
 
 			private static final long serialVersionUID = 1940316475848878030L;
 

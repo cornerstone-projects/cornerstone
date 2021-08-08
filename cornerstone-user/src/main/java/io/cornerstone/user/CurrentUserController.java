@@ -54,6 +54,7 @@ public class CurrentUserController extends BaseRestController {
 			BeanUtils.copyNonNullProperties(user, u);
 			// synchronize user in session
 			TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+				@Override
 				public void afterCommit() {
 					BeanUtils.copyNonNullProperties(user, currentUser);
 					RequestAttributes attrs = RequestContextHolder.currentRequestAttributes();

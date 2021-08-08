@@ -8,7 +8,7 @@ import java.lang.annotation.Target;
 
 /**
  * properties are ignored in JsonDesensitizer.toJson()
- * 
+ *
  */
 @Target({ METHOD, FIELD })
 @Retention(RUNTIME)

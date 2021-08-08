@@ -87,14 +87,6 @@ jaeger:
 
 ---
 spring:
-  config.activate.on-profile: nosecurity
-  autoconfigure:
-    exclude: 
-      - org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
-      - org.springframework.boot.actuate.autoconfigure.security.servlet.ManagementWebSecurityAutoConfiguration
-
----
-spring:
   config.activate.on-profile: dev|test
   devtools.livereload.enabled: false
   jackson.serialization.indent_output: true
@@ -120,15 +112,6 @@ logging:
 
 spring.jpa.properties.hibernate:
   show_sql: true
-
----
-spring:
-  config.activate.on-profile: test && nosecurity
-  autoconfigure:
-    exclude: 
-      - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
-      - org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
-      - org.springframework.boot.actuate.autoconfigure.security.servlet.ManagementWebSecurityAutoConfiguration
 
 ---
 spring:

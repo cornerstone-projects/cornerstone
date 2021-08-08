@@ -29,6 +29,7 @@ public class RestfulUsernamePasswordAuthenticationFilter extends UsernamePasswor
 		this.objectMapper = objectMapper;
 	}
 
+	@Override
 	@Nullable
 	protected String obtainUsername(HttpServletRequest request) {
 		Map<String, String> requestBody = body(request);
@@ -39,6 +40,7 @@ public class RestfulUsernamePasswordAuthenticationFilter extends UsernamePasswor
 		return super.obtainUsername(request);
 	}
 
+	@Override
 	@Nullable
 	protected String obtainPassword(HttpServletRequest request) {
 		@SuppressWarnings("unchecked")

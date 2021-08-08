@@ -38,9 +38,9 @@ public class AccessFilter implements Filter {
 	public static final String MDC_KEY_REQUEST_ID = CodecUtils.MDC_KEY_REQUEST_ID;
 	public static final String MDC_KEY_REQUEST = CodecUtils.MDC_KEY_REQUEST;
 
-	private Logger accessLog = LoggerFactory.getLogger("access");
+	private final Logger accessLog = LoggerFactory.getLogger("access");
 
-	private Logger accesWarnLog = LoggerFactory.getLogger("access-warn");
+	private final Logger accesWarnLog = LoggerFactory.getLogger("access-warn");
 
 	public static final long DEFAULT_RESPONSETIMETHRESHOLD = 5000;
 

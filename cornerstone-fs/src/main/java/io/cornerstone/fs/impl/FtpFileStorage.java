@@ -52,7 +52,7 @@ public class FtpFileStorage extends AbstractFileStorage {
 
 	@PostConstruct
 	public void init() {
-		PooledObjectFactory<FTPClient> factory = new BasePooledObjectFactory<FTPClient>() {
+		PooledObjectFactory<FTPClient> factory = new BasePooledObjectFactory<>() {
 
 			@Override
 			public FTPClient create() throws Exception {
@@ -134,7 +134,7 @@ public class FtpFileStorage extends AbstractFileStorage {
 		poolConfig.setSoftMinEvictableIdleTimeMillis(poolConfig.getMinEvictableIdleTimeMillis());
 		poolConfig.setLifo(false);
 		poolConfig.setTestOnBorrow(true);
-		pool = new GenericObjectPool<FTPClient>(factory, poolConfig);
+		pool = new GenericObjectPool<>(factory, poolConfig);
 	}
 
 	@PreDestroy
@@ -219,8 +219,8 @@ public class FtpFileStorage extends AbstractFileStorage {
 			String relativePath = pathname.substring(workingDirectory.length() + 1);
 			String[] arr = relativePath.split("/");
 			StringBuilder sb = new StringBuilder(workingDirectory);
-			for (int i = 0; i < arr.length; i++) {
-				sb.append("/").append(arr[i]);
+			for (String element : arr) {
+				sb.append("/").append(element);
 				ftpClient.changeWorkingDirectory(sb.toString());
 				if (ftpClient.getReplyCode() == 550) {
 					if (!ftpClient.makeDirectory(sb.toString()))

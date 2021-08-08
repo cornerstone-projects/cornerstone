@@ -14,7 +14,7 @@ import lombok.RequiredArgsConstructor;
 @Profile("test||dev")
 @RequiredArgsConstructor
 public class UserSetup {
-	
+
 	public static final String DEFAULT_PASSWORD = "password";
 	public static final String USER_USERNAME = "user";
 	public static final String ADMIN_USERNAME = "admin";
@@ -22,7 +22,7 @@ public class UserSetup {
 
 	private final UserRepository userRepository;
 	private final PasswordEncoder passwordEncoder;
-	
+
 	@PostConstruct
 	void setup() {
 		if (userRepository.count() == 0) {

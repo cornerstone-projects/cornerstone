@@ -12,7 +12,7 @@ import lombok.Setter;
 public class TestEntity extends AbstractAuditableEntity {
 
 	private static final long serialVersionUID = -4902047633960048660L;
-	
+
 	private String name;
 
 }
