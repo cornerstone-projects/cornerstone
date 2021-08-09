@@ -1,18 +1,17 @@
 package io.cornerstone.user;
 
 import java.util.Optional;
-import java.util.function.Consumer;
-import java.util.stream.Stream;
 
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
-import org.springframework.transaction.annotation.Transactional;
 
-public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificationExecutor<User> {
+import io.cornerstone.core.repository.StreamingRepository;
+
+public interface UserRepository
+		extends JpaRepository<User, Long>, JpaSpecificationExecutor<User>, StreamingRepository<User> {
 
 	String CACHE_NAME = "user";
 
@@ -43,16 +42,5 @@ public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificat
 	Optional<User> findByUsername(String username);
 
 	boolean existsByUsername(String username);
-
-	Stream<User> findBy(Sort sort);
-
-	@Transactional(readOnly = true)
-	default void iterate(Sort sort, Consumer<User> consumer) {
-		// avoid org.springframework.dao.InvalidDataAccessApiUsageException
-		// see JpaQueryExecution.StreamExecution::doExecute
-		try (Stream<User> all = findBy(sort)) {
-			all.forEach(consumer);
-		}
-	}
 
 }

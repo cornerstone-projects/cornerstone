@@ -149,7 +149,7 @@ public class UserController extends BaseRestController {
 		return ResponseEntity.status(OK).contentType(new MediaType("text", "csv", cs)).body(os -> {
 			try (PrintWriter writer = new PrintWriter(new OutputStreamWriter(os, cs), true)) {
 				writer.write("id,username,name,phone,roles,disabled");
-				userRepository.iterate(sort, u -> {
+				userRepository.forEach(sort, u -> {
 					writer.write('\n');
 					writer.write(String.format("%s,%s,%s,%s,%s,%b", String.valueOf(u.getId()), u.getUsername(),
 							u.getName(), u.getPhone(), u.getRoles() != null ? String.join(" ", u.getRoles()) : "",
