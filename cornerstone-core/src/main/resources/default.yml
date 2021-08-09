@@ -110,9 +110,6 @@ spring:
 logging:
   config: classpath:log4j2-test.xml
 
-spring.jpa.properties.hibernate:
-  show_sql: true
-
 ---
 spring:
   config.activate.on-profile: prod
