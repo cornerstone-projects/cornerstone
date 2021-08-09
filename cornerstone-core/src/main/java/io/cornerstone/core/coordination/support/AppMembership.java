@@ -2,6 +2,9 @@ package io.cornerstone.core.coordination.support;
 
 import java.util.List;
 
+import org.springframework.boot.availability.AvailabilityChangeEvent;
+import org.springframework.boot.availability.ReadinessState;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import io.cornerstone.core.Application;
@@ -17,7 +20,7 @@ public class AppMembership {
 	public AppMembership(Application application, Membership membership) {
 		this.membership = membership;
 		this.group = application.getName();
-		this.membership.join(group);
+
 	}
 
 	public boolean isLeader() {
@@ -32,4 +35,15 @@ public class AppMembership {
 		return membership.getMembers(group);
 	}
 
+	@EventListener
+	void onEvent(AvailabilityChangeEvent<ReadinessState> event) {
+		switch (event.getState()) {
+		case ACCEPTING_TRAFFIC:
+			this.membership.join(group);
+			break;
+		case REFUSING_TRAFFIC:
+			this.membership.leave(group);
+			break;
+		}
+	}
 }
