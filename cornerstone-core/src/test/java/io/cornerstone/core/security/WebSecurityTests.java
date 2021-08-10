@@ -23,9 +23,9 @@ import java.util.Map;
 import java.util.function.Function;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.RequestEntity;
@@ -39,7 +39,6 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -54,7 +53,6 @@ import io.vavr.collection.Stream;
 		"security.login-processing-url=" + TEST_LOGIN_PROCESSING_URL,
 		"security.default-success-url=" + TEST_DEFAULT_SUCCESS_URL,
 		"security.authorize-requests-mapping[/admin/**]=ADMIN" })
-@ContextConfiguration(classes = WebSecurityTests.Config.class)
 class WebSecurityTests extends ControllerTestBase {
 
 	public static final String TEST_LOGIN_PROCESSING_URL = "/test";
@@ -203,7 +201,7 @@ class WebSecurityTests extends ControllerTestBase {
 		}
 	}
 
-	@ComponentScan
+	@TestConfiguration
 	static class Config {
 
 		@Bean

@@ -107,6 +107,8 @@ spring:
     exclude:
       - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
 
+spring.main.allow-bean-definition-overriding: true
+
 logging:
   config: classpath:log4j2-test.xml
 
