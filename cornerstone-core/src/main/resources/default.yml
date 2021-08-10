@@ -22,8 +22,12 @@ spring.jpa:
   open-in-view: false
   hibernate.use-new-id-generator-mappings: false
   properties.hibernate:
+    jdbc.fetch_size: 100
     jdbc.batch_size: 50
+    default_batch_fetch_size: 10
     order_inserts: true
+    order_updates: true
+    auto_quote_keyword: true
     xml_mapping_enabled: false
 
 spring.data.web:
