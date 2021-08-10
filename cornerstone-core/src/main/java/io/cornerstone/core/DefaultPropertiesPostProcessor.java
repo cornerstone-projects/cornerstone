@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.cloud.CloudPlatform;
 import org.springframework.boot.env.EnvironmentPostProcessor;
 import org.springframework.boot.env.YamlPropertySourceLoader;
 import org.springframework.core.Ordered;
@@ -31,7 +32,13 @@ public class DefaultPropertiesPostProcessor implements EnvironmentPostProcessor,
 			List<PropertySource<?>> list = new YamlPropertySourceLoader()
 					.load(FILE_NAME, new ClassPathResource(FILE_NAME)).stream().filter(ps -> {
 						String onProfile = (String) ps.getProperty("spring.config.activate.on-profile");
-						return onProfile == null || environment.acceptsProfiles(Profiles.of(onProfile));
+						if (onProfile != null && !environment.acceptsProfiles(Profiles.of(onProfile)))
+							return false;
+						String onCloudPlatform = (String) ps.getProperty("spring.config.activate.on-cloud-platform");
+						if (onCloudPlatform == null)
+							return true;
+						CloudPlatform cloudPlatform = CloudPlatform.getActive(environment);
+						return cloudPlatform != null && cloudPlatform.name().equalsIgnoreCase(onCloudPlatform);
 					}).collect(Collectors.toList());
 			Collections.reverse(list);
 			list.forEach(environment.getPropertySources()::addLast);
