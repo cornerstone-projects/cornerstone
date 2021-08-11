@@ -4,7 +4,9 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Date;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.util.TimeZone;
 
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataAccessResourceFailureException;
@@ -73,8 +75,10 @@ public class MySQLCyclicSequence extends AbstractDatabaseCyclicSequence {
 			Long current = rs.getLong(2);
 			if (current < 10000000000L) // no mills
 				current *= 1000;
-			Date currentTimestamp = new Date(current);
-			return getStringValue(currentTimestamp, getPaddingLength(), next);
+			LocalDateTime datetime = LocalDateTime.ofInstant(Instant.ofEpochMilli(current),
+					TimeZone.getDefault().toZoneId());
+			;
+			return getStringValue(datetime, getPaddingLength(), next);
 		}
 	}
 

@@ -1,6 +1,6 @@
 package io.cornerstone.core.sequence.cyclic;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,8 +39,8 @@ public abstract class AbstractCyclicSequence implements CyclicSequence, Initiali
 		return Long.valueOf(nextStringValue());
 	}
 
-	protected String getStringValue(Date date, int paddingLength, int nextId) {
-		return getCycleType().format(date) + NumberUtils.format(nextId, paddingLength);
+	protected String getStringValue(LocalDateTime datetime, int paddingLength, int nextId) {
+		return getCycleType().format(datetime) + NumberUtils.format(nextId, paddingLength);
 	}
 
 	@Override

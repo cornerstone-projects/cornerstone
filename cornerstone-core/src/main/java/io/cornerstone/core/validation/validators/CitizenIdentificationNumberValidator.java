@@ -3,7 +3,6 @@ package io.cornerstone.core.validation.validators;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.List;
 import java.util.Random;
 
@@ -80,11 +79,8 @@ public class CitizenIdentificationNumberValidator implements ConstraintValidator
 		String province = provinces.get(random.nextInt(provinces.size())) + '0';
 		String area = String.valueOf(1 + random.nextInt(3)) + String.valueOf(1 + random.nextInt(3))
 				+ String.valueOf(1 + random.nextInt(7));
-		Calendar cal = Calendar.getInstance();
-		cal.set(Calendar.YEAR, 1970 + random.nextInt(50));
-		cal.set(Calendar.DAY_OF_YEAR, 1 + random.nextInt(365));
-		String dob = NumberUtils.format(cal.get(Calendar.YEAR), 4) + NumberUtils.format(cal.get(Calendar.MONTH) + 1, 2)
-				+ NumberUtils.format(cal.get(Calendar.DAY_OF_MONTH), 2);
+		String dob = NumberUtils.format(1970 + random.nextInt(50), 4) + NumberUtils.format(1 + random.nextInt(12), 2)
+				+ NumberUtils.format(1 + random.nextInt(28), 2);
 		String seq = NumberUtils.format(1 + random.nextInt(999), 3);
 		String s = province + area + dob + seq;
 		return s + getCheckBit(getPowerSum(s.toCharArray()));
