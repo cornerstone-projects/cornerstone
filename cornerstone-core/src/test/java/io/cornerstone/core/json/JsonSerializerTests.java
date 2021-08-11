@@ -63,7 +63,7 @@ public class JsonSerializerTests {
 		u.setDepartment(department);
 		u.getDepartments().add(department);
 		u.getDepartments().add(department2);
-		u.setDepts(u.getDepartments().toArray(new Department[u.getDepartments().size()]));
+		u.setDepts(u.getDepartments().toArray(new Department[0]));
 		String json = mapper.writeValueAsString(u);
 		JsonNode root = mapper.readTree(json);
 		JsonNode node = root.get("department");

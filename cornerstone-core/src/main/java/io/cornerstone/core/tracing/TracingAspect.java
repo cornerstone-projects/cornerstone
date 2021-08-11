@@ -104,7 +104,7 @@ public class TracingAspect {
 			}
 		}
 		return Tracing.executeCheckedCallable(ReflectionUtils.stringify(method), pjp::proceed,
-				tags.toArray(new Serializable[tags.size()]));
+				tags.toArray(new Serializable[0]));
 	}
 
 	@Around("execution(public * *(..)) and target(org.springframework.data.repository.Repository))")
@@ -128,7 +128,7 @@ public class TracingAspect {
 			}
 		}
 		return Tracing.executeCheckedCallable(ReflectionUtils.stringify(method), pjp::proceed,
-				tags.toArray(new Serializable[tags.size()]));
+				tags.toArray(new Serializable[0]));
 	}
 
 	@Around("execution(public * *(..)) and @within(restController)")

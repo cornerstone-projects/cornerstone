@@ -61,7 +61,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 		List<String> ignoringPathPatterns = new ArrayList<>();
 		ignoringPathPatterns.addAll(Arrays.asList("/error", "/actuator/**", "/assets/**"));
 		ignoringPathPatterns.addAll(properties.getIgnoringPathPatterns());
-		web.ignoring().antMatchers(ignoringPathPatterns.toArray(new String[ignoringPathPatterns.size()]));
+		web.ignoring().antMatchers(ignoringPathPatterns.toArray(new String[0]));
 	}
 
 	@Override
@@ -72,7 +72,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 			patterns.addAll(Arrays.asList(properties.getLoginPage(), properties.getLoginProcessingUrl(),
 					properties.getLogoutUrl()));
 			patterns.addAll(properties.getPermitAllPathPatterns());
-			permitAllPathPatterns = patterns.toArray(new String[patterns.size()]);
+			permitAllPathPatterns = patterns.toArray(new String[0]);
 		} else {
 			permitAllPathPatterns = new String[] { "/**" };
 		}

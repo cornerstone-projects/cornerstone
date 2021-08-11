@@ -217,7 +217,7 @@ public class SsoFilter implements Filter {
 				Set<String> roles = userFromApi.getRoles();
 				if (!CollectionUtils.isEmpty(roles)) {
 					List<GrantedAuthority> list = AuthorityUtils
-							.createAuthorityList(roles.toArray(new String[roles.size()]));
+							.createAuthorityList(roles.toArray(new String[0]));
 					for (GrantedAuthority ga : list) {
 						if (!authorities.contains(ga))
 							authorities.add(ga);

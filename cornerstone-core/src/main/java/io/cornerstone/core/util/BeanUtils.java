@@ -25,7 +25,7 @@ public class BeanUtils {
 				.filter(name -> bw.getPropertyValue(name) == null).collect(Collectors.toSet()));
 		if (ignoreProperties.length > 0)
 			ignores.addAll(Arrays.asList(ignoreProperties));
-		org.springframework.beans.BeanUtils.copyProperties(source, target, ignores.toArray(new String[ignores.size()]));
+		org.springframework.beans.BeanUtils.copyProperties(source, target, ignores.toArray(new String[0]));
 	}
 
 	public static void copyPropertiesInJsonView(Object source, Object target, Class<?> view) {
