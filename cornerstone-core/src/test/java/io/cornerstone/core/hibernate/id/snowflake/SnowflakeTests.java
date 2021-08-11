@@ -1,4 +1,4 @@
-package io.cornerstone.core.hibernate.id;
+package io.cornerstone.core.hibernate.id.snowflake;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
+import io.cornerstone.core.hibernate.id.Snowflake;
+import io.cornerstone.core.hibernate.id.SnowflakeProperties;
 import io.cornerstone.test.DataJpaTestBase;
 
 @EnableJpaRepositories(basePackageClasses = TestEntityRepository.class)

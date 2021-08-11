@@ -1,4 +1,4 @@
-package io.cornerstone.core.hibernate.id;
+package io.cornerstone.core.hibernate.id.snowflake;
 
 import javax.persistence.Entity;
 
