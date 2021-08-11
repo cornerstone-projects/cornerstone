@@ -36,6 +36,15 @@ spring.data.web:
     max-page-size: 100
     one-indexed-parameters: true
 
+spring.redis:
+  timeout: 5s
+  connect-timeout: 5s
+  lettuce.pool:
+    max-total: 50
+    max-idle: 10
+    min-idle: 1
+    max-wait: 10s
+
 spring.data.redis.repositories.enabled: false
 
 spring.cache.redis.time-to-live: 300s

@@ -4,7 +4,6 @@ plugins {
 
 dependencies {
 	api project(":cornerstone-core")
-	api "org.apache.commons:commons-pool2"
 	api "commons-net:commons-net:${project.properties['commons-net.version']?:'latest.release'}"
 	api "com.amazonaws:aws-java-sdk-s3:${project.properties['aws-sdk-java.version']?:'latest.release'}"
 	testImplementation(testFixtures(project(":cornerstone-core")))
