@@ -11,3 +11,7 @@ dependencies {
 	runtimeOnly "mysql:mysql-connector-java"
 	testImplementation testFixtures(project(":cornerstone-core"))
 }
+
+springBoot {
+	buildInfo()
+}
