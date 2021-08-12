@@ -12,7 +12,10 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 @Component
@@ -21,8 +24,10 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class SnowflakeProperties {
 
-	public static final String PREFIX = "hibernate-buddy.snowflake";
+	public static final String PREFIX = "snowflake";
 
+	@Getter(value = AccessLevel.NONE)
+	@Setter(value = AccessLevel.NONE)
 	@Autowired
 	private Environment env;
 
