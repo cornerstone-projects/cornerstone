@@ -41,6 +41,12 @@ java {
 	withSourcesJar()
 }
 
+sourcesJar {
+	dependsOn delombok
+	from 'build/generated/sources/delombok/java/main/'
+	duplicatesStrategy DuplicatesStrategy.INCLUDE
+}
+
 clean {
 	doLast {
 		project.delete 'bin', 'logs'
