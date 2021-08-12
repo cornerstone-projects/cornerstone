@@ -5,13 +5,11 @@ import java.util.Optional;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
-import io.cornerstone.core.repository.StreamingRepository;
+import io.cornerstone.core.repository.StreamableJpaRepository;
 
-public interface UserRepository
-		extends JpaRepository<User, Long>, JpaSpecificationExecutor<User>, StreamingRepository<User> {
+public interface UserRepository extends StreamableJpaRepository<User, Long>, JpaSpecificationExecutor<User> {
 
 	String CACHE_NAME = "user";
 
