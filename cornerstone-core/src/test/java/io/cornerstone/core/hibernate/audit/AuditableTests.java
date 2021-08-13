@@ -21,6 +21,8 @@ public class AuditableTests extends DataJpaTestBase {
 	@WithMockUser(username = "admin")
 	public void test() {
 		TestEntity entity = repository.save(new TestEntity());
+		flushAndClear();
+
 		entity = repository.findById(entity.getId()).orElseThrow(IllegalStateException::new);
 		assertThat(entity.getCreatedDate()).isNotNull();
 		assertThat(entity.getCreatedBy()).isEqualTo("admin");
@@ -29,6 +31,8 @@ public class AuditableTests extends DataJpaTestBase {
 
 		entity.setName("test");
 		entity = repository.save(entity);
+		flushAndClear();
+
 		assertThat(entity.getCreatedDate()).isNotNull();
 		assertThat(entity.getCreatedBy()).isEqualTo("admin");
 		assertThat(entity.getLastModifiedDate()).isNotNull();

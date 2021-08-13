@@ -43,11 +43,12 @@ public class IntegratedEntityTests extends DataJpaTestBase {
 		entity.setTestComponentList(Arrays.asList(new TestEntity.TestComponent("a", 1, new BigDecimal("10.1")),
 				new TestEntity.TestComponent("b", 2, new BigDecimal("10.2")),
 				new TestEntity.TestComponent("c", 3, new BigDecimal("10.3"))));
-		entity.setAnotherComponentList(
-				Arrays.asList(new TestEntity.AnotherComponent("a", 1, new BigDecimal("10.1")),
-						new TestEntity.AnotherComponent("b", 2, new BigDecimal("10.2")),
-						new TestEntity.AnotherComponent("c", 3, new BigDecimal("10.3"))));
+		entity.setAnotherComponentList(Arrays.asList(new TestEntity.AnotherComponent("a", 1, new BigDecimal("10.1")),
+				new TestEntity.AnotherComponent("b", 2, new BigDecimal("10.2")),
+				new TestEntity.AnotherComponent("c", 3, new BigDecimal("10.3"))));
 		repository.save(entity);
+		flushAndClear();
+
 		assertThat(entity.getId()).isGreaterThan(100000000L);
 		TestEntity savedEntity = repository.findById(entity.getId()).orElseThrow(IllegalStateException::new);
 		assertThat(savedEntity).isNotSameAs(entity);

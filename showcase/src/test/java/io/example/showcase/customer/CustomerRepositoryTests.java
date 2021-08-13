@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import io.cornerstone.core.validation.validators.CitizenIdentificationNumberValidator;
 import io.cornerstone.core.validation.validators.MobilePhoneNumberValidator;
@@ -23,6 +25,7 @@ public class CustomerRepositoryTests extends DataJpaTestBase {
 	CustomerRepository repository;
 
 	@Test
+	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public void save() {
 		Customer customer = new Customer();
 		customer.setName("name");
@@ -41,6 +44,7 @@ public class CustomerRepositoryTests extends DataJpaTestBase {
 		assertThat(savedCustomer.getIdNo()).isEqualTo(customer.getIdNo());
 		assertThat(savedCustomer.getPhone()).isEqualTo(customer.getPhone());
 		assertThat(savedCustomer.getCreatedDate()).isNotNull();
+		repository.delete(savedCustomer);
 	}
 
 }
