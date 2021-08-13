@@ -47,6 +47,10 @@ sourcesJar {
 	duplicatesStrategy DuplicatesStrategy.INCLUDE
 }
 
+tasks.withType(JavaCompile) {
+	options.encoding = 'UTF-8'
+}
+
 clean {
 	doLast {
 		project.delete 'bin', 'logs'
