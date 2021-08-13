@@ -13,7 +13,7 @@ import org.springframework.test.context.ContextConfiguration;
 import io.cornerstone.core.hibernate.convert.AbstractArrayConverter;
 import io.cornerstone.core.hibernate.id.SnowflakeProperties;
 
-@DataJpaTest
+@DataJpaTest(showSql = false)
 @ContextConfiguration(classes = DataJpaTestBase.Config.class)
 @ActiveProfiles("test")
 public abstract class DataJpaTestBase {
