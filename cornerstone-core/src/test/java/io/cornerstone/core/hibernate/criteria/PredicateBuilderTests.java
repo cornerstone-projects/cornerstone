@@ -4,9 +4,12 @@ import static io.cornerstone.core.hibernate.criteria.PredicateBuilder.contains;
 import static io.cornerstone.core.hibernate.criteria.PredicateBuilder.itemContains;
 import static io.cornerstone.core.hibernate.criteria.PredicateBuilder.itemEndsWith;
 import static io.cornerstone.core.hibernate.criteria.PredicateBuilder.itemStartsWith;
+import static io.cornerstone.core.hibernate.criteria.PredicateBuilder.regexpLike;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.junit.jupiter.api.Test;
@@ -92,6 +95,27 @@ public class PredicateBuilderTests extends DataJpaTestBase {
 			String name = "name" + i;
 			long expected = size - i;
 			assertThat(repository.count((root, cq, cb) -> itemEndsWith(root, cb, "names", name))).isEqualTo(expected);
+		}
+	}
+
+	@Test
+	public void testRegexpLike() {
+		int size = 5;
+		for (int i = 0; i < size; i++) {
+			TestEntity entity = new TestEntity();
+			List<String> list = new ArrayList<>();
+			for (int j = 0; j < i + 1; j++)
+				list.add(String.valueOf(j));
+			entity.setName("name" + String.join("", list));
+			repository.save(entity);
+		}
+		for (int i = 0; i < size; i++) {
+			List<String> list = new ArrayList<>();
+			for (int j = 0; j < i + 1; j++)
+				list.add(String.valueOf(j));
+			String name = "name" + String.join("", list) + ".*";
+			long expected = size - i;
+			assertThat(repository.count((root, cq, cb) -> regexpLike(root, cb, "name", name))).isEqualTo(expected);
 		}
 	}
 

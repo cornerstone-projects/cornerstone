@@ -41,6 +41,16 @@ public class PredicateBuilder {
 		return cb.like(cb.concat(root.get(propertyName), ","), '%' + suffix + ",%");
 	}
 
+	public static <T> Predicate regexpLike(Root<T> root, CriteriaBuilder cb, String propertyName, String pattern) {
+		// for mysql 5.7:
+		// create function regexp_like (text varchar(255), pattern varchar(255)) returns
+		// integer deterministic return text regexp pattern;
+		// for postgresql:
+		// create or replace function regexp_like(character varying,character varying)
+		// returns integer as $$ select ($1 ~ $2)::int; $$ language sql immutable;
+		return cb.equal(cb.function("regexp_like", Integer.class, root.get(propertyName), cb.literal(pattern)), 1);
+	}
+
 	@Nullable
 	private static Dialect getDialect(CriteriaBuilder cb) {
 		if (cb instanceof CriteriaBuilderImpl) {

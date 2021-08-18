@@ -15,6 +15,8 @@ public class TestEntity extends AbstractEntity {
 
 	private static final long serialVersionUID = 950904507124426155L;
 
+	private String name;
+
 	private Set<String> names;
 
 }
