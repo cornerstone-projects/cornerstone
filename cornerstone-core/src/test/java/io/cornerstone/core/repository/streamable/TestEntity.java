@@ -1,4 +1,4 @@
-package io.cornerstone.core.repository;
+package io.cornerstone.core.repository.streamable;
 
 import javax.persistence.Entity;
 

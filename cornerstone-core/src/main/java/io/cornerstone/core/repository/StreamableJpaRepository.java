@@ -12,7 +12,6 @@ import org.springframework.lang.Nullable;
 import org.springframework.transaction.annotation.Transactional;
 
 @NoRepositoryBean
-
 public interface StreamableJpaRepository<T, ID> extends JpaRepository<T, ID> {
 
 	default Stream<T> stream(Sort sort) {

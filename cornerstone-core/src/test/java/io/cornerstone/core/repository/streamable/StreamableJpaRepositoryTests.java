@@ -1,4 +1,4 @@
-package io.cornerstone.core.repository;
+package io.cornerstone.core.repository.streamable;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -18,6 +18,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import io.cornerstone.core.repository.SimpleStreamableJpaRepository;
 import io.cornerstone.test.DataJpaTestBase;
 
 @EnableJpaRepositories(basePackageClasses = TestEntityRepository.class, repositoryBaseClass = SimpleStreamableJpaRepository.class)
