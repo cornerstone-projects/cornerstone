@@ -1,9 +1,11 @@
 package io.cornerstone.core.util;
 
+import static com.fasterxml.jackson.annotation.JsonProperty.Access.READ_ONLY;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.Test;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 
 import lombok.Data;
@@ -22,6 +24,10 @@ public class BeanUtilsTests {
 		private String password;
 
 		private Boolean enabled;
+		
+		@JsonView(View.A.class)
+		@JsonProperty(access = READ_ONLY)
+		private String fullname;
 
 		interface View {
 			interface A {
@@ -65,6 +71,7 @@ public class BeanUtilsTests {
 		user1.setUsername("username1");
 		user1.setPassword("password1");
 		user1.setEnabled(false);
+		user1.setFullname("fullname1");
 
 		User user2 = new User();
 		user2.setEnabled(true);
@@ -73,7 +80,8 @@ public class BeanUtilsTests {
 		assertThat(user2.getUsername()).isEqualTo(user1.getUsername());
 		assertThat(user2.getPassword()).isNull();
 		assertThat(user2.getEnabled()).isEqualTo(Boolean.TRUE);
-
+		assertThat(user2.getFullname()).isNull(); // readonly
+		
 		User user3 = new User();
 		user3.setEnabled(true);
 		BeanUtils.copyPropertiesInJsonView(user1, user3, User.View.B.class);

@@ -2,6 +2,7 @@ package io.cornerstone.core.util;
 
 import java.beans.FeatureDescriptor;
 import java.beans.PropertyDescriptor;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -12,6 +13,8 @@ import java.util.stream.Stream;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
 import com.fasterxml.jackson.annotation.JsonView;
 
 import lombok.experimental.UtilityClass;
@@ -36,14 +39,11 @@ public class BeanUtils {
 			Method m = pd.getReadMethod();
 			if (m == null)
 				continue;
-			JsonView jsonView = m.getAnnotation(JsonView.class);
-			if (jsonView == null) {
-				try {
-					jsonView = m.getDeclaringClass().getDeclaredField(name).getAnnotation(JsonView.class);
-				} catch (Exception e) {
-				}
-			}
+			JsonView jsonView = findAnnotation(m, name, JsonView.class);
 			if (jsonView == null)
+				continue;
+			JsonProperty jsonProperty = findAnnotation(m, name, JsonProperty.class);
+			if (jsonProperty != null && jsonProperty.access() == Access.READ_ONLY)
 				continue;
 			for (Class<?> clazz : jsonView.value()) {
 				if (clazz.isAssignableFrom(view)) {
@@ -54,5 +54,16 @@ public class BeanUtils {
 
 		}
 
+	}
+
+	private static <T extends Annotation> T findAnnotation(Method getter, String propertyName, Class<T> clazz) {
+		T anno = getter.getAnnotation(clazz);
+		if (anno == null) {
+			try {
+				anno = getter.getDeclaringClass().getDeclaredField(propertyName).getAnnotation(clazz);
+			} catch (Exception e) {
+			}
+		}
+		return anno;
 	}
 }
