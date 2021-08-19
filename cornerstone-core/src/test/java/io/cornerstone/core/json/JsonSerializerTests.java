@@ -40,13 +40,18 @@ public class JsonSerializerTests {
 
 	}
 
-	@Getter
-	@Setter
 	static class Department {
 
+		@Getter
 		private Long id;
 
+		@Getter
+		@Setter
 		private String name;
+
+		protected void setId(Long id) {
+			this.id = id;
+		}
 
 	}
 
