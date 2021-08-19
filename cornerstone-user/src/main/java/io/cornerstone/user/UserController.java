@@ -109,7 +109,7 @@ public class UserController extends BaseRestController {
 		encodePassword(user);
 		userRepository.findById(id).map(u -> {
 			BeanUtils.copyPropertiesInJsonView(user, u,
-					user.getVersion() == null ? User.View.AdminEditable.class : User.View.Update.class);
+					user.getVersion() == null ? User.View.Edit.class : User.View.Update.class);
 			return userRepository.save(u);
 		}).orElseThrow(() -> notFound(id));
 	}

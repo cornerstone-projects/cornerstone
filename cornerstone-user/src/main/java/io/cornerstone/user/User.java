@@ -45,14 +45,14 @@ public class User extends AbstractAuditableEntity implements UserDetails {
 	@JsonView(View.EditableProfile.class)
 	private String phone;
 
-	@JsonView(View.AdminEditable.class)
+	@JsonView(View.Edit.class)
 	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	private String password;
 
-	@JsonView(View.AdminEditable.class)
+	@JsonView(View.Edit.class)
 	private Boolean disabled;
 
-	@JsonView({ View.AdminEditable.class, View.Profile.class })
+	@JsonView({ View.Edit.class, View.Profile.class })
 	private Set<String> roles;
 
 	@JsonView(View.Update.class)
@@ -102,15 +102,15 @@ public class User extends AbstractAuditableEntity implements UserDetails {
 
 		}
 
-		interface AdminEditable extends EditableProfile {
+		interface Edit extends EditableProfile {
 
 		}
 
-		interface Creation extends AdminEditable {
+		interface Creation extends Edit {
 
 		}
 
-		interface Update extends AdminEditable {
+		interface Update extends Edit {
 
 		}
 

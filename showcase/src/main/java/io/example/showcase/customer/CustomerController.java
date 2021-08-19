@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.annotation.JsonView;
 
 import io.cornerstone.core.domain.ResultPage;
+import io.cornerstone.core.domain.View;
 import io.cornerstone.core.util.BeanUtils;
 import io.cornerstone.core.web.BaseRestController;
 import springfox.documentation.annotations.ApiIgnore;
@@ -41,7 +42,7 @@ public class CustomerController extends BaseRestController {
 	@Autowired
 	private CustomerRepository customerRepository;
 
-	@JsonView({ Customer.View.List.class })
+	@JsonView({ View.List.class })
 	@GetMapping(PATH_LIST)
 	public ResultPage<Customer> list(@PageableDefault(sort = "id", direction = DESC) Pageable pageable,
 			@RequestParam(required = false) String query, @ApiIgnore Customer example) {
@@ -62,7 +63,7 @@ public class CustomerController extends BaseRestController {
 	}
 
 	@PostMapping(PATH_LIST)
-	public Customer save(@RequestBody @JsonView(Customer.View.Creation.class) @Valid Customer customer) {
+	public Customer save(@RequestBody @JsonView(View.Creation.class) @Valid Customer customer) {
 		if (customerRepository.existsByIdNo(customer.getIdNo()))
 			throw badRequest("idNo.already.exists");
 		return customerRepository.save(customer);
@@ -74,18 +75,17 @@ public class CustomerController extends BaseRestController {
 	}
 
 	@PutMapping(PATH_DETAIL)
-	public void update(@PathVariable Long id,
-			@RequestBody @JsonView(Customer.View.Update.class) @Valid Customer customer) {
+	public void update(@PathVariable Long id, @RequestBody @JsonView(View.Update.class) @Valid Customer customer) {
 		customerRepository.findById(id).map(u -> {
 			BeanUtils.copyPropertiesInJsonView(customer, u,
-					customer.getVersion() == null ? Customer.View.Editable.class : Customer.View.Update.class);
+					customer.getVersion() == null ? View.Edit.class : View.Update.class);
 			return customerRepository.save(u);
 		}).orElseThrow(() -> notFound(id));
 	}
 
 	@PatchMapping(PATH_DETAIL)
 	public Customer updatePartial(@PathVariable Long id,
-			@RequestBody @JsonView(Customer.View.Update.class) @Valid Customer customer) {
+			@RequestBody @JsonView(View.Update.class) @Valid Customer customer) {
 		return customerRepository.findById(id).map(u -> {
 			BeanUtils.copyNonNullProperties(customer, u);
 			return customerRepository.save(u);

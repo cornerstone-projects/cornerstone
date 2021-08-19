@@ -4,11 +4,9 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Version;
 
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Persistable;
-
 import com.fasterxml.jackson.annotation.JsonView;
 
+import io.cornerstone.core.domain.View;
 import io.cornerstone.core.hibernate.domain.AbstractAuditableEntity;
 import io.cornerstone.core.validation.constraints.CitizenIdentificationNumber;
 import io.cornerstone.core.validation.constraints.MobilePhoneNumber;
@@ -27,42 +25,22 @@ public class Customer extends AbstractAuditableEntity {
 	@Column(nullable = false, unique = true, updatable = false)
 	private String idNo;
 
-	@JsonView(View.Editable.class)
+	@JsonView(View.Edit.class)
 	@Column(nullable = false)
 	private String name;
 
 	@MobilePhoneNumber
-	@JsonView(View.Editable.class)
+	@JsonView(View.Edit.class)
 	private String phone;
 
-	@JsonView(View.Editable.class)
+	@JsonView(View.Edit.class)
 	private String address;
 
-	@JsonView(View.Editable.class)
+	@JsonView(View.Edit.class)
 	private Boolean disabled;
 
 	@JsonView(View.Update.class)
 	@Version
 	private Integer version;
-
-	interface View {
-
-		interface Editable {
-
-		}
-
-		interface Creation extends Editable {
-
-		}
-
-		interface Update extends Editable {
-
-		}
-
-		interface List extends Persistable<Long>, Pageable, Creation, Update {
-
-		}
-
-	}
 
 }
