@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -101,4 +102,36 @@ public class StreamableJpaRepositoryTests extends DataJpaTestBase {
 		assertThat(list).containsExactly(1);
 	}
 
+	@Test
+	@Transactional(propagation = Propagation.NOT_SUPPORTED)
+	public void forEachModifyWithoutExistingTransaction() {
+		doForEachModify();
+		assertThat(repository.findAll(Sort.by("index"))).extracting("index").containsExactly(0, 1, 2, 3, 4);
+		// not modified
+		repository.deleteAll();
+	}
+
+	@Test
+	public void forEachModifyInExistingTransaction() {
+		doForEachModify();
+		assertThat(repository.findAll(Sort.by("index"))).extracting("index").containsExactly(1, 2, 3, 4, 5);
+		// modified
+	}
+
+	private void doForEachModify() {
+		int size = 5;
+		for (int i = 0; i < size; i++) {
+			TestEntity entity = new TestEntity();
+			entity.setIndex(i);
+			repository.save(entity);
+		}
+		AtomicInteger count = new AtomicInteger();
+		int batchSize = 2; // hibernate.jdbc.batch_size
+		repository.forEach(Sort.by("index"), e -> {
+			e.setIndex(e.getIndex() + 1);
+			if (count.incrementAndGet() % batchSize == 0) {
+				repository.flush();
+			}
+		});
+	}
 }
