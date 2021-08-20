@@ -1,5 +1,6 @@
 package io.example.showcase.treenode;
 
+import static io.example.showcase.treenode.TreenodeController.PATH_CHILDREN;
 import static io.example.showcase.treenode.TreenodeController.PATH_DETAIL;
 import static io.example.showcase.treenode.TreenodeController.PATH_LIST;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -9,7 +10,6 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.OK;
 
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -25,8 +25,7 @@ class TreenodeControllerTests extends BaseControllerTests {
 	@Test
 	void crud() {
 		TestRestTemplate restTemplate = adminRestTemplate();
-		Treenode parent = new Treenode();
-		parent.setName("parent");
+		Treenode parent = new Treenode("parent");
 
 		// create
 		ResponseEntity<Treenode> response = restTemplate.postForEntity(PATH_LIST, parent, Treenode.class);
@@ -36,8 +35,7 @@ class TreenodeControllerTests extends BaseControllerTests {
 		assertThat(treenode.getId()).isNotNull();
 		assertThat(treenode.getName()).isEqualTo(parent.getName());
 		assertThat(treenode.getLevel()).isEqualTo(1);
-		Treenode child = new Treenode();
-		child.setName("child");
+		Treenode child = new Treenode("child");
 		child.setParent(treenode);
 		response = restTemplate.postForEntity(PATH_LIST, child, Treenode.class);
 		assertThat(response.getStatusCode()).isSameAs(OK);
@@ -55,8 +53,7 @@ class TreenodeControllerTests extends BaseControllerTests {
 		assertThat(response.getBody()).isEqualTo(treenode);
 
 		// update partial
-		Treenode temp = new Treenode();
-		temp.setName("new name");
+		Treenode temp = new Treenode("new name");
 		child = restTemplate.patchForObject(PATH_DETAIL, temp, Treenode.class, child.getId());
 		assertThat(child.getName()).isEqualTo(temp.getName());
 		assertThat(child.getParent()).isNotNull(); // parent not updated
@@ -84,21 +81,94 @@ class TreenodeControllerTests extends BaseControllerTests {
 	@Test
 	void list() {
 		TestRestTemplate restTemplate = adminRestTemplate();
-		int size = 5;
-		List<Treenode> list = new ArrayList<>();
-		for (int i = 0; i < size; i++) {
-			Treenode c = new Treenode();
-			c.setName("test" + i);
-			list.add(restTemplate.postForObject(PATH_LIST, c, Treenode.class));
-		}
+		Treenode parent1 = restTemplate.postForObject(PATH_LIST, new Treenode("parent1", 1), Treenode.class);
+		Treenode parent2 = restTemplate.postForObject(PATH_LIST, new Treenode("parent2", 2), Treenode.class);
+		Treenode child1 = restTemplate.postForObject(PATH_LIST, new Treenode(parent1, "child1", 1), Treenode.class);
+		Treenode child2 = restTemplate.postForObject(PATH_LIST, new Treenode(parent1, "child2", 1), Treenode.class);
 
 		ResponseEntity<List<Treenode>> response = restTemplate.exchange(
 				RequestEntity.method(GET, URI.create(PATH_LIST)).build(),
 				new ParameterizedTypeReference<List<Treenode>>() {
 				});
 		assertThat(response.getStatusCode()).isSameAs(OK);
-		List<Treenode> result = response.getBody();
-		assertThat(result).hasSize(size);
+		assertThat(response.getBody()).hasSize(4);
+
+		response = restTemplate.exchange(RequestEntity.method(GET, URI.create(PATH_LIST + "?query=child")).build(),
+				new ParameterizedTypeReference<List<Treenode>>() {
+				});
+		assertThat(response.getBody()).hasSize(2);
+
+		response = restTemplate.exchange(RequestEntity.method(GET, URI.create(PATH_LIST + "?name=child")).build(),
+				new ParameterizedTypeReference<List<Treenode>>() {
+				});
+		assertThat(response.getBody()).hasSize(2);
+
+		response = restTemplate.exchange(RequestEntity.method(GET, URI.create(PATH_LIST + "?level=2")).build(),
+				new ParameterizedTypeReference<List<Treenode>>() {
+				});
+		assertThat(response.getBody()).hasSize(2);
+
+		restTemplate.delete(PATH_DETAIL, child1.getId());
+		restTemplate.delete(PATH_DETAIL, child2.getId());
+		restTemplate.delete(PATH_DETAIL, parent1.getId());
+		restTemplate.delete(PATH_DETAIL, parent2.getId());
+	}
+
+	@Test
+	void children() {
+		TestRestTemplate restTemplate = adminRestTemplate();
+		Treenode parent1 = restTemplate.postForObject(PATH_LIST, new Treenode("parent1", 1), Treenode.class);
+		Treenode parent2 = restTemplate.postForObject(PATH_LIST, new Treenode("parent2", 2), Treenode.class);
+		Treenode child1 = restTemplate.postForObject(PATH_LIST, new Treenode(parent1, "child1", 1), Treenode.class);
+		Treenode child2 = restTemplate.postForObject(PATH_LIST, new Treenode(parent1, "child2", 1), Treenode.class);
+
+		ResponseEntity<List<Treenode>> response = restTemplate.exchange(
+				RequestEntity.method(GET, PATH_CHILDREN, 0).build(), new ParameterizedTypeReference<List<Treenode>>() {
+				});
+		assertThat(response.getBody()).hasSize(2);
+		assertThat(response.getBody()).element(0).extracting("name").isEqualTo(parent1.getName());
+		assertThat(response.getBody()).element(1).extracting("name").isEqualTo(parent2.getName());
+
+		response = restTemplate.exchange(RequestEntity.method(GET, PATH_CHILDREN, parent1.getId()).build(),
+				new ParameterizedTypeReference<List<Treenode>>() {
+				});
+		assertThat(response.getBody()).hasSize(2);
+		assertThat(response.getBody()).element(0).extracting("name").isEqualTo(child1.getName());
+		assertThat(response.getBody()).element(1).extracting("name").isEqualTo(child2.getName());
+
+		response = restTemplate.exchange(RequestEntity.method(GET, PATH_CHILDREN + "?query=parent", 0).build(),
+				new ParameterizedTypeReference<List<Treenode>>() {
+				});
+		assertThat(response.getBody()).hasSize(2);
+		assertThat(response.getBody()).element(0).extracting("name").isEqualTo(parent1.getName());
+		assertThat(response.getBody()).element(1).extracting("name").isEqualTo(parent2.getName());
+
+		response = restTemplate.exchange(
+				RequestEntity.method(GET, PATH_CHILDREN + "?query=" + parent2.getName(), 0).build(),
+				new ParameterizedTypeReference<List<Treenode>>() {
+				});
+		assertThat(response.getBody()).hasSize(1);
+		assertThat(response.getBody()).element(0).extracting("name").isEqualTo(parent2.getName());
+
+		response = restTemplate.exchange(
+				RequestEntity.method(GET, PATH_CHILDREN + "?query=child", parent1.getId()).build(),
+				new ParameterizedTypeReference<List<Treenode>>() {
+				});
+		assertThat(response.getBody()).hasSize(2);
+		assertThat(response.getBody()).element(0).extracting("name").isEqualTo(child1.getName());
+		assertThat(response.getBody()).element(1).extracting("name").isEqualTo(child2.getName());
+
+		response = restTemplate.exchange(
+				RequestEntity.method(GET, PATH_CHILDREN + "?query=" + child2.getName(), parent1.getId()).build(),
+				new ParameterizedTypeReference<List<Treenode>>() {
+				});
+		assertThat(response.getBody()).hasSize(1);
+		assertThat(response.getBody()).element(0).extracting("name").isEqualTo(child2.getName());
+
+		restTemplate.delete(PATH_DETAIL, child1.getId());
+		restTemplate.delete(PATH_DETAIL, child2.getId());
+		restTemplate.delete(PATH_DETAIL, parent1.getId());
+		restTemplate.delete(PATH_DETAIL, parent2.getId());
 	}
 
 }

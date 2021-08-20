@@ -27,6 +27,12 @@ public class Treenode extends AbstractTreeableEntity<Treenode> {
 		this.displayOrder = displayOrder;
 	}
 
+	public Treenode(Treenode parent, String name, int displayOrder) {
+		this.parent = parent;
+		this.name = name;
+		this.displayOrder = displayOrder;
+	}
+
 	interface View {
 
 		interface Editable {
