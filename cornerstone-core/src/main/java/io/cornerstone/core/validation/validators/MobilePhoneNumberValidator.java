@@ -3,7 +3,7 @@ package io.cornerstone.core.validation.validators;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
@@ -79,7 +79,7 @@ public class MobilePhoneNumberValidator implements ConstraintValidator<MobilePho
 	}
 
 	public static String randomValue() {
-		Random random = new Random();
+		ThreadLocalRandom random = ThreadLocalRandom.current();
 		Carrier carrier = Carrier.values()[random.nextInt(Carrier.values().length)];
 		String prefix = carrier.numberPrefixes.get(random.nextInt(carrier.numberPrefixes.size()));
 		int digit = 11 - prefix.length();

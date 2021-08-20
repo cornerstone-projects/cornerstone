@@ -1,7 +1,7 @@
 package io.cornerstone.core.validation.validators;
 
 import java.util.Arrays;
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
@@ -47,7 +47,7 @@ public class OrganizationCodeValidator implements ConstraintValidator<Organizati
 	private static final int[] power = { 3, 7, 9, 10, 5, 8, 4, 2 };
 
 	public static String randomValue() {
-		Random random = new Random();
+		ThreadLocalRandom random = ThreadLocalRandom.current();
 		String seq = NumberUtils.format(10000000 + random.nextInt(89999999), 8);
 		return seq + getCheckBit(getPowerSum(seq.toCharArray()));
 	}

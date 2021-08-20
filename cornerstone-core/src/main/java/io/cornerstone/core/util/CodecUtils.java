@@ -1,6 +1,6 @@
 package io.cornerstone.core.util;
 
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 import org.slf4j.MDC;
 
@@ -20,7 +20,6 @@ public class CodecUtils {
 
 	public static final char[] CHARS = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
 
-	private static final Random random = new Random();
 
 	public static String nextId() {
 		return nextId(22); // back compatibility
@@ -28,9 +27,9 @@ public class CodecUtils {
 
 	public static String nextId(int length) {
 		char[] chars = new char[length];
-		chars[0] = CHARS[random.nextInt(length == 22 ? 8 : CHARS.length)];
+		chars[0] = CHARS[ThreadLocalRandom.current().nextInt(length == 22 ? 8 : CHARS.length)];
 		for (int i = 1; i < chars.length; i++)
-			chars[i] = CHARS[random.nextInt(CHARS.length)];
+			chars[i] = CHARS[ThreadLocalRandom.current().nextInt(CHARS.length)];
 		return new String(chars);
 	}
 

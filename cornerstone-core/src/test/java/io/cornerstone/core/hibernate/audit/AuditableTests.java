@@ -23,7 +23,9 @@ public class AuditableTests extends DataJpaTestBase {
 		TestEntity entity = repository.save(new TestEntity());
 		flushAndClear();
 
-		entity = repository.findById(entity.getId()).orElseThrow(IllegalStateException::new);
+		Long id = entity.getId();
+		assertThat(id).isNotNull();
+		entity = repository.findById(id).orElseThrow(IllegalStateException::new);
 		assertThat(entity.getCreatedDate()).isNotNull();
 		assertThat(entity.getCreatedBy()).isEqualTo("admin");
 		assertThat(entity.getLastModifiedDate()).isNull();

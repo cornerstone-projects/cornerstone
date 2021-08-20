@@ -58,9 +58,11 @@ public class CurrentUserController extends BaseRestController {
 				public void afterCommit() {
 					BeanUtils.copyNonNullProperties(user, currentUser);
 					RequestAttributes attrs = RequestContextHolder.currentRequestAttributes();
-					// trigger session save to store
-					attrs.setAttribute(SPRING_SECURITY_CONTEXT_KEY,
-							attrs.getAttribute(SPRING_SECURITY_CONTEXT_KEY, SCOPE_SESSION), SCOPE_SESSION);
+					Object securityContext = attrs.getAttribute(SPRING_SECURITY_CONTEXT_KEY, SCOPE_SESSION);
+					if (securityContext != null) {
+						// trigger session save to store
+						attrs.setAttribute(SPRING_SECURITY_CONTEXT_KEY, securityContext, SCOPE_SESSION);
+					}
 				}
 			});
 			return userRepository.save(u);

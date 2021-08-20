@@ -4,7 +4,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
@@ -75,7 +75,7 @@ public class CitizenIdentificationNumberValidator implements ConstraintValidator
 	private static final int[] power = { 7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2 };
 
 	public static String randomValue() {
-		Random random = new Random();
+		ThreadLocalRandom random = ThreadLocalRandom.current();
 		String province = provinces.get(random.nextInt(provinces.size())) + '0';
 		String area = String.valueOf(1 + random.nextInt(3)) + String.valueOf(1 + random.nextInt(3))
 				+ String.valueOf(1 + random.nextInt(7));

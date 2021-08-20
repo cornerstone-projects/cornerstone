@@ -39,7 +39,9 @@ public class CustomerRepositoryTests extends DataJpaTestBase {
 				.isInstanceOf(ConstraintViolationException.class);
 		customer.setPhone(MobilePhoneNumberValidator.randomValue());
 		Customer savedCustomer = repository.save(customer);
-		savedCustomer = repository.findById(savedCustomer.getId()).orElseThrow(IllegalStateException::new);
+		Long id = savedCustomer.getId();
+		assertThat(id).isNotNull();
+		savedCustomer = repository.findById(id).orElseThrow(IllegalStateException::new);
 		assertThat(savedCustomer.getName()).isEqualTo(customer.getName());
 		assertThat(savedCustomer.getIdNo()).isEqualTo(customer.getIdNo());
 		assertThat(savedCustomer.getPhone()).isEqualTo(customer.getPhone());

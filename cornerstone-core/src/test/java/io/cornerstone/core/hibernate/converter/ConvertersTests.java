@@ -45,7 +45,9 @@ public class ConvertersTests extends DataJpaTestBase {
 		repository.save(entity);
 		flushAndClear();
 
-		TestEntity savedEntity = repository.findById(entity.getId()).orElseThrow(IllegalStateException::new);
+		Long id = entity.getId();
+		assertThat(id).isNotNull();
+		TestEntity savedEntity = repository.findById(id).orElseThrow(IllegalStateException::new);
 		assertThat(savedEntity).isNotSameAs(entity);
 		assertThat(savedEntity).isEqualTo(entity);
 	}

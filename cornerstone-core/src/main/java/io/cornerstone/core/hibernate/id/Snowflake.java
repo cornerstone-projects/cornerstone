@@ -1,13 +1,12 @@
 package io.cornerstone.core.hibernate.id;
 
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 import lombok.Value;
 
 public class Snowflake {
 
 	private final static long EPOCH = 1556150400000L;
-	private final static Random RANDOM = new Random();
 	private final int workerId;
 	private final int workerIdBits;
 	private final int sequenceBits;
@@ -42,14 +41,14 @@ public class Snowflake {
 				}
 			}
 		} else if (timestamp > lastTimestamp) {
-			sequence = RANDOM.nextInt(2);
+			sequence = ThreadLocalRandom.current().nextInt(2);
 		} else {
 			long offset = lastTimestamp - timestamp;
 			if (offset < 5000) {
 				try {
 					Thread.sleep(offset + 1);
 					timestamp = System.currentTimeMillis();
-					sequence = RANDOM.nextInt(2);
+					sequence = ThreadLocalRandom.current().nextInt(2);
 				} catch (InterruptedException e) {
 					throw new IllegalStateException(e);
 				}

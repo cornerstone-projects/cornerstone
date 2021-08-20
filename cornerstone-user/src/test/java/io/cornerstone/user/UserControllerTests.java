@@ -217,7 +217,9 @@ class UserControllerTests extends ControllerTestBase {
 				Resource.class);
 		assertThat(response.getHeaders().getContentType().getSubtype()).isEqualTo("csv");
 		assertThat(response.getStatusCode()).isSameAs(OK);
-		try (InputStream is = response.getBody().getInputStream();
+		Resource resource = response.getBody();
+		assertThat(resource).isNotNull();
+		try (InputStream is = resource.getInputStream();
 				BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
 			List<String> lines = reader.lines().collect(Collectors.toList());
 			assertThat(lines).hasSize(size + 3);

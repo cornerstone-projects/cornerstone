@@ -2,7 +2,7 @@ package io.cornerstone.core.validation.validators;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
@@ -68,7 +68,7 @@ public class SocialCreditIdentifierValidator implements ConstraintValidator<Soci
 	private static final String characters = "ABCDEFGHJKLMNPQRTUWXY";
 
 	public static String randomValue() {
-		Random random = new Random();
+		ThreadLocalRandom random = ThreadLocalRandom.current();
 		String province = provinces.get(random.nextInt(provinces.size())) + '0';
 		String area = String.valueOf(1 + random.nextInt(3)) + String.valueOf(1 + random.nextInt(3))
 				+ String.valueOf(1 + random.nextInt(7));
