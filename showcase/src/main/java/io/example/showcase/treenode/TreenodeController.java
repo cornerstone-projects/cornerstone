@@ -8,7 +8,6 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
-import org.springframework.data.jpa.convert.QueryByExamplePredicateBuilder;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
@@ -25,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.annotation.JsonView;
 
 import io.cornerstone.core.domain.View;
+import io.cornerstone.core.hibernate.criteria.PredicateBuilder;
 import io.cornerstone.core.util.BeanUtils;
 import io.cornerstone.core.web.BaseRestController;
 import springfox.documentation.annotations.ApiIgnore;
@@ -47,15 +47,15 @@ public class TreenodeController extends BaseRestController {
 	public List<Treenode> children(@PathVariable Long id, @RequestParam(required = false) String query,
 			@ApiIgnore Treenode example) {
 		Specification<Treenode> spec = (root, cq, cb) -> {
-			Predicate p = (id == null || id < 1) ? cb.isNull(root.get("parent"))
+			Predicate predicate = (id == null || id < 1) ? cb.isNull(root.get("parent"))
 					: cb.equal(root.get("parent").get("id"), id);
 			if (StringUtils.hasText(query)) {
-				p = cb.and(p, cb.like(root.get("name"), '%' + query + '%'));
+				predicate = cb.and(predicate, cb.like(root.get("name"), '%' + query + '%'));
 			} else {
 				ExampleMatcher matcher = ExampleMatcher.matching().withMatcher("name", match -> match.contains());
-				p = cb.and(p, QueryByExamplePredicateBuilder.getPredicate(root, cb, Example.of(example, matcher)));
+				predicate = PredicateBuilder.andExample(root, cb, predicate, Example.of(example, matcher));
 			}
-			return p;
+			return predicate;
 		};
 		return treenodeRepository.findAll(spec);
 	}

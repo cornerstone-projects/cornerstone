@@ -18,5 +18,7 @@ public class TestEntity extends AbstractEntity {
 	private String name;
 
 	private Set<String> names;
+	
+	private Boolean enabled;
 
 }

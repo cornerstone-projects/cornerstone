@@ -1,6 +1,7 @@
 package io.cornerstone.core.hibernate.criteria;
 
 import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
@@ -9,10 +10,63 @@ import org.hibernate.dialect.MySQLDialect;
 import org.hibernate.dialect.PostgreSQL81Dialect;
 import org.hibernate.engine.jdbc.spi.JdbcServices;
 import org.hibernate.query.criteria.internal.CriteriaBuilderImpl;
+import org.hibernate.query.criteria.internal.expression.LiteralExpression;
+import org.hibernate.query.criteria.internal.predicate.BooleanAssertionPredicate;
+import org.hibernate.query.criteria.internal.predicate.NegatedPredicateWrapper;
+import org.hibernate.query.criteria.internal.predicate.NullnessPredicate;
+import org.springframework.data.domain.Example;
+import org.springframework.data.jpa.convert.QueryByExamplePredicateBuilder;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 
+import io.cornerstone.core.util.ReflectionUtils;
+
 public class PredicateBuilder {
+
+	public static boolean isConstantTrue(Predicate predicate) {
+		if (predicate instanceof NegatedPredicateWrapper) {
+			return isConstantFalse(unwrap((NegatedPredicateWrapper) predicate));
+		} else if (predicate instanceof NullnessPredicate) {
+			// literal cannot be null
+			return false;
+		} else if (predicate instanceof BooleanAssertionPredicate) {
+			BooleanAssertionPredicate bap = (BooleanAssertionPredicate) predicate;
+			Expression<Boolean> exp = bap.getExpression();
+			if (exp instanceof LiteralExpression) {
+				return bap.getAssertedValue().equals(((LiteralExpression<Boolean>) exp).getLiteral());
+			}
+		}
+		return false;
+	}
+
+	public static boolean isConstantFalse(Predicate predicate) {
+		if (predicate instanceof NegatedPredicateWrapper) {
+			return isConstantTrue(unwrap((NegatedPredicateWrapper) predicate));
+		} else if (predicate instanceof NullnessPredicate) {
+			return ((NullnessPredicate) predicate).getOperand() instanceof LiteralExpression;
+		} else if (predicate instanceof BooleanAssertionPredicate) {
+			BooleanAssertionPredicate bap = (BooleanAssertionPredicate) predicate;
+			Expression<Boolean> exp = bap.getExpression();
+			if (exp instanceof LiteralExpression) {
+				return !bap.getAssertedValue().equals(((LiteralExpression<Boolean>) exp).getLiteral());
+			}
+		}
+		return false;
+	}
+
+	public static <T> Predicate andExample(Root<T> root, CriteriaBuilder cb, Predicate predicate, Example<T> example) {
+		Predicate examplePredicate = QueryByExamplePredicateBuilder.getPredicate(root, cb, example);
+		if (isConstantTrue(examplePredicate)) // eliminate unnecessary true=1
+			return predicate;
+		return cb.and(predicate, examplePredicate);
+	}
+
+	public static <T> Predicate orExample(Root<T> root, CriteriaBuilder cb, Predicate predicate, Example<T> example) {
+		Predicate examplePredicate = QueryByExamplePredicateBuilder.getPredicate(root, cb, example);
+		if (isConstantTrue(examplePredicate))
+			return examplePredicate;
+		return cb.or(predicate, examplePredicate);
+	}
 
 	public static <T> Predicate contains(Root<T> root, CriteriaBuilder cb, String propertyName, String item) {
 		Assert.doesNotContain(item, ",", "'item' should not contains comma");
@@ -58,6 +112,10 @@ public class PredicateBuilder {
 					.getService(JdbcServices.class).getDialect();
 		}
 		return null;
+	}
+
+	private static Predicate unwrap(NegatedPredicateWrapper wrapper) {
+		return ReflectionUtils.getFieldValue(wrapper, "predicate");
 	}
 
 }
