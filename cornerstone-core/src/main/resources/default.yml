@@ -120,6 +120,8 @@ spring:
     exclude:
       - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
 
+spring.security.user.password: "{bcrypt}$2a$10$g1WqDyVfiD4vEOQZr.yRZOnWlzuAs2gMiS/jILkmYfb22XTzx9Dlm"
+
 spring.main.allow-bean-definition-overriding: true
 
 logging:
