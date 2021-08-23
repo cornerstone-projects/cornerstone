@@ -2,7 +2,9 @@ package io.cornerstone.core;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.boot.SpringApplication;
@@ -11,6 +13,7 @@ import org.springframework.boot.env.EnvironmentPostProcessor;
 import org.springframework.boot.env.YamlPropertySourceLoader;
 import org.springframework.core.Ordered;
 import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.core.env.MapPropertySource;
 import org.springframework.core.env.Profiles;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.io.ClassPathResource;
@@ -45,6 +48,12 @@ public class DefaultPropertiesPostProcessor implements EnvironmentPostProcessor,
 		} catch (IOException e) {
 			throw new RuntimeException(e.getMessage(), e);
 		}
+
+		String version = CornerstoneVersion.getVersion();
+		Map<String, Object> map = new HashMap<>();
+		map.put("cornerstone.version", version != null ? version : "developing");
+		map.put("cornerstone.formatted-version", version != null ? String.format(" (v%s)", version) : " (developing)");
+		environment.getPropertySources().addLast(new MapPropertySource("cornerstone-version", map));
 	}
 
 }

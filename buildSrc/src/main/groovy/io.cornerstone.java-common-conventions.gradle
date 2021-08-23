@@ -41,6 +41,15 @@ java {
 	withSourcesJar()
 }
 
+jar {
+	manifest {
+		 attributes(
+		 	'Implementation-Title': project.name,
+			'Implementation-Version': project.version
+		)
+	}
+}
+
 sourcesJar {
 	dependsOn delombok
 	from 'build/generated/sources/delombok/java/main/'
