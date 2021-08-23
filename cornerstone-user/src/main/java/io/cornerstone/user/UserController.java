@@ -22,9 +22,7 @@ import org.hibernate.cfg.AvailableSettings;
 import org.hibernate.dialect.Dialect;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
-import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
@@ -50,14 +48,13 @@ import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBo
 import com.fasterxml.jackson.annotation.JsonView;
 
 import io.cornerstone.core.domain.ResultPage;
-import io.cornerstone.core.util.BeanUtils;
-import io.cornerstone.core.web.BaseRestController;
+import io.cornerstone.core.web.AbstractEntityController;
 import springfox.documentation.annotations.ApiIgnore;
 
 @RestController
 @Validated
 @Secured(ADMIN_ROLE)
-public class UserController extends BaseRestController {
+public class UserController extends AbstractEntityController<User> {
 
 	public static final String PATH_LIST = "/users";
 
@@ -71,56 +68,39 @@ public class UserController extends BaseRestController {
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 
+	@Override
 	@GetMapping(PATH_LIST)
 	@JsonView({ User.View.List.class })
 	public ResultPage<User> list(@PageableDefault(sort = "username", direction = ASC) Pageable pageable,
 			@RequestParam(required = false) String query, @ApiIgnore User example) {
-		Page<User> page;
-		if (StringUtils.hasText(query)) {
-			String q = '%' + query + '%';
-			Specification<User> spec = (root, cq, cb) -> cb.or(
-					cb.or(cb.like(root.get("username"), q), cb.like(root.get("name"), q)),
-					cb.equal(root.get("phone"), query));
-			page = userRepository.findAll(spec, pageable);
-		} else {
-			ExampleMatcher matcher = ExampleMatcher.matching().withIgnorePaths("password", "roles")
-					.withMatcher("username", match -> match.contains().ignoreCase())
-					.withMatcher("name", match -> match.contains());
-			page = userRepository.findAll(Example.of(example, matcher), pageable);
-		}
-		return ResultPage.of(page);
+		return super.list(pageable, query, example);
 	}
 
+	@Override
 	@PostMapping(PATH_LIST)
 	public User save(@RequestBody @JsonView(User.View.Creation.class) @Valid User user) {
-		if (userRepository.existsByUsername(user.getUsername()))
-			throw badRequest("username.already.exists");
-		encodePassword(user);
-		return userRepository.save(user);
+		return super.save(user);
 	}
 
 	@GetMapping(PATH_DETAIL)
 	public User get(@PathVariable Long id) {
-		return userRepository.findById(id).orElseThrow(() -> notFound(id));
+		return super.get(id);
 	}
 
 	@PutMapping(PATH_DETAIL)
 	public void update(@PathVariable Long id, @RequestBody @JsonView(User.View.Update.class) @Valid User user) {
 		encodePassword(user);
-		userRepository.findById(id).map(u -> {
-			BeanUtils.copyPropertiesInJsonView(user, u,
-					user.getVersion() == null ? User.View.Edit.class : User.View.Update.class);
-			return userRepository.save(u);
-		}).orElseThrow(() -> notFound(id));
+		super.update(id, user);
 	}
 
 	@PatchMapping(PATH_DETAIL)
-	public User updatePartial(@PathVariable Long id, @RequestBody @JsonView(User.View.Update.class) @Valid User user) {
-		encodePassword(user);
-		return userRepository.findById(id).map(u -> {
-			BeanUtils.copyNonNullProperties(user, u);
-			return userRepository.save(u);
-		}).orElseThrow(() -> notFound(id));
+	public User patch(@PathVariable Long id, @RequestBody @JsonView(User.View.Update.class) @Valid User user) {
+		return super.patch(id, user);
+	}
+
+	@DeleteMapping(PATH_DETAIL)
+	public void delete(@PathVariable Long id) {
+		super.delete(id);
 	}
 
 	@PutMapping(PATH_PASSWORD)
@@ -132,14 +112,6 @@ public class UserController extends BaseRestController {
 			encodePassword(user);
 			return userRepository.save(user);
 		}).orElseThrow(() -> notFound(id));
-	}
-
-	@DeleteMapping(PATH_DETAIL)
-	public void delete(@PathVariable Long id) {
-		User user = userRepository.findById(id).orElseThrow(() -> notFound(id));
-		if (user.isEnabled())
-			throw badRequest("disable.before.delete");
-		userRepository.delete(user);
 	}
 
 	@GetMapping(value = PATH_LIST + ".csv", produces = "text/csv")
@@ -197,6 +169,38 @@ public class UserController extends BaseRestController {
 	private void encodePassword(User user) {
 		if (StringUtils.hasLength(user.getPassword()))
 			user.setPassword(passwordEncoder.encode(user.getPassword()));
+	}
+
+	@Override
+	protected void beforeSave(User user) {
+		if (userRepository.existsByUsername(user.getUsername()))
+			throw badRequest("username.already.exists");
+		encodePassword(user);
+	}
+
+	@Override
+	protected void beforeUpdate(Long id, User user) {
+		encodePassword(user);
+	}
+
+	@Override
+	protected void beforeDelete(User user) {
+		if (user.getDisabled() != Boolean.TRUE)
+			throw badRequest("disable.before.delete");
+	}
+
+	@Override
+	protected Specification<User> getQuerySpecification(String query) {
+		String q = '%' + query + '%';
+		return (root, cq, cb) -> cb.or(cb.or(cb.like(root.get("username"), q), cb.like(root.get("name"), q)),
+				cb.equal(root.get("phone"), query));
+	}
+
+	@Override
+	protected ExampleMatcher getExampleMatcher() {
+		return ExampleMatcher.matching().withIgnorePaths("password", "roles")
+				.withMatcher("username", match -> match.contains().ignoreCase())
+				.withMatcher("name", match -> match.contains());
 	}
 
 }

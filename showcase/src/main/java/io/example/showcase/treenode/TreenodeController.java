@@ -2,14 +2,8 @@ package io.example.showcase.treenode;
 
 import java.util.List;
 
-import javax.persistence.criteria.Predicate;
 import javax.validation.Valid;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.ExampleMatcher;
-import org.springframework.data.jpa.domain.Specification;
-import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,14 +18,12 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.annotation.JsonView;
 
 import io.cornerstone.core.domain.View;
-import io.cornerstone.core.hibernate.criteria.PredicateBuilder;
-import io.cornerstone.core.util.BeanUtils;
-import io.cornerstone.core.web.BaseRestController;
+import io.cornerstone.core.web.AbstractTreeableEntityController;
 import springfox.documentation.annotations.ApiIgnore;
 
 @RestController
 @Validated
-public class TreenodeController extends BaseRestController {
+public class TreenodeController extends AbstractTreeableEntityController<Treenode> {
 
 	public static final String PATH_LIST = "/treenodes";
 
@@ -39,70 +31,49 @@ public class TreenodeController extends BaseRestController {
 
 	public static final String PATH_CHILDREN = "/treenode/{id:\\d+}/children";
 
-	@Autowired
-	private TreenodeRepository treenodeRepository;
-
+	@Override
 	@GetMapping(PATH_CHILDREN)
 	@JsonView(View.List.class)
 	public List<Treenode> children(@PathVariable Long id, @RequestParam(required = false) String query,
 			@ApiIgnore Treenode example) {
-		Specification<Treenode> spec = (root, cq, cb) -> {
-			Predicate predicate = (id == null || id < 1) ? cb.isNull(root.get("parent"))
-					: cb.equal(root.get("parent").get("id"), id);
-			if (StringUtils.hasText(query)) {
-				predicate = cb.and(predicate, cb.like(root.get("name"), '%' + query + '%'));
-			} else {
-				ExampleMatcher matcher = ExampleMatcher.matching().withMatcher("name", match -> match.contains());
-				predicate = PredicateBuilder.andExample(root, cb, predicate, Example.of(example, matcher));
-			}
-			return predicate;
-		};
-		return treenodeRepository.findAll(spec);
+		return super.children(id, query, example);
 	}
 
+	@Override
 	@GetMapping(PATH_LIST)
 	@JsonView(View.List.class)
 	public List<Treenode> list(@RequestParam(required = false) String query, @ApiIgnore Treenode example) {
-		if (StringUtils.hasText(query)) {
-			String q = '%' + query + '%';
-			Specification<Treenode> spec = (root, cq, cb) -> cb.like(root.get("name"), q);
-			return treenodeRepository.findAll(spec);
-		} else {
-			ExampleMatcher matcher = ExampleMatcher.matching().withMatcher("name", match -> match.contains());
-			return treenodeRepository.findAll(Example.of(example, matcher));
-		}
+		return super.list(query, example);
 	}
 
+	@Override
 	@PostMapping(PATH_LIST)
 	public Treenode save(@RequestBody @Valid @JsonView(View.Creation.class) Treenode treenode) {
-		return treenodeRepository.save(treenode);
+		return super.save(treenode);
 	}
 
+	@Override
 	@GetMapping(PATH_DETAIL)
 	public Treenode get(@PathVariable Long id) {
-		return treenodeRepository.findById(id).orElseThrow(() -> notFound(id));
+		return super.get(id);
 	}
 
+	@Override
 	@PutMapping(PATH_DETAIL)
 	public void update(@PathVariable Long id, @RequestBody @JsonView(View.Update.class) @Valid Treenode treenode) {
-		treenodeRepository.findById(id).map(u -> {
-			BeanUtils.copyPropertiesInJsonView(treenode, u, View.Update.class);
-			return treenodeRepository.save(u);
-		}).orElseThrow(() -> notFound(id));
+		super.update(id, treenode);
 	}
 
+	@Override
 	@PatchMapping(PATH_DETAIL)
-	public Treenode updatePartial(@PathVariable Long id,
-			@RequestBody @JsonView(View.Update.class) @Valid Treenode treenode) {
-		return treenodeRepository.findById(id).map(u -> {
-			BeanUtils.copyNonNullProperties(treenode, u);
-			return treenodeRepository.save(u);
-		}).orElseThrow(() -> notFound(id));
+	public Treenode patch(@PathVariable Long id, @RequestBody @JsonView(View.Update.class) @Valid Treenode treenode) {
+		return super.patch(id, treenode);
 	}
 
+	@Override
 	@DeleteMapping(PATH_DETAIL)
 	public void delete(@PathVariable Long id) {
-		treenodeRepository.deleteById(id);
+		super.delete(id);
 	}
 
 }

@@ -6,6 +6,7 @@ import javax.persistence.Version;
 
 import com.fasterxml.jackson.annotation.JsonView;
 
+import io.cornerstone.core.domain.Versioned;
 import io.cornerstone.core.domain.View;
 import io.cornerstone.core.hibernate.domain.AbstractAuditableEntity;
 import io.cornerstone.core.validation.constraints.CitizenIdentificationNumber;
@@ -16,7 +17,7 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-public class Customer extends AbstractAuditableEntity {
+public class Customer extends AbstractAuditableEntity implements Versioned {
 
 	private static final long serialVersionUID = 1L;
 

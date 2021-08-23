@@ -21,6 +21,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 
+import io.cornerstone.core.domain.Versioned;
 import io.cornerstone.core.hibernate.domain.AbstractAuditableEntity;
 import io.cornerstone.core.validation.constraints.MobilePhoneNumber;
 import lombok.Getter;
@@ -29,7 +30,7 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-public class User extends AbstractAuditableEntity implements UserDetails {
+public class User extends AbstractAuditableEntity implements UserDetails, Versioned {
 
 	private static final long serialVersionUID = 1L;
 
