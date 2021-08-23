@@ -6,6 +6,7 @@ import javax.persistence.criteria.Predicate;
 
 import org.springframework.data.domain.Example;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.lang.Nullable;
 import org.springframework.util.StringUtils;
 
 import io.cornerstone.core.hibernate.criteria.PredicateBuilder;
@@ -34,6 +35,25 @@ public abstract class AbstractTreeableEntityController<T extends AbstractTreeabl
 		} else {
 			return repository.findAll(Example.of(example, getExampleMatcher()));
 		}
+	}
+
+	protected void beforeSave(T entity) {
+		validateName(entity, entity.getId());
+	}
+
+	protected void beforeUpdate(Long id, T entity) {
+		validateName(entity, id);
+	}
+
+	private void validateName(T entity, @Nullable Long id) {
+		T parent = entity.getParent();
+		Specification<T> spec = (root, cq, cb) -> {
+			Predicate p = cb.and(parent != null ? cb.equal(root.get("parent"), parent) : cb.isNull(root.get("parent")),
+					cb.equal(root.get("name"), entity.getName()));
+			return id != null ? cb.and(p, cb.notEqual(root.get("id"), id)) : p;
+		};
+		if (specificationExecutor.count(spec) > 0)
+			throw badRequest("name.already.exists");
 	}
 
 }

@@ -6,6 +6,8 @@ import static io.example.showcase.treenode.TreenodeController.PATH_LIST;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpMethod.DELETE;
 import static org.springframework.http.HttpMethod.GET;
+import static org.springframework.http.HttpMethod.PATCH;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.OK;
 
@@ -25,9 +27,9 @@ class TreenodeControllerTests extends BaseControllerTests {
 	@Test
 	void crud() {
 		TestRestTemplate restTemplate = adminRestTemplate();
-		Treenode parent = new Treenode("parent");
 
 		// create
+		Treenode parent = new Treenode("parent");
 		ResponseEntity<Treenode> response = restTemplate.postForEntity(PATH_LIST, parent, Treenode.class);
 		assertThat(response.getStatusCode()).isSameAs(OK);
 		Treenode treenode = response.getBody();
@@ -35,6 +37,11 @@ class TreenodeControllerTests extends BaseControllerTests {
 		assertThat(treenode.getId()).isNotNull();
 		assertThat(treenode.getName()).isEqualTo(parent.getName());
 		assertThat(treenode.getLevel()).isEqualTo(1);
+
+		assertThat(
+				restTemplate.postForEntity(PATH_LIST, new Treenode(treenode.getName()), Treenode.class).getStatusCode())
+						.isSameAs(BAD_REQUEST); // name already exists
+
 		Treenode child = new Treenode("child");
 		child.setParent(treenode);
 		response = restTemplate.postForEntity(PATH_LIST, child, Treenode.class);
@@ -46,6 +53,14 @@ class TreenodeControllerTests extends BaseControllerTests {
 		assertThat(child.getLevel()).isEqualTo(2);
 		assertThat(child.getParent()).isNotNull();
 		assertThat(child.getParent().getId()).isEqualTo(treenode.getId());
+		assertThat(restTemplate
+				.postForEntity(PATH_LIST, new Treenode(child.getParent(), child.getName(), 0), Treenode.class)
+				.getStatusCode()).isSameAs(BAD_REQUEST);
+
+		Treenode child2 = new Treenode("child2");
+		child2.setParent(child.getParent());
+		child2 = restTemplate.postForObject(PATH_LIST, child2, Treenode.class);
+		assertThat(child2.getId()).isNotNull();
 
 		// read
 		response = restTemplate.getForEntity(PATH_DETAIL, Treenode.class, treenode.getId());
@@ -58,6 +73,12 @@ class TreenodeControllerTests extends BaseControllerTests {
 		assertThat(child.getName()).isEqualTo(temp.getName());
 		assertThat(child.getParent()).isNotNull(); // parent not updated
 		assertThat(child.getLevel()).isEqualTo(2);
+		assertThat(
+				restTemplate
+						.exchange(RequestEntity.method(PATCH, PATH_DETAIL, child2.getId())
+								.body(new Treenode(child.getParent(), child.getName(), 0)), Treenode.class)
+						.getStatusCode()).isSameAs(BAD_REQUEST); // name already exists
+
 		// update full
 		temp.setName("name");
 		temp.setParent(null);
@@ -69,6 +90,8 @@ class TreenodeControllerTests extends BaseControllerTests {
 		assertThat(child.getLevel()).isEqualTo(1);
 
 		// delete
+		assertThat(restTemplate.exchange(RequestEntity.method(DELETE, PATH_DETAIL, child2.getId()).build(), void.class)
+				.getStatusCode()).isSameAs(OK);
 		assertThat(restTemplate.exchange(RequestEntity.method(DELETE, PATH_DETAIL, child.getId()).build(), void.class)
 				.getStatusCode()).isSameAs(OK);
 		assertThat(
