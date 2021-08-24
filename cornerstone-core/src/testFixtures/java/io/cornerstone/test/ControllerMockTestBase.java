@@ -6,9 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.RequestPostProcessor;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @SpringApplicationTest(webEnvironment = WebEnvironment.MOCK)
@@ -16,21 +14,17 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public abstract class ControllerMockTestBase extends SpringApplicationTestBase {
 
 	@Autowired
-	protected ObjectMapper objectMapper;
-
-	@Autowired
 	protected MockMvc mockMvc;
 
-	protected String toJson(Object object) throws JsonProcessingException {
-		return objectMapper.writeValueAsString(object);
+	@Autowired
+	protected ObjectMapper objectMapper;
+
+	protected MockMvcRestTemplate userRestTemplate() {
+		return new MockMvcRestTemplate(mockMvc, objectMapper, httpBasic(USER_USERNAME, DEFAULT_PASSWORD));
 	}
 
-	protected RequestPostProcessor user() {
-		return httpBasic(USER_USERNAME, DEFAULT_PASSWORD);
-	}
-
-	protected RequestPostProcessor admin() {
-		return httpBasic(ADMIN_USERNAME, DEFAULT_PASSWORD);
+	protected MockMvcRestTemplate adminRestTemplate() {
+		return new MockMvcRestTemplate(mockMvc, objectMapper, httpBasic(ADMIN_USERNAME, DEFAULT_PASSWORD));
 	}
 
 }
