@@ -11,20 +11,20 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class TestTreeableEntity extends AbstractTreeableEntity<TestTreeableEntity> {
+public class TestEntity extends AbstractTreeableEntity<TestEntity> {
 
 	private static final long serialVersionUID = 1L;
 
-	public TestTreeableEntity(String name) {
+	public TestEntity(String name) {
 		this.name = name;
 	}
 
-	public TestTreeableEntity(String name, int displayOrder) {
+	public TestEntity(String name, int displayOrder) {
 		this.name = name;
 		this.displayOrder = displayOrder;
 	}
 
-	public TestTreeableEntity(TestTreeableEntity parent, String name, int displayOrder) {
+	public TestEntity(TestEntity parent, String name, int displayOrder) {
 		this.parent = parent;
 		this.name = name;
 		this.displayOrder = displayOrder;

@@ -5,7 +5,7 @@ import static org.springframework.data.domain.Sort.Direction.DESC;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -28,7 +28,7 @@ import io.cornerstone.core.domain.View;
 import io.cornerstone.core.web.AbstractEntityController;
 import springfox.documentation.annotations.ApiIgnore;
 
-@ConditionalOnProperty(name = "TestEntityController.enabled", havingValue = "true")
+@Profile("WebMvcTest")
 @RestController
 @Validated
 public class TestEntityController extends AbstractEntityController<TestEntity, Long> {

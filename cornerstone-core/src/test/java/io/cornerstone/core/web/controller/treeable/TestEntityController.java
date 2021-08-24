@@ -6,7 +6,7 @@ import java.util.List;
 
 import javax.validation.Valid;
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.validation.annotation.Validated;
@@ -27,58 +27,56 @@ import io.cornerstone.core.domain.View;
 import io.cornerstone.core.web.AbstractTreeableEntityController;
 import springfox.documentation.annotations.ApiIgnore;
 
-@ConditionalOnProperty(name = "TestTreeableEntityController.enabled", havingValue = "true")
+@Profile("WebMvcTest")
 @RestController
 @Validated
-public class TestTreeableEntityController extends AbstractTreeableEntityController<TestTreeableEntity> {
+public class TestEntityController extends AbstractTreeableEntityController<TestEntity> {
 
 	public static final String PATH_LIST = "/testTreeableEntities";
 
-	public static final String PATH_DETAIL = "/testTreeableEntity/{id:\\d+}";
+	public static final String PATH_DETAIL = "/testEntity/{id:\\d+}";
 
-	public static final String PATH_CHILDREN = "/testTreeableEntity/{id:\\d+}/children";
+	public static final String PATH_CHILDREN = "/testEntity/{id:\\d+}/children";
 
 	@Override
 	@GetMapping(PATH_CHILDREN)
 	@JsonView(View.List.class)
-	public List<TestTreeableEntity> children(@PathVariable Long id, @RequestParam(required = false) String query,
-			@ApiIgnore TestTreeableEntity example) {
+	public List<TestEntity> children(@PathVariable Long id, @RequestParam(required = false) String query,
+			@ApiIgnore TestEntity example) {
 		return super.children(id, query, example);
 	}
 
 	@Override
 	@GetMapping(PATH_LIST)
 	@JsonView(View.List.class)
-	public ResultPage<TestTreeableEntity> list(@PageableDefault(sort = "id", direction = ASC) Pageable pageable,
-			@RequestParam(required = false) String query, @ApiIgnore TestTreeableEntity example) {
+	public ResultPage<TestEntity> list(@PageableDefault(sort = "id", direction = ASC) Pageable pageable,
+			@RequestParam(required = false) String query, @ApiIgnore TestEntity example) {
 		return super.list(pageable, query, example);
 	}
 
 	@Override
 	@PostMapping(PATH_LIST)
-	public TestTreeableEntity save(
-			@RequestBody @Valid @JsonView(View.Creation.class) TestTreeableEntity testTreeableEntity) {
-		return super.save(testTreeableEntity);
+	public TestEntity save(@RequestBody @Valid @JsonView(View.Creation.class) TestEntity testEntity) {
+		return super.save(testEntity);
 	}
 
 	@Override
 	@GetMapping(PATH_DETAIL)
-	public TestTreeableEntity get(@PathVariable Long id) {
+	public TestEntity get(@PathVariable Long id) {
 		return super.get(id);
 	}
 
 	@Override
 	@PutMapping(PATH_DETAIL)
-	public void update(@PathVariable Long id,
-			@RequestBody @JsonView(View.Update.class) @Valid TestTreeableEntity testTreeableEntity) {
-		super.update(id, testTreeableEntity);
+	public void update(@PathVariable Long id, @RequestBody @JsonView(View.Update.class) @Valid TestEntity testEntity) {
+		super.update(id, testEntity);
 	}
 
 	@Override
 	@PatchMapping(PATH_DETAIL)
-	public TestTreeableEntity patch(@PathVariable Long id,
-			@RequestBody @JsonView(View.Update.class) @Valid TestTreeableEntity testTreeableEntity) {
-		return super.patch(id, testTreeableEntity);
+	public TestEntity patch(@PathVariable Long id,
+			@RequestBody @JsonView(View.Update.class) @Valid TestEntity testEntity) {
+		return super.patch(id, testEntity);
 	}
 
 	@Override
