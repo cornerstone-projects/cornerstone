@@ -11,7 +11,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 @WebMvcTest
 @ImportAutoConfiguration(exclude = SecurityAutoConfiguration.class)
-@ActiveProfiles({ "test", "WebMvcTest" })
+@ActiveProfiles("test")
 public abstract class WebMvcTestBase {
 
 	protected MockMvc mockMvc;

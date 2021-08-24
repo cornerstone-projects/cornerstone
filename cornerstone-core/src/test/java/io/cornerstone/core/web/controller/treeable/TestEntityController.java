@@ -6,7 +6,7 @@ import java.util.List;
 
 import javax.validation.Valid;
 
-import org.springframework.context.annotation.Profile;
+import org.springframework.boot.test.context.TestComponent;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.validation.annotation.Validated;
@@ -27,7 +27,7 @@ import io.cornerstone.core.domain.View;
 import io.cornerstone.core.web.AbstractTreeableEntityController;
 import springfox.documentation.annotations.ApiIgnore;
 
-@Profile("WebMvcTest")
+@TestComponent
 @RestController
 @Validated
 public class TestEntityController extends AbstractTreeableEntityController<TestEntity> {
