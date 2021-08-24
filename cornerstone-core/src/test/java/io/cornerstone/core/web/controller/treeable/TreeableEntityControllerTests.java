@@ -24,6 +24,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 
+import io.cornerstone.core.domain.ResultPage;
 import io.cornerstone.test.ControllerTestBase;
 
 @TestPropertySource(properties = "TestTreeableEntityController.enabled=true")
@@ -118,27 +119,36 @@ class TreeableEntityControllerTests extends ControllerTestBase {
 		TestTreeableEntity child2 = restTemplate.postForObject(PATH_LIST, new TestTreeableEntity(parent1, "child2", 1),
 				TestTreeableEntity.class);
 
-		ResponseEntity<List<TestTreeableEntity>> response = restTemplate.exchange(
+		ResponseEntity<ResultPage<TestTreeableEntity>> response = restTemplate.exchange(
 				RequestEntity.method(GET, URI.create(PATH_LIST)).build(),
-				new ParameterizedTypeReference<List<TestTreeableEntity>>() {
+				new ParameterizedTypeReference<ResultPage<TestTreeableEntity>>() {
 				});
 		assertThat(response.getStatusCode()).isSameAs(OK);
-		assertThat(response.getBody()).hasSize(4);
+
+		ResultPage<TestTreeableEntity> page = response.getBody();
+		assertThat(page).isNotNull();
+		assertThat(page.getResult()).hasSize(4);
 
 		response = restTemplate.exchange(RequestEntity.method(GET, URI.create(PATH_LIST + "?query=child")).build(),
-				new ParameterizedTypeReference<List<TestTreeableEntity>>() {
+				new ParameterizedTypeReference<ResultPage<TestTreeableEntity>>() {
 				});
-		assertThat(response.getBody()).hasSize(2);
+		page = response.getBody();
+		assertThat(page).isNotNull();
+		assertThat(page.getResult()).hasSize(2);
 
 		response = restTemplate.exchange(RequestEntity.method(GET, URI.create(PATH_LIST + "?name=child")).build(),
-				new ParameterizedTypeReference<List<TestTreeableEntity>>() {
+				new ParameterizedTypeReference<ResultPage<TestTreeableEntity>>() {
 				});
-		assertThat(response.getBody()).hasSize(2);
+		page = response.getBody();
+		assertThat(page).isNotNull();
+		assertThat(page.getResult()).hasSize(2);
 
 		response = restTemplate.exchange(RequestEntity.method(GET, URI.create(PATH_LIST + "?level=2")).build(),
-				new ParameterizedTypeReference<List<TestTreeableEntity>>() {
+				new ParameterizedTypeReference<ResultPage<TestTreeableEntity>>() {
 				});
-		assertThat(response.getBody()).hasSize(2);
+		page = response.getBody();
+		assertThat(page).isNotNull();
+		assertThat(page.getResult()).hasSize(2);
 
 		restTemplate.delete(PATH_DETAIL, child1.getId());
 		restTemplate.delete(PATH_DETAIL, child2.getId());

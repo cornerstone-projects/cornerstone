@@ -31,7 +31,7 @@ import springfox.documentation.annotations.ApiIgnore;
 @ConditionalOnProperty(name = "TestEntityController.enabled", havingValue = "true")
 @RestController
 @Validated
-public class TestEntityController extends AbstractEntityController<TestEntity> {
+public class TestEntityController extends AbstractEntityController<TestEntity, Long> {
 
 	public static final String PATH_LIST = "/testEntitys";
 

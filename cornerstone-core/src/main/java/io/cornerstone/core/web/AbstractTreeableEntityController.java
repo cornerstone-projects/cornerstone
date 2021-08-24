@@ -13,7 +13,7 @@ import io.cornerstone.core.hibernate.criteria.PredicateBuilder;
 import io.cornerstone.core.hibernate.domain.AbstractTreeableEntity;
 
 public abstract class AbstractTreeableEntityController<T extends AbstractTreeableEntity<T>>
-		extends EntityControllerBase<T, Long> {
+		extends AbstractEntityController<T, Long> {
 
 	public List<T> children(Long id, String query, T example) {
 		Specification<T> spec = (root, cq, cb) -> {
@@ -29,20 +29,20 @@ public abstract class AbstractTreeableEntityController<T extends AbstractTreeabl
 		return specificationExecutor.findAll(spec);
 	}
 
-	public List<T> list(String query, T example) {
-		if (StringUtils.hasText(query)) {
-			return specificationExecutor.findAll(getQuerySpecification(query));
-		} else {
-			return repository.findAll(Example.of(example, getExampleMatcher()));
-		}
-	}
-
+	@Override
 	protected void beforeSave(T entity) {
 		validateName(entity, entity.getId());
 	}
 
+	@Override
 	protected void beforeUpdate(Long id, T entity) {
 		validateName(entity, id);
+	}
+
+	@Override
+	protected void beforePatch(Long id, T entity) {
+		if (entity.getName() != null) // name present
+			validateName(entity, id);
 	}
 
 	private void validateName(T entity, @Nullable Long id) {

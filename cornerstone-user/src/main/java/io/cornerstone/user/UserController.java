@@ -54,7 +54,7 @@ import springfox.documentation.annotations.ApiIgnore;
 @RestController
 @Validated
 @Secured(ADMIN_ROLE)
-public class UserController extends AbstractEntityController<User> {
+public class UserController extends AbstractEntityController<User, Long> {
 
 	public static final String PATH_LIST = "/users";
 
@@ -82,22 +82,26 @@ public class UserController extends AbstractEntityController<User> {
 		return super.save(user);
 	}
 
+	@Override
 	@GetMapping(PATH_DETAIL)
 	public User get(@PathVariable Long id) {
 		return super.get(id);
 	}
 
+	@Override
 	@PutMapping(PATH_DETAIL)
 	public void update(@PathVariable Long id, @RequestBody @JsonView(User.View.Update.class) @Valid User user) {
 		encodePassword(user);
 		super.update(id, user);
 	}
 
+	@Override
 	@PatchMapping(PATH_DETAIL)
 	public User patch(@PathVariable Long id, @RequestBody @JsonView(User.View.Update.class) @Valid User user) {
 		return super.patch(id, user);
 	}
 
+	@Override
 	@DeleteMapping(PATH_DETAIL)
 	public void delete(@PathVariable Long id) {
 		super.delete(id);

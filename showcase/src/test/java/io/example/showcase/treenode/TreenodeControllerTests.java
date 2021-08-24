@@ -20,6 +20,7 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 
+import io.cornerstone.core.domain.ResultPage;
 import io.example.showcase.BaseControllerTests;
 
 class TreenodeControllerTests extends BaseControllerTests {
@@ -109,27 +110,36 @@ class TreenodeControllerTests extends BaseControllerTests {
 		Treenode child1 = restTemplate.postForObject(PATH_LIST, new Treenode(parent1, "child1", 1), Treenode.class);
 		Treenode child2 = restTemplate.postForObject(PATH_LIST, new Treenode(parent1, "child2", 1), Treenode.class);
 
-		ResponseEntity<List<Treenode>> response = restTemplate.exchange(
+		ResponseEntity<ResultPage<Treenode>> response = restTemplate.exchange(
 				RequestEntity.method(GET, URI.create(PATH_LIST)).build(),
-				new ParameterizedTypeReference<List<Treenode>>() {
+				new ParameterizedTypeReference<ResultPage<Treenode>>() {
 				});
 		assertThat(response.getStatusCode()).isSameAs(OK);
-		assertThat(response.getBody()).hasSize(4);
+
+		ResultPage<Treenode> page = response.getBody();
+		assertThat(page).isNotNull();
+		assertThat(page.getResult()).hasSize(4);
 
 		response = restTemplate.exchange(RequestEntity.method(GET, URI.create(PATH_LIST + "?query=child")).build(),
-				new ParameterizedTypeReference<List<Treenode>>() {
+				new ParameterizedTypeReference<ResultPage<Treenode>>() {
 				});
-		assertThat(response.getBody()).hasSize(2);
+		page = response.getBody();
+		assertThat(page).isNotNull();
+		assertThat(page.getResult()).hasSize(2);
 
 		response = restTemplate.exchange(RequestEntity.method(GET, URI.create(PATH_LIST + "?name=child")).build(),
-				new ParameterizedTypeReference<List<Treenode>>() {
+				new ParameterizedTypeReference<ResultPage<Treenode>>() {
 				});
-		assertThat(response.getBody()).hasSize(2);
+		page = response.getBody();
+		assertThat(page).isNotNull();
+		assertThat(page.getResult()).hasSize(2);
 
 		response = restTemplate.exchange(RequestEntity.method(GET, URI.create(PATH_LIST + "?level=2")).build(),
-				new ParameterizedTypeReference<List<Treenode>>() {
+				new ParameterizedTypeReference<ResultPage<Treenode>>() {
 				});
-		assertThat(response.getBody()).hasSize(2);
+		page = response.getBody();
+		assertThat(page).isNotNull();
+		assertThat(page.getResult()).hasSize(2);
 
 		restTemplate.delete(PATH_DETAIL, child1.getId());
 		restTemplate.delete(PATH_DETAIL, child2.getId());

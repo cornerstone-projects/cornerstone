@@ -29,7 +29,7 @@ import springfox.documentation.annotations.ApiIgnore;
 
 @RestController
 @Validated
-public class CustomerController extends AbstractEntityController<Customer> {
+public class CustomerController extends AbstractEntityController<Customer, Long> {
 
 	public static final String PATH_LIST = "/customers";
 
