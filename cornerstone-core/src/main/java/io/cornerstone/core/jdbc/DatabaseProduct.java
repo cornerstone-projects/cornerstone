@@ -15,7 +15,6 @@ import java.util.stream.Collectors;
 
 import org.springframework.util.StringUtils;
 
-
 public enum DatabaseProduct {
 
 	MYSQL {

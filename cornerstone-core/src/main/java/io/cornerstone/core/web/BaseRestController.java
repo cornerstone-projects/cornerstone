@@ -14,8 +14,8 @@ public abstract class BaseRestController {
 	protected ApplicationContext applicationContext;
 
 	protected ResponseStatusException notFound(Object subject) {
-		return new ResponseStatusException(NOT_FOUND,
-				applicationContext.getMessage("not.found", new Object[] { String.valueOf(subject) }, LocaleContextHolder.getLocale()));
+		return new ResponseStatusException(NOT_FOUND, applicationContext.getMessage("not.found",
+				new Object[] { String.valueOf(subject) }, LocaleContextHolder.getLocale()));
 	}
 
 	protected ResponseStatusException badRequest(String reason) {

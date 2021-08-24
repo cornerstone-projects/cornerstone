@@ -13,7 +13,7 @@ public class DB2SimpleSequence extends AbstractSequenceSimpleSequence {
 
 	@Override
 	protected String getQuerySequenceStatement() {
-		return "SELECT NEXTVAL FOR "+getActualSequenceName()+" FROM SYSIBM.SYSDUMMY1";
+		return "SELECT NEXTVAL FOR " + getActualSequenceName() + " FROM SYSIBM.SYSDUMMY1";
 	}
 
 }

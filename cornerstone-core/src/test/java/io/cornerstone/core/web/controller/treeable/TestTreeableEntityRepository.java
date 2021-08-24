@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import io.cornerstone.core.repository.TreeableRepository;
 
-public interface TestTreeableEntityRepository
-		extends JpaRepository<TestTreeableEntity, Long>, JpaSpecificationExecutor<TestTreeableEntity>, TreeableRepository<TestTreeableEntity> {
+public interface TestTreeableEntityRepository extends JpaRepository<TestTreeableEntity, Long>,
+		JpaSpecificationExecutor<TestTreeableEntity>, TreeableRepository<TestTreeableEntity> {
 
 }

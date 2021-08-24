@@ -24,7 +24,7 @@ public class BeanUtilsTests {
 		private String password;
 
 		private Boolean enabled;
-		
+
 		@JsonView(View.A.class)
 		@JsonProperty(access = READ_ONLY)
 		private String fullname;
@@ -81,7 +81,7 @@ public class BeanUtilsTests {
 		assertThat(user2.getPassword()).isNull();
 		assertThat(user2.getEnabled()).isEqualTo(Boolean.TRUE);
 		assertThat(user2.getFullname()).isNull(); // readonly
-		
+
 		User user3 = new User();
 		user3.setEnabled(true);
 		BeanUtils.copyPropertiesInJsonView(user1, user3, User.View.B.class);

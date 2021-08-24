@@ -20,7 +20,6 @@ public class CodecUtils {
 
 	public static final char[] CHARS = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
 
-
 	public static String nextId() {
 		return nextId(22); // back compatibility
 	}

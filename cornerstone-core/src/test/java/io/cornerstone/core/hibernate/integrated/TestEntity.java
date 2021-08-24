@@ -123,5 +123,4 @@ public class TestEntity implements Persistable<Long> {
 		private BigDecimal bigDecimal;
 	}
 
-
 }
