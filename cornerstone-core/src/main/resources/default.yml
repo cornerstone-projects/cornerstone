@@ -70,7 +70,6 @@ spring.messages:
 
 logging:
   config: classpath:log4j2.xml
-  group.SQL: org.hibernate.SQL,org.hibernate.type.descriptor.sql.BasicBinder,org.springframework.jdbc.core
   level.org.springframework.context.support.ResourceBundleMessageSource: ERROR
 
 management.endpoints.web.exposure.include: health
@@ -110,7 +109,11 @@ spring:
 springfox.documentation.enabled: true
 management.endpoints.web.exposure.include: "*"
 logging:
-  level.SQL: TRACE
+  level:
+    sql: TRACE
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    web: DEBUG
+    org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping: TRACE
 
 ---
 spring:
