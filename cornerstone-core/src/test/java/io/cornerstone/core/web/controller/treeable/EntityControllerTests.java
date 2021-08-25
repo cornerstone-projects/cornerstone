@@ -12,14 +12,15 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import org.springframework.test.context.ContextConfiguration;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 
 import io.cornerstone.core.domain.ResultPage;
 import io.cornerstone.test.WebMvcWithDataJpaTestBase;
 
-@ContextConfiguration(classes = EntityControllerTests.Config.class)
+@ComponentScan // scan @RestController in this package
+@EnableJpaRepositories(basePackageClasses = TestEntityRepository.class)
+@EntityScan(basePackageClasses = TestEntity.class)
 class EntityControllerTests extends WebMvcWithDataJpaTestBase {
 
 	@Test
@@ -176,13 +177,6 @@ class EntityControllerTests extends WebMvcWithDataJpaTestBase {
 		mockMvcRestTemplate.delete(PATH_DETAIL, child2.getId());
 		mockMvcRestTemplate.delete(PATH_DETAIL, parent1.getId());
 		mockMvcRestTemplate.delete(PATH_DETAIL, parent2.getId());
-	}
-
-	@ComponentScan
-	@EnableJpaRepositories(basePackageClasses = TestEntityRepository.class)
-	@EntityScan(basePackageClasses = TestEntity.class)
-	static class Config {
-
 	}
 
 }
