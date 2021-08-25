@@ -1,4 +1,4 @@
-package io.cornerstone.core.hibernate.audit;
+package io.cornerstone.core.domain;
 
 import java.time.LocalDateTime;
 

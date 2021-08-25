@@ -10,7 +10,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import com.fasterxml.jackson.annotation.JsonView;
 
-import io.cornerstone.core.hibernate.audit.Auditable;
+import io.cornerstone.core.domain.Auditable;
 import io.cornerstone.core.hibernate.audit.CreationUser;
 import io.cornerstone.core.hibernate.audit.UpdateUser;
 import lombok.Getter;

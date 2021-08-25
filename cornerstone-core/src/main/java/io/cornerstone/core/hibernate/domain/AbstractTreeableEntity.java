@@ -1,5 +1,7 @@
 package io.cornerstone.core.hibernate.domain;
 
+import static lombok.AccessLevel.PROTECTED;
+
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Collection;
@@ -16,12 +18,10 @@ import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
-import javax.persistence.Transient;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.domain.Persistable;
-import org.springframework.data.util.ProxyUtils;
 import org.springframework.lang.Nullable;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -29,10 +29,10 @@ import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
+import io.cornerstone.core.domain.Auditable;
 import io.cornerstone.core.domain.Ordered;
 import io.cornerstone.core.domain.Treeable;
 import io.cornerstone.core.domain.View;
-import io.cornerstone.core.hibernate.audit.Auditable;
 import io.cornerstone.core.hibernate.audit.CreationUser;
 import io.cornerstone.core.hibernate.audit.UpdateUser;
 import io.cornerstone.core.json.FromIdDeserializer;
@@ -44,14 +44,15 @@ import lombok.Setter;
 @MappedSuperclass
 @Getter
 @Setter
-public abstract class AbstractTreeableEntity<T extends AbstractTreeableEntity<T>>
-		implements Persistable<Long>, Treeable<T, Long>, Ordered<T>, Serializable {
+public abstract class AbstractTreeableEntity<T extends AbstractTreeableEntity<T>> extends AbstractPersistable<Long>
+		implements Auditable, Treeable<T, Long>, Ordered<T>, Serializable {
 
 	private static final long serialVersionUID = -2016525006418883120L;
 
 	@Id
 	@GeneratedValue
 	@JsonView(Persistable.class)
+	@Setter(PROTECTED)
 	private @Nullable Long id;
 
 	@Column(unique = true, nullable = false)
@@ -99,49 +100,5 @@ public abstract class AbstractTreeableEntity<T extends AbstractTreeableEntity<T>
 	@JsonView(Auditable.class)
 	@Column(insertable = false)
 	private String lastModifiedBy;
-
-	@Nullable
-	@Override
-	public Long getId() {
-		return id;
-	}
-
-	protected void setId(@Nullable Long id) {
-		this.id = id;
-	}
-
-	@Transient
-	@Override
-	@JsonIgnore
-	public boolean isNew() {
-		return null == getId();
-	}
-
-	@Override
-	public String toString() {
-		return String.format("Entity of type %s with id: %s", this.getClass().getName(), getId());
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (null == obj) {
-			return false;
-		}
-		if (this == obj) {
-			return true;
-		}
-		if (!getClass().equals(ProxyUtils.getUserClass(obj))) {
-			return false;
-		}
-		AbstractTreeableEntity<?> that = (AbstractTreeableEntity<?>) obj;
-		return this.id == null ? false : id.equals(that.id);
-	}
-
-	@Override
-	public int hashCode() {
-		int hashCode = 17;
-		hashCode += id == null ? 0 : id.hashCode() * 31;
-		return hashCode;
-	}
 
 }
