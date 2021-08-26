@@ -28,23 +28,31 @@ public abstract class AbstractEntityController<T, ID> extends BaseRestController
 
 	protected final Class<T> entityClass;
 
+	protected final Class<ID> idClass;
+
 	protected JpaRepository<T, ID> repository;
 
 	protected JpaSpecificationExecutor<T> specificationExecutor;
 
 	@SuppressWarnings("unchecked")
 	protected AbstractEntityController() {
-		entityClass = (Class<T>) ResolvableType.forClass(getClass()).as(AbstractEntityController.class).getGeneric(0)
-				.resolve();
+		ResolvableType rt = ResolvableType.forClass(getClass()).as(AbstractEntityController.class);
+		entityClass = (Class<T>) rt.getGeneric(0).resolve();
+		idClass = (Class<ID>) rt.getGeneric(1).resolve();
 	}
 
 	@SuppressWarnings("unchecked")
 	@PostConstruct
-	public void init() {
-		repository = (JpaRepository<T, ID>) applicationContext.getBeanProvider(
-				ResolvableType.forClassWithGenerics(JpaRepository.class, entityClass, Long.class), false).getObject();
+	private void init() {
+		repository = (JpaRepository<T, ID>) applicationContext
+				.getBeanProvider(ResolvableType.forClassWithGenerics(JpaRepository.class, entityClass, idClass), false)
+				.getObject();
 		specificationExecutor = (JpaSpecificationExecutor<T>) applicationContext.getBeanProvider(
 				ResolvableType.forClassWithGenerics(JpaSpecificationExecutor.class, entityClass), false).getObject();
+	}
+
+	public String getEntityName() {
+		return StringUtils.uncapitalize(entityClass.getSimpleName());
 	}
 
 	public ResultPage<T> list(@PageableDefault(sort = "id", direction = DESC) Pageable pageable,
