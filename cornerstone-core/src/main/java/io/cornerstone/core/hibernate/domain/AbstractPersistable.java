@@ -15,7 +15,7 @@ import io.cornerstone.core.hibernate.type.JsonType;
 
 @TypeDefs({ @TypeDef(name = "json", typeClass = JsonType.class) })
 @MappedSuperclass
-public abstract class AbstractPersistable<ID> implements Persistable<ID>, Serializable {
+public abstract class AbstractPersistable<ID extends Serializable> implements Persistable<ID>, Serializable {
 
 	private static final long serialVersionUID = -2241508041793759552L;
 

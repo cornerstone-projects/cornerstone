@@ -3,7 +3,6 @@ package io.cornerstone.core.hibernate.domain;
 import static lombok.AccessLevel.PROTECTED;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
 import java.util.Collection;
 
 import javax.persistence.CascadeType;
@@ -19,8 +18,6 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.domain.Persistable;
 import org.springframework.lang.Nullable;
 
@@ -29,12 +26,9 @@ import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
-import io.cornerstone.core.domain.Auditable;
 import io.cornerstone.core.domain.Ordered;
 import io.cornerstone.core.domain.Treeable;
 import io.cornerstone.core.domain.View;
-import io.cornerstone.core.hibernate.audit.CreationUser;
-import io.cornerstone.core.hibernate.audit.UpdateUser;
 import io.cornerstone.core.json.FromIdDeserializer;
 import io.cornerstone.core.json.ToIdSerializer;
 import io.swagger.annotations.ApiModelProperty;
@@ -44,8 +38,8 @@ import lombok.Setter;
 @MappedSuperclass
 @Getter
 @Setter
-public abstract class AbstractTreeableEntity<T extends AbstractTreeableEntity<T>> extends AbstractPersistable<Long>
-		implements Auditable, Treeable<T, Long>, Ordered<T>, Serializable {
+public abstract class AbstractTreeableEntity<T extends AbstractTreeableEntity<T>>
+		extends AbstractAuditable<Long> implements Treeable<T, Long>, Ordered<T>, Serializable {
 
 	private static final long serialVersionUID = -2016525006418883120L;
 
@@ -80,25 +74,5 @@ public abstract class AbstractTreeableEntity<T extends AbstractTreeableEntity<T>
 	@OneToMany(cascade = CascadeType.REMOVE, mappedBy = "parent")
 	@OrderBy("displayOrder,name")
 	protected Collection<T> children;
-
-	@CreationTimestamp
-	@JsonView(Auditable.class)
-	@Column(updatable = false)
-	private LocalDateTime createdDate;
-
-	@UpdateTimestamp
-	@JsonView(Auditable.class)
-	@Column(insertable = false)
-	private LocalDateTime lastModifiedDate;
-
-	@CreationUser
-	@JsonView(Auditable.class)
-	@Column(updatable = false)
-	private String createdBy;
-
-	@UpdateUser
-	@JsonView(Auditable.class)
-	@Column(insertable = false)
-	private String lastModifiedBy;
 
 }
