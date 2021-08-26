@@ -16,7 +16,16 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import com.fasterxml.jackson.annotation.JsonView;
 
 import io.cornerstone.core.domain.ResultPage;
 import io.cornerstone.core.domain.Versioned;
@@ -25,6 +34,10 @@ import io.cornerstone.core.util.BeanUtils;
 import springfox.documentation.annotations.ApiIgnore;
 
 public abstract class AbstractEntityController<T, ID> extends BaseRestController {
+
+	protected static final String PATH_LIST = "/#{T(io.cornerstone.core.util.StringHelper).pluralOf(entityName)}";
+
+	protected static final String PATH_DETAIL = "/#{entityName}/{id:\\d+}";
 
 	protected final Class<T> entityClass;
 
@@ -55,6 +68,8 @@ public abstract class AbstractEntityController<T, ID> extends BaseRestController
 		return StringUtils.uncapitalize(entityClass.getSimpleName());
 	}
 
+	@JsonView({ View.List.class })
+	@GetMapping(PATH_LIST)
 	public ResultPage<T> list(@PageableDefault(sort = "id", direction = DESC) Pageable pageable,
 			@RequestParam(required = false) String query, @ApiIgnore T example) {
 		Page<T> page;
@@ -66,16 +81,19 @@ public abstract class AbstractEntityController<T, ID> extends BaseRestController
 		return ResultPage.of(page);
 	}
 
-	public T save(@Valid T entity) {
+	@PostMapping(PATH_LIST)
+	public T save(@RequestBody @JsonView(View.Creation.class) @Valid T entity) {
 		beforeSave(entity);
 		return repository.save(entity);
 	}
 
-	public T get(ID id) {
+	@GetMapping(PATH_DETAIL)
+	public T get(@PathVariable ID id) {
 		return repository.findById(id).orElseThrow(() -> notFound(id));
 	}
 
-	public void update(ID id, @Valid T entity) {
+	@PutMapping(PATH_DETAIL)
+	public void update(@PathVariable ID id, @RequestBody @JsonView(View.Update.class) @Valid T entity) {
 		beforeUpdate(id, entity);
 		repository.findById(id).map(en -> {
 			BeanUtils.copyPropertiesInJsonView(entity, en, determineViewForUpdate(entity));
@@ -83,7 +101,8 @@ public abstract class AbstractEntityController<T, ID> extends BaseRestController
 		}).orElseThrow(() -> notFound(id));
 	}
 
-	public T patch(ID id, @Valid T entity) {
+	@PatchMapping(PATH_DETAIL)
+	public T patch(@PathVariable ID id, @RequestBody @JsonView(View.Update.class) @Valid T entity) {
 		beforePatch(id, entity);
 		return repository.findById(id).map(en -> {
 			BeanUtils.copyNonNullProperties(entity, en);
@@ -91,7 +110,8 @@ public abstract class AbstractEntityController<T, ID> extends BaseRestController
 		}).orElseThrow(() -> notFound(id));
 	}
 
-	public void delete(ID id) {
+	@DeleteMapping(PATH_DETAIL)
+	public void delete(@PathVariable ID id) {
 		T entity = repository.findById(id).orElseThrow(() -> notFound(id));
 		beforeDelete(entity);
 		repository.delete(entity);

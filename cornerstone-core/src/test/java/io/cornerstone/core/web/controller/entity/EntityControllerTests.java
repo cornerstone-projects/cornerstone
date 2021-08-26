@@ -1,7 +1,5 @@
 package io.cornerstone.core.web.controller.entity;
 
-import static io.cornerstone.core.web.controller.entity.TestEntityController.PATH_DETAIL;
-import static io.cornerstone.core.web.controller.entity.TestEntityController.PATH_LIST;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.springframework.http.HttpMethod.GET;
@@ -26,6 +24,10 @@ import io.cornerstone.test.WebMvcWithDataJpaTestBase;
 @EnableJpaRepositories(basePackageClasses = TestEntityRepository.class)
 @EntityScan(basePackageClasses = TestEntity.class)
 class EntityControllerTests extends WebMvcWithDataJpaTestBase {
+
+	private static final String PATH_LIST = "/testEntities";
+
+	private static final String PATH_DETAIL = "/testEntity/{id}";
 
 	@Test
 	void crud() throws Exception {

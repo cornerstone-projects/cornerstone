@@ -8,14 +8,23 @@ import org.springframework.data.domain.Example;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.lang.Nullable;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import com.fasterxml.jackson.annotation.JsonView;
+
+import io.cornerstone.core.domain.View;
 import io.cornerstone.core.hibernate.criteria.PredicateBuilder;
 import io.cornerstone.core.hibernate.domain.AbstractTreeableEntity;
+import springfox.documentation.annotations.ApiIgnore;
 
 public abstract class AbstractTreeableEntityController<T extends AbstractTreeableEntity<T>>
 		extends AbstractEntityController<T, Long> {
 
-	public List<T> children(Long id, String query, T example) {
+	@GetMapping(PATH_DETAIL + "/children")
+	@JsonView(View.List.class)
+	public List<T> children(@PathVariable Long id, @RequestParam(required = false) String query, @ApiIgnore T example) {
 		Specification<T> spec = (root, cq, cb) -> {
 			Predicate predicate = (id == null || id < 1) ? cb.isNull(root.get("parent"))
 					: cb.equal(root.get("parent").get("id"), id);

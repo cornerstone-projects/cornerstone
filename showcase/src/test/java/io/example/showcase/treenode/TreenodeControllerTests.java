@@ -1,8 +1,5 @@
 package io.example.showcase.treenode;
 
-import static io.example.showcase.treenode.TreenodeController.PATH_CHILDREN;
-import static io.example.showcase.treenode.TreenodeController.PATH_DETAIL;
-import static io.example.showcase.treenode.TreenodeController.PATH_LIST;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpMethod.DELETE;
 import static org.springframework.http.HttpMethod.GET;
@@ -24,6 +21,12 @@ import io.cornerstone.core.domain.ResultPage;
 import io.example.showcase.BaseControllerTests;
 
 class TreenodeControllerTests extends BaseControllerTests {
+
+	private static final String PATH_LIST = "/treenodes";
+
+	private static final String PATH_DETAIL = "/treenode/{id}";
+
+	private static final String PATH_CHILDREN = PATH_DETAIL + "/children";
 
 	@Test
 	void crud() {

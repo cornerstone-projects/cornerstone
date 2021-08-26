@@ -1,7 +1,5 @@
 package io.example.showcase.customer;
 
-import static io.example.showcase.customer.CustomerController.PATH_DETAIL;
-import static io.example.showcase.customer.CustomerController.PATH_LIST;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpMethod.DELETE;
 import static org.springframework.http.HttpMethod.GET;
@@ -24,6 +22,10 @@ import io.cornerstone.core.validation.validators.CitizenIdentificationNumberVali
 import io.example.showcase.BaseControllerTests;
 
 class CustomerControllerTests extends BaseControllerTests {
+
+	private static final String PATH_LIST = "/customers";
+
+	private static final String PATH_DETAIL = "/customer/{id}";
 
 	@Test
 	void crud() {
