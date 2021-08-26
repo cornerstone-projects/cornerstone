@@ -8,18 +8,18 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Import;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.test.context.ContextConfiguration;
 
-import io.cornerstone.core.sequence.CyclicSequence.CycleType;
 import io.cornerstone.core.hibernate.id.SnowflakeProperties;
+import io.cornerstone.core.sequence.CyclicSequence.CycleType;
 import io.cornerstone.core.sequence.Sequence;
 import io.cornerstone.core.sequence.cyclic.DatabaseCyclicSequenceDelegate;
 import io.cornerstone.test.DataJpaTestBase;
 
 @EnableJpaRepositories(basePackageClasses = TestEntityRepository.class)
 @EntityScan(basePackageClasses = TestEntity.class)
-@Import(SequenceTests.Config.class)
+@ContextConfiguration(classes = SequenceTests.Config.class)
 public class SequenceTests extends DataJpaTestBase {
 
 	@Autowired

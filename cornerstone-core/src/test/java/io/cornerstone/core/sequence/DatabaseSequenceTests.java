@@ -3,13 +3,13 @@ package io.cornerstone.core.sequence;
 import javax.sql.DataSource;
 
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ContextConfiguration;
 
 import io.cornerstone.core.sequence.CyclicSequence.CycleType;
 import io.cornerstone.core.sequence.cyclic.DatabaseCyclicSequenceDelegate;
 import io.cornerstone.core.sequence.simple.DatabaseSimpleSequenceDelegate;
 
-@Import(DatabaseSequenceTests.Config.class)
+@ContextConfiguration(classes = DatabaseSequenceTests.Config.class)
 public class DatabaseSequenceTests extends SequenceTestBase {
 
 	static class Config {

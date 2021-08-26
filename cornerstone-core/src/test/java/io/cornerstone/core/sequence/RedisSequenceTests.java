@@ -4,13 +4,15 @@ import org.junit.jupiter.api.Disabled;
 import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ContextConfiguration;
 
 import io.cornerstone.core.sequence.CyclicSequence.CycleType;
 import io.cornerstone.core.sequence.cyclic.RedisCyclicSequence;
 import io.cornerstone.core.sequence.simple.RedisSimpleSequence;
 
 @Disabled
-@Import({ RedisAutoConfiguration.class, RedisSequenceTests.Config.class })
+@Import(RedisAutoConfiguration.class)
+@ContextConfiguration(classes = RedisSequenceTests.Config.class)
 public class RedisSequenceTests extends SequenceTestBase {
 
 	static class Config {
