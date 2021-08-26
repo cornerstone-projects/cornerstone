@@ -6,9 +6,9 @@ import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfi
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.web.client.MockMvcClientHttpRequestFactory;
 import org.springframework.test.web.servlet.MockMvc;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.web.client.RestTemplate;
 
 @WebMvcTest
 @ContextConfiguration(classes = WebMvcTestBase.Config.class)
@@ -18,15 +18,12 @@ public abstract class WebMvcTestBase {
 
 	protected MockMvc mockMvc;
 
-	protected ObjectMapper objectMapper;
-
-	protected MockMvcRestTemplate mockMvcRestTemplate;
+	protected RestTemplate restTemplate;
 
 	@Autowired
-	private void init(MockMvc mockMvc, ObjectMapper objectMapper) {
+	private void setMockMvc(MockMvc mockMvc) {
 		this.mockMvc = mockMvc;
-		this.objectMapper = objectMapper;
-		this.mockMvcRestTemplate = new MockMvcRestTemplate(mockMvc, objectMapper);
+		this.restTemplate = new RestTemplate(new MockMvcClientHttpRequestFactory(this.mockMvc));
 	}
 
 	static class Config {

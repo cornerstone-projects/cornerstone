@@ -3,7 +3,8 @@ package io.cornerstone.core.web.controller.entity;
 import static io.cornerstone.core.web.controller.entity.TestEntityController.PATH_DETAIL;
 import static io.cornerstone.core.web.controller.entity.TestEntityController.PATH_LIST;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.springframework.http.HttpMethod.GET;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,9 +12,11 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-
-import com.fasterxml.jackson.core.type.TypeReference;
+import org.springframework.http.RequestEntity;
+import org.springframework.web.client.HttpClientErrorException.BadRequest;
+import org.springframework.web.client.HttpClientErrorException.NotFound;
 
 import io.cornerstone.core.domain.ResultPage;
 import io.cornerstone.core.validation.validators.CitizenIdentificationNumberValidator;
@@ -32,7 +35,7 @@ class EntityControllerTests extends WebMvcWithDataJpaTestBase {
 		c.setDisabled(Boolean.TRUE);
 
 		// create
-		TestEntity testEntity = mockMvcRestTemplate.postForObject(PATH_LIST, c, TestEntity.class);
+		TestEntity testEntity = restTemplate.postForObject(PATH_LIST, c, TestEntity.class);
 		assertThat(testEntity).isNotNull();
 		assertThat(testEntity.getId()).isNotNull();
 		assertThat(testEntity.getIdNo()).isEqualTo(c.getIdNo());
@@ -41,14 +44,14 @@ class EntityControllerTests extends WebMvcWithDataJpaTestBase {
 		Long id = testEntity.getId();
 
 		// read
-		assertThat(mockMvcRestTemplate.getForObject(PATH_DETAIL, TestEntity.class, id)).isEqualTo(testEntity);
+		assertThat(restTemplate.getForObject(PATH_DETAIL, TestEntity.class, id)).isEqualTo(testEntity);
 
 		// update partial
 		TestEntity c2 = new TestEntity();
 		c2.setIdNo(CitizenIdentificationNumberValidator.randomValue());
 		c2.setName("new name");
 		c2.setDisabled(Boolean.TRUE);
-		TestEntity c3 = mockMvcRestTemplate.patchForObject(PATH_DETAIL, c2, TestEntity.class, id);
+		TestEntity c3 = restTemplate.patchForObject(PATH_DETAIL, c2, TestEntity.class, id);
 		assertThat(c3.getName()).isEqualTo(c2.getName());
 		assertThat(c3.getDisabled()).isEqualTo(c2.getDisabled());
 		assertThat(c3.getIdNo()).isEqualTo(testEntity.getIdNo()); // idNo not updatable
@@ -56,20 +59,21 @@ class EntityControllerTests extends WebMvcWithDataJpaTestBase {
 		c3.setIdNo(CitizenIdentificationNumberValidator.randomValue());
 		c3.setName("name");
 		c3.setDisabled(Boolean.FALSE);
-		mockMvcRestTemplate.put(PATH_DETAIL, c3, id);
-		TestEntity c4 = mockMvcRestTemplate.getForObject(PATH_DETAIL, TestEntity.class, id);
+		restTemplate.put(PATH_DETAIL, c3, id);
+		TestEntity c4 = restTemplate.getForObject(PATH_DETAIL, TestEntity.class, id);
 		assertThat(c4).isNotNull();
 		assertThat(c4.getDisabled()).isEqualTo(c3.getDisabled());
 		assertThat(c4.getName()).isEqualTo(c3.getName());
 		assertThat(c4.getIdNo()).isEqualTo(testEntity.getIdNo()); // idNo not updatable
 
 		// delete
-		mockMvcRestTemplate.deleteForResult(PATH_DETAIL, id).andExpect(status().isBadRequest());
+		assertThatThrownBy(() -> restTemplate.delete(PATH_DETAIL, id)).isInstanceOf(BadRequest.class);
 
 		c4.setDisabled(Boolean.TRUE);
-		mockMvcRestTemplate.put(PATH_DETAIL, c4, id);
-		mockMvcRestTemplate.delete(PATH_DETAIL, id);
-		mockMvcRestTemplate.getForResult(PATH_DETAIL, id).andExpect(status().isNotFound());
+		restTemplate.put(PATH_DETAIL, c4, id);
+		restTemplate.delete(PATH_DETAIL, id);
+		assertThatThrownBy(() -> restTemplate.getForObject(PATH_DETAIL, TestEntity.class, id))
+				.isInstanceOf(NotFound.class);
 	}
 
 	@Test
@@ -81,11 +85,12 @@ class EntityControllerTests extends WebMvcWithDataJpaTestBase {
 			c.setIdNo(CitizenIdentificationNumberValidator.randomValue());
 			c.setName("test" + i);
 			c.setDisabled(Boolean.TRUE);
-			list.add(mockMvcRestTemplate.postForObject(PATH_LIST, c, TestEntity.class));
+			list.add(restTemplate.postForObject(PATH_LIST, c, TestEntity.class));
 		}
 
-		ResultPage<TestEntity> page = mockMvcRestTemplate.getForObject(PATH_LIST, new TypeReference<>() {
-		});
+		ResultPage<TestEntity> page = restTemplate.exchange(RequestEntity.method(GET, PATH_LIST).build(),
+				new ParameterizedTypeReference<ResultPage<TestEntity>>() {
+				}).getBody();
 		assertThat(page).isNotNull();
 		assertThat(page.getResult()).hasSize(size);
 		assertThat(page.getPage()).isEqualTo(1);
@@ -94,15 +99,17 @@ class EntityControllerTests extends WebMvcWithDataJpaTestBase {
 		assertThat(page.getTotalElements()).isEqualTo(size);
 		assertThat(page.getResult().get(0).getCreatedDate()).isNull(); // View.List view
 
-		page = mockMvcRestTemplate.getForObject(PATH_LIST + "?page=2&size=1&sort=id,desc", new TypeReference<>() {
-		});
+		page = restTemplate.exchange(RequestEntity.method(GET, PATH_LIST + "?page=2&size=1&sort=id,desc").build(),
+				new ParameterizedTypeReference<ResultPage<TestEntity>>() {
+				}).getBody();
 		assertThat(page).isNotNull();
 		assertThat(page.getResult()).hasSize(1);
 		assertThat(page.getPage()).isEqualTo(2);
 		assertThat(page.getSize()).isEqualTo(1);
 
-		page = mockMvcRestTemplate.getForObject(PATH_LIST + "?query=test0", new TypeReference<>() {
-		});
+		page = restTemplate.exchange(RequestEntity.method(GET, PATH_LIST + "?query=test0").build(),
+				new ParameterizedTypeReference<ResultPage<TestEntity>>() {
+				}).getBody();
 		assertThat(page).isNotNull();
 		assertThat(page.getResult()).hasSize(1);
 		assertThat(page.getPage()).isEqualTo(1);
@@ -110,13 +117,15 @@ class EntityControllerTests extends WebMvcWithDataJpaTestBase {
 		assertThat(page.getTotalPages()).isEqualTo(1);
 		assertThat(page.getTotalElements()).isEqualTo(1);
 
-		ResultPage<TestEntity> page2 = mockMvcRestTemplate.getForObject(PATH_LIST + "?name=test0",
-				new TypeReference<>() {
-				});
+		ResultPage<TestEntity> page2 = restTemplate
+				.exchange(RequestEntity.method(GET, PATH_LIST + "?name=test0").build(),
+						new ParameterizedTypeReference<ResultPage<TestEntity>>() {
+						})
+				.getBody();
 		assertThat(page2).isEqualTo(page);
 
 		for (TestEntity c : list)
-			mockMvcRestTemplate.delete(PATH_DETAIL, c.getId());
+			restTemplate.delete(PATH_DETAIL, c.getId());
 	}
 
 }

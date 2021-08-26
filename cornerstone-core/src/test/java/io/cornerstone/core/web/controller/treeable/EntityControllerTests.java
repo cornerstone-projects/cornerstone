@@ -4,16 +4,19 @@ import static io.cornerstone.core.web.controller.treeable.TestEntityController.P
 import static io.cornerstone.core.web.controller.treeable.TestEntityController.PATH_DETAIL;
 import static io.cornerstone.core.web.controller.treeable.TestEntityController.PATH_LIST;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.springframework.http.HttpMethod.GET;
 
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-
-import com.fasterxml.jackson.core.type.TypeReference;
+import org.springframework.http.RequestEntity;
+import org.springframework.web.client.HttpClientErrorException.BadRequest;
+import org.springframework.web.client.HttpClientErrorException.NotFound;
 
 import io.cornerstone.core.domain.ResultPage;
 import io.cornerstone.test.WebMvcWithDataJpaTestBase;
@@ -28,155 +31,172 @@ class EntityControllerTests extends WebMvcWithDataJpaTestBase {
 
 		// create
 		TestEntity parent = new TestEntity("parent");
-		TestEntity testEntity = mockMvcRestTemplate.postForObject(PATH_LIST, parent, TestEntity.class);
+		TestEntity testEntity = restTemplate.postForObject(PATH_LIST, parent, TestEntity.class);
 		assertThat(testEntity).isNotNull();
 		assertThat(testEntity.getId()).isNotNull();
 		assertThat(testEntity.getName()).isEqualTo(parent.getName());
 		assertThat(testEntity.getLevel()).isEqualTo(1);
 
-		mockMvcRestTemplate.postForResult(PATH_LIST, new TestEntity(testEntity.getName()))
-				.andExpect(status().isBadRequest());
+		assertThatThrownBy(
+				() -> restTemplate.postForObject(PATH_LIST, new TestEntity(parent.getName()), TestEntity.class))
+						.isInstanceOf(BadRequest.class);
 		// name already exists
 
 		TestEntity child = new TestEntity("child");
 		child.setParent(testEntity);
-		child = mockMvcRestTemplate.postForObject(PATH_LIST, child, TestEntity.class);
+		child = restTemplate.postForObject(PATH_LIST, child, TestEntity.class);
 		assertThat(child).isNotNull();
 		assertThat(child.getId()).isNotNull();
 		assertThat(child.getName()).isEqualTo("child");
 		assertThat(child.getLevel()).isEqualTo(2);
 		assertThat(child.getParent()).isNotNull();
 		assertThat(child.getParent().getId()).isEqualTo(testEntity.getId());
-		mockMvcRestTemplate.postForResult(PATH_LIST, new TestEntity(child.getParent(), child.getName(), 0))
-				.andExpect(status().isBadRequest());
+		TestEntity te = new TestEntity(child.getParent(), child.getName(), 0);
+		assertThatThrownBy(() -> restTemplate.postForObject(PATH_LIST, te, TestEntity.class))
+				.isInstanceOf(BadRequest.class);
 
 		TestEntity child2 = new TestEntity("child2");
 		child2.setParent(child.getParent());
-		child2 = mockMvcRestTemplate.postForObject(PATH_LIST, child2, TestEntity.class);
+		child2 = restTemplate.postForObject(PATH_LIST, child2, TestEntity.class);
 		assertThat(child2.getId()).isNotNull();
 
 		// read
-		assertThat(mockMvcRestTemplate.getForObject(PATH_DETAIL, TestEntity.class, testEntity.getId()))
-				.isEqualTo(testEntity);
+		assertThat(restTemplate.getForObject(PATH_DETAIL, TestEntity.class, testEntity.getId())).isEqualTo(testEntity);
 
 		// update partial
 		TestEntity temp = new TestEntity("new name");
-		child = mockMvcRestTemplate.patchForObject(PATH_DETAIL, temp, TestEntity.class, child.getId());
+		child = restTemplate.patchForObject(PATH_DETAIL, temp, TestEntity.class, child.getId());
 		assertThat(child.getName()).isEqualTo(temp.getName());
 		assertThat(child.getParent()).isNotNull(); // parent not updated
 		assertThat(child.getLevel()).isEqualTo(2);
-		mockMvcRestTemplate
-				.patchForResult(PATH_DETAIL, new TestEntity(child.getParent(), child.getName(), 0), child2.getId())
-				.andExpect(status().isBadRequest());
+		TestEntity te2 = new TestEntity(child.getParent(), child.getName(), 0);
+		Long child2Id = child2.getId();
+		assertThatThrownBy(() -> restTemplate.patchForObject(PATH_DETAIL, te2, TestEntity.class, child2Id))
+				.isInstanceOf(BadRequest.class);
 		// name already exists
 
 		// update full
 		temp.setName("name");
 		temp.setParent(null);
-		mockMvcRestTemplate.put(PATH_DETAIL, temp, child.getId());
-		child = mockMvcRestTemplate.getForObject(PATH_DETAIL, TestEntity.class, child.getId());
+		restTemplate.put(PATH_DETAIL, temp, child.getId());
+		child = restTemplate.getForObject(PATH_DETAIL, TestEntity.class, child.getId());
 		assertThat(child).isNotNull();
 		assertThat(child.getName()).isEqualTo("name");
 		assertThat(child.getParent()).isNull();
 		assertThat(child.getLevel()).isEqualTo(1);
 
 		// delete
-		mockMvcRestTemplate.delete(PATH_DETAIL, child2.getId());
-		mockMvcRestTemplate.delete(PATH_DETAIL, child.getId());
-		mockMvcRestTemplate.delete(PATH_DETAIL, testEntity.getId());
+		restTemplate.delete(PATH_DETAIL, child2.getId());
+		restTemplate.delete(PATH_DETAIL, child.getId());
+		restTemplate.delete(PATH_DETAIL, testEntity.getId());
 
-		mockMvcRestTemplate.getForResult(PATH_DETAIL, testEntity.getId()).andExpect(status().isNotFound());
+		assertThatThrownBy(() -> restTemplate.getForObject(PATH_DETAIL, TestEntity.class, testEntity.getId()))
+				.isInstanceOf(NotFound.class);
+
 	}
 
 	@Test
 	void list() throws Exception {
-		TestEntity parent1 = mockMvcRestTemplate.postForObject(PATH_LIST, new TestEntity("parent1", 1),
+		TestEntity parent1 = restTemplate.postForObject(PATH_LIST, new TestEntity("parent1", 1), TestEntity.class);
+		TestEntity parent2 = restTemplate.postForObject(PATH_LIST, new TestEntity("parent2", 2), TestEntity.class);
+		TestEntity child1 = restTemplate.postForObject(PATH_LIST, new TestEntity(parent1, "child1", 1),
 				TestEntity.class);
-		TestEntity parent2 = mockMvcRestTemplate.postForObject(PATH_LIST, new TestEntity("parent2", 2),
-				TestEntity.class);
-		TestEntity child1 = mockMvcRestTemplate.postForObject(PATH_LIST, new TestEntity(parent1, "child1", 1),
-				TestEntity.class);
-		TestEntity child2 = mockMvcRestTemplate.postForObject(PATH_LIST, new TestEntity(parent1, "child2", 1),
+		TestEntity child2 = restTemplate.postForObject(PATH_LIST, new TestEntity(parent1, "child2", 1),
 				TestEntity.class);
 
-		ResultPage<TestEntity> page = mockMvcRestTemplate.getForObject(PATH_LIST, new TypeReference<>() {
-		});
+		ResultPage<TestEntity> page = restTemplate.exchange(RequestEntity.method(GET, PATH_LIST).build(),
+				new ParameterizedTypeReference<ResultPage<TestEntity>>() {
+				}).getBody();
+
 		assertThat(page).isNotNull();
 		assertThat(page.getResult()).hasSize(4);
 
-		page = mockMvcRestTemplate.getForObject(PATH_LIST + "?query=child", new TypeReference<>() {
-		});
+		page = restTemplate.exchange(RequestEntity.method(GET, PATH_LIST + "?query=child").build(),
+				new ParameterizedTypeReference<ResultPage<TestEntity>>() {
+				}).getBody();
 		assertThat(page).isNotNull();
 		assertThat(page.getResult()).hasSize(2);
 
-		page = mockMvcRestTemplate.getForObject(PATH_LIST + "?name=child", new TypeReference<>() {
-		});
+		page = restTemplate.exchange(RequestEntity.method(GET, PATH_LIST + "?name=child").build(),
+				new ParameterizedTypeReference<ResultPage<TestEntity>>() {
+				}).getBody();
 		assertThat(page).isNotNull();
 		assertThat(page.getResult()).hasSize(2);
 
-		page = mockMvcRestTemplate.getForObject(PATH_LIST + "?level=2", new TypeReference<>() {
-		});
+		page = restTemplate.exchange(RequestEntity.method(GET, PATH_LIST + "?level=2").build(),
+				new ParameterizedTypeReference<ResultPage<TestEntity>>() {
+				}).getBody();
 		assertThat(page).isNotNull();
 		assertThat(page.getResult()).hasSize(2);
 
-		mockMvcRestTemplate.delete(PATH_DETAIL, child1.getId());
-		mockMvcRestTemplate.delete(PATH_DETAIL, child2.getId());
-		mockMvcRestTemplate.delete(PATH_DETAIL, parent1.getId());
-		mockMvcRestTemplate.delete(PATH_DETAIL, parent2.getId());
+		restTemplate.delete(PATH_DETAIL, child1.getId());
+		restTemplate.delete(PATH_DETAIL, child2.getId());
+		restTemplate.delete(PATH_DETAIL, parent1.getId());
+		restTemplate.delete(PATH_DETAIL, parent2.getId());
 	}
 
 	@Test
 	void children() throws Exception {
-		TestEntity parent1 = mockMvcRestTemplate.postForObject(PATH_LIST, new TestEntity("parent1", 1),
+		TestEntity parent1 = restTemplate.postForObject(PATH_LIST, new TestEntity("parent1", 1), TestEntity.class);
+		TestEntity parent2 = restTemplate.postForObject(PATH_LIST, new TestEntity("parent2", 2), TestEntity.class);
+		TestEntity child1 = restTemplate.postForObject(PATH_LIST, new TestEntity(parent1, "child1", 1),
 				TestEntity.class);
-		TestEntity parent2 = mockMvcRestTemplate.postForObject(PATH_LIST, new TestEntity("parent2", 2),
-				TestEntity.class);
-		TestEntity child1 = mockMvcRestTemplate.postForObject(PATH_LIST, new TestEntity(parent1, "child1", 1),
-				TestEntity.class);
-		TestEntity child2 = mockMvcRestTemplate.postForObject(PATH_LIST, new TestEntity(parent1, "child2", 1),
+		TestEntity child2 = restTemplate.postForObject(PATH_LIST, new TestEntity(parent1, "child2", 1),
 				TestEntity.class);
 
-		List<TestEntity> children = mockMvcRestTemplate.getForObject(PATH_CHILDREN, new TypeReference<>() {
-		}, 0);
+		List<TestEntity> children = restTemplate.exchange(RequestEntity.method(GET, PATH_CHILDREN, 0).build(),
+				new ParameterizedTypeReference<List<TestEntity>>() {
+				}).getBody();
+
 		assertThat(children).hasSize(2);
 		assertThat(children).element(0).extracting("name").isEqualTo(parent1.getName());
 		assertThat(children).element(1).extracting("name").isEqualTo(parent2.getName());
 
-		children = mockMvcRestTemplate.getForObject(PATH_CHILDREN, new TypeReference<>() {
-		}, parent1.getId());
+		children = restTemplate.exchange(RequestEntity.method(GET, PATH_CHILDREN, parent1.getId()).build(),
+				new ParameterizedTypeReference<List<TestEntity>>() {
+				}).getBody();
+
 		assertThat(children).hasSize(2);
 		assertThat(children).element(0).extracting("name").isEqualTo(child1.getName());
 		assertThat(children).element(1).extracting("name").isEqualTo(child2.getName());
 
-		children = mockMvcRestTemplate.getForObject(PATH_CHILDREN + "?query=parent", new TypeReference<>() {
-		}, 0);
+		children = restTemplate.exchange(RequestEntity.method(GET, PATH_CHILDREN + "?query=parent", 0).build(),
+				new ParameterizedTypeReference<List<TestEntity>>() {
+				}).getBody();
+
 		assertThat(children).hasSize(2);
 		assertThat(children).element(0).extracting("name").isEqualTo(parent1.getName());
 		assertThat(children).element(1).extracting("name").isEqualTo(parent2.getName());
 
-		children = mockMvcRestTemplate.getForObject(PATH_CHILDREN + "?query=" + parent2.getName(),
-				new TypeReference<>() {
-				}, 0);
+		children = restTemplate
+				.exchange(RequestEntity.method(GET, PATH_CHILDREN + "?query=" + parent2.getName(), 0).build(),
+						new ParameterizedTypeReference<List<TestEntity>>() {
+						})
+				.getBody();
 
 		assertThat(children).hasSize(1);
 		assertThat(children).element(0).extracting("name").isEqualTo(parent2.getName());
 
-		children = mockMvcRestTemplate.getForObject(PATH_CHILDREN + "?query=child", new TypeReference<>() {
-		}, parent1.getId());
+		children = restTemplate
+				.exchange(RequestEntity.method(GET, PATH_CHILDREN + "?query=child", parent1.getId()).build(),
+						new ParameterizedTypeReference<List<TestEntity>>() {
+						})
+				.getBody();
 		assertThat(children).hasSize(2);
 		assertThat(children).element(0).extracting("name").isEqualTo(child1.getName());
 		assertThat(children).element(1).extracting("name").isEqualTo(child2.getName());
 
-		children = mockMvcRestTemplate.getForObject(PATH_CHILDREN + "?query=" + child2.getName(),
-				new TypeReference<>() {
-				}, parent1.getId());
+		children = restTemplate.exchange(
+				RequestEntity.method(GET, PATH_CHILDREN + "?query=" + child2.getName(), parent1.getId()).build(),
+				new ParameterizedTypeReference<List<TestEntity>>() {
+				}).getBody();
 		assertThat(children).hasSize(1);
 		assertThat(children).element(0).extracting("name").isEqualTo(child2.getName());
 
-		mockMvcRestTemplate.delete(PATH_DETAIL, child1.getId());
-		mockMvcRestTemplate.delete(PATH_DETAIL, child2.getId());
-		mockMvcRestTemplate.delete(PATH_DETAIL, parent1.getId());
-		mockMvcRestTemplate.delete(PATH_DETAIL, parent2.getId());
+		restTemplate.delete(PATH_DETAIL, child1.getId());
+		restTemplate.delete(PATH_DETAIL, child2.getId());
+		restTemplate.delete(PATH_DETAIL, parent1.getId());
+		restTemplate.delete(PATH_DETAIL, parent2.getId());
 	}
 
 }
