@@ -33,7 +33,7 @@ import springfox.documentation.annotations.ApiIgnore;
 @Validated
 public class TestEntityController extends AbstractEntityController<TestEntity, Long> {
 
-	public static final String PATH_LIST = "/testEntitys";
+	public static final String PATH_LIST = "/testEntities";
 
 	public static final String PATH_DETAIL = "/testEntity/{id:\\d+}";
 

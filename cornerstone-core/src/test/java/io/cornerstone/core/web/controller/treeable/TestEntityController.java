@@ -32,11 +32,11 @@ import springfox.documentation.annotations.ApiIgnore;
 @Validated
 public class TestEntityController extends AbstractTreeableEntityController<TestEntity> {
 
-	public static final String PATH_LIST = "/testTreeableEntities";
+	public static final String PATH_LIST = "/testEntities";
 
 	public static final String PATH_DETAIL = "/testEntity/{id:\\d+}";
 
-	public static final String PATH_CHILDREN = "/testEntity/{id:\\d+}/children";
+	public static final String PATH_CHILDREN = PATH_DETAIL + "/children";
 
 	@Override
 	@GetMapping(PATH_CHILDREN)
