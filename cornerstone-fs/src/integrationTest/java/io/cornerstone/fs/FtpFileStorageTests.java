@@ -12,11 +12,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.TestPropertySource;
 
-@Disabled
 @TestPropertySource(properties = { "file-storage.uri=ftp://admin:admin@localhost:2121/temp",
 		"file-storage.ftp.data-timeout=30000", "file-storage.ftp.buffer-threshold=8",
 		"file-storage.ftp.pool.max-total=5" })

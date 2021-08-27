@@ -20,6 +20,22 @@ dependencyManagement {
 	}
 }
 
+sourceSets {
+	integrationTest {
+		compileClasspath += sourceSets.main.output
+		compileClasspath += sourceSets.test.output
+		runtimeClasspath += sourceSets.main.output
+		runtimeClasspath += sourceSets.test.output
+	}
+}
+
+configurations {
+	integrationTestImplementation.extendsFrom implementation
+	integrationTestImplementation.extendsFrom testImplementation
+	integrationTestRuntimeOnly.extendsFrom runtimeOnly
+	integrationTestRuntimeOnly.extendsFrom testRuntimeOnly
+}
+
 dependencies {
 	implementation "org.springframework.boot:spring-boot-starter-log4j2"
 	testImplementation "org.springframework.boot:spring-boot-starter-test"
@@ -33,7 +49,7 @@ configurations.all {
 	exclude group: 'org.glassfish.jaxb', module: 'jaxb-runtime' // introduced by hibernate-core
 }
 
-test {
+tasks.withType(Test) {
 	useJUnitPlatform()
 }
 
@@ -66,3 +82,14 @@ clean {
 		project.delete 'bin', 'logs'
 	}
 }
+
+tasks.register('integrationTest', Test) {
+	description = 'Runs integration tests.'
+	group = 'verification'
+
+	testClassesDirs = sourceSets.integrationTest.output.classesDirs
+	classpath = sourceSets.integrationTest.runtimeClasspath
+	shouldRunAfter test
+}
+
+// check.dependsOn integrationTest
