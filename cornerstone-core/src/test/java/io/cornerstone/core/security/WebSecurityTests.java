@@ -219,8 +219,7 @@ class WebSecurityTests extends ControllerTestBase {
 		}
 
 		private User createUser(String username, String password, String... roles) {
-			return new User(username, password,
-					Stream.of(roles).map(r -> new SimpleGrantedAuthority(r)).collect(toList()));
+			return new User(username, password, Stream.of(roles).map(SimpleGrantedAuthority::new).collect(toList()));
 		}
 	}
 }

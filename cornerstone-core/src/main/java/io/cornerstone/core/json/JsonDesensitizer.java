@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.TimeZone;
 import java.util.concurrent.ConcurrentHashMap;
@@ -84,7 +85,7 @@ public class JsonDesensitizer {
 				if (include(writer) && !dropping.stream().anyMatch(entry -> entry.test(name, obj))) {
 					BeanWrapperImpl bw = new BeanWrapperImpl(obj);
 					Optional<Function<String, String>> func = mapping.entrySet().stream()
-							.filter(entry -> entry.getKey().test(name, obj)).findFirst().map(entry -> entry.getValue());
+							.filter(entry -> entry.getKey().test(name, obj)).findFirst().map(Entry::getValue);
 					if (func.isPresent()) {
 						Object value = bw.getPropertyValue(name);
 						try {
