@@ -21,6 +21,7 @@ class CurrentUserControllerMockTests extends ControllerMockTestBase {
 	void testGet() throws Exception {
 		RestTemplate restTemplate = userRestTemplate();
 		User u = restTemplate.getForObject(PATH_PROFILE, User.class);
+		assertThat(u).isNotNull();
 		assertThat(u.getUsername()).isEqualTo(USER_USERNAME);
 		assertThat(u.getPassword()).isNull();
 		assertThat(u.getName()).isNotNull();
@@ -35,10 +36,12 @@ class CurrentUserControllerMockTests extends ControllerMockTestBase {
 		user.setPhone("13111111111");
 		user.setPassword("iampassword"); // not editable
 		User u = restTemplate.patchForObject(PATH_PROFILE, user, User.class);
+		assertThat(u).isNotNull();
 		assertThat(u.getName()).isEqualTo(user.getName());
 		assertThat(u.getPhone()).isEqualTo(user.getPhone());
 		assertThat(u.getUsername()).isEqualTo(USER_USERNAME); // username not editable
 		User u2 = restTemplate.getForObject(PATH_PROFILE, User.class);
+		assertThat(u2).isNotNull();
 		assertThat(u2.getName()).isEqualTo(u.getName());
 		assertThat(u2.getPhone()).isEqualTo(u.getPhone());
 
@@ -80,6 +83,7 @@ class CurrentUserControllerMockTests extends ControllerMockTestBase {
 
 		RestTemplate newPasswordRestTemplate = getRestTemplate(USER_USERNAME, changePasswordRequest.getPassword());
 		User u = newPasswordRestTemplate.getForObject(PATH_PROFILE, User.class);
+		assertThat(u).isNotNull();
 		assertThat(u.getUsername()).isEqualTo(USER_USERNAME); // verify password changed
 
 		changePasswordRequest.setCurrentPassword(changePasswordRequest.getPassword());

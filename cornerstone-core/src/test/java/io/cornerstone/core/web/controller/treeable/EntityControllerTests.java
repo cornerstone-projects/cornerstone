@@ -61,6 +61,7 @@ class EntityControllerTests extends WebMvcWithDataJpaTestBase {
 		TestEntity child2 = new TestEntity("child2");
 		child2.setParent(child.getParent());
 		child2 = restTemplate.postForObject(PATH_LIST, child2, TestEntity.class);
+		assertThat(child2).isNotNull();
 		assertThat(child2.getId()).isNotNull();
 
 		// read
@@ -69,6 +70,7 @@ class EntityControllerTests extends WebMvcWithDataJpaTestBase {
 		// update partial
 		TestEntity temp = new TestEntity("new name");
 		child = restTemplate.patchForObject(PATH_DETAIL, temp, TestEntity.class, child.getId());
+		assertThat(child).isNotNull();
 		assertThat(child.getName()).isEqualTo(temp.getName());
 		assertThat(child.getParent()).isNotNull(); // parent not updated
 		assertThat(child.getLevel()).isEqualTo(2);
@@ -151,6 +153,7 @@ class EntityControllerTests extends WebMvcWithDataJpaTestBase {
 				new ParameterizedTypeReference<List<TestEntity>>() {
 				}).getBody();
 
+		assertThat(children).isNotNull();
 		assertThat(children).hasSize(2);
 		assertThat(children).element(0).extracting("name").isEqualTo(parent1.getName());
 		assertThat(children).element(1).extracting("name").isEqualTo(parent2.getName());

@@ -54,6 +54,7 @@ class EntityControllerTests extends WebMvcWithDataJpaTestBase {
 		c2.setName("new name");
 		c2.setDisabled(Boolean.TRUE);
 		TestEntity c3 = restTemplate.patchForObject(PATH_DETAIL, c2, TestEntity.class, id);
+		assertThat(c3).isNotNull();
 		assertThat(c3.getName()).isEqualTo(c2.getName());
 		assertThat(c3.getDisabled()).isEqualTo(c2.getDisabled());
 		assertThat(c3.getIdNo()).isEqualTo(testEntity.getIdNo()); // idNo not updatable

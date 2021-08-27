@@ -193,8 +193,8 @@ public class DefaultWebMvcRegistrations implements WebMvcRegistrations {
 		@Override
 		public String resolveStringValue(String strVal) {
 			if (this.context != null) {
-				strVal = PARSER.parseExpression(strVal, ParserContext.TEMPLATE_EXPRESSION).getValue(this.context)
-						.toString();
+				strVal = String.valueOf(
+						PARSER.parseExpression(strVal, ParserContext.TEMPLATE_EXPRESSION).getValue(this.context));
 			}
 			if (this.delegate != null) {
 				strVal = this.delegate.resolveStringValue(strVal);

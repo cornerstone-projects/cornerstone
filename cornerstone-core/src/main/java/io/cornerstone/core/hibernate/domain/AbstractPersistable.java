@@ -42,13 +42,15 @@ public abstract class AbstractPersistable<ID extends Serializable> implements Pe
 			return false;
 		}
 		AbstractPersistable<?> that = (AbstractPersistable<?>) obj;
-		return this.getId() == null ? false : this.getId().equals(that.getId());
+		ID id = this.getId();
+		return id == null ? false : id.equals(that.getId());
 	}
 
 	@Override
 	public int hashCode() {
 		int hashCode = 17;
-		hashCode += getId() == null ? 0 : getId().hashCode() * 31;
+		ID id = this.getId();
+		hashCode += id == null ? 0 : id.hashCode() * 31;
 		return hashCode;
 	}
 }
