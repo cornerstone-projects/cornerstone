@@ -1,8 +1,5 @@
 package io.cornerstone.user;
 
-import static io.cornerstone.user.UserController.PATH_DETAIL;
-import static io.cornerstone.user.UserController.PATH_LIST;
-import static io.cornerstone.user.UserController.PATH_PASSWORD;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpMethod.DELETE;
 import static org.springframework.http.HttpMethod.GET;
@@ -40,6 +37,12 @@ import io.cornerstone.core.domain.ResultPage;
 import io.cornerstone.test.ControllerTestBase;
 
 class UserControllerTests extends ControllerTestBase {
+	
+	private static final String PATH_LIST = "/users";
+
+	private static final String PATH_DETAIL = "/user/{id}";
+
+	private static final String PATH_PASSWORD = PATH_DETAIL + "/password";
 
 	@Test
 	void crud() {

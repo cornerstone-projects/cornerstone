@@ -10,8 +10,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Version;
 
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Persistable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,6 +20,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 
 import io.cornerstone.core.domain.Versioned;
+import io.cornerstone.core.domain.View.Creation;
+import io.cornerstone.core.domain.View.Edit;
+import io.cornerstone.core.domain.View.Update;
 import io.cornerstone.core.hibernate.domain.AbstractAuditableEntity;
 import io.cornerstone.core.validation.constraints.MobilePhoneNumber;
 import lombok.Getter;
@@ -35,28 +36,28 @@ public class User extends AbstractAuditableEntity implements UserDetails, Versio
 	private static final long serialVersionUID = 1L;
 
 	@Column(nullable = false, unique = true, updatable = false)
-	@JsonView({ View.Creation.class, View.Profile.class })
+	@JsonView({ Creation.class, View.Profile.class })
 	private String username;
 
 	@Column(nullable = false)
-	@JsonView(View.EditableProfile.class)
+	@JsonView({ Edit.class, View.EditableProfile.class })
 	private String name;
 
 	@MobilePhoneNumber
-	@JsonView(View.EditableProfile.class)
+	@JsonView({ Edit.class, View.EditableProfile.class })
 	private String phone;
 
-	@JsonView(View.Edit.class)
+	@JsonView(Edit.class)
 	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	private String password;
 
-	@JsonView(View.Edit.class)
+	@JsonView(Edit.class)
 	private Boolean disabled;
 
-	@JsonView({ View.Edit.class, View.Profile.class })
+	@JsonView({ Edit.class, View.Profile.class })
 	private Set<String> roles;
 
-	@JsonView(View.Update.class)
+	@JsonView(Update.class)
 	@Version
 	private Integer version;
 
@@ -100,22 +101,6 @@ public class User extends AbstractAuditableEntity implements UserDetails, Versio
 		}
 
 		interface Profile extends EditableProfile {
-
-		}
-
-		interface Edit extends EditableProfile {
-
-		}
-
-		interface Creation extends Edit {
-
-		}
-
-		interface Update extends Edit {
-
-		}
-
-		interface List extends Persistable<Long>, Pageable, Creation, Update {
 
 		}
 

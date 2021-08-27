@@ -34,9 +34,7 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -48,6 +46,7 @@ import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBo
 import com.fasterxml.jackson.annotation.JsonView;
 
 import io.cornerstone.core.domain.ResultPage;
+import io.cornerstone.core.domain.View;
 import io.cornerstone.core.web.AbstractEntityController;
 import springfox.documentation.annotations.ApiIgnore;
 
@@ -55,12 +54,6 @@ import springfox.documentation.annotations.ApiIgnore;
 @Validated
 @Secured(ADMIN_ROLE)
 public class UserController extends AbstractEntityController<User, Long> {
-
-	public static final String PATH_LIST = "/users";
-
-	public static final String PATH_DETAIL = "/user/{id:\\d+}";
-
-	public static final String PATH_PASSWORD = PATH_DETAIL + "/password";
 
 	@Autowired
 	private UserRepository userRepository;
@@ -70,44 +63,14 @@ public class UserController extends AbstractEntityController<User, Long> {
 
 	@Override
 	@GetMapping(PATH_LIST)
-	@JsonView({ User.View.List.class })
+	@JsonView({ View.List.class })
 	public ResultPage<User> list(@PageableDefault(sort = "username", direction = ASC) Pageable pageable,
 			@RequestParam(required = false) String query, @ApiIgnore User example) {
+		// use "username asc" override default sort "id desc"
 		return super.list(pageable, query, example);
 	}
 
-	@Override
-	@PostMapping(PATH_LIST)
-	public User save(@RequestBody @JsonView(User.View.Creation.class) @Valid User user) {
-		return super.save(user);
-	}
-
-	@Override
-	@GetMapping(PATH_DETAIL)
-	public User get(@PathVariable Long id) {
-		return super.get(id);
-	}
-
-	@Override
-	@PutMapping(PATH_DETAIL)
-	public void update(@PathVariable Long id, @RequestBody @JsonView(User.View.Update.class) @Valid User user) {
-		encodePassword(user);
-		super.update(id, user);
-	}
-
-	@Override
-	@PatchMapping(PATH_DETAIL)
-	public User patch(@PathVariable Long id, @RequestBody @JsonView(User.View.Update.class) @Valid User user) {
-		return super.patch(id, user);
-	}
-
-	@Override
-	@DeleteMapping(PATH_DETAIL)
-	public void delete(@PathVariable Long id) {
-		super.delete(id);
-	}
-
-	@PutMapping(PATH_PASSWORD)
+	@PutMapping(PATH_DETAIL + "/password")
 	public void updatePassword(@PathVariable Long id, @RequestBody @Valid UpdatePasswordRequest request) {
 		if (request.isWrongConfirmedPassword())
 			throw badRequest("wrong.confirmed.password");
