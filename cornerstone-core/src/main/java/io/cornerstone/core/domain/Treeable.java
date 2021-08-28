@@ -35,7 +35,7 @@ public interface Treeable<T extends Treeable<T, ID>, ID> {
 			child.setParent((T) this);
 			Collection<T> coll = getChildren();
 			if (coll == null) {
-				coll = new ArrayList<T>();
+				coll = new ArrayList<>();
 				setChildren(coll);
 			}
 			coll.add(child);

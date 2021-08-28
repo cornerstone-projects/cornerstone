@@ -25,7 +25,7 @@ public class SimpleStreamableJpaRepository<T, ID> extends SimpleJpaRepository<T,
 		implements StreamableJpaRepository<T, ID> {
 
 	// see JpaQueryExecution.StreamExecution
-	private static final String NO_SURROUNDING_TRANSACTION = "You're trying to execute a streaming query method without a surrounding transaction that keeps the connection open so that the Stream can actually be consumed. Make sure the code consuming the stream uses @Transactional or any other way of declaring a (read-only) transaction.";;
+	private static final String NO_SURROUNDING_TRANSACTION = "You're trying to execute a streaming query method without a surrounding transaction that keeps the connection open so that the Stream can actually be consumed. Make sure the code consuming the stream uses @Transactional or any other way of declaring a (read-only) transaction.";
 
 	@Setter
 	private EscapeCharacter escapeCharacter = EscapeCharacter.DEFAULT;

@@ -77,7 +77,7 @@ public class MySQLCyclicSequence extends AbstractDatabaseCyclicSequence {
 				current *= 1000;
 			LocalDateTime datetime = LocalDateTime.ofInstant(Instant.ofEpochMilli(current),
 					TimeZone.getDefault().toZoneId());
-			;
+
 			return getStringValue(datetime, getPaddingLength(), next);
 		}
 	}

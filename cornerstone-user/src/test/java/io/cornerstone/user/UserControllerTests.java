@@ -37,7 +37,7 @@ import io.cornerstone.core.domain.ResultPage;
 import io.cornerstone.test.ControllerTestBase;
 
 class UserControllerTests extends ControllerTestBase {
-	
+
 	private static final String PATH_LIST = "/users";
 
 	private static final String PATH_DETAIL = "/user/{id}";

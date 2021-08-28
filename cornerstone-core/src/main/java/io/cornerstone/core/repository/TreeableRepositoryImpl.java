@@ -19,6 +19,7 @@ public class TreeableRepositoryImpl<T extends AbstractTreeableEntity<T>> impleme
 	@Autowired
 	private EntityManager entityManager;
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public <S extends T> S save(S entity) {
 		T parent = entity.getParent();
@@ -26,7 +27,7 @@ public class TreeableRepositoryImpl<T extends AbstractTreeableEntity<T>> impleme
 			Class<T> entityClass = (Class<T>) ProxyUtils.getUserClass(parent);
 			if (parent.getClass() != entityClass // uninitialized proxy
 					|| parent.getId() != null && parent.getFullId() == null) {
-				parent = (T) entityManager.find(entityClass, parent.getId());
+				parent = entityManager.find(entityClass, parent.getId());
 				entity.setParent(parent);
 			}
 		}
@@ -74,7 +75,7 @@ public class TreeableRepositoryImpl<T extends AbstractTreeableEntity<T>> impleme
 
 	@Override
 	public <S extends T> List<S> saveAll(Iterable<S> entities) {
-		List<S> result = new ArrayList<S>();
+		List<S> result = new ArrayList<>();
 		for (S entity : entities) {
 			result.add(save(entity));
 		}
