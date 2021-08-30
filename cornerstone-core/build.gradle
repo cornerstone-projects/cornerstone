@@ -17,6 +17,7 @@ dependencies {
 	api "io.github.resilience4j:resilience4j-spring-boot2:${project.properties['resilience4j.version']?:'latest.release'}"
 	api "io.opentracing.contrib:opentracing-spring-jaeger-web-starter:${project.properties['java-spring-jaeger.version']?:'latest.release'}"
 	api "io.opentracing.contrib:opentracing-jdbc:${project.properties['opentracing-jdbc.version']?:'latest.release'}"
+	api "io.opentracing.contrib:opentracing-redis-spring-data2:${project.properties['opentracing-spring-data-redis.version']?:'latest.release'}"
 	api "io.springfox:springfox-boot-starter:${project.properties['springfox.version']?:'latest.release'}"
 	api "org.apache.commons:commons-pool2"
 	testFixturesApi "org.springframework.boot:spring-boot-starter-test"

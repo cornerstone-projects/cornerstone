@@ -6,6 +6,9 @@ server:
     include-binding-errors: always
     include-stacktrace: never
 
+spring.autoconfigure.exclude:
+  - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
+
 spring.datasource:
   name: ${spring.application.name}
   url: jdbc:mysql://${mysql.host}:${mysql.port}/${spring.application.name}?createDatabaseIfNotExist=true&serverTimezone=Asia/Shanghai&autoReconnectForPools=true&useUnicode=true&useServerPrepStmts=true&cachePrepStmts=true&tinyInt1isBit=false&socketTimeout=60000&sslMode=DISABLED&allowPublicKeyRetrieval=true
@@ -120,12 +123,10 @@ logging:
 ---
 spring:
   config.activate.on-profile: test
+  redis.enabled: false
   datasource:
     name: null
     url: jdbc:h2:mem:${spring.application.name};DB_CLOSE_ON_EXIT=FALSE
-  autoconfigure:
-    exclude:
-      - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
 
 spring.security.user.password: "{bcrypt}$2a$10$g1WqDyVfiD4vEOQZr.yRZOnWlzuAs2gMiS/jILkmYfb22XTzx9Dlm"
 
