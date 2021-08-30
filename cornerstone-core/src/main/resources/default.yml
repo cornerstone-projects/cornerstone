@@ -114,6 +114,7 @@ logging:
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
     web: DEBUG
     org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping: TRACE
+    io.cornerstone.core.web.DefaultRequestMappingHandlerMapping: TRACE
 
 ---
 spring:
