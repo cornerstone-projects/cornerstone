@@ -8,7 +8,6 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.OK;
 
-import java.net.URI;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -114,8 +113,7 @@ class TreenodeControllerTests extends BaseControllerTests {
 		Treenode child2 = restTemplate.postForObject(PATH_LIST, new Treenode(parent1, "child2", 1), Treenode.class);
 
 		ResponseEntity<ResultPage<Treenode>> response = restTemplate.exchange(
-				RequestEntity.method(GET, URI.create(PATH_LIST)).build(),
-				new ParameterizedTypeReference<ResultPage<Treenode>>() {
+				RequestEntity.method(GET, PATH_LIST).build(), new ParameterizedTypeReference<ResultPage<Treenode>>() {
 				});
 		assertThat(response.getStatusCode()).isSameAs(OK);
 
@@ -123,21 +121,21 @@ class TreenodeControllerTests extends BaseControllerTests {
 		assertThat(page).isNotNull();
 		assertThat(page.getResult()).hasSize(4);
 
-		response = restTemplate.exchange(RequestEntity.method(GET, URI.create(PATH_LIST + "?query=child")).build(),
+		response = restTemplate.exchange(RequestEntity.method(GET, PATH_LIST + "?query=child").build(),
 				new ParameterizedTypeReference<ResultPage<Treenode>>() {
 				});
 		page = response.getBody();
 		assertThat(page).isNotNull();
 		assertThat(page.getResult()).hasSize(2);
 
-		response = restTemplate.exchange(RequestEntity.method(GET, URI.create(PATH_LIST + "?name=child")).build(),
+		response = restTemplate.exchange(RequestEntity.method(GET, PATH_LIST + "?name=child").build(),
 				new ParameterizedTypeReference<ResultPage<Treenode>>() {
 				});
 		page = response.getBody();
 		assertThat(page).isNotNull();
 		assertThat(page.getResult()).hasSize(2);
 
-		response = restTemplate.exchange(RequestEntity.method(GET, URI.create(PATH_LIST + "?level=2")).build(),
+		response = restTemplate.exchange(RequestEntity.method(GET, PATH_LIST + "?level=2").build(),
 				new ParameterizedTypeReference<ResultPage<Treenode>>() {
 				});
 		page = response.getBody();

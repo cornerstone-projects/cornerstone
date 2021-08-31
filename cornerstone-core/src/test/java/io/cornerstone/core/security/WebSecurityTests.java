@@ -17,7 +17,6 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.TEXT_HTML_VALUE;
 
 import java.net.HttpURLConnection;
-import java.net.URI;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Function;
@@ -115,10 +114,9 @@ class WebSecurityTests extends ControllerTestBase {
 
 	@Test
 	void testAccessWithUnauthenticated() {
-		ResponseEntity<String> response = executeWithNoRedirects(template -> template.exchange(
-				RequestEntity.method(POST, URI.create(testRestTemplate.getRootUri() + TEST_DEFAULT_SUCCESS_URL))
-						.header(ACCEPT, TEXT_HTML_VALUE).build(),
-				String.class));
+		ResponseEntity<String> response = executeWithNoRedirects(template -> template
+				.exchange(RequestEntity.method(POST, testRestTemplate.getRootUri() + TEST_DEFAULT_SUCCESS_URL)
+						.header(ACCEPT, TEXT_HTML_VALUE).build(), String.class));
 		// GET always follow redirects
 		assertThat(response.getStatusCode()).isSameAs(FOUND);
 		assertThat(response.getHeaders().getLocation()).hasPath(TEST_LOGIN_PAGE);
@@ -126,15 +124,11 @@ class WebSecurityTests extends ControllerTestBase {
 
 	@Test
 	void testRestfulAccessWithUnauthenticated() {
-		ResponseEntity<Map<String, Object>> response = executeWithNoRedirects(
-				template -> template
-						.exchange(
-								RequestEntity
-										.method(POST,
-												URI.create(testRestTemplate.getRootUri() + TEST_DEFAULT_SUCCESS_URL))
-										.header(ACCEPT, APPLICATION_JSON_VALUE).build(),
-								new ParameterizedTypeReference<Map<String, Object>>() {
-								}));
+		ResponseEntity<Map<String, Object>> response = executeWithNoRedirects(template -> template.exchange(
+				RequestEntity.method(POST, testRestTemplate.getRootUri() + TEST_DEFAULT_SUCCESS_URL)
+						.header(ACCEPT, APPLICATION_JSON_VALUE).build(),
+				new ParameterizedTypeReference<Map<String, Object>>() {
+				}));
 		assertThat(response.getStatusCode()).isSameAs(UNAUTHORIZED);
 		assertThat(response.getBody().get("status")).isEqualTo(UNAUTHORIZED.value());
 		assertThat(response.getBody().get("message")).isEqualTo(messageSource.getMessage(
@@ -154,7 +148,7 @@ class WebSecurityTests extends ControllerTestBase {
 		Map<String, String> data = new LinkedHashMap<>();
 		data.put("username", username);
 		data.put("password", password);
-		return testRestTemplate.exchange(RequestEntity.method(POST, URI.create(TEST_LOGIN_PROCESSING_URL)).body(data),
+		return testRestTemplate.exchange(RequestEntity.method(POST, TEST_LOGIN_PROCESSING_URL).body(data),
 				new ParameterizedTypeReference<Map<String, Object>>() {
 				});
 	}
@@ -163,15 +157,9 @@ class WebSecurityTests extends ControllerTestBase {
 		MultiValueMap<String, String> data = new LinkedMultiValueMap<>();
 		data.add("username", username);
 		data.add("password", password);
-		return executeWithNoRedirects(
-				template -> template
-						.exchange(
-								RequestEntity
-										.method(POST,
-												URI.create(testRestTemplate.getRootUri() + TEST_LOGIN_PROCESSING_URL))
-										.header(ACCEPT, TEXT_HTML_VALUE)
-										.header(CONTENT_TYPE, APPLICATION_FORM_URLENCODED_VALUE).body(data),
-								String.class));
+		return executeWithNoRedirects(template -> template.exchange(RequestEntity
+				.method(POST, testRestTemplate.getRootUri() + TEST_LOGIN_PROCESSING_URL).header(ACCEPT, TEXT_HTML_VALUE)
+				.header(CONTENT_TYPE, APPLICATION_FORM_URLENCODED_VALUE).body(data), String.class));
 	}
 
 	private <T> T executeWithNoRedirects(Function<RestTemplate, T> function) {
