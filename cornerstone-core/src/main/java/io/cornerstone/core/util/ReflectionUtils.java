@@ -16,15 +16,11 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.hibernate.proxy.HibernateProxy;
-import org.springframework.aop.SpringProxy;
-import org.springframework.aop.framework.Advised;
 import org.springframework.core.BridgeMethodResolver;
 import org.springframework.core.DefaultParameterNameDiscoverer;
 import org.springframework.core.ParameterNameDiscoverer;
 import org.springframework.util.ClassUtils;
 
-import javassist.util.proxy.ProxyObject;
 import lombok.Value;
 import lombok.experimental.UtilityClass;
 
@@ -35,22 +31,6 @@ public class ReflectionUtils {
 
 	private static final boolean JDK9PLUS = ClassUtils.isPresent("java.lang.StackWalker",
 			System.class.getClassLoader());
-
-	public static Class<?> getActualClass(Object object) {
-		return getActualClass(object.getClass());
-	}
-
-	public static Class<?> getActualClass(Class<?> clazz) {
-		if (Proxy.isProxyClass(clazz))
-			return clazz.getInterfaces()[0];
-		if (ProxyObject.class.isAssignableFrom(clazz) || HibernateProxy.class.isAssignableFrom(clazz)
-				|| SpringProxy.class.isAssignableFrom(clazz) || clazz.getName().contains("$$EnhancerBySpringCGLIB$$")) {
-			clazz = clazz.getSuperclass();
-			return getActualClass(clazz);
-		} else {
-			return clazz;
-		}
-	}
 
 	public static Set<Class<?>> getAllInterfaces(Class<?> clazz) {
 		Set<Class<?>> set = new HashSet<>();
@@ -124,22 +104,6 @@ public class ReflectionUtils {
 		} catch (Exception e) {
 			throw new RuntimeException(e.getMessage(), e);
 		}
-	}
-
-	public static Object getTargetObject(Object proxy) {
-		while (proxy instanceof Advised) {
-			try {
-				Object target = ((Advised) proxy).getTargetSource().getTarget();
-				if (target == null)
-					return proxy;
-				else
-					proxy = target;
-			} catch (Exception e) {
-				e.printStackTrace();
-				return proxy;
-			}
-		}
-		return proxy;
 	}
 
 	public static String getCurrentMethodName() {
