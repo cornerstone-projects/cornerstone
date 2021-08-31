@@ -6,6 +6,8 @@ import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.util.StringValueResolver;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
+import io.cornerstone.core.util.AopUtils;
+
 public class DefaultRequestMappingHandlerMapping extends RequestMappingHandlerMapping {
 
 	private static final SpelExpressionParser PARSER = new SpelExpressionParser();
@@ -32,7 +34,10 @@ public class DefaultRequestMappingHandlerMapping extends RequestMappingHandlerMa
 
 	@Override
 	protected void detectHandlerMethods(Object handler) {
-		handlerHolder.set((handler instanceof String ? obtainApplicationContext().getBean((String) handler) : handler));
+		Object handlerObject = (handler instanceof String ? obtainApplicationContext().getBean((String) handler)
+				: handler);
+		handlerObject = AopUtils.getTargetObject(handlerObject);
+		handlerHolder.set(handlerObject);
 		super.detectHandlerMethods(handler);
 		handlerHolder.remove();
 	}
