@@ -8,6 +8,7 @@ import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.http.HttpMethod.PUT;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.CONFLICT;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
@@ -255,6 +256,33 @@ class UserControllerTests extends ControllerTestBase {
 		page.getResult().forEach(u -> {
 			restTemplate.delete(PATH_DETAIL, u.getId());
 		});
+	}
+
+	@Test
+	void testForbidden() {
+		TestRestTemplate restTemplate = adminRestTemplate();
+		ResultPage<User> page = restTemplate.exchange(RequestEntity.method(GET, PATH_LIST).build(),
+				new ParameterizedTypeReference<ResultPage<User>>() {
+				}).getBody();
+		assertThat(page).isNotNull();
+		User user = page.getResult().get(0);
+
+		restTemplate = userRestTemplate();
+		assertThat(restTemplate.getForEntity(PATH_LIST, String.class).getStatusCode()).isSameAs(FORBIDDEN);
+		assertThat(restTemplate.getForEntity(PATH_DETAIL, String.class, user.getId()).getStatusCode())
+				.isSameAs(FORBIDDEN);
+		User u = new User();
+		u.setName("temp");
+		u.setDisabled(true);
+		assertThat(restTemplate.postForEntity(PATH_LIST, u, User.class).getStatusCode()).isSameAs(FORBIDDEN);
+		user.setName("new name");
+		assertThat(restTemplate.exchange(RequestEntity.method(PUT, PATH_DETAIL, user.getId()).body(user), String.class)
+				.getStatusCode()).isSameAs(FORBIDDEN);
+		assertThat(
+				restTemplate.exchange(RequestEntity.method(PATCH, PATH_DETAIL, user.getId()).body(user), String.class)
+						.getStatusCode()).isSameAs(FORBIDDEN);
+		assertThat(restTemplate.exchange(RequestEntity.method(DELETE, PATH_DETAIL, user.getId()).build(), String.class)
+				.getStatusCode()).isSameAs(FORBIDDEN);
 	}
 
 }
