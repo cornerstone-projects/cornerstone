@@ -55,6 +55,8 @@ public class FileStorageProperties {
 
 		private String domain;
 
+		private boolean pathStyleAccess = true;
+
 		private int batchSize = 100;
 
 		private boolean hierarchicalDirectory;

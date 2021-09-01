@@ -55,7 +55,7 @@ public class S3FileStorage extends BucketFileStorage {
 		AmazonS3ClientBuilder builder = AmazonS3ClientBuilder.standard()
 				.withCredentials(new AWSStaticCredentialsProvider(credentials)).withClientConfiguration(clientConfig);
 		if (StringUtils.hasText(config.getEndpoint()))
-			builder.withEndpointConfiguration(new EndpointConfiguration(config.getEndpoint(), config.getRegion()));
+			builder.withPathStyleAccessEnabled(config.isPathStyleAccess()).withEndpointConfiguration(new EndpointConfiguration(config.getEndpoint(), config.getRegion()));
 		else
 			builder.withRegion(config.getRegion());
 		s3 = builder.build();
