@@ -7,6 +7,7 @@ import javax.persistence.criteria.Root;
 
 import org.hibernate.dialect.Dialect;
 import org.hibernate.dialect.MySQLDialect;
+import org.hibernate.dialect.Oracle8iDialect;
 import org.hibernate.dialect.PostgreSQL81Dialect;
 import org.hibernate.engine.jdbc.spi.JdbcServices;
 import org.hibernate.query.criteria.internal.CriteriaBuilderImpl;
@@ -96,6 +97,10 @@ public class PredicateBuilder {
 	}
 
 	public static <T> Predicate regexpLike(Root<T> root, CriteriaBuilder cb, String propertyName, String pattern) {
+		Dialect dialect = getDialect(cb);
+		if (dialect instanceof Oracle8iDialect) {
+			return cb.gt(cb.function("regexp_instr", Integer.class, root.get(propertyName), cb.literal(pattern)), 0);
+		}
 		// for mysql 5.7:
 		// create function regexp_like (text varchar(255), pattern varchar(255)) returns
 		// integer deterministic return text regexp pattern;

@@ -2,17 +2,26 @@ package io.cornerstone.test.containers;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.Connection;
+import java.sql.Statement;
 import java.util.Properties;
 
 import javax.sql.DataSource;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.ResolvableType;
+import org.springframework.core.env.Environment;
+import org.springframework.util.StringUtils;
 import org.testcontainers.containers.JdbcDatabaseContainer;
 
 import com.zaxxer.hikari.HikariDataSource;
 
 abstract class JdbcDatabase<T extends JdbcDatabaseContainer<?>> {
+
+	public static final String IMAGE = "database.image";
+
+	public static final String INIT_SQL = "database.initSql";
 
 	static Properties props = new Properties();
 	static {
@@ -25,6 +34,9 @@ abstract class JdbcDatabase<T extends JdbcDatabaseContainer<?>> {
 	}
 
 	private final Class<T> containerClass;
+
+	@Autowired
+	private Environment env;
 
 	@SuppressWarnings("unchecked")
 	JdbcDatabase() {
@@ -54,7 +66,9 @@ abstract class JdbcDatabase<T extends JdbcDatabaseContainer<?>> {
 	}
 
 	protected String getImage() {
-		String image = props.getProperty(getImageName() + ".container.image");
+		String image = env.getProperty(IMAGE);
+		if (image == null)
+			image = props.getProperty(getImageName() + ".container.image");
 		if (image == null)
 			image = getImageName() + ':' + getImageTag();
 		return image;
@@ -71,12 +85,19 @@ abstract class JdbcDatabase<T extends JdbcDatabaseContainer<?>> {
 	}
 
 	@Bean
-	public DataSource dataSource(T databaseContainer) {
+	public DataSource dataSource(T databaseContainer) throws Exception {
 		HikariDataSource ds = new HikariDataSource();
 		ds.setJdbcUrl(databaseContainer.getJdbcUrl());
 		ds.setUsername(databaseContainer.getUsername());
 		ds.setPassword(databaseContainer.getPassword());
 		ds.setAutoCommit(false);
+		String initSql = env.getProperty(INIT_SQL);
+		if (StringUtils.hasLength(initSql)) {
+			try (Connection conn = ds.getConnection(); Statement stmt = conn.createStatement()) {
+				stmt.execute(initSql);
+				conn.commit();
+			}
+		}
 		return ds;
 	}
 

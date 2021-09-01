@@ -22,6 +22,7 @@ import javax.persistence.criteria.Root;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
@@ -30,6 +31,7 @@ import io.cornerstone.test.DataJpaTestBase;
 
 @EnableJpaRepositories(basePackageClasses = TestEntityRepository.class)
 @EntityScan(basePackageClasses = TestEntity.class)
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class PredicateBuilderTests extends DataJpaTestBase {
 
 	@Autowired
