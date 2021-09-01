@@ -18,6 +18,17 @@ dependencyManagement {
 	imports {
 		mavenBom org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES
 	}
+	dependencies {
+		dependencySet(group:'org.testcontainers', version: project.properties['testcontainers.version']?:'latest.release') {
+			entry 'testcontainers'
+			entry 'junit-jupiter'
+			entry 'mysql'
+			entry 'postgresql'
+			entry 'mssqlserver'
+			entry 'db2'
+			entry 'oracle-xe'
+		}
+	}
 }
 
 sourceSets {

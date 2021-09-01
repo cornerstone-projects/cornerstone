@@ -8,18 +8,21 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import io.cornerstone.test.SpringApplicationTestBase;
+import lombok.Getter;
 
 public abstract class SequenceTestBase extends SpringApplicationTestBase {
 
-	public static final int THREADS = 50;
+	@Getter
+	private int threads = 5;
 
-	public static final int LOOP = 10000;
+	@Getter
+	private int loop = 1000;
 
 	private static ExecutorService executorService;
 
@@ -29,13 +32,13 @@ public abstract class SequenceTestBase extends SpringApplicationTestBase {
 	@Autowired
 	private Sequence sample2Sequence;
 
-	@BeforeAll
-	public static void setup() {
-		executorService = Executors.newFixedThreadPool(THREADS);
+	@BeforeEach
+	public void setup() {
+		executorService = Executors.newFixedThreadPool(getThreads());
 	}
 
-	@AfterAll
-	public static void destroy() {
+	@AfterEach
+	public void destroy() {
 		executorService.shutdown();
 	}
 
@@ -50,15 +53,15 @@ public abstract class SequenceTestBase extends SpringApplicationTestBase {
 	}
 
 	private void test(boolean cyclic) throws InterruptedException {
-		final ConcurrentHashMap<String, Long> map = new ConcurrentHashMap<>(THREADS * LOOP * 2);
-		final CountDownLatch cdl = new CountDownLatch(THREADS);
+		final ConcurrentHashMap<String, Long> map = new ConcurrentHashMap<>(getThreads() * getLoop() * 2);
+		final CountDownLatch cdl = new CountDownLatch(getThreads());
 		final AtomicInteger count = new AtomicInteger();
 		final Sequence seq = cyclic ? sample2Sequence : sample1Sequence;
 		long time = System.currentTimeMillis();
-		for (int i = 0; i < THREADS; i++) {
+		for (int i = 0; i < getThreads(); i++) {
 			executorService.execute(() -> {
 
-				for (int j = 0; j < LOOP; j++) {
+				for (int j = 0; j < getLoop(); j++) {
 					try {
 						String id = seq.nextStringValue();
 						Long time2 = System.currentTimeMillis();
@@ -75,10 +78,10 @@ public abstract class SequenceTestBase extends SpringApplicationTestBase {
 		}
 		cdl.await();
 		time = System.currentTimeMillis() - time;
-		System.out.println(
-				"completed " + count.get() + " requests with concurrency(" + THREADS + ") in " + time + "ms (tps = "
-						+ (int) (((double) count.get() / time) * 1000) + ") using " + seq.getClass().getSimpleName());
-		assertThat(map.size()).isEqualTo(LOOP * THREADS);
+		System.out.println("completed " + count.get() + " requests with concurrency(" + getThreads() + ") in " + time
+				+ "ms (tps = " + (int) (((double) count.get() / time) * 1000) + ") using "
+				+ seq.getClass().getSimpleName());
+		assertThat(map.size()).isEqualTo(getLoop() * getThreads());
 	}
 
 }

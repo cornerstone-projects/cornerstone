@@ -8,9 +8,16 @@ import org.springframework.test.context.ContextConfiguration;
 import io.cornerstone.core.sequence.CyclicSequence.CycleType;
 import io.cornerstone.core.sequence.cyclic.DatabaseCyclicSequenceDelegate;
 import io.cornerstone.core.sequence.simple.DatabaseSimpleSequenceDelegate;
+import lombok.Getter;
 
 @ContextConfiguration(classes = DatabaseSequenceTests.Config.class)
 public class DatabaseSequenceTests extends SequenceTestBase {
+
+	@Getter
+	private int threads = 5;
+
+	@Getter
+	private int loop = 1000;
 
 	static class Config {
 
