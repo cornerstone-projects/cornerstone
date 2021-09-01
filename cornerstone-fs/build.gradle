@@ -6,5 +6,7 @@ dependencies {
 	api project(":cornerstone-core")
 	api "commons-net:commons-net:${project.properties['commons-net.version']?:'latest.release'}"
 	api "com.amazonaws:aws-java-sdk-s3:${project.properties['aws-sdk-java.version']?:'latest.release'}"
-	testImplementation(testFixtures(project(":cornerstone-core")))
+	integrationTestImplementation("com.clever-cloud:testcontainers-ceph:${project.properties['testcontainers-ceph.version']?:'latest.release'}") {
+		exclude group: 'org.slf4j', module: 'slf4j-jdk14'
+	}
 }
