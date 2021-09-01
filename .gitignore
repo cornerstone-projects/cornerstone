@@ -1,8 +1,8 @@
 build/
 bin/
-config/
 target/
 logs/
 .gradle/
 .idea/
 .reloadtrigger
+/config/
