@@ -20,9 +20,15 @@ public class DefaultApplication implements Application {
 
 	private static String hostAddress = "127.0.0.1";
 
+	static Application currentApplication;
+
 	@Autowired
 	@Getter
 	private ApplicationContext context;
+
+	public DefaultApplication() {
+		currentApplication = this;
+	}
 
 	@Override
 	public String getHostName() {

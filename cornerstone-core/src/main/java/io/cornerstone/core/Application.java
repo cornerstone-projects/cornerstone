@@ -5,6 +5,7 @@ import javax.servlet.ServletContext;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Profiles;
+import org.springframework.lang.Nullable;
 import org.springframework.util.ClassUtils;
 
 public interface Application {
@@ -47,6 +48,11 @@ public interface Application {
 
 	default boolean isUnitTest() {
 		return getContext().getEnvironment().acceptsProfiles(Profiles.of("test"));
+	}
+
+	@Nullable
+	static Application current() {
+		return DefaultApplication.currentApplication;
 	}
 
 }
