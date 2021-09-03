@@ -22,13 +22,16 @@ dependencies {
 	api "org.apache.commons:commons-pool2"
 	testFixturesApi "org.springframework.boot:spring-boot-starter-test"
 	testFixturesApi "org.springframework.security:spring-security-test"
-	testFixturesApi "org.testcontainers:testcontainers"
-	testFixturesApi "org.testcontainers:junit-jupiter"
-	testFixturesImplementation "org.testcontainers:mysql"
-	testFixturesImplementation "org.testcontainers:postgresql"
-	testFixturesImplementation "org.testcontainers:mssqlserver"
-	testFixturesImplementation "org.testcontainers:oracle-xe"
-	testFixturesImplementation "org.testcontainers:db2"
+	ext {
+		testcontainersVersion = project.properties['testcontainers.version']?:'latest.release'
+	}
+	testFixturesApi "org.testcontainers:testcontainers:${testcontainersVersion}"
+	testFixturesApi "org.testcontainers:junit-jupiter:${testcontainersVersion}"
+	testFixturesImplementation "org.testcontainers:mysql:${testcontainersVersion}"
+	testFixturesImplementation "org.testcontainers:postgresql:${testcontainersVersion}"
+	testFixturesImplementation "org.testcontainers:mssqlserver:${testcontainersVersion}"
+	testFixturesImplementation "org.testcontainers:oracle-xe:${testcontainersVersion}"
+	testFixturesImplementation "org.testcontainers:db2:${testcontainersVersion}"
 	integrationTestRuntimeOnly "mysql:mysql-connector-java"
 	integrationTestRuntimeOnly "org.postgresql:postgresql"
 	integrationTestRuntimeOnly "com.microsoft.sqlserver:mssql-jdbc"
