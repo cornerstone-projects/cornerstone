@@ -3,8 +3,8 @@ package io.cornerstone.user;
 import static java.util.stream.Collectors.toList;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Set;
-import java.util.stream.Stream;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,7 +13,6 @@ import javax.persistence.Version;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.util.CollectionUtils;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -64,10 +63,9 @@ public class User extends AbstractAuditableEntity implements UserDetails, Versio
 	@JsonIgnore
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		Stream<String> stream = Stream.of(getClass().getSimpleName().toUpperCase());
-		if (!CollectionUtils.isEmpty(roles))
-			stream = Stream.concat(stream, roles.stream());
-		return stream.map(SimpleGrantedAuthority::new).collect(toList());
+		if (roles == null)
+			return Collections.emptyList();
+		return roles.stream().map(SimpleGrantedAuthority::new).collect(toList());
 	}
 
 	@JsonIgnore

@@ -31,8 +31,6 @@ import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -62,6 +60,8 @@ class WebSecurityTests extends ControllerTestBase {
 
 	public static final String TEST_DEFAULT_SUCCESS_URL = "/index.html";
 
+	public static final String TEST_USER_HOME = "/user/home.html";
+
 	public static final String TEST_ADMIN_HOME = "/admin/home.html";
 
 	@Test
@@ -75,7 +75,7 @@ class WebSecurityTests extends ControllerTestBase {
 	@Test
 	void testAccessDenied() {
 		TestRestTemplate restTemplate = userRestTemplate();
-		ResponseEntity<String> response = restTemplate.getForEntity(TEST_DEFAULT_SUCCESS_URL, String.class);
+		ResponseEntity<String> response = restTemplate.getForEntity(TEST_ADMIN_HOME, String.class);
 		assertThat(response.getStatusCode()).isSameAs(FORBIDDEN);
 	}
 
@@ -144,6 +144,16 @@ class WebSecurityTests extends ControllerTestBase {
 		assertThat(response.getStatusCode()).isSameAs(OK);
 	}
 
+	@Test
+	void testUsernameAndTypeMapper() {
+		ResponseEntity<String> response = userRestTemplate().getForEntity(TEST_DEFAULT_SUCCESS_URL, String.class);
+		assertThat(response.getStatusCode()).isSameAs(OK);
+		response = userRestTemplate().getForEntity(TEST_USER_HOME, String.class);
+		assertThat(response.getStatusCode()).isSameAs(OK);
+		response = adminRestTemplate().getForEntity(TEST_USER_HOME, String.class);
+		assertThat(response.getStatusCode()).isSameAs(FORBIDDEN);
+	}
+
 	private ResponseEntity<Map<String, Object>> restfulFormLogin(String username, String password) {
 		Map<String, String> data = new LinkedHashMap<>();
 		data.put("username", username);
@@ -177,17 +187,23 @@ class WebSecurityTests extends ControllerTestBase {
 	}
 
 	@RestController
-	@Secured(ADMIN_ROLE)
 	static class TestController {
 
 		@GetMapping(TEST_DEFAULT_SUCCESS_URL)
-		public String get() {
-			return "test";
+		@Secured("USER")
+		public String home() {
+			return "home";
+		}
+
+		@GetMapping(TEST_USER_HOME)
+		@Secured("USERNAME(user)")
+		public String user() {
+			return "user";
 		}
 
 		@GetMapping(TEST_ADMIN_HOME)
-		public String home() {
-			return "home";
+		public String admin() {
+			return "admin";
 		}
 	}
 
@@ -195,18 +211,12 @@ class WebSecurityTests extends ControllerTestBase {
 	static class Config {
 
 		@Bean
-		AuthenticationProvider authenticationProvider(PasswordEncoder passwordEncoder) {
-			// see InitializeAuthenticationProviderManagerConfigurer.getBeanOrNull()
-			UserDetailsService uds = new InMemoryUserDetailsManager(
-					createUser(USER_USERNAME, passwordEncoder.encode(DEFAULT_PASSWORD)),
+		UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
+			return new InMemoryUserDetailsManager(createUser(USER_USERNAME, passwordEncoder.encode(DEFAULT_PASSWORD)),
 					createUser(ADMIN_USERNAME, passwordEncoder.encode(DEFAULT_PASSWORD), ADMIN_ROLE));
-			DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-			provider.setUserDetailsService(uds);
-			provider.setPasswordEncoder(passwordEncoder);
-			return provider;
 		}
 
-		private User createUser(String username, String password, String... roles) {
+		private static User createUser(String username, String password, String... roles) {
 			return new User(username, password, Stream.of(roles).map(SimpleGrantedAuthority::new).collect(toList()));
 		}
 	}

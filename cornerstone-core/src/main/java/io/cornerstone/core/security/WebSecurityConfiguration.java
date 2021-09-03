@@ -14,12 +14,14 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -28,6 +30,10 @@ import org.springframework.security.config.annotation.web.configurers.AbstractAu
 import org.springframework.security.config.annotation.web.configurers.ExpressionUrlAuthorizationConfigurer;
 import org.springframework.security.config.annotation.web.configurers.FormLoginConfigurer;
 import org.springframework.security.config.core.GrantedAuthorityDefaults;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsPasswordService;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.DefaultRedirectStrategy;
@@ -147,6 +153,25 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 		Field f = AbstractAuthenticationFilterConfigurer.class.getDeclaredField("authFilter");
 		f.setAccessible(true); // AbstractAuthenticationFilterConfigurer::setAuthenticationFilter not visible
 		f.set(formLogin, authFilter);
+	}
+
+	@Bean
+	DaoAuthenticationProvider daoAuthenticationProvider(ObjectProvider<UserDetailsService> userDetailsService,
+			ObjectProvider<PasswordEncoder> passwordEncoder,
+			ObjectProvider<UserDetailsPasswordService> userDetailsPasswordService,
+			ObjectProvider<List<UserAuthorityMapper>> userAuthorityMappers) {
+		UserDetailsService uds = userDetailsService.getIfAvailable(() -> new UserDetailsService() {
+			@Override
+			public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+				throw new UsernameNotFoundException(username);
+			}
+		});
+		DefaultDaoAuthenticationProvider provider = new DefaultDaoAuthenticationProvider();
+		provider.setUserDetailsService(uds);
+		passwordEncoder.ifAvailable(provider::setPasswordEncoder);
+		userDetailsPasswordService.ifAvailable(provider::setUserDetailsPasswordService);
+		userAuthorityMappers.ifAvailable(provider::setUserAuthorityMappers);
+		return provider;
 	}
 
 	@Bean
