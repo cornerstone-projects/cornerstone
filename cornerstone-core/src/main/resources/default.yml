@@ -70,7 +70,7 @@ spring.jackson:
   time-zone: Asia/Shanghai
 
 spring.messages:
-  basename: messages,i18n/messages
+  basename: messages,i18n/messages,org.springframework.security.messages
 
 logging:
   config: classpath:log4j2.xml
