@@ -29,4 +29,10 @@ public class FileStorageAutoConfiguration {
 		return null;
 	}
 
+	@Bean
+	@ConditionalOnMissingBean
+	public FileStorageInstrumentation fileStorageInstrumentation() {
+		return new FileStorageInstrumentation();
+	}
+
 }

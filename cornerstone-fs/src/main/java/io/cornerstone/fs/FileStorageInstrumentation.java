@@ -7,13 +7,11 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.springframework.stereotype.Component;
 
 import io.cornerstone.core.tracing.Tracing;
 import io.cornerstone.core.util.ReflectionUtils;
 import io.micrometer.core.instrument.Metrics;
 
-@Component
 @Aspect
 public class FileStorageInstrumentation {
 
