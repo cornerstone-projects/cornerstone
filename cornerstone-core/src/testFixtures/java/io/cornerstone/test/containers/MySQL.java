@@ -1,13 +1,9 @@
 package io.cornerstone.test.containers;
 
-import org.springframework.context.annotation.Bean;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.testcontainers.containers.MySQLContainer;
 
+@TestConfiguration(proxyBeanMethods = false)
 public class MySQL extends JdbcDatabase<MySQLContainer<?>> {
-
-	@Bean
-	public MySQLContainer<?> databaseContainer() {
-		return super.createContainer();
-	}
 
 }

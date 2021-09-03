@@ -1,5 +1,6 @@
 package io.cornerstone.test.containers;
 
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
@@ -8,16 +9,12 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.testcontainers.containers.GenericContainer;
 
-public class Redis {
+@TestConfiguration(proxyBeanMethods = false)
+public class Redis extends AbstractContainer {
 
-	private static final String DOCKER_IMAGE = "redis:latest";
-
-	@Bean
-	public GenericContainer<?> redisContainer() {
-		@SuppressWarnings("resource")
-		GenericContainer<?> container = new GenericContainer<>(DOCKER_IMAGE).withExposedPorts(6379);
-		container.start();
-		return container;
+	@Override
+	protected int getExposedPort() {
+		return 6379;
 	}
 
 	@Bean
