@@ -9,6 +9,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.data.redis.LettuceClientConfigurationBuilderCustomizer;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -19,13 +20,13 @@ import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactor
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
-import org.springframework.stereotype.Component;
 
 import io.cornerstone.core.redis.DefaultRedisConfiguration.DefaultRedisProperties;
 import io.lettuce.core.resource.ClientResources;
 import io.lettuce.core.resource.DefaultClientResources;
 
 @Configuration(proxyBeanMethods = false)
+@EnableConfigurationProperties(DefaultRedisProperties.class)
 @ConditionalOnProperty(prefix = DefaultRedisProperties.PREFIX, name = "enabled", havingValue = "true", matchIfMissing = true)
 public class DefaultRedisConfiguration extends RedisConfigurationSupport {
 
@@ -79,7 +80,6 @@ public class DefaultRedisConfiguration extends RedisConfigurationSupport {
 	}
 
 	@Primary
-	@Component
 	@ConfigurationProperties(prefix = DefaultRedisProperties.PREFIX)
 	public static class DefaultRedisProperties extends RedisProperties {
 

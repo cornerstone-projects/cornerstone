@@ -15,10 +15,13 @@ import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import io.cornerstone.core.redis.DefaultRedisConfiguration.DefaultRedisProperties;
+import io.cornerstone.core.redis.GlobalRedisConfiguration.GlobalRedisProperties;
 import io.cornerstone.test.SpringApplicationTestBase;
 
-@TestPropertySource(properties = { "spring.redis.enabled=true", "spring.redis.database=1", "global.redis.enabled=true",
-		"global.redis.database=2" })
+@TestPropertySource(properties = { "spring.redis.enabled=true", "spring.redis.database=1",
+		"spring.redis.client-name=default", "global.redis.enabled=true", "global.redis.database=2",
+		"global.redis.client-name=global" })
 @Testcontainers
 public class RedisConfigurationTests extends SpringApplicationTestBase {
 
@@ -29,9 +32,13 @@ public class RedisConfigurationTests extends SpringApplicationTestBase {
 	static void registerDynamicProperties(DynamicPropertyRegistry registry) {
 		registry.add("spring.redis.host", container::getHost);
 		registry.add("spring.redis.port", container::getFirstMappedPort);
-		registry.add("global.redis.host", container::getHost);
-		registry.add("global.redis.port", container::getFirstMappedPort);
 	}
+
+	@Autowired
+	private DefaultRedisProperties defaultRedisProperties;
+
+	@Autowired
+	private GlobalRedisProperties globalRedisProperties;
 
 	@Autowired
 	private StringRedisTemplate stringRedisTemplate;
@@ -40,7 +47,15 @@ public class RedisConfigurationTests extends SpringApplicationTestBase {
 	private StringRedisTemplate globalStringRedisTemplate;
 
 	@Test
-	void test() {
+	void testRedisProperties() {
+		assertThat(globalRedisProperties.getHost()).isEqualTo(defaultRedisProperties.getHost());
+		assertThat(globalRedisProperties.getPort()).isEqualTo(defaultRedisProperties.getPort());
+		assertThat(globalRedisProperties.getDatabase()).isNotEqualTo(defaultRedisProperties.getDatabase());
+		assertThat(globalRedisProperties.getClientName()).isNotEqualTo(defaultRedisProperties.getClientName());
+	}
+
+	@Test
+	void testRedisTemplate() {
 		assertThat(stringRedisTemplate).isNotSameAs(globalStringRedisTemplate);
 		String key = "test";
 		ValueOperations<String, String> ops = stringRedisTemplate.opsForValue();
