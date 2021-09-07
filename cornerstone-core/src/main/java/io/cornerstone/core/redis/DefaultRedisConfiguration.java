@@ -5,7 +5,6 @@ import java.util.concurrent.Executor;
 
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.data.redis.LettuceClientConfigurationBuilderCustomizer;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -27,7 +26,7 @@ import io.lettuce.core.resource.DefaultClientResources;
 
 @Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties(DefaultRedisProperties.class)
-@ConditionalOnProperty(prefix = DefaultRedisProperties.PREFIX, name = "enabled", havingValue = "true", matchIfMissing = true)
+@RedisEnabled
 public class DefaultRedisConfiguration extends RedisConfigurationSupport {
 
 	DefaultRedisConfiguration(DefaultRedisProperties properties,
