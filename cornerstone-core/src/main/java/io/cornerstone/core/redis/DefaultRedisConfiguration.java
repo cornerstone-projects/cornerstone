@@ -60,12 +60,11 @@ public class DefaultRedisConfiguration extends RedisConfigurationSupport {
 	@Bean
 	@Primary
 	@Override
-	public RedisTemplate<Object, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
+	public RedisTemplate<String, ?> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
 		return super.redisTemplate(redisConnectionFactory);
 	}
 
 	@Bean
-	@Primary
 	@Override
 	public StringRedisTemplate stringRedisTemplate(RedisConnectionFactory redisConnectionFactory) {
 		return super.stringRedisTemplate(redisConnectionFactory);

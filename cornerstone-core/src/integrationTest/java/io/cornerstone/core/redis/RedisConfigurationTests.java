@@ -6,6 +6,7 @@ import javax.annotation.Resource;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -41,6 +42,12 @@ public class RedisConfigurationTests extends SpringApplicationTestBase {
 	private GlobalRedisProperties globalRedisProperties;
 
 	@Autowired
+	private RedisTemplate<String, Object> redisTemplate;
+
+	@Resource
+	private RedisTemplate<String, Object> globalRedisTemplate;
+
+	@Autowired
 	private StringRedisTemplate stringRedisTemplate;
 
 	@Resource
@@ -56,6 +63,17 @@ public class RedisConfigurationTests extends SpringApplicationTestBase {
 
 	@Test
 	void testRedisTemplate() {
+		assertThat(redisTemplate).isNotSameAs(globalRedisTemplate);
+		String key = "test";
+		ValueOperations<String, Object> ops = redisTemplate.opsForValue();
+		ValueOperations<String, Object> globalOps = globalRedisTemplate.opsForValue();
+		ops.set(key, "redisTemplate");
+		globalOps.set(key, "globalRedisTemplate");
+		assertThat(ops.get(key)).isNotEqualTo(globalOps.get(key));
+	}
+
+	@Test
+	void testStringRedisTemplate() {
 		assertThat(stringRedisTemplate).isNotSameAs(globalStringRedisTemplate);
 		String key = "test";
 		ValueOperations<String, String> ops = stringRedisTemplate.opsForValue();

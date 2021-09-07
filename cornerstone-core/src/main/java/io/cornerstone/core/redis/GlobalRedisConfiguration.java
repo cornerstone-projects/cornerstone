@@ -56,7 +56,7 @@ public class GlobalRedisConfiguration extends RedisConfigurationSupport {
 	}
 
 	@Bean
-	public RedisTemplate<Object, Object> globalRedisTemplate(
+	public RedisTemplate<String, ?> globalRedisTemplate(
 			@Qualifier("globalRedisConnectionFactory") RedisConnectionFactory redisConnectionFactory) {
 		return super.redisTemplate(redisConnectionFactory);
 	}
