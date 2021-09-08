@@ -11,12 +11,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import io.cornerstone.test.SpringApplicationTestBase;
 import lombok.Getter;
 
-public abstract class SequenceTestBase extends SpringApplicationTestBase {
+@ExtendWith(SpringExtension.class)
+public abstract class SequenceTestBase {
 
 	@Getter
 	private int threads = 5;
