@@ -9,7 +9,6 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
@@ -38,9 +37,6 @@ public class TracingAspect {
 	private static final String TAG_NAME_PREFIX_PARAM = "param.";
 
 	private static final String TAG_NAME_TX_READONLY = "tx.readonly";
-
-	@Autowired
-	private Application application;
 
 	@Around("execution(public * *(..)) and @annotation(traced)")
 	public Object trace(ProceedingJoinPoint pjp, Traced traced) throws Throwable {
@@ -158,7 +154,7 @@ public class TracingAspect {
 	}
 
 	private boolean isDebug() {
-		if (application.isDevelopment())
+		if (Application.current().map(Application::isDevelopment).orElse(false))
 			return true;
 		Span activeSpan = GlobalTracer.get().activeSpan();
 		SpanContext ctx = activeSpan != null ? activeSpan.context() : null;

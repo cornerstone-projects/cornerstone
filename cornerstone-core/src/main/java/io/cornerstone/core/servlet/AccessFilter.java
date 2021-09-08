@@ -17,7 +17,6 @@ import javax.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.util.StringUtils;
@@ -55,14 +54,11 @@ public class AccessFilter implements Filter {
 	@Value("${accessFilter.print:" + DEFAULT_PRINT + "}")
 	private boolean print = DEFAULT_PRINT;
 
-	@Autowired
-	private Application application;
-
 	private String serverTag;
 
 	@Override
 	public void init(FilterConfig filterConfig) {
-		serverTag = " server:" + application.getInstanceId(true);
+		serverTag = " server:" + Application.current().map(a -> a.getInstanceId(true)).orElse(null);
 	}
 
 	@Override

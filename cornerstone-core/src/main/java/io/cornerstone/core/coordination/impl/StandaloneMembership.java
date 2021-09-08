@@ -12,11 +12,7 @@ public class StandaloneMembership implements Membership {
 
 	private Map<String, List<String>> groups = new HashMap<>();
 
-	private final String self;
-
-	public StandaloneMembership(Application application) {
-		this.self = application.getInstanceId(false);
-	}
+	private final String self = Application.current().map(Application::getInstanceId).orElse("");
 
 	@Override
 	public void join(String group) {

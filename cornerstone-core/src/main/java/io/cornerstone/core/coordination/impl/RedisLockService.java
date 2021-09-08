@@ -28,7 +28,7 @@ public class RedisLockService implements LockService {
 	@Value("${lockService.watchdogTimeout:30000}")
 	private int watchdogTimeout = 30000;
 
-	private final String self;
+	private final String self = Application.current().map(Application::getInstanceId).orElse("");
 
 	private final StringRedisTemplate stringRedisTemplate;
 
@@ -41,8 +41,7 @@ public class RedisLockService implements LockService {
 			"if redis.call('get',KEYS[1]) == ARGV[1] then return redis.call('del',KEYS[1]) else return redis.call('exists',KEYS[1]) == 0 and 2 or 0 end",
 			Long.class);
 
-	public RedisLockService(Application application, StringRedisTemplate stringRedisTemplate) {
-		this.self = application.getInstanceId(false);
+	public RedisLockService(StringRedisTemplate stringRedisTemplate) {
 		this.stringRedisTemplate = stringRedisTemplate;
 	}
 

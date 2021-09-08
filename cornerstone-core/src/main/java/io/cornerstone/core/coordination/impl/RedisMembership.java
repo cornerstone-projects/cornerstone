@@ -32,12 +32,11 @@ public class RedisMembership implements Membership, SchedulingConfigurer {
 	@Value("${redis.membership.heartbeat:60000}")
 	private int heartbeat = 60000;
 
-	private final String self;
+	private final String self = Application.current().map(Application::getInstanceId).orElse("");;
 
 	private final StringRedisTemplate stringRedisTemplate;
 
-	public RedisMembership(Application application, StringRedisTemplate stringRedisTemplate) {
-		this.self = application.getInstanceId(false);
+	public RedisMembership(StringRedisTemplate stringRedisTemplate) {
 		this.stringRedisTemplate = stringRedisTemplate;
 	}
 

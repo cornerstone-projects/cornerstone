@@ -14,7 +14,7 @@ public class MetricsConfiguration {
 	@Bean
 	MeterRegistryCustomizer<MeterRegistry> meterRegistryCustomizer(Application application) {
 		return registry -> registry.config().commonTags("app", application.getName(), "instance",
-				application.getInstanceId(false));
+				application.getInstanceId());
 	}
 
 	@Bean

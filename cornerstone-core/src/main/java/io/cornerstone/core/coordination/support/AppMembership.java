@@ -13,13 +13,12 @@ import io.cornerstone.core.coordination.Membership;
 @Component
 public class AppMembership {
 
-	private final String group;
+	private final String group = Application.current().map(Application::getName).orElse("application");
 
 	private final Membership membership;
 
-	public AppMembership(Application application, Membership membership) {
+	public AppMembership(Membership membership) {
 		this.membership = membership;
-		this.group = application.getName();
 
 	}
 

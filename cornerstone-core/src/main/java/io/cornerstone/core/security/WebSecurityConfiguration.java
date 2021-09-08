@@ -57,9 +57,6 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 	private SecurityProperties properties;
 
 	@Autowired
-	private Application application;
-
-	@Autowired
 	private ObjectMapper objectMapper;
 
 	@Override
@@ -101,7 +98,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 				.successHandler(authenticationSuccessHandler(http.getSharedObject(RequestCache.class)))
 				.failureHandler(authenticationFailureHandler()).and().logout().logoutUrl(properties.getLogoutUrl())
 				.logoutSuccessUrl(properties.getLoginPage());
-		if (application.isUnitTest()) {
+		if (Application.current().map(Application::isUnitTest).orElse(true)) {
 			http.httpBasic();
 		}
 

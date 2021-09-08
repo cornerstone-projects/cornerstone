@@ -1,11 +1,12 @@
 package io.cornerstone.core;
 
+import java.util.Optional;
+
 import javax.servlet.ServletContext;
 
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Profiles;
-import org.springframework.lang.Nullable;
 import org.springframework.util.ClassUtils;
 
 public interface Application {
@@ -35,6 +36,10 @@ public interface Application {
 		return Integer.valueOf(getContext().getEnvironment().getProperty("local.server.port", "8080"));
 	}
 
+	default String getInstanceId() {
+		return getInstanceId(false);
+	}
+
 	default String getInstanceId(boolean includeName) {
 		if (includeName)
 			return String.format("%s@%s:%d", getName(), getHostAddress(), getServerPort());
@@ -50,9 +55,8 @@ public interface Application {
 		return getContext().getEnvironment().acceptsProfiles(Profiles.of("test"));
 	}
 
-	@Nullable
-	static Application current() {
-		return DefaultApplication.currentApplication;
+	static Optional<Application> current() {
+		return Optional.ofNullable(DefaultApplication.currentApplication);
 	}
 
 }
