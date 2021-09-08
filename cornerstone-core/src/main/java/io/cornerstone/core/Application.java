@@ -8,6 +8,7 @@ import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Profiles;
 import org.springframework.util.ClassUtils;
+import org.springframework.util.StringUtils;
 
 public interface Application {
 
@@ -18,7 +19,10 @@ public interface Application {
 	String getHostAddress();
 
 	default String getName() {
-		return getContext().getId();
+		String name = getContext().getId();
+		if (name.indexOf('@') > 0)
+			name = StringUtils.uncapitalize(getClass().getSimpleName());
+		return name;
 	}
 
 	default String getServerInfo() {
