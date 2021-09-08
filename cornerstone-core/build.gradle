@@ -20,6 +20,7 @@ dependencies {
 	api "io.opentracing.contrib:opentracing-redis-spring-data2:${project.properties['opentracing-spring-data-redis.version']?:'latest.release'}"
 	api "io.springfox:springfox-boot-starter:${project.properties['springfox.version']?:'latest.release'}"
 	api "org.apache.commons:commons-pool2"
+	implementation "org.springframework.boot:spring-boot-starter-amqp"
 	testFixturesApi "org.springframework.boot:spring-boot-starter-test"
 	testFixturesApi "org.springframework.security:spring-security-test"
 	ext {
@@ -32,6 +33,7 @@ dependencies {
 	testFixturesImplementation "org.testcontainers:mssqlserver:${testcontainersVersion}"
 	testFixturesImplementation "org.testcontainers:oracle-xe:${testcontainersVersion}"
 	testFixturesImplementation "org.testcontainers:db2:${testcontainersVersion}"
+	testFixturesImplementation "org.testcontainers:rabbitmq:${testcontainersVersion}"
 	integrationTestRuntimeOnly "mysql:mysql-connector-java"
 	integrationTestRuntimeOnly "org.postgresql:postgresql"
 	integrationTestRuntimeOnly "com.microsoft.sqlserver:mssql-jdbc"
