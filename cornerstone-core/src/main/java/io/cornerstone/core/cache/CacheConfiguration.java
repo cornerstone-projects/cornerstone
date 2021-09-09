@@ -5,9 +5,10 @@ import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.interceptor.CacheErrorHandler;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.core.Ordered;
 
 @Profile("!test")
-@EnableCaching
+@EnableCaching(order = Ordered.HIGHEST_PRECEDENCE + 3)
 @Configuration(proxyBeanMethods = false)
 public class CacheConfiguration extends CachingConfigurerSupport {
 
