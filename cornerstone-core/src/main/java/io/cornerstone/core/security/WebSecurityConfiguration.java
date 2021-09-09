@@ -102,7 +102,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 			http.httpBasic();
 		}
 
-		http.csrf().disable();
+		http.csrf().disable().headers().frameOptions().sameOrigin();
 	}
 
 	AuthenticationSuccessHandler authenticationSuccessHandler(RequestCache requestCache) {
