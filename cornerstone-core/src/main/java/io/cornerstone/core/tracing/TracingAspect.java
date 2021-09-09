@@ -9,6 +9,7 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.springframework.core.Ordered;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.cornerstone.core.Application;
+import io.cornerstone.core.aop.BaseAspect;
 import io.cornerstone.core.util.ReflectionUtils;
 import io.jaegertracing.internal.JaegerSpanContext;
 import io.opentracing.Scope;
@@ -28,7 +30,7 @@ import io.opentracing.tag.Tags;
 import io.opentracing.util.GlobalTracer;
 
 @Aspect
-public class TracingAspect {
+public class TracingAspect extends BaseAspect {
 
 	private static final ExpressionParser expressionParser = new SpelExpressionParser();
 
@@ -37,6 +39,10 @@ public class TracingAspect {
 	private static final String TAG_NAME_PREFIX_PARAM = "param.";
 
 	private static final String TAG_NAME_TX_READONLY = "tx.readonly";
+	
+	public TracingAspect() {
+		order = Ordered.HIGHEST_PRECEDENCE + 1;
+	}
 
 	@Around("execution(public * *(..)) and @annotation(traced)")
 	public Object trace(ProceedingJoinPoint pjp, Traced traced) throws Throwable {

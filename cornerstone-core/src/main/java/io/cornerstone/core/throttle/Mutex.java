@@ -6,10 +6,14 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+import io.cornerstone.core.domain.Scope;
+
 @Target({ METHOD })
 @Retention(RUNTIME)
 public @interface Mutex {
 
-	String value() default "";
+	String key() default "";
+
+	Scope scope() default Scope.GLOBAL;
 
 }
