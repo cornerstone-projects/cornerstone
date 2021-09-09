@@ -5,6 +5,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.redis.connection.RedisConnection;
@@ -14,7 +15,7 @@ import org.springframework.test.context.ContextConfiguration;
 import io.cornerstone.core.message.MessageProcessor;
 import io.cornerstone.core.message.QueueTestBase;
 import io.cornerstone.test.containers.Redis;
-import io.cornerstone.test.mock.SpyResultCaptor;
+import io.cornerstone.test.mock.ResultCaptor;
 import lombok.RequiredArgsConstructor;
 
 @ContextConfiguration(classes = { RedisQueueTests.Config.class, Redis.class })
@@ -25,7 +26,7 @@ class RedisQueueTests extends QueueTestBase {
 
 	@Test
 	void produce() {
-		SpyResultCaptor<RedisConnection> resultCaptor = new SpyResultCaptor<>();
+		ResultCaptor<RedisConnection> resultCaptor = new ResultCaptor<>(Mockito::spy);
 		given(connectionFactory.getConnection()).willAnswer(resultCaptor);
 		testQueue.produce("test");
 		verify(resultCaptor.getResult()).rPush(any(), any());

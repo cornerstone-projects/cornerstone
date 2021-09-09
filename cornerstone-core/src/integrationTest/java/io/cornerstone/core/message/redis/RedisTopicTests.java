@@ -9,6 +9,7 @@ import static org.mockito.Mockito.verify;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
+import org.mockito.Mockito;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.redis.connection.RedisConnection;
@@ -21,7 +22,7 @@ import io.cornerstone.core.domain.Scope;
 import io.cornerstone.core.message.MessageProcessor;
 import io.cornerstone.core.message.TopicTestBase;
 import io.cornerstone.test.containers.Redis;
-import io.cornerstone.test.mock.SpyResultCaptor;
+import io.cornerstone.test.mock.ResultCaptor;
 import lombok.RequiredArgsConstructor;
 
 @ContextConfiguration(classes = { RedisTopicTests.Config.class, Redis.class })
@@ -35,7 +36,7 @@ class RedisTopicTests extends TopicTestBase {
 
 	@Test
 	void publishLocalScopeMessage() throws Exception {
-		SpyResultCaptor<RedisConnection> resultCaptor = new SpyResultCaptor<>();
+		ResultCaptor<RedisConnection> resultCaptor = new ResultCaptor<>(Mockito::spy);
 		given(connectionFactory.getConnection()).willAnswer(resultCaptor);
 		testTopic.publish("test", Scope.LOCAL);
 		assertThat(resultCaptor.getResult()).isNull();
@@ -44,7 +45,7 @@ class RedisTopicTests extends TopicTestBase {
 
 	@Test
 	void publishApplicationScopeMessage() throws Exception {
-		SpyResultCaptor<RedisConnection> resultCaptor = new SpyResultCaptor<>();
+		ResultCaptor<RedisConnection> resultCaptor = new ResultCaptor<>(Mockito::spy);
 		given(connectionFactory.getConnection()).willAnswer(resultCaptor);
 		testTopic.publish("test", Scope.APPLICATION);
 		verify(resultCaptor.getResult()).publish(channelCaptor.capture(), any());
@@ -55,7 +56,7 @@ class RedisTopicTests extends TopicTestBase {
 
 	@Test
 	void publishGlobalScopeMessage() throws Exception {
-		SpyResultCaptor<RedisConnection> resultCaptor = new SpyResultCaptor<>();
+		ResultCaptor<RedisConnection> resultCaptor = new ResultCaptor<>(Mockito::spy);
 		given(connectionFactory.getConnection()).willAnswer(resultCaptor);
 		testTopic.publish("test", Scope.GLOBAL);
 		verify(resultCaptor.getResult()).publish(channelCaptor.capture(), any());
