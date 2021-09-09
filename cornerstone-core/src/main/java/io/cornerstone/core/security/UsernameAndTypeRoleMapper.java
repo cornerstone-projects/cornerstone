@@ -9,7 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import io.cornerstone.core.util.AopUtils;
+import io.cornerstone.core.util.ReflectionUtils;
 
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @Component
@@ -25,7 +25,7 @@ public class UsernameAndTypeRoleMapper implements UserRoleMapper {
 	}
 
 	public static String mapUserType(UserDetails user) {
-		Class<?> c = AopUtils.getActualClass(user);
+		Class<?> c = ReflectionUtils.getEntityClass(user);
 		String name = c.getSimpleName();
 		if (!StringUtils.hasLength(name)) // anonymous class
 			name = c.getSuperclass().getSimpleName();

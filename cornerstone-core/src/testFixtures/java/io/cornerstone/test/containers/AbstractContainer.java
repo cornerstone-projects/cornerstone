@@ -42,7 +42,7 @@ abstract class AbstractContainer {
 	protected Map<String, String> getEnv() {
 		Map<String, String> env = new HashMap<>();
 		try {
-			for (Field f : AopUtils.getActualClass(getClass()).getDeclaredFields()) {
+			for (Field f : AopUtils.getUltimateTargetObject(this).getClass().getDeclaredFields()) {
 				int mod = f.getModifiers();
 				if (Modifier.isStatic(mod) && Modifier.isFinal(mod)) {
 					env.put(f.getName(), String.valueOf(f.get(null)));

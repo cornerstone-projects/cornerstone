@@ -36,7 +36,7 @@ public class DefaultRequestMappingHandlerMapping extends RequestMappingHandlerMa
 	protected void detectHandlerMethods(Object handler) {
 		Object handlerObject = (handler instanceof String ? obtainApplicationContext().getBean((String) handler)
 				: handler);
-		handlerObject = AopUtils.getTargetObject(handlerObject);
+		handlerObject = AopUtils.getUltimateTargetObject(handlerObject);
 		handlerHolder.set(handlerObject);
 		super.detectHandlerMethods(handler);
 		handlerHolder.remove();

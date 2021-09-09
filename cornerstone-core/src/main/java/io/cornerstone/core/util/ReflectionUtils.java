@@ -16,6 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.hibernate.proxy.HibernateProxy;
 import org.springframework.core.BridgeMethodResolver;
 import org.springframework.core.DefaultParameterNameDiscoverer;
 import org.springframework.core.ParameterNameDiscoverer;
@@ -31,6 +32,11 @@ public class ReflectionUtils {
 
 	private static final boolean JDK9PLUS = ClassUtils.isPresent("java.lang.StackWalker",
 			System.class.getClassLoader());
+
+	public static Class<?> getEntityClass(Object entity) {
+		Class<?> clazz = entity.getClass();
+		return HibernateProxy.class.isAssignableFrom(clazz) ? clazz.getSuperclass() : clazz;
+	}
 
 	public static Set<Class<?>> getAllInterfaces(Class<?> clazz) {
 		Set<Class<?>> set = new HashSet<>();
