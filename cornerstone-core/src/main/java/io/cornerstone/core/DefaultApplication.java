@@ -1,13 +1,16 @@
 package io.cornerstone.core;
 
+import static java.lang.StackWalker.Option.RETAIN_CLASS_REFERENCE;
 import static org.springframework.core.env.AbstractEnvironment.ACTIVE_PROFILES_PROPERTY_NAME;
 
+import java.lang.StackWalker.StackFrame;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.util.Enumeration;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.util.ClassUtils;
@@ -20,14 +23,17 @@ public class DefaultApplication implements Application {
 
 	private static String hostAddress = "127.0.0.1";
 
-	static Application currentApplication;
+	static volatile Application currentApplication;
 
 	@Autowired
 	@Getter
 	private ApplicationContext context;
 
 	public DefaultApplication() {
-		currentApplication = this;
+		boolean createdBySpring = StackWalker.getInstance(RETAIN_CLASS_REFERENCE).walk(
+				s -> s.map(StackFrame::getDeclaringClass).anyMatch(c -> c == AbstractAutowireCapableBeanFactory.class));
+		if (createdBySpring)
+			currentApplication = this;
 	}
 
 	@Override
@@ -71,6 +77,9 @@ public class DefaultApplication implements Application {
 
 	protected static void start(String[] args) throws Exception {
 		init(args);
-		SpringApplication.run(Class.forName(new Throwable().getStackTrace()[1].getClassName()), args); // caller class
+		Class<?> caller = StackWalker.getInstance(RETAIN_CLASS_REFERENCE)
+				.walk(stream1 -> stream1.skip(1).findFirst().map(StackFrame::getDeclaringClass)
+						.orElseThrow(() -> new RuntimeException("start() method should be called in main method")));
+		SpringApplication.run(caller, args);
 	}
 }
