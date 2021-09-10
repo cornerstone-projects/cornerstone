@@ -2,7 +2,7 @@
 <!DOCTYPE Configuration>
 <Configuration>
 	<Appenders>
-		<Console name="CONSOLE" target="SYSTEM_OUT">
+		<Console name="CONSOLE" target="SYSTEM_OUT" follow="true">
 			<PatternLayout
 				pattern="%style{%d %25.25t %60.60c{1.}}{cyan} %highlight{%p %m}%n%throwable" />
 		</Console>
