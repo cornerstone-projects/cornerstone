@@ -14,6 +14,7 @@ import org.testcontainers.containers.RabbitMQContainer;
 @Import(RabbitAutoConfiguration.class)
 public class RabbitMQ extends AbstractContainer {
 
+	@Override
 	protected GenericContainer<?> createContainer() {
 		return new RabbitMQContainer(getImage());
 	}

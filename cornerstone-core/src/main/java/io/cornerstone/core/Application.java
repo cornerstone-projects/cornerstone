@@ -20,7 +20,7 @@ public interface Application {
 
 	default String getName() {
 		String name = getContext().getId();
-		if (name.indexOf('@') > 0)
+		if (name == null || name.indexOf('@') > 0)
 			name = StringUtils.uncapitalize(getClass().getSimpleName());
 		return name;
 	}

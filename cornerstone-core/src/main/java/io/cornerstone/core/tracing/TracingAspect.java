@@ -39,7 +39,7 @@ public class TracingAspect extends BaseAspect {
 	private static final String TAG_NAME_PREFIX_PARAM = "param.";
 
 	private static final String TAG_NAME_TX_READONLY = "tx.readonly";
-	
+
 	public TracingAspect() {
 		order = Ordered.HIGHEST_PRECEDENCE + 1;
 	}

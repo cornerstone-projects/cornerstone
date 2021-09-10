@@ -282,7 +282,7 @@ public class RedisConfigurationSupport // extends LettuceConnectionConfiguration
 
 	/**
 	 * Create a {@link RedisClusterConfiguration} if necessary.
-	 * 
+	 *
 	 * @return {@literal null} if no cluster settings are set.
 	 */
 	protected final RedisClusterConfiguration getClusterConfiguration() {
@@ -313,7 +313,7 @@ public class RedisConfigurationSupport // extends LettuceConnectionConfiguration
 		for (String node : sentinel.getNodes()) {
 			try {
 				String[] parts = StringUtils.split(node, ":");
-				Assert.state(parts.length == 2, "Must be defined as 'host:port'");
+				Assert.state(parts != null && parts.length == 2, "Must be defined as 'host:port'");
 				nodes.add(new RedisNode(parts[0], Integer.parseInt(parts[1])));
 			} catch (RuntimeException ex) {
 				throw new IllegalStateException("Invalid redis sentinel property '" + node + "'", ex);

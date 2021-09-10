@@ -37,8 +37,6 @@ class RabbitQueueTests extends QueueTestBase {
 			return queue;
 		}
 
-		
-
 	}
 
 	@RequiredArgsConstructor

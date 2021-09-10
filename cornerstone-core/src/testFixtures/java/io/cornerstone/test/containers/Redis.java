@@ -42,7 +42,7 @@ public class Redis extends AbstractContainer {
 	public StringRedisTemplate stringRedisTemplate(RedisConnectionFactory redisConnectionFactory) {
 		return new StringRedisTemplate(redisConnectionFactory);
 	}
-	
+
 	@Bean
 	public RedisMessageListenerContainer redisMessageListenerContainer(
 			RedisConnectionFactory redisConnectionFactory, Optional<Executor> taskExecutor) {

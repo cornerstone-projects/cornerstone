@@ -31,6 +31,11 @@ public class BaseEvent<T> extends ApplicationEvent {
 	}
 
 	@Override
+	public int hashCode() {
+		return super.hashCode();
+	}
+
+	@Override
 	public boolean equals(Object that) {
 		if (that == null)
 			return false;
