@@ -26,5 +26,6 @@ repositories {
 dependencies {
 	implementation "io.freefair.lombok:io.freefair.lombok.gradle.plugin:${project.properties['lombok-plugin.version']?:'latest.release'}"
 	implementation "io.spring.dependency-management:io.spring.dependency-management.gradle.plugin:${project.properties['dependency-management-plugin.version']?:'latest.release'}"
+	implementation "io.spring.javaformat:io.spring.javaformat.gradle.plugin:${project.properties['javaformat-plugin.version']?:'latest.release'}"
 	implementation "org.springframework.boot:org.springframework.boot.gradle.plugin:${project.properties['spring-boot.version']?:'latest.release'}"
 }

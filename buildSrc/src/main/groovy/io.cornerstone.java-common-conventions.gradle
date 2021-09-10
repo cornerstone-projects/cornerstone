@@ -1,7 +1,9 @@
 plugins {
 	id 'java'
+	id 'checkstyle'
 	id 'io.freefair.lombok'
 	id 'io.spring.dependency-management'
+	id 'io.spring.javaformat'
 }
 
 sourceCompatibility = '11'
@@ -48,6 +50,7 @@ dependencies {
 	testRuntimeOnly "com.h2database:h2"
 	testImplementation(testFixtures(project(":cornerstone-core")))
 	integrationTestImplementation(testFixtures(project(":cornerstone-core")))
+	checkstyle("io.spring.javaformat:spring-javaformat-checkstyle:${project.properties['javaformat-plugin.version']?:'latest.release'}")
 }
 
 configurations.all {
