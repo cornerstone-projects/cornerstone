@@ -55,7 +55,7 @@ class RedisApplicationEventTopicTests extends ApplicationEventTopicTestBase {
 	static class Config {
 
 		@Bean
-		public RedisApplicationEventTopic redisApplicationEventTopic() {
+		RedisApplicationEventTopic redisApplicationEventTopic() {
 			return new RedisApplicationEventTopic();
 		}
 

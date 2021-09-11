@@ -9,6 +9,6 @@ import io.cornerstone.core.web.AbstractTreeableEntityController;
 @TestComponent
 @RestController
 @Validated
-public class TestEntityController extends AbstractTreeableEntityController<TestEntity> {
+class TestEntityController extends AbstractTreeableEntityController<TestEntity> {
 
 }

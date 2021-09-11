@@ -17,7 +17,7 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-public class TestEntity extends AbstractAuditableEntity implements Versioned {
+class TestEntity extends AbstractAuditableEntity implements Versioned {
 
 	private static final long serialVersionUID = 1L;
 

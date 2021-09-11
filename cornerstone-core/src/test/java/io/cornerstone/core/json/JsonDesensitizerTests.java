@@ -12,10 +12,10 @@ import org.junit.jupiter.api.Test;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
-public class JsonDesensitizerTests {
+class JsonDesensitizerTests {
 
 	@Test
-	public void testDesensitize() {
+	void testDesensitize() {
 		JsonDesensitizer desensitizer = new JsonDesensitizer();
 		String json = "{\"password\":\"password\"}";
 		assertThat(desensitizer.desensitize(json)).contains("\"******\"");
@@ -35,7 +35,7 @@ public class JsonDesensitizerTests {
 	}
 
 	@Test
-	public void testToJson() {
+	void testToJson() {
 		JsonDesensitizer desensitizer = new JsonDesensitizer();
 		User user = new User("username", "password", 12);
 		User mate = new User("mate", "password", 11);
@@ -53,7 +53,7 @@ public class JsonDesensitizerTests {
 	}
 
 	@Test
-	public void testCustomize() {
+	void testCustomize() {
 		JsonDesensitizer desensitizer = new JsonDesensitizer();
 		Map<BiPredicate<String, Object>, Function<String, String>> mapping = desensitizer.getMapping();
 		mapping.clear();
@@ -73,7 +73,7 @@ public class JsonDesensitizerTests {
 	}
 
 	@Test
-	public void testToJsonWithAnnotation() {
+	void testToJsonWithAnnotation() {
 		JsonDesensitizer desensitizer = new JsonDesensitizer();
 		Person p = new Person("test", "13333333333", 12);
 		String json = desensitizer.toJson(p);

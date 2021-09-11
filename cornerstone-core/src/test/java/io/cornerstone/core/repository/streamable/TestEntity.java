@@ -10,7 +10,7 @@ import lombok.Setter;
 @Entity
 @Setter
 @Getter
-public class TestEntity extends AbstractPersistable<Long> {
+class TestEntity extends AbstractPersistable<Long> {
 
 	private int index;
 

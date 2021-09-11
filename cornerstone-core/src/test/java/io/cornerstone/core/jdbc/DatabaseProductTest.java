@@ -4,10 +4,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.Test;
 
-public class DatabaseProductTest {
+class DatabaseProductTest {
 
 	@Test
-	public void testParse() {
+	void testParse() {
 		assertThat(DatabaseProduct.parse("MySQL")).isEqualTo(DatabaseProduct.MYSQL);
 		assertThat(DatabaseProduct.parse("jdbc:mysql://localhost:3306/test")).isEqualTo(DatabaseProduct.MYSQL);
 		assertThat(DatabaseProduct.parse("MariaDB")).isEqualTo(DatabaseProduct.MARIADB);

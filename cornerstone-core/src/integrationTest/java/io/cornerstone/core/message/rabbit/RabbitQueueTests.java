@@ -32,7 +32,7 @@ class RabbitQueueTests extends QueueTestBase {
 	static class Config {
 
 		@Bean
-		public TestQueue testQueue(MessageProcessor messageProcessor) {
+		TestQueue testQueue(MessageProcessor messageProcessor) {
 			TestQueue queue = new TestQueue(messageProcessor);
 			return queue;
 		}

@@ -4,6 +4,6 @@ import org.springframework.data.repository.CrudRepository;
 
 import io.cornerstone.core.repository.TreeableRepository;
 
-public interface TestEntityRepository extends CrudRepository<TestEntity, Long>, TreeableRepository<TestEntity> {
+interface TestEntityRepository extends CrudRepository<TestEntity, Long>, TreeableRepository<TestEntity> {
 
 }

@@ -38,8 +38,8 @@ import lombok.Setter;
 @MappedSuperclass
 @Getter
 @Setter
-public abstract class AbstractTreeableEntity<T extends AbstractTreeableEntity<T>>
-		extends AbstractAuditable<Long> implements Treeable<T, Long>, Ordered<T>, Serializable {
+public abstract class AbstractTreeableEntity<T extends AbstractTreeableEntity<T>> extends AbstractAuditable<Long>
+		implements Treeable<T, Long>, Ordered<T>, Serializable {
 
 	private static final long serialVersionUID = -2016525006418883120L;
 

@@ -18,18 +18,18 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import io.cornerstone.test.SpringApplicationTest;
 
 @SpringApplicationTest(classes = FileStorageAutoConfiguration.class, webEnvironment = WebEnvironment.NONE)
-public abstract class FileStorageTestBase {
+abstract class FileStorageTestBase {
 
 	@Autowired
 	protected FileStorage fs;
 
 	@BeforeEach
-	public void cleanup() {
+	void cleanup() {
 		delete(fs, "/");
 	}
 
 	@Test
-	public void testDirectory() throws IOException {
+	void testDirectory() throws IOException {
 		assertThat(fs.isDirectory("/test")).isFalse();
 		assertThat(fs.mkdir("/test")).isTrue();
 		assertThat(fs.isDirectory("/test")).isTrue();
@@ -42,7 +42,7 @@ public abstract class FileStorageTestBase {
 	}
 
 	@Test
-	public void testFile() throws IOException {
+	void testFile() throws IOException {
 		String text = "test";
 		String path = "/test/test2/test.txt";
 		String path2 = "/test/test2/test2.txt";
@@ -66,7 +66,7 @@ public abstract class FileStorageTestBase {
 	}
 
 	@Test
-	public void testRenameFile() throws IOException {
+	void testRenameFile() throws IOException {
 		String text = "test";
 		String path = "/test/test2/test.txt";
 		String path2 = "/test/test2/test2.txt";
@@ -87,7 +87,7 @@ public abstract class FileStorageTestBase {
 	}
 
 	@Test
-	public void testListFiles() throws IOException {
+	void testListFiles() throws IOException {
 		fs.mkdir("/test");
 		List<FileInfo> files = fs.listFiles("/");
 		assertThat(files).isEmpty();
@@ -123,7 +123,7 @@ public abstract class FileStorageTestBase {
 	}
 
 	@Test
-	public void testListFilesWithMarker() throws IOException {
+	void testListFilesWithMarker() throws IOException {
 		String dir = "/test";
 
 		// prepare

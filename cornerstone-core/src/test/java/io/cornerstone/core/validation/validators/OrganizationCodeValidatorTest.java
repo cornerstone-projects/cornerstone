@@ -5,10 +5,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 import org.junit.jupiter.api.Test;
 
-public class OrganizationCodeValidatorTest {
+class OrganizationCodeValidatorTest {
 
 	@Test
-	public void testIsValid() {
+	void testIsValid() {
 		assertThat(OrganizationCodeValidator.isValid(""), is(false));
 		assertThat(OrganizationCodeValidator.isValid("10000000"), is(false));
 		assertThat(OrganizationCodeValidator.isValid("123456789"), is(false));
@@ -32,7 +32,7 @@ public class OrganizationCodeValidatorTest {
 	}
 
 	@Test
-	public void testRandomValue() {
+	void testRandomValue() {
 		for (int i = 0; i < 100; i++)
 			assertThat(OrganizationCodeValidator.isValid(OrganizationCodeValidator.randomValue()), is(true));
 	}

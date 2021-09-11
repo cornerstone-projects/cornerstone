@@ -13,14 +13,14 @@ import org.junit.jupiter.api.Test;
 
 import io.cornerstone.fs.impl.LocalFileStorage;
 
-public class FileStorageMigrationTests {
+class FileStorageMigrationTests {
 
 	static FileStorage source;
 
 	static FileStorage target;
 
 	@BeforeAll
-	public static void setup() {
+	static void setup() {
 		FileStorageProperties props1 = new FileStorageProperties();
 		props1.setUri(URI.create("file:///tmp/fs1"));
 		LocalFileStorage fs1 = new LocalFileStorage(props1);
@@ -34,7 +34,7 @@ public class FileStorageMigrationTests {
 	}
 
 	@AfterAll
-	public static void cleanup() {
+	static void cleanup() {
 		try {
 			cleanup(source, "/");
 			cleanup(target, "/");
@@ -44,7 +44,7 @@ public class FileStorageMigrationTests {
 	}
 
 	@Test
-	public void testMigration() throws IOException {
+	void testMigration() throws IOException {
 		for (int i = 0; i < 10; i++)
 			for (int j = 0; j < 10; j++)
 				writeToFile(source, "text", "/test" + i + "/test" + j + ".txt");

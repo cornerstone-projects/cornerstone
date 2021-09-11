@@ -20,7 +20,7 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-public class TestEntity extends AbstractPersistable<Long> {
+class TestEntity extends AbstractPersistable<Long> {
 
 	private String[] stringArray;
 
@@ -51,20 +51,20 @@ public class TestEntity extends AbstractPersistable<Long> {
 	private List<TestComponent> testComponentList;
 
 	@Converter(autoApply = true)
-	public static class TestEnumArrayConverter extends EnumArrayConverter<TestEnum>
+	static class TestEnumArrayConverter extends EnumArrayConverter<TestEnum>
 			implements AttributeConverter<TestEnum[], String> {
 	}
 
 	@Converter(autoApply = true)
-	public static class TestEnumSetConverter extends EnumSetConverter<TestEnum> {
+	static class TestEnumSetConverter extends EnumSetConverter<TestEnum> {
 	}
 
 	@Converter(autoApply = true)
-	public static class TestEnumListConverter extends EnumListConverter<TestEnum> {
+	static class TestEnumListConverter extends EnumListConverter<TestEnum> {
 	}
 
 	@Converter(autoApply = true)
-	public static class TestComponentListConverter extends JsonConverter<List<TestComponent>> {
+	static class TestComponentListConverter extends JsonConverter<List<TestComponent>> {
 	}
 
 }

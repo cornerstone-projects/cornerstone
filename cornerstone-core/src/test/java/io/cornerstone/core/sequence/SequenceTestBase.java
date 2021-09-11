@@ -18,7 +18,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import lombok.Getter;
 
 @ExtendWith(SpringExtension.class)
-public abstract class SequenceTestBase {
+abstract class SequenceTestBase {
 
 	@Getter
 	private int threads = 5;
@@ -35,22 +35,22 @@ public abstract class SequenceTestBase {
 	private Sequence sample2Sequence;
 
 	@BeforeEach
-	public void setup() {
+	void setup() {
 		executorService = Executors.newFixedThreadPool(getThreads());
 	}
 
 	@AfterEach
-	public void destroy() {
+	void destroy() {
 		executorService.shutdown();
 	}
 
 	@Test
-	public void testSimple() throws InterruptedException {
+	void testSimple() throws InterruptedException {
 		test(false);
 	}
 
 	@Test
-	public void testCyclic() throws InterruptedException {
+	void testCyclic() throws InterruptedException {
 		test(true);
 	}
 

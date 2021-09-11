@@ -14,13 +14,13 @@ import io.cornerstone.test.DataJpaTestBase;
 
 @EnableJpaRepositories(basePackageClasses = TestEntityRepository.class)
 @EntityScan(basePackageClasses = TestEntity.class)
-public class TreeableRepositoryTests extends DataJpaTestBase {
+class TreeableRepositoryTests extends DataJpaTestBase {
 
 	@Autowired
 	TestEntityRepository repository;
 
 	@Test
-	public void save() {
+	void save() {
 		TestEntity parent = new TestEntity("parent");
 		TestEntity child0 = new TestEntity("child0", 0);
 		TestEntity child1 = new TestEntity("child1", 1);

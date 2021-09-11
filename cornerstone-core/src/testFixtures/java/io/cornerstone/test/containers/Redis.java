@@ -44,8 +44,8 @@ public class Redis extends AbstractContainer {
 	}
 
 	@Bean
-	public RedisMessageListenerContainer redisMessageListenerContainer(
-			RedisConnectionFactory redisConnectionFactory, Optional<Executor> taskExecutor) {
+	public RedisMessageListenerContainer redisMessageListenerContainer(RedisConnectionFactory redisConnectionFactory,
+			Optional<Executor> taskExecutor) {
 		RedisMessageListenerContainer container = new RedisMessageListenerContainer();
 		container.setConnectionFactory(redisConnectionFactory);
 		taskExecutor.ifPresent(container::setTaskExecutor);

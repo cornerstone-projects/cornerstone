@@ -20,7 +20,7 @@ import io.cornerstone.test.DataJpaTestBase;
 @EnableJpaRepositories(basePackageClasses = TestEntityRepository.class)
 @EntityScan(basePackageClasses = TestEntity.class)
 @ContextConfiguration(classes = SequenceTests.Config.class)
-public class SequenceTests extends DataJpaTestBase {
+class SequenceTests extends DataJpaTestBase {
 
 	@Autowired
 	TestEntityRepository repository;
@@ -29,7 +29,7 @@ public class SequenceTests extends DataJpaTestBase {
 	SnowflakeProperties snowflakeProperties;
 
 	@Test
-	public void test() {
+	void test() {
 		Long id1 = repository.save(new TestEntity()).getId();
 		Long id2 = repository.save(new TestEntity()).getId();
 		assertThat(id2).isNotNull();
@@ -40,7 +40,7 @@ public class SequenceTests extends DataJpaTestBase {
 	static class Config {
 
 		@Bean
-		public Sequence testSequence(DataSource dataSource) {
+		Sequence testSequence(DataSource dataSource) {
 			DatabaseCyclicSequenceDelegate cs = new DatabaseCyclicSequenceDelegate(dataSource);
 			cs.setCycleType(CycleType.MINUTE);
 			return cs;

@@ -29,7 +29,7 @@ import io.cornerstone.test.DataJpaTestBase;
 @EnableJpaRepositories(basePackageClasses = TestEntityRepository.class)
 @EntityScan(basePackageClasses = TestEntity.class)
 @Transactional(propagation = Propagation.NOT_SUPPORTED)
-public class PublishAwareTests extends DataJpaTestBase {
+class PublishAwareTests extends DataJpaTestBase {
 
 	@Autowired
 	TestEntityRepository repository;
@@ -49,7 +49,7 @@ public class PublishAwareTests extends DataJpaTestBase {
 	}
 
 	@Test
-	public void cud() {
+	void cud() {
 		TestEntity entity = repository.save(new TestEntity());
 		verify(testListener).on(eventCaptor.capture());
 		EntityOperationEvent<TestEntity> event = eventCaptor.getValue();
@@ -74,7 +74,7 @@ public class PublishAwareTests extends DataJpaTestBase {
 	}
 
 	@Test
-	public void saveAndUpdate() {
+	void saveAndUpdate() {
 		testService.saveAndUpdate();
 		verify(testListener).on(eventCaptor.capture());
 		EntityOperationEvent<TestEntity> event = eventCaptor.getValue();
@@ -83,7 +83,7 @@ public class PublishAwareTests extends DataJpaTestBase {
 	}
 
 	@Test
-	public void saveAndUpdateAndDelete() {
+	void saveAndUpdateAndDelete() {
 		testService.saveAndUpdateAndDelete();
 		verify(testListener).on(eventCaptor.capture());
 		EntityOperationEvent<TestEntity> event = eventCaptor.getValue();

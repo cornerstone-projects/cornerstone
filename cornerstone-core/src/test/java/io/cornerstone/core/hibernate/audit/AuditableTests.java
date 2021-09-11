@@ -12,14 +12,14 @@ import io.cornerstone.test.DataJpaTestBase;
 
 @EnableJpaRepositories(basePackageClasses = TestEntityRepository.class)
 @EntityScan(basePackageClasses = TestEntity.class)
-public class AuditableTests extends DataJpaTestBase {
+class AuditableTests extends DataJpaTestBase {
 
 	@Autowired
 	TestEntityRepository repository;
 
 	@Test
 	@WithMockUser(username = "admin")
-	public void test() {
+	void test() {
 		TestEntity entity = repository.save(new TestEntity());
 		flushAndClear();
 

@@ -13,7 +13,7 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-public class TestEntity extends AbstractEntity {
+class TestEntity extends AbstractEntity {
 
 	private static final long serialVersionUID = 6471017006033411659L;
 

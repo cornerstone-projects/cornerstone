@@ -54,15 +54,15 @@ import io.vavr.collection.Stream;
 @ContextConfiguration(classes = WebSecurityTests.Config.class)
 class WebSecurityTests extends ControllerTestBase {
 
-	public static final String TEST_LOGIN_PROCESSING_URL = "/test";
+	static final String TEST_LOGIN_PROCESSING_URL = "/test";
 
-	public static final String TEST_LOGIN_PAGE = "/test.html";
+	static final String TEST_LOGIN_PAGE = "/test.html";
 
-	public static final String TEST_DEFAULT_SUCCESS_URL = "/index.html";
+	static final String TEST_DEFAULT_SUCCESS_URL = "/index.html";
 
-	public static final String TEST_USER_HOME = "/user/home.html";
+	static final String TEST_USER_HOME = "/user/home.html";
 
-	public static final String TEST_ADMIN_HOME = "/admin/home.html";
+	static final String TEST_ADMIN_HOME = "/admin/home.html";
 
 	@Test
 	void testAuthenticationFailure() {
@@ -191,18 +191,18 @@ class WebSecurityTests extends ControllerTestBase {
 
 		@GetMapping(TEST_DEFAULT_SUCCESS_URL)
 		@Secured("USER")
-		public String home() {
+		String home() {
 			return "home";
 		}
 
 		@GetMapping(TEST_USER_HOME)
 		@Secured("USERNAME(user)")
-		public String user() {
+		String user() {
 			return "user";
 		}
 
 		@GetMapping(TEST_ADMIN_HOME)
-		public String admin() {
+		String admin() {
 			return "admin";
 		}
 	}

@@ -37,7 +37,7 @@ abstract class ApplicationEventTopicTestBase {
 	static class Config {
 
 		@Bean
-		public EventPublisher eventPublisher() {
+		EventPublisher eventPublisher() {
 			return new EventPublisher();
 		}
 
@@ -51,7 +51,7 @@ abstract class ApplicationEventTopicTestBase {
 
 		private static final long serialVersionUID = 1L;
 
-		public TestEvent(String source) {
+		TestEvent(String source) {
 			super(source);
 		}
 
@@ -60,7 +60,7 @@ abstract class ApplicationEventTopicTestBase {
 	static class TestLisenter {
 
 		@EventListener
-		public void listen(TestEvent event) {
+		void listen(TestEvent event) {
 		}
 	}
 

@@ -1,6 +1,6 @@
 package io.cornerstone.core.hibernate.converter;
 
-public enum TestEnum {
+enum TestEnum {
 
 	A, B, C
 

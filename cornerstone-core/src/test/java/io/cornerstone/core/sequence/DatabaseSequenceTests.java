@@ -14,7 +14,7 @@ import lombok.Getter;
 
 @ContextConfiguration(classes = DatabaseSequenceTests.Config.class)
 @Import(DataSourceAutoConfiguration.class)
-public class DatabaseSequenceTests extends SequenceTestBase {
+class DatabaseSequenceTests extends SequenceTestBase {
 
 	@Getter
 	private int threads = 5;
@@ -25,12 +25,12 @@ public class DatabaseSequenceTests extends SequenceTestBase {
 	static class Config {
 
 		@Bean
-		public Sequence sample1Sequence(DataSource dataSource) {
+		Sequence sample1Sequence(DataSource dataSource) {
 			return new DatabaseSimpleSequenceDelegate(dataSource);
 		}
 
 		@Bean
-		public Sequence sample2Sequence(DataSource dataSource) {
+		Sequence sample2Sequence(DataSource dataSource) {
 			DatabaseCyclicSequenceDelegate cs = new DatabaseCyclicSequenceDelegate(dataSource);
 			cs.setCycleType(CycleType.MINUTE);
 			return cs;

@@ -19,13 +19,13 @@ import io.cornerstone.test.DataJpaTestBase;
 
 @EnableJpaRepositories(basePackageClasses = TestEntityRepository.class)
 @EntityScan(basePackageClasses = TestEntity.class)
-public class IntegratedEntityTests extends DataJpaTestBase {
+class IntegratedEntityTests extends DataJpaTestBase {
 
 	@Autowired
 	TestEntityRepository repository;
 
 	@Test
-	public void test() {
+	void test() {
 		TestEntity entity = new TestEntity();
 		entity.setStringArray(new String[] { "a", "b", "c" });
 		entity.setStringList(Arrays.asList(entity.getStringArray()));

@@ -10,10 +10,10 @@ import com.fasterxml.jackson.annotation.JsonView;
 
 import lombok.Data;
 
-public class BeanUtilsTests {
+class BeanUtilsTests {
 
 	@Data
-	public static class User {
+	static class User {
 
 		private Integer id;
 
@@ -41,7 +41,7 @@ public class BeanUtilsTests {
 	}
 
 	@Test
-	public void copyNonNullProperties() {
+	void copyNonNullProperties() {
 		User user1 = new User();
 		user1.setId(1);
 		user1.setUsername("username");
@@ -65,7 +65,7 @@ public class BeanUtilsTests {
 	}
 
 	@Test
-	public void copyPropertiesInJsonView() {
+	void copyPropertiesInJsonView() {
 		User user1 = new User();
 		user1.setId(1);
 		user1.setUsername("username1");

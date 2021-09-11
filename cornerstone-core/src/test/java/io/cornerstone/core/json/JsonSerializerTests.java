@@ -16,7 +16,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Getter;
 import lombok.Setter;
 
-public class JsonSerializerTests {
+class JsonSerializerTests {
 
 	ObjectMapper mapper = new ObjectMapper();
 
@@ -56,7 +56,7 @@ public class JsonSerializerTests {
 	}
 
 	@Test
-	public void testToIdSerializer() throws IOException {
+	void testToIdSerializer() throws IOException {
 		User u = new User();
 		u.setUsername("username");
 		Department department = new Department();

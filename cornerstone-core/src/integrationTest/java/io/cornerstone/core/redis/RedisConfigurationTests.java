@@ -28,7 +28,7 @@ import io.cornerstone.core.redis.GlobalRedisConfiguration.GlobalRedisProperties;
 		"global.redis.client-name=global" })
 @Testcontainers
 @ExtendWith(SpringExtension.class)
-public class RedisConfigurationTests {
+class RedisConfigurationTests {
 
 	@Container
 	static GenericContainer<?> container = new GenericContainer<>("redis").withExposedPorts(6379);

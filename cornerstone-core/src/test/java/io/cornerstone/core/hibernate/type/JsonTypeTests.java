@@ -14,13 +14,13 @@ import io.cornerstone.test.DataJpaTestBase;
 
 @EnableJpaRepositories(basePackageClasses = TestEntityRepository.class)
 @EntityScan(basePackageClasses = TestEntity.class)
-public class JsonTypeTests extends DataJpaTestBase {
+class JsonTypeTests extends DataJpaTestBase {
 
 	@Autowired
 	TestEntityRepository repository;
 
 	@Test
-	public void test() {
+	void test() {
 		TestEntity entity = new TestEntity();
 		entity.setTestComponentList(Arrays.asList(new TestComponent("a", 1, new BigDecimal("10.1")),
 				new TestComponent("b", 2, new BigDecimal("10.2")), new TestComponent("c", 3, new BigDecimal("10.3"))));

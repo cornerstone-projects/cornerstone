@@ -13,7 +13,7 @@ import io.cornerstone.test.DataJpaTestBase;
 
 @EnableJpaRepositories(basePackageClasses = TestEntityRepository.class)
 @EntityScan(basePackageClasses = TestEntity.class)
-public class SnowflakeTests extends DataJpaTestBase {
+class SnowflakeTests extends DataJpaTestBase {
 
 	@Autowired
 	TestEntityRepository repository;
@@ -22,7 +22,7 @@ public class SnowflakeTests extends DataJpaTestBase {
 	SnowflakeProperties snowflakeProperties;
 
 	@Test
-	public void test() {
+	void test() {
 		Long id1 = repository.save(new TestEntity()).getId();
 		Long id2 = repository.save(new TestEntity()).getId();
 		assertThat(id1).isGreaterThan(100000000);

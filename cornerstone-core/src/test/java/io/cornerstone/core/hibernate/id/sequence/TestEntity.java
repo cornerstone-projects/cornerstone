@@ -17,7 +17,7 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-public class TestEntity implements Persistable<Long>, Serializable {
+class TestEntity implements Persistable<Long>, Serializable {
 
 	private static final long serialVersionUID = 6471017006033411659L;
 

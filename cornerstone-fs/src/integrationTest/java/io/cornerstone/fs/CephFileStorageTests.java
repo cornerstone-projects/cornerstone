@@ -10,7 +10,7 @@ import com.clevercloud.testcontainers.ceph.CephContainer;
 
 @TestPropertySource(properties = { "file-storage.s3.bucket=test" })
 @Testcontainers
-public class CephFileStorageTests extends FileStorageTestBase {
+class CephFileStorageTests extends FileStorageTestBase {
 
 	@Container
 	static CephContainer container = new CephContainer();

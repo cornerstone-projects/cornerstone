@@ -35,7 +35,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @EqualsAndHashCode
-public class TestEntity implements Persistable<Long> {
+class TestEntity implements Persistable<Long> {
 
 	@Id
 	@GeneratedValue(generator = "snowflake")
@@ -79,30 +79,30 @@ public class TestEntity implements Persistable<Long> {
 	}
 
 	@Converter(autoApply = true)
-	public static class TestEnumArrayConverter extends EnumArrayConverter<TestEnum>
+	static class TestEnumArrayConverter extends EnumArrayConverter<TestEnum>
 			implements AttributeConverter<TestEnum[], String> {
 	}
 
 	@Converter(autoApply = true)
-	public static class TestEnumSetConverter extends EnumSetConverter<TestEnum> {
+	static class TestEnumSetConverter extends EnumSetConverter<TestEnum> {
 	}
 
 	@Converter(autoApply = true)
-	public static class TestEnumListConverter extends EnumListConverter<TestEnum> {
+	static class TestEnumListConverter extends EnumListConverter<TestEnum> {
 	}
 
 	@Converter(autoApply = true)
-	public static class TestComponentListConverter extends JsonConverter<List<TestComponent>> {
+	static class TestComponentListConverter extends JsonConverter<List<TestComponent>> {
 	}
 
-	public static enum TestEnum {
+	static enum TestEnum {
 		A, B, C
 	}
 
 	@Data
 	@NoArgsConstructor
 	@AllArgsConstructor
-	public static class TestComponent {
+	static class TestComponent {
 
 		private String string;
 
@@ -114,7 +114,7 @@ public class TestEntity implements Persistable<Long> {
 	@Data
 	@NoArgsConstructor
 	@AllArgsConstructor
-	public static class AnotherComponent {
+	static class AnotherComponent {
 
 		private String string;
 

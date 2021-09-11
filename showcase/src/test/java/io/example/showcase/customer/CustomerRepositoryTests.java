@@ -19,14 +19,14 @@ import io.cornerstone.test.DataJpaTestBase;
 
 @EnableJpaRepositories(basePackageClasses = CustomerRepository.class)
 @EntityScan(basePackageClasses = Customer.class)
-public class CustomerRepositoryTests extends DataJpaTestBase {
+class CustomerRepositoryTests extends DataJpaTestBase {
 
 	@Autowired
 	CustomerRepository repository;
 
 	@Test
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public void save() {
+	void save() {
 		Customer customer = new Customer();
 		customer.setName("name");
 		assertThatThrownBy(() -> repository.save(customer)).isInstanceOf(DataIntegrityViolationException.class);

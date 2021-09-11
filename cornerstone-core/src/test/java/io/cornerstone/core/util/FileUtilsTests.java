@@ -4,10 +4,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.Test;
 
-public class FileUtilsTests {
+class FileUtilsTests {
 
 	@Test
-	public void test() {
+	void test() {
 		assertThat(FileUtils.normalizePath("/")).isEqualTo("/");
 		assertThat(FileUtils.normalizePath("test")).isEqualTo("test");
 		assertThat(FileUtils.normalizePath("/test")).isEqualTo("/test");

@@ -24,32 +24,32 @@ import io.cornerstone.test.DataJpaTestBase;
 
 @EnableJpaRepositories(basePackageClasses = TestEntityRepository.class, repositoryBaseClass = SimpleStreamableJpaRepository.class)
 @EntityScan(basePackageClasses = TestEntity.class)
-public class StreamableJpaRepositoryTests extends DataJpaTestBase {
+class StreamableJpaRepositoryTests extends DataJpaTestBase {
 
 	@Autowired
 	TestEntityRepository repository;
 
 	@Test
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public void streamWithoutExistingTransaction() {
+	void streamWithoutExistingTransaction() {
 		assertThatThrownBy(this::doStream).isInstanceOf(InvalidDataAccessApiUsageException.class);
 		repository.deleteAll();
 	}
 
 	@Test
-	public void streamInExistingTransaction() {
+	void streamInExistingTransaction() {
 		doStream();
 	}
 
 	@Test
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public void forEachWithoutExistingTransaction() {
+	void forEachWithoutExistingTransaction() {
 		doForEach();
 		repository.deleteAll();
 	}
 
 	@Test
-	public void forEachInExistingTransaction() {
+	void forEachInExistingTransaction() {
 		doForEach();
 	}
 
@@ -104,7 +104,7 @@ public class StreamableJpaRepositoryTests extends DataJpaTestBase {
 
 	@Test
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public void forEachModifyWithoutExistingTransaction() {
+	void forEachModifyWithoutExistingTransaction() {
 		doForEachModify();
 		assertThat(repository.findAll(Sort.by("index"))).extracting("index").containsExactly(0, 1, 2, 3, 4);
 		// not modified
@@ -112,7 +112,7 @@ public class StreamableJpaRepositoryTests extends DataJpaTestBase {
 	}
 
 	@Test
-	public void forEachModifyInExistingTransaction() {
+	void forEachModifyInExistingTransaction() {
 		doForEachModify();
 		assertThat(repository.findAll(Sort.by("index"))).extracting("index").containsExactly(1, 2, 3, 4, 5);
 		// modified

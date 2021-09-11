@@ -11,13 +11,13 @@ import io.cornerstone.test.DataJpaTestBase;
 
 @EnableJpaRepositories(basePackageClasses = TreenodeRepository.class)
 @EntityScan(basePackageClasses = Treenode.class)
-public class TreenodeRepositoryTests extends DataJpaTestBase {
+class TreenodeRepositoryTests extends DataJpaTestBase {
 
 	@Autowired
 	TreenodeRepository repository;
 
 	@Test
-	public void save() {
+	void save() {
 		Treenode treenode = new Treenode("parent");
 		repository.saveAndFlush(treenode);
 

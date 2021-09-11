@@ -12,7 +12,7 @@ import io.cornerstone.core.web.AbstractEntityController;
 @TestComponent
 @RestController
 @Validated
-public class TestEntityController extends AbstractEntityController<TestEntity, Long> {
+class TestEntityController extends AbstractEntityController<TestEntity, Long> {
 
 	@Autowired
 	private TestEntityRepository testEntityRepository;

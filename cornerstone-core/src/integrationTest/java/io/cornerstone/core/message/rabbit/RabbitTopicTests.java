@@ -24,7 +24,7 @@ import io.cornerstone.test.containers.RabbitMQ;
 import lombok.RequiredArgsConstructor;
 
 @ContextConfiguration(classes = { RabbitTopicTests.Config.class, RabbitMQ.class })
-class RabbitTopicTests extends TopicTestBase {
+public class RabbitTopicTests extends TopicTestBase {
 
 	@Captor
 	ArgumentCaptor<String> routingKeyCaptor;
@@ -61,12 +61,12 @@ class RabbitTopicTests extends TopicTestBase {
 	static class Config {
 
 		@Bean
-		public Application application() {
+		Application application() {
 			return new DefaultApplication();
 		}
 
 		@Bean
-		public TestTopic testTopic(MessageProcessor messageProcessor) {
+		TestTopic testTopic(MessageProcessor messageProcessor) {
 			return new TestTopic(messageProcessor);
 		}
 

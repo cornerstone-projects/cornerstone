@@ -94,8 +94,7 @@ class CustomerControllerTests extends BaseControllerTests {
 		}
 
 		ResponseEntity<ResultPage<Customer>> response = restTemplate.exchange(
-				RequestEntity.method(GET, PATH_LIST).build(),
-				new ParameterizedTypeReference<ResultPage<Customer>>() {
+				RequestEntity.method(GET, PATH_LIST).build(), new ParameterizedTypeReference<ResultPage<Customer>>() {
 				});
 		assertThat(response.getStatusCode()).isSameAs(OK);
 		ResultPage<Customer> page = response.getBody();
@@ -106,8 +105,7 @@ class CustomerControllerTests extends BaseControllerTests {
 		assertThat(page.getTotalPages()).isEqualTo(1);
 		assertThat(page.getTotalElements()).isEqualTo(size);
 		assertThat(page.getResult().get(0).getCreatedDate()).isNull(); // Customer.View.List view
-		response = restTemplate.exchange(
-				RequestEntity.method(GET, PATH_LIST + "?page=2&size=1&sort=id,desc").build(),
+		response = restTemplate.exchange(RequestEntity.method(GET, PATH_LIST + "?page=2&size=1&sort=id,desc").build(),
 				new ParameterizedTypeReference<ResultPage<Customer>>() {
 				});
 		assertThat(response.getStatusCode()).isSameAs(OK);

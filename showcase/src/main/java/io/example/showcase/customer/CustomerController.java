@@ -12,7 +12,6 @@ import io.cornerstone.core.web.AbstractEntityController;
 @Validated
 public class CustomerController extends AbstractEntityController<Customer, Long> {
 
-
 	@Autowired
 	private CustomerRepository customerRepository;
 

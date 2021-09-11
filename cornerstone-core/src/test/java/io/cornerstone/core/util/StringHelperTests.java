@@ -5,10 +5,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.Test;
 
-public class StringHelperTests {
+class StringHelperTests {
 
 	@Test
-	public void testPluralOf() {
+	void testPluralOf() {
 		assertThat(pluralOf(null)).isNull();
 		assertThat(pluralOf("")).isEqualTo("");
 		assertThat(pluralOf("man")).isEqualTo("men");

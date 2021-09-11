@@ -5,6 +5,6 @@ import org.springframework.test.context.ContextConfiguration;
 import io.cornerstone.test.containers.PostgreSQL;
 
 @ContextConfiguration(classes = PostgreSQL.class)
-public class PostgreSQLSequenceTests extends DatabaseSequenceTests {
+class PostgreSQLSequenceTests extends DatabaseSequenceTests {
 
 }

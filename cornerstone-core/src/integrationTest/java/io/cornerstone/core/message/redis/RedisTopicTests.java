@@ -68,12 +68,12 @@ class RedisTopicTests extends TopicTestBase {
 	static class Config {
 
 		@Bean
-		public Application application() {
+		Application application() {
 			return new DefaultApplication();
 		}
 
 		@Bean
-		public TestTopic testTopic(MessageProcessor messageProcessor) {
+		TestTopic testTopic(MessageProcessor messageProcessor) {
 			return new TestTopic(messageProcessor);
 		}
 

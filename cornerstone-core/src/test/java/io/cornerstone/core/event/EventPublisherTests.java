@@ -23,7 +23,7 @@ import io.cornerstone.test.SpringApplicationTestBase;
 
 @TestMethodOrder(OrderAnnotation.class)
 @ContextConfiguration(classes = EventPublisherTests.Config.class)
-public class EventPublisherTests extends SpringApplicationTestBase {
+class EventPublisherTests extends SpringApplicationTestBase {
 
 	@Autowired
 	private ApplicationContext ctx;
@@ -39,7 +39,7 @@ public class EventPublisherTests extends SpringApplicationTestBase {
 
 	@Test
 	@Order(1)
-	public void publishApplicationContextEventAsGlobal() {
+	void publishApplicationContextEventAsGlobal() {
 		verify(applicationEventTopic).publish(any(InstanceStartupEvent.class), eq(Scope.GLOBAL));
 	}
 
@@ -89,7 +89,7 @@ public class EventPublisherTests extends SpringApplicationTestBase {
 	static class TestLisenter {
 
 		@EventListener
-		public void listen(TestEvent event) {
+		void listen(TestEvent event) {
 		}
 	}
 
@@ -97,7 +97,7 @@ public class EventPublisherTests extends SpringApplicationTestBase {
 
 		private static final long serialVersionUID = 1L;
 
-		public TestEvent(String source) {
+		TestEvent(String source) {
 			super(source);
 		}
 

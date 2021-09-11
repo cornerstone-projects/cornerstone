@@ -23,7 +23,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @TestPropertySource(properties = { "file-storage.ftp.data-timeout=30000", "file-storage.ftp.buffer-threshold=8",
 		"file-storage.ftp.pool.max-total=5" })
 @Testcontainers
-public class FtpFileStorageTests extends FileStorageTestBase {
+class FtpFileStorageTests extends FileStorageTestBase {
 
 	private static final String FTP_USER = "ftp";
 
@@ -49,7 +49,7 @@ public class FtpFileStorageTests extends FileStorageTestBase {
 	}
 
 	@Test
-	public void testConcurrency() throws Exception {
+	void testConcurrency() throws Exception {
 
 		int concurrency = 2;
 		int loop = 20;
