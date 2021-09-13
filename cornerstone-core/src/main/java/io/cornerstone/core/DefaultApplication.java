@@ -3,11 +3,13 @@ package io.cornerstone.core;
 import static java.lang.StackWalker.Option.RETAIN_CLASS_REFERENCE;
 import static org.springframework.core.env.AbstractEnvironment.ACTIVE_PROFILES_PROPERTY_NAME;
 
+import java.io.IOException;
 import java.lang.StackWalker.StackFrame;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.util.Enumeration;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory;
@@ -46,10 +48,9 @@ public class DefaultApplication implements Application {
 		return hostAddress;
 	}
 
-	protected static void init(String[] args) throws Exception {
-		hostName = InetAddress.getLocalHost().getHostName();
+	private static Optional<String> findHostAddress() throws IOException {
 		Enumeration<NetworkInterface> e = NetworkInterface.getNetworkInterfaces();
-		loop: while (e.hasMoreElements()) {
+		while (e.hasMoreElements()) {
 			NetworkInterface n = e.nextElement();
 			Enumeration<InetAddress> ee = n.getInetAddresses();
 			while (ee.hasMoreElements()) {
@@ -57,11 +58,16 @@ public class DefaultApplication implements Application {
 				if (addr.isLoopbackAddress())
 					continue;
 				if (addr.isSiteLocalAddress() && addr instanceof Inet4Address) {
-					hostAddress = addr.getHostAddress();
-					break loop;
+					return Optional.of(addr.getHostAddress());
 				}
 			}
 		}
+		return Optional.empty();
+	}
+
+	protected static void init(String[] args) throws IOException {
+		hostName = InetAddress.getLocalHost().getHostName();
+		findHostAddress().ifPresent(addr -> hostAddress = addr);
 
 		if (ClassUtils.isPresent("org.springframework.boot.devtools.RemoteSpringApplication",
 				DefaultApplication.class.getClassLoader())) {
