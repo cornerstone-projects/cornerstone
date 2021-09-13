@@ -3,7 +3,8 @@ package io.cornerstone.core.message;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import io.cornerstone.core.Application;
@@ -17,14 +18,13 @@ public abstract class TopicTestBase extends MessageTestBase {
 	@Autowired
 	protected Topic<String> testTopic;
 
-	@Test
-	void publish() throws Exception {
-		for (Scope s : Scope.values()) {
-			String message = s.name();
-			this.testTopic.publish(message, s);
-			Thread.sleep(100);
-			verify(this.messageProcessor).process(eq(message));
-		}
+	@ParameterizedTest
+	@EnumSource(value = Scope.class)
+	void publish(Scope scope) throws Exception {
+		String message = scope.name();
+		this.testTopic.publish(message, scope);
+		Thread.sleep(100);
+		verify(this.messageProcessor).process(eq(message));
 	}
 
 }

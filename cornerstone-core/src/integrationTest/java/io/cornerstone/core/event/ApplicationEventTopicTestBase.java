@@ -3,8 +3,9 @@ package io.cornerstone.core.event;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.annotation.Bean;
@@ -24,14 +25,13 @@ abstract class ApplicationEventTopicTestBase {
 	@SpyBean
 	protected TestLisenter testListener;
 
-	@Test
-	void publish() throws Exception {
-		for (Scope s : Scope.values()) {
-			TestEvent event = new TestEvent(s.name());
-			this.eventPublisher.publish(event, s);
-			Thread.sleep(100);
-			verify(this.testListener).listen(eq(event));
-		}
+	@ParameterizedTest
+	@EnumSource(value = Scope.class)
+	void publish(Scope scope) throws Exception {
+		TestEvent event = new TestEvent(scope.name());
+		this.eventPublisher.publish(event, scope);
+		Thread.sleep(100);
+		verify(this.testListener).listen(eq(event));
 	}
 
 	static class Config {
