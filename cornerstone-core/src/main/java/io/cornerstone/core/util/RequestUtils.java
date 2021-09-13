@@ -19,7 +19,7 @@ public class RequestUtils {
 		if (request.getHeader("X-Requested-With") != null)
 			return true;
 		String contentType = request.getContentType();
-		if (contentType != null && MediaType.parseMediaType(contentType).isCompatibleWith(APPLICATION_JSON))
+		if ((contentType != null) && MediaType.parseMediaType(contentType).isCompatibleWith(APPLICATION_JSON))
 			return true;
 		List<MediaType> accepts = MediaType.parseMediaTypes(request.getHeader(ACCEPT));
 		if (!accepts.isEmpty()) {

@@ -24,8 +24,8 @@ public abstract class DataJpaTestBase {
 
 	protected void flushAndClear() {
 		// force read from database
-		entityManager.flush();
-		entityManager.clear();
+		this.entityManager.flush();
+		this.entityManager.clear();
 	}
 
 	static class Config {

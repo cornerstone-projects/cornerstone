@@ -30,7 +30,7 @@ public class MutexAspect extends BaseAspect {
 	private LockService lockService;
 
 	public MutexAspect() {
-		order = -2000;
+		this.order = -2000;
 	}
 
 	@Around("execution(public * *(..)) and @annotation(mutex)")
@@ -65,11 +65,11 @@ public class MutexAspect extends BaseAspect {
 			}
 		});
 		key = sb.toString();
-		if (lockService.tryLock(key)) {
+		if (this.lockService.tryLock(key)) {
 			try {
 				return pjp.proceed();
 			} finally {
-				lockService.unlock(key);
+				this.lockService.unlock(key);
 			}
 		} else {
 			throw new LockFailedException(key);

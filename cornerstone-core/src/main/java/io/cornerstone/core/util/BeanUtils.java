@@ -43,7 +43,7 @@ public class BeanUtils {
 			if (jsonView == null)
 				continue;
 			JsonProperty jsonProperty = findAnnotation(m, name, JsonProperty.class);
-			if (jsonProperty != null && jsonProperty.access() == Access.READ_ONLY)
+			if ((jsonProperty != null) && (jsonProperty.access() == Access.READ_ONLY))
 				continue;
 			for (Class<?> clazz : jsonView.value()) {
 				if (clazz.isAssignableFrom(view)) {
@@ -61,7 +61,7 @@ public class BeanUtils {
 		if (anno == null) {
 			try {
 				anno = getter.getDeclaringClass().getDeclaredField(propertyName).getAnnotation(clazz);
-			} catch (Exception e) {
+			} catch (Exception ex) {
 			}
 		}
 		return anno;

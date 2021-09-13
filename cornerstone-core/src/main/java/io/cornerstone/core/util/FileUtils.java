@@ -34,7 +34,7 @@ public class FileUtils {
 			case ".":
 				continue;
 			case "..":
-				if (list.size() > 0 && !list.get(list.size() - 1).equals("..")) {
+				if ((list.size() > 0) && !list.get(list.size() - 1).equals("..")) {
 					list.remove(list.size() - 1);
 				} else {
 					list.add("..");
@@ -54,7 +54,7 @@ public class FileUtils {
 			path = path.substring(3);
 		if (path.equals("/.."))
 			path = "/";
-		if (input.charAt(input.length() - 1) == '/' && path.charAt(path.length() - 1) != '/')
+		if ((input.charAt(input.length() - 1) == '/') && (path.charAt(path.length() - 1) != '/'))
 			path = path + '/';
 		return path;
 	}
@@ -139,8 +139,8 @@ public class FileUtils {
 				map.put(k.toString(), v.toString());
 			});
 			return map;
-		} catch (IOException e) {
-			e.printStackTrace();
+		} catch (IOException ex) {
+			ex.printStackTrace();
 			return null;
 		}
 	}

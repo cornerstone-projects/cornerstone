@@ -40,42 +40,42 @@ class EventPublisherTests extends SpringApplicationTestBase {
 	@Test
 	@Order(1)
 	void publishApplicationContextEventAsGlobal() {
-		verify(applicationEventTopic).publish(any(InstanceStartupEvent.class), eq(Scope.GLOBAL));
+		verify(this.applicationEventTopic).publish(any(InstanceStartupEvent.class), eq(Scope.GLOBAL));
 	}
 
 	@Test
 	@Order(2)
 	void publishLocalScopeEvent() {
 		TestEvent event = new TestEvent("");
-		eventPublisher.publish(event, Scope.LOCAL);
-		verifyNoInteractions(applicationEventTopic);
-		verify(testListener).listen(eq(event));
+		this.eventPublisher.publish(event, Scope.LOCAL);
+		verifyNoInteractions(this.applicationEventTopic);
+		verify(this.testListener).listen(eq(event));
 	}
 
 	@Test
 	@Order(3)
 	void publishApplicationScopeEvent() {
 		willAnswer(invocation -> {
-			ctx.publishEvent(invocation.getArguments()[0]);
+			this.ctx.publishEvent(invocation.getArguments()[0]);
 			return null;
-		}).given(applicationEventTopic).publish(any(TestEvent.class), eq(Scope.APPLICATION));
+		}).given(this.applicationEventTopic).publish(any(TestEvent.class), eq(Scope.APPLICATION));
 		TestEvent event = new TestEvent("");
-		eventPublisher.publish(event, Scope.APPLICATION);
-		verify(applicationEventTopic).publish(eq(event), eq(Scope.APPLICATION));
-		verify(testListener).listen(eq(event));
+		this.eventPublisher.publish(event, Scope.APPLICATION);
+		verify(this.applicationEventTopic).publish(eq(event), eq(Scope.APPLICATION));
+		verify(this.testListener).listen(eq(event));
 	}
 
 	@Test
 	@Order(4)
 	void publishGlobalScopeEvent() {
 		willAnswer(invocation -> {
-			ctx.publishEvent(invocation.getArguments()[0]);
+			this.ctx.publishEvent(invocation.getArguments()[0]);
 			return null;
-		}).given(applicationEventTopic).publish(any(TestEvent.class), eq(Scope.GLOBAL));
+		}).given(this.applicationEventTopic).publish(any(TestEvent.class), eq(Scope.GLOBAL));
 		TestEvent event = new TestEvent("");
-		eventPublisher.publish(event, Scope.GLOBAL);
-		verify(applicationEventTopic).publish(eq(event), eq(Scope.GLOBAL));
-		verify(testListener).listen(eq(event));
+		this.eventPublisher.publish(event, Scope.GLOBAL);
+		verify(this.applicationEventTopic).publish(eq(event), eq(Scope.GLOBAL));
+		verify(this.testListener).listen(eq(event));
 	}
 
 	static class Config {

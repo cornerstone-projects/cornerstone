@@ -21,15 +21,15 @@ public class EventPublisher {
 	private ApplicationEventTopic applicationEventTopic;
 
 	public void publish(ApplicationEvent event, final Scope scope) {
-		if (applicationEventTopic != null && scope != null && scope != Scope.LOCAL)
-			applicationEventTopic.publish(event, scope);
+		if ((this.applicationEventTopic != null) && (scope != null) && (scope != Scope.LOCAL))
+			this.applicationEventTopic.publish(event, scope);
 		else
-			ctx.publishEvent(event);
+			this.ctx.publishEvent(event);
 	}
 
 	@EventListener
 	public void onApplicationEvent(ApplicationContextEvent event) {
-		if (event.getApplicationContext() != ctx)
+		if (event.getApplicationContext() != this.ctx)
 			return;
 		if (event instanceof ContextRefreshedEvent) {
 			publish(new InstanceStartupEvent(), Scope.GLOBAL);

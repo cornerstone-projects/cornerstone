@@ -18,18 +18,18 @@ public class RedisSimpleSequence extends AbstractSimpleSequence {
 	public void afterPropertiesSet() {
 		Assert.hasText(getSequenceName(), "sequenceName shouldn't be blank");
 		Assert.isTrue(getPaddingLength() > 0, "paddingLength should large than 0");
-		boundValueOperations = stringRedisTemplate.boundValueOps(KEY_SEQUENCE + getSequenceName());
-		boundValueOperations.setIfAbsent("0");
+		this.boundValueOperations = this.stringRedisTemplate.boundValueOps(KEY_SEQUENCE + getSequenceName());
+		this.boundValueOperations.setIfAbsent("0");
 	}
 
 	@Override
 	public void restart() {
-		boundValueOperations.set("0");
+		this.boundValueOperations.set("0");
 	}
 
 	@Override
 	public long nextLongValue() {
-		Long value = boundValueOperations.increment(1);
+		Long value = this.boundValueOperations.increment(1);
 		if (value == null)
 			throw new RuntimeException("Unexpected null");
 		return value;

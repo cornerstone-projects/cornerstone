@@ -16,7 +16,7 @@ public interface LockService {
 				return false;
 			try {
 				Thread.sleep(100);
-			} catch (InterruptedException e) {
+			} catch (InterruptedException ex) {
 				return false;
 			}
 		}

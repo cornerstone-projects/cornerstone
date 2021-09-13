@@ -42,20 +42,23 @@ public class NameableThreadFactory implements ThreadFactory {
 			sb.append("-");
 		}
 		this.namePrefix = sb.toString();
-		this.uncaughtExceptionHandler = uncaughtExceptionHandler != null ? uncaughtExceptionHandler : (t, e) -> {
-			log.error(e.getMessage(), e);
+		this.uncaughtExceptionHandler = uncaughtExceptionHandler != null ? uncaughtExceptionHandler : (t, ex) -> {
+			log.error(ex.getMessage(), ex);
 		};
 	}
 
 	@Override
 	public Thread newThread(Runnable r) {
-		Thread t = new Thread(group, r, namePrefix + threadNumber.getAndIncrement(), 0);
-		if (t.isDaemon())
+		Thread t = new Thread(this.group, r, this.namePrefix + this.threadNumber.getAndIncrement(), 0);
+		if (t.isDaemon()) {
 			t.setDaemon(false);
-		if (t.getPriority() != Thread.NORM_PRIORITY)
+		}
+		if (t.getPriority() != Thread.NORM_PRIORITY) {
 			t.setPriority(Thread.NORM_PRIORITY);
-		if (uncaughtExceptionHandler != null)
-			t.setUncaughtExceptionHandler(uncaughtExceptionHandler);
+		}
+		if (this.uncaughtExceptionHandler != null) {
+			t.setUncaughtExceptionHandler(this.uncaughtExceptionHandler);
+		}
 		return t;
 	}
 }

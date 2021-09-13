@@ -50,7 +50,7 @@ public class CurrentUserController extends BaseRestController {
 	@JsonView(User.View.Profile.class)
 	public User update(@AuthenticationPrincipal User currentUser,
 			@RequestBody @JsonView(User.View.EditableProfile.class) @Valid User user) {
-		return userRepository.findByUsername(currentUser.getUsername()).map(u -> {
+		return this.userRepository.findByUsername(currentUser.getUsername()).map(u -> {
 			BeanUtils.copyNonNullProperties(user, u);
 			// synchronize user in session
 			TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
@@ -65,7 +65,7 @@ public class CurrentUserController extends BaseRestController {
 					}
 				}
 			});
-			return userRepository.save(u);
+			return this.userRepository.save(u);
 		}).orElseThrow(this::shouldNeverHappen);
 	}
 
@@ -74,11 +74,11 @@ public class CurrentUserController extends BaseRestController {
 			@RequestBody @Valid ChangePasswordRequest request) {
 		if (request.isWrongConfirmedPassword())
 			throw badRequest("wrong.confirmed.password");
-		if (!passwordEncoder.matches(request.getCurrentPassword(), currentUser.getPassword()))
+		if (!this.passwordEncoder.matches(request.getCurrentPassword(), currentUser.getPassword()))
 			throw badRequest("wrong.current.password");
-		userRepository.findByUsername(currentUser.getUsername()).map(user -> {
-			user.setPassword(passwordEncoder.encode(request.getPassword()));
-			return userRepository.save(user);
+		this.userRepository.findByUsername(currentUser.getUsername()).map(user -> {
+			user.setPassword(this.passwordEncoder.encode(request.getPassword()));
+			return this.userRepository.save(user);
 		}).orElseThrow(this::shouldNeverHappen);
 	}
 

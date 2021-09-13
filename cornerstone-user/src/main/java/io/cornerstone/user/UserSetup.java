@@ -25,18 +25,18 @@ public class UserSetup {
 
 	@PostConstruct
 	void setup() {
-		if (userRepository.count() == 0) {
+		if (this.userRepository.count() == 0) {
 			User user = new User();
 			user.setUsername(USER_USERNAME);
 			user.setName(user.getUsername());
-			user.setPassword(passwordEncoder.encode(DEFAULT_PASSWORD));
-			userRepository.save(user);
+			user.setPassword(this.passwordEncoder.encode(DEFAULT_PASSWORD));
+			this.userRepository.save(user);
 			User admin = new User();
 			admin.setUsername(ADMIN_USERNAME);
 			admin.setName(user.getUsername());
-			admin.setPassword(passwordEncoder.encode(DEFAULT_PASSWORD));
+			admin.setPassword(this.passwordEncoder.encode(DEFAULT_PASSWORD));
 			admin.setRoles(Collections.singleton(ADMIN_ROLE));
-			userRepository.save(admin);
+			this.userRepository.save(admin);
 		}
 	}
 }

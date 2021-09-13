@@ -57,8 +57,8 @@ class UserControllerTests extends ControllerTestBase {
 				new ParameterizedTypeReference<Map<String, Object>>() {
 				});
 		assertThat(resp.getStatusCode()).isSameAs(BAD_REQUEST);
-		assertThat(resp.getBody().get("message"))
-				.isEqualTo(messageSource.getMessage("username.already.exists", null, LocaleContextHolder.getLocale()));
+		assertThat(resp.getBody().get("message")).isEqualTo(
+				this.messageSource.getMessage("username.already.exists", null, LocaleContextHolder.getLocale()));
 		u.setUsername("test");
 		ResponseEntity<User> response = restTemplate.postForEntity(PATH_LIST, u, User.class);
 		assertThat(response.getStatusCode()).isSameAs(OK);
@@ -223,7 +223,7 @@ class UserControllerTests extends ControllerTestBase {
 			List<String> lines = reader.lines().collect(Collectors.toList());
 			assertThat(lines).hasSize(size + 3);
 			assertThat(lines).element(4).asString().contains(",test,");
-			for (int i = 3; i < size + 3; i++) {
+			for (int i = 3; i < (size + 3); i++) {
 				String[] arr = lines.get(i).split(",");
 				restTemplate.delete(PATH_DETAIL, arr[0]);
 			}

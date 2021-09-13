@@ -36,12 +36,13 @@ public class RedisCyclicSequence extends AbstractCyclicSequence {
 		Assert.isTrue(getPaddingLength() > 0, "paddingLength should large than 0");
 		int maxlength = String.valueOf(Long.MAX_VALUE).length() - getCycleType().getPattern().length();
 		Assert.isTrue(getPaddingLength() <= maxlength, "paddingLength should not large than " + maxlength);
-		boundValueOperations = stringRedisTemplate.boundValueOps(KEY_SEQUENCE + getSequenceName());
-		Long time = stringRedisTemplate.execute((RedisConnection connection) -> connection.time());
-		if (time == null)
+		this.boundValueOperations = this.stringRedisTemplate.boundValueOps(KEY_SEQUENCE + getSequenceName());
+		Long time = this.stringRedisTemplate.execute((RedisConnection connection) -> connection.time());
+		if (time == null) {
 			throw new RuntimeException("Unexpected null");
+		}
 		LocalDateTime datetime = LocalDateTime.ofInstant(Instant.ofEpochMilli(time), TimeZone.getDefault().toZoneId());
-		boundValueOperations.setIfAbsent(getStringValue(datetime, getPaddingLength(), 0));
+		this.boundValueOperations.setIfAbsent(getStringValue(datetime, getPaddingLength(), 0));
 	}
 
 	@Override
@@ -50,9 +51,9 @@ public class RedisCyclicSequence extends AbstractCyclicSequence {
 		int remainingAttempts = maxAttempts;
 		do {
 			@SuppressWarnings("unchecked")
-			byte[] key = ((RedisSerializer<String>) stringRedisTemplate.getKeySerializer())
-					.serialize(boundValueOperations.getKey());
-			List<Object> results = stringRedisTemplate.executePipelined((RedisConnection connection) -> {
+			byte[] key = ((RedisSerializer<String>) this.stringRedisTemplate.getKeySerializer())
+					.serialize(this.boundValueOperations.getKey());
+			List<Object> results = this.stringRedisTemplate.executePipelined((RedisConnection connection) -> {
 				connection.incr(key);
 				connection.time();
 				return null;
@@ -61,39 +62,46 @@ public class RedisCyclicSequence extends AbstractCyclicSequence {
 			LocalDateTime now = LocalDateTime.ofInstant(Instant.ofEpochMilli((Long) results.get(1)),
 					TimeZone.getDefault().toZoneId());
 			final String stringValue = String.valueOf(value);
-			if (stringValue.length() == getPaddingLength() + getCycleType().getPattern().length()) {
+			if (stringValue.length() == (getPaddingLength() + getCycleType().getPattern().length())) {
 				LocalDateTime datetime = LocalDateTime.now();
 				CycleType cycleType = getCycleType();
-				if (cycleType.ordinal() <= CycleType.MINUTE.ordinal())
+				if (cycleType.ordinal() <= CycleType.MINUTE.ordinal()) {
 					datetime = datetime.withMinute(Integer.parseInt(stringValue.substring(10, 12)));
-				if (cycleType.ordinal() <= CycleType.HOUR.ordinal())
+				}
+				if (cycleType.ordinal() <= CycleType.HOUR.ordinal()) {
 					datetime = datetime.withHour(Integer.parseInt(stringValue.substring(8, 10)));
-				if (cycleType.ordinal() <= CycleType.DAY.ordinal())
+				}
+				if (cycleType.ordinal() <= CycleType.DAY.ordinal()) {
 					datetime = datetime.withDayOfMonth(Integer.parseInt(stringValue.substring(6, 8)));
-				if (cycleType.ordinal() <= CycleType.MONTH.ordinal())
+				}
+				if (cycleType.ordinal() <= CycleType.MONTH.ordinal()) {
 					datetime = datetime.withMonth(Integer.parseInt(stringValue.substring(4, 6)));
-				if (cycleType.ordinal() <= CycleType.YEAR.ordinal())
+				}
+				if (cycleType.ordinal() <= CycleType.YEAR.ordinal()) {
 					datetime = datetime.withYear(Integer.parseInt(stringValue.substring(0, 4)));
-				if (getCycleType().isSameCycle(datetime, now))
+				}
+				if (getCycleType().isSameCycle(datetime, now)) {
 					return stringValue;
-				else if (datetime.isAfter(now)) {
+				} else if (datetime.isAfter(now)) {
 					// treat it as overflow not clock jumps backward
 					long next = value
-							- Long.valueOf(CycleType.DAY.format(now)) * ((long) Math.pow(10, getPaddingLength()));
+							- (Long.valueOf(CycleType.DAY.format(now)) * ((long) Math.pow(10, getPaddingLength())));
 					return cycleType.format(now) + next;
 				}
 			}
 			String restart = getStringValue(now, getPaddingLength(), 1);
-			Boolean success = stringRedisTemplate.execute(compareAndSetScript,
-					Collections.singletonList(boundValueOperations.getKey()), stringValue, restart);
-			if (success == null)
+			Boolean success = this.stringRedisTemplate.execute(this.compareAndSetScript,
+					Collections.singletonList(this.boundValueOperations.getKey()), stringValue, restart);
+			if (success == null) {
 				throw new RuntimeException("Unexpected null");
-			if (success)
+			}
+			if (success) {
 				return restart;
+			}
 			try {
-				Thread.sleep((1 + maxAttempts - remainingAttempts) * 50);
-			} catch (InterruptedException e) {
-				logger.warn(e.getMessage(), e);
+				Thread.sleep(((1 + maxAttempts) - remainingAttempts) * 50);
+			} catch (InterruptedException ex) {
+				this.logger.warn(ex.getMessage(), ex);
 			}
 		} while (--remainingAttempts > 0);
 		throw new MaxAttemptsExceededException(maxAttempts);

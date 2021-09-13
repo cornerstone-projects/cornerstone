@@ -13,7 +13,7 @@ public interface Displayable {
 	default String getDisplayName() {
 		try {
 			return I18N.getMessage(getClass(), getName());
-		} catch (Exception e) {
+		} catch (Exception ex) {
 			return getName();
 		}
 	}

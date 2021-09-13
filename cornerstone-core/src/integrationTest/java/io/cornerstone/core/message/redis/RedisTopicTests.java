@@ -37,32 +37,32 @@ class RedisTopicTests extends TopicTestBase {
 	@Test
 	void publishLocalScopeMessage() throws Exception {
 		ResultCaptor<RedisConnection> resultCaptor = new ResultCaptor<>(Mockito::spy);
-		given(connectionFactory.getConnection()).willAnswer(resultCaptor);
-		testTopic.publish("test", Scope.LOCAL);
+		given(this.connectionFactory.getConnection()).willAnswer(resultCaptor);
+		this.testTopic.publish("test", Scope.LOCAL);
 		assertThat(resultCaptor.getResult()).isNull();
-		verify(messageProcessor).process(eq("test"));
+		verify(this.messageProcessor).process(eq("test"));
 	}
 
 	@Test
 	void publishApplicationScopeMessage() throws Exception {
 		ResultCaptor<RedisConnection> resultCaptor = new ResultCaptor<>(Mockito::spy);
-		given(connectionFactory.getConnection()).willAnswer(resultCaptor);
-		testTopic.publish("test", Scope.APPLICATION);
-		verify(resultCaptor.getResult()).publish(channelCaptor.capture(), any());
-		assertThat(new String(channelCaptor.getValue())).endsWith('.' + application.getName());
+		given(this.connectionFactory.getConnection()).willAnswer(resultCaptor);
+		this.testTopic.publish("test", Scope.APPLICATION);
+		verify(resultCaptor.getResult()).publish(this.channelCaptor.capture(), any());
+		assertThat(new String(this.channelCaptor.getValue())).endsWith('.' + this.application.getName());
 		Thread.sleep(100); // wait network response
-		verify(messageProcessor).process(eq("test"));
+		verify(this.messageProcessor).process(eq("test"));
 	}
 
 	@Test
 	void publishGlobalScopeMessage() throws Exception {
 		ResultCaptor<RedisConnection> resultCaptor = new ResultCaptor<>(Mockito::spy);
-		given(connectionFactory.getConnection()).willAnswer(resultCaptor);
-		testTopic.publish("test", Scope.GLOBAL);
-		verify(resultCaptor.getResult()).publish(channelCaptor.capture(), any());
-		assertThat(new String(channelCaptor.getValue())).doesNotEndWith('.' + application.getName());
+		given(this.connectionFactory.getConnection()).willAnswer(resultCaptor);
+		this.testTopic.publish("test", Scope.GLOBAL);
+		verify(resultCaptor.getResult()).publish(this.channelCaptor.capture(), any());
+		assertThat(new String(this.channelCaptor.getValue())).doesNotEndWith('.' + this.application.getName());
 		Thread.sleep(100); // wait network response
-		verify(messageProcessor).process(eq("test"));
+		verify(this.messageProcessor).process(eq("test"));
 	}
 
 	static class Config {
@@ -86,7 +86,7 @@ class RedisTopicTests extends TopicTestBase {
 
 		@Override
 		public void subscribe(String message) {
-			messageProcessor.process(message);
+			this.messageProcessor.process(message);
 		}
 
 	}

@@ -17,12 +17,12 @@ public class CreationUserGeneration implements AnnotationValueGeneration<Creatio
 	@Override
 	public void initialize(CreationUser annotation, Class<?> propertyType) {
 		if (UserDetails.class.isAssignableFrom(propertyType)) {
-			generator = (session, obj) -> {
+			this.generator = (session, obj) -> {
 				Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-				return auth != null && propertyType.isInstance(auth.getPrincipal()) ? auth.getPrincipal() : null;
+				return (auth != null) && propertyType.isInstance(auth.getPrincipal()) ? auth.getPrincipal() : null;
 			};
 		} else if (String.class == propertyType) {
-			generator = (session, obj) -> {
+			this.generator = (session, obj) -> {
 				Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 				return auth != null ? auth.getName() : null;
 			};
@@ -38,7 +38,7 @@ public class CreationUserGeneration implements AnnotationValueGeneration<Creatio
 
 	@Override
 	public ValueGenerator<?> getValueGenerator() {
-		return generator;
+		return this.generator;
 	}
 
 	@Override

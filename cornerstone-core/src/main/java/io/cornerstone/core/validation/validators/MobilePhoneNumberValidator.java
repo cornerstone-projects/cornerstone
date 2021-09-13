@@ -29,7 +29,7 @@ public class MobilePhoneNumberValidator implements ConstraintValidator<MobilePho
 			return false;
 		try {
 			Long.parseLong(input);
-		} catch (Exception e) {
+		} catch (Exception ex) {
 			return false;
 		}
 		for (Carrier car : Carrier.values())
@@ -57,11 +57,11 @@ public class MobilePhoneNumberValidator implements ConstraintValidator<MobilePho
 		private List<String> numberPrefixes;
 
 		private Carrier(String... strings) {
-			numberPrefixes = Collections.unmodifiableList(Arrays.asList(strings));
+			this.numberPrefixes = Collections.unmodifiableList(Arrays.asList(strings));
 		}
 
 		public List<String> getNumberPrefixes() {
-			return numberPrefixes;
+			return this.numberPrefixes;
 		}
 
 		public static Carrier parse(String number) {

@@ -47,7 +47,7 @@ public class RestFilter implements Filter {
 		HttpServletResponse response = (HttpServletResponse) resp;
 		boolean isRequestDispatcher = request.getDispatcherType() == REQUEST;
 		if (isRequestDispatcher) {
-			boolean skip = !loggingBody;
+			boolean skip = !this.loggingBody;
 			if (!skip) {
 				List<MediaType> accepts = MediaType.parseMediaTypes(request.getHeader(ACCEPT));
 				MediaType accept = accepts.isEmpty() ? APPLICATION_JSON : accepts.get(0);
@@ -62,7 +62,7 @@ public class RestFilter implements Filter {
 		}
 
 		String contentType = request.getContentType();
-		if (contentType == null || contentType.startsWith(TEXT_PLAIN_VALUE)
+		if ((contentType == null) || contentType.startsWith(TEXT_PLAIN_VALUE)
 				|| contentType.startsWith(APPLICATION_JSON_VALUE)) {
 			if (isRequestDispatcher) {
 				if (request.getMethod().equals("GET") || request.getMethod().equals("DELETE")) {
@@ -71,7 +71,7 @@ public class RestFilter implements Filter {
 					request = new LoggingBodyHttpServletRequest(request, LOGGER);
 				}
 			}
-			if (request.getAttribute(ATTR_NAME_RESPONSE_WRAPPED) == null || request.getDispatcherType() == ERROR) {
+			if ((request.getAttribute(ATTR_NAME_RESPONSE_WRAPPED) == null) || (request.getDispatcherType() == ERROR)) {
 				response = new LoggingBodyHttpServletResponse(response, LOGGER, request.getCharacterEncoding());
 				request.setAttribute(ATTR_NAME_RESPONSE_WRAPPED, Boolean.TRUE);
 			}

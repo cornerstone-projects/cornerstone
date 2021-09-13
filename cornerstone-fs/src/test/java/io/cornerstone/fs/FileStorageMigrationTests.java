@@ -38,8 +38,8 @@ class FileStorageMigrationTests {
 		try {
 			cleanup(source, "/");
 			cleanup(target, "/");
-		} catch (IOException e) {
-			e.printStackTrace();
+		} catch (IOException ex) {
+			ex.printStackTrace();
 		}
 	}
 

@@ -33,17 +33,18 @@ public abstract class RabbitQueue<T extends Serializable> implements Queue<T> {
 		Class<?> clazz = ResolvableType.forClass(getClass()).as(RabbitQueue.class).resolveGeneric(0);
 		if (clazz == null)
 			throw new IllegalArgumentException(getClass().getName() + " should be generic");
-		queueName = clazz.getName();
+		this.queueName = clazz.getName();
 	}
 
 	@PostConstruct
 	public void init() {
-		amqpAdmin.declareQueue(new org.springframework.amqp.core.Queue(queueName, durable, false, false));
+		this.amqpAdmin
+				.declareQueue(new org.springframework.amqp.core.Queue(this.queueName, this.durable, false, false));
 	}
 
 	@Override
 	public void produce(T message) {
-		rabbitTemplate.convertAndSend(getQueueName(), message);
+		this.rabbitTemplate.convertAndSend(getQueueName(), message);
 	}
 
 }

@@ -30,7 +30,7 @@ class CurrentUserControllerTests extends ControllerTestBase {
 	void update() {
 		TestRestTemplate restTemplate = userRestTemplate();
 		User user = new User();
-		user.setUsername("other");// not editable
+		user.setUsername("other"); // not editable
 		user.setName("new name");
 		user.setPhone("13111111111");
 		user.setPassword("iampassword"); // not editable

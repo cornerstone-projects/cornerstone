@@ -25,8 +25,8 @@ class RabbitQueueTests extends QueueTestBase {
 	@Test
 	void produce() {
 		String message = "test";
-		testQueue.produce(message);
-		verify(rabbitTemplate).convertAndSend(any(String.class), eq(message));
+		this.testQueue.produce(message);
+		verify(this.rabbitTemplate).convertAndSend(any(String.class), eq(message));
 	}
 
 	static class Config {
@@ -47,7 +47,7 @@ class RabbitQueueTests extends QueueTestBase {
 		@RabbitListener(queues = "#{@testQueue.queueName}")
 		@Override
 		public void consume(String message) {
-			messageProcessor.process(message);
+			this.messageProcessor.process(message);
 		}
 
 	}

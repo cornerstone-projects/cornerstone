@@ -76,13 +76,13 @@ public abstract class AbstractSequenceCyclicSequence extends AbstractDatabaseCyc
 
 	@Override
 	public void afterPropertiesSet() {
-		querySequenceStatement = getQuerySequenceStatement();
-		queryTimestampForUpdateStatement = getQueryTimestampForUpdateStatement();
-		updateTimestampStatement = getUpdateTimestampStatement();
+		this.querySequenceStatement = getQuerySequenceStatement();
+		this.queryTimestampForUpdateStatement = getQueryTimestampForUpdateStatement();
+		this.updateTimestampStatement = getUpdateTimestampStatement();
 		try {
 			createOrUpgradeTable();
-		} catch (SQLException e) {
-			logger.error(e.getMessage(), e);
+		} catch (SQLException ex) {
+			this.logger.error(ex.getMessage(), ex);
 		}
 	}
 
@@ -184,17 +184,17 @@ public abstract class AbstractSequenceCyclicSequence extends AbstractDatabaseCyc
 							return getStringValue(result.current, getPaddingLength(), result.nextId);
 						}
 						con.commit();
-					} catch (Exception e) {
+					} catch (Exception ex) {
 						con.rollback();
-						throw new DataAccessResourceFailureException(e.getMessage(), e);
+						throw new DataAccessResourceFailureException(ex.getMessage(), ex);
 					} finally {
 						con.setAutoCommit(true);
 					}
 				}
 				try {
-					Thread.sleep((1 + maxAttempts - remainingAttempts) * 50);
-				} catch (InterruptedException e) {
-					logger.warn(e.getMessage(), e);
+					Thread.sleep(((1 + maxAttempts) - remainingAttempts) * 50);
+				} catch (InterruptedException ex) {
+					this.logger.warn(ex.getMessage(), ex);
 				}
 			} while (--remainingAttempts > 0);
 			throw new MaxAttemptsExceededException(maxAttempts);
@@ -209,7 +209,7 @@ public abstract class AbstractSequenceCyclicSequence extends AbstractDatabaseCyc
 
 	private boolean updateLastUpdated(Connection con, LocalDateTime lastUpdated, LocalDateTime limit)
 			throws SQLException {
-		try (PreparedStatement ps = con.prepareStatement(updateTimestampStatement)) {
+		try (PreparedStatement ps = con.prepareStatement(this.updateTimestampStatement)) {
 			ps.setTimestamp(1, Timestamp.valueOf(lastUpdated));
 			ps.setTimestamp(2, Timestamp.valueOf(limit));
 			return ps.executeUpdate() == 1;
@@ -221,7 +221,7 @@ public abstract class AbstractSequenceCyclicSequence extends AbstractDatabaseCyc
 	}
 
 	private Result queryTimestampWithSequence(Connection con, Statement stmt) throws SQLException {
-		try (ResultSet rs = stmt.executeQuery(querySequenceStatement)) {
+		try (ResultSet rs = stmt.executeQuery(this.querySequenceStatement)) {
 			rs.next();
 			int nextId = rs.getInt(1);
 			Timestamp currentTimestamp = rs.getTimestamp(2);
@@ -234,7 +234,7 @@ public abstract class AbstractSequenceCyclicSequence extends AbstractDatabaseCyc
 	}
 
 	private Result queryTimestampForUpdate(Connection con, Statement stmt) throws SQLException {
-		try (ResultSet rs = stmt.executeQuery(queryTimestampForUpdateStatement)) {
+		try (ResultSet rs = stmt.executeQuery(this.queryTimestampForUpdateStatement)) {
 			rs.next();
 			Timestamp currentTimestamp = rs.getTimestamp(1);
 			Timestamp lastTimestamp = rs.getTimestamp(2);

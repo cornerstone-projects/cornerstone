@@ -22,14 +22,14 @@ public class ExceptionUtils {
 			os.flush();
 			os.close();
 			return s;
-		} catch (IOException e) {
+		} catch (IOException ex) {
 			return t.getCause().toString();
 		}
 	}
 
 	public static Throwable getRootCause(Throwable t) {
 		int depth = MAX_DEPTH;
-		while (t.getCause() != null && depth > 0) {
+		while ((t.getCause() != null) && (depth > 0)) {
 			depth--;
 			t = t.getCause();
 		}
@@ -44,19 +44,20 @@ public class ExceptionUtils {
 		StringBuilder sb = new StringBuilder();
 		sb.append(t.getClass().getName()).append(":").append(t.getLocalizedMessage());
 		int maxDepth = 10;
-		while (t.getCause() != null && maxDepth > 0) {
+		while ((t.getCause() != null) && (maxDepth > 0)) {
 			maxDepth--;
 			t = t.getCause();
 			sb.append("\n").append(t.getClass().getName());
-			if (t.getLocalizedMessage() != null && sb.indexOf(t.getLocalizedMessage()) < 0)
+			if ((t.getLocalizedMessage() != null) && (sb.indexOf(t.getLocalizedMessage()) < 0)) {
 				sb.append(":").append(t.getLocalizedMessage());
+			}
 		}
 		return sb.toString();
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <E extends Throwable, R> R sneakyThrow(Throwable e) throws E {
-		throw (E) e;
+	public static <E extends Throwable, R> R sneakyThrow(Throwable ex) throws E {
+		throw (E) ex;
 	}
 
 }

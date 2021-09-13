@@ -23,19 +23,20 @@ public class MySQLCyclicSequence extends AbstractDatabaseCyclicSequence {
 
 	@Override
 	public void afterPropertiesSet() {
-		setVariableSql = "SELECT @TIMESTAMP:=GREATEST(LAST_UPDATED,UNIX_TIMESTAMP()) FROM `" + getTableName()
+		this.setVariableSql = "SELECT @TIMESTAMP:=GREATEST(LAST_UPDATED,UNIX_TIMESTAMP()) FROM `" + getTableName()
 				+ "` WHERE NAME='" + getSequenceName() + "'";
-		incrementSql = "UPDATE `" + getTableName()
+		this.incrementSql = "UPDATE `" + getTableName()
 				+ "` SET VALUE=LAST_INSERT_ID(VALUE+1),LAST_UPDATED=@TIMESTAMP WHERE NAME='" + getSequenceName()
 				+ "' AND DATE_FORMAT(FROM_UNIXTIME(LAST_UPDATED),'" + getDateFormat()
 				+ "')=DATE_FORMAT(FROM_UNIXTIME(@TIMESTAMP),'" + getDateFormat() + "')";
-		restartSql = "UPDATE `" + getTableName() + "` SET VALUE=LAST_INSERT_ID(1),LAST_UPDATED=@TIMESTAMP WHERE NAME='"
-				+ getSequenceName() + "' AND DATE_FORMAT(FROM_UNIXTIME(LAST_UPDATED),'" + getDateFormat()
+		this.restartSql = "UPDATE `" + getTableName()
+				+ "` SET VALUE=LAST_INSERT_ID(1),LAST_UPDATED=@TIMESTAMP WHERE NAME='" + getSequenceName()
+				+ "' AND DATE_FORMAT(FROM_UNIXTIME(LAST_UPDATED),'" + getDateFormat()
 				+ "')!=DATE_FORMAT(FROM_UNIXTIME(@TIMESTAMP),'" + getDateFormat() + "')";
 		try {
 			MySQLSimpleSequence.createTable(getDataSource(), getTableName(), getSequenceName());
-		} catch (SQLException e) {
-			logger.error(e.getMessage(), e);
+		} catch (SQLException ex) {
+			this.logger.error(ex.getMessage(), ex);
 		}
 	}
 
@@ -46,18 +47,20 @@ public class MySQLCyclicSequence extends AbstractDatabaseCyclicSequence {
 			int maxAttempts = 3;
 			int remainingAttempts = maxAttempts;
 			do {
-				stmt.execute(setVariableSql);
-				int rows = stmt.executeUpdate(incrementSql);
-				if (rows == 1)
+				stmt.execute(this.setVariableSql);
+				int rows = stmt.executeUpdate(this.incrementSql);
+				if (rows == 1) {
 					return nextId(stmt);
-				stmt.execute(setVariableSql);
-				rows = stmt.executeUpdate(restartSql);
-				if (rows == 1)
+				}
+				stmt.execute(this.setVariableSql);
+				rows = stmt.executeUpdate(this.restartSql);
+				if (rows == 1) {
 					return nextId(stmt);
+				}
 				try {
-					Thread.sleep((1 + maxAttempts - remainingAttempts) * 50);
-				} catch (InterruptedException e) {
-					logger.warn(e.getMessage(), e);
+					Thread.sleep(((1 + maxAttempts) - remainingAttempts) * 50);
+				} catch (InterruptedException ex) {
+					this.logger.warn(ex.getMessage(), ex);
 				}
 			} while (--remainingAttempts > 0);
 			throw new MaxAttemptsExceededException(maxAttempts);
@@ -68,13 +71,15 @@ public class MySQLCyclicSequence extends AbstractDatabaseCyclicSequence {
 	}
 
 	private String nextId(Statement stmt) throws SQLException {
-		try (ResultSet rs = stmt.executeQuery(selectLastInsertIdSql)) {
-			if (!rs.next())
+		try (ResultSet rs = stmt.executeQuery(this.selectLastInsertIdSql)) {
+			if (!rs.next()) {
 				throw new DataAccessResourceFailureException("LAST_INSERT_ID() failed after executing an update");
+			}
 			int next = rs.getInt(1);
 			Long current = rs.getLong(2);
-			if (current < 10000000000L) // no mills
+			if (current < 10000000000L) {
 				current *= 1000;
+			}
 			LocalDateTime datetime = LocalDateTime.ofInstant(Instant.ofEpochMilli(current),
 					TimeZone.getDefault().toZoneId());
 

@@ -23,13 +23,13 @@ public class SocialCreditIdentifierValidator implements ConstraintValidator<Soci
 	}
 
 	public static boolean isValid(String input) {
-		if (input == null || input.length() != 18)
+		if ((input == null) || (input.length() != 18))
 			return false;
 		char ch = input.charAt(0);
-		if (!(ch >= '1' && ch <= '9' || ch == 'A' || ch == 'N' || ch == 'Y'))
+		if (!(((ch >= '1') && (ch <= '9')) || (ch == 'A') || (ch == 'N') || (ch == 'Y')))
 			return false;
 		ch = input.charAt(1);
-		if (!(ch >= '1' && ch <= '5' || ch == '9'))
+		if (!(((ch >= '1') && (ch <= '5')) || (ch == '9')))
 			return false;
 		String province = input.substring(2, 4);
 		if (!provinces.contains(province))
@@ -53,7 +53,7 @@ public class SocialCreditIdentifierValidator implements ConstraintValidator<Soci
 	}
 
 	private static char getCheckBit(int sum) {
-		int i = 31 - sum % 31;
+		int i = 31 - (sum % 31);
 		if (i == 31)
 			i = 0;
 		return i < 10 ? (char) (i + '0') : characters.charAt(i - 10);

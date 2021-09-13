@@ -16,32 +16,32 @@ public class StandaloneMembership implements Membership {
 
 	@Override
 	public void join(String group) {
-		List<String> members = groups.get(group);
+		List<String> members = this.groups.get(group);
 		if (members == null) {
 			members = new ArrayList<>();
-			groups.put(group, members);
+			this.groups.put(group, members);
 		}
-		if (!members.contains(self))
-			members.add(self);
+		if (!members.contains(this.self))
+			members.add(this.self);
 	}
 
 	@Override
 	public void leave(String group) {
-		List<String> members = groups.get(group);
+		List<String> members = this.groups.get(group);
 		if (members != null) {
-			members.remove(self);
+			members.remove(this.self);
 		}
 	}
 
 	@Override
 	public boolean isLeader(String group) {
-		return self.equals(getLeader(group));
+		return this.self.equals(getLeader(group));
 	}
 
 	@Override
 	public String getLeader(String group) {
 		List<String> members = getMembers(group);
-		if (members == null || members.isEmpty())
+		if ((members == null) || members.isEmpty())
 			return null;
 		else
 			return members.get(0);
@@ -49,7 +49,7 @@ public class StandaloneMembership implements Membership {
 
 	@Override
 	public List<String> getMembers(String group) {
-		return groups.get(group);
+		return this.groups.get(group);
 	}
 
 }

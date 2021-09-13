@@ -17,7 +17,7 @@ public class NumberUtils {
 		try {
 			Double.parseDouble(value);
 			return true;
-		} catch (Exception e) {
+		} catch (Exception ex) {
 			return false;
 		}
 	}
@@ -194,11 +194,11 @@ public class NumberUtils {
 					key = IUNIT[4];
 				else if ((length - i) == 9)
 					key = IUNIT[8];
-				else if ((length - i) == 5 && isMust5)
+				else if (((length - i) == 5) && isMust5)
 					key = IUNIT[4];
 				else if ((length - i) == 1)
 					key = IUNIT[0];
-				if ((length - i) > 1 && integers[i + 1] != 0)
+				if (((length - i) > 1) && (integers[i + 1] != 0))
 					key += CNUMBERS[0];
 			}
 			chineseInteger.append(integers[i] == 0 ? key : (CNUMBERS[integers[i]] + IUNIT[length - i - 1]));

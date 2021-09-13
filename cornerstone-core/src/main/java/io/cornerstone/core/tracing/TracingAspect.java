@@ -41,13 +41,13 @@ public class TracingAspect extends BaseAspect {
 	private static final String TAG_NAME_TX_READONLY = "tx.readonly";
 
 	public TracingAspect() {
-		order = Ordered.HIGHEST_PRECEDENCE + 1;
+		this.order = Ordered.HIGHEST_PRECEDENCE + 1;
 	}
 
 	@Around("execution(public * *(..)) and @annotation(traced)")
 	public Object trace(ProceedingJoinPoint pjp, Traced traced) throws Throwable {
 		Tracer tracer = GlobalTracer.get();
-		if (traced.withActiveSpanOnly() && tracer.activeSpan() == null)
+		if (traced.withActiveSpanOnly() && (tracer.activeSpan() == null))
 			return pjp.proceed();
 		Method method = ((MethodSignature) pjp.getSignature()).getMethod();
 		String operationName = traced.operationName();
@@ -164,7 +164,7 @@ public class TracingAspect extends BaseAspect {
 			return true;
 		Span activeSpan = GlobalTracer.get().activeSpan();
 		SpanContext ctx = activeSpan != null ? activeSpan.context() : null;
-		return ctx instanceof JaegerSpanContext && ((JaegerSpanContext) ctx).isDebug();
+		return (ctx instanceof JaegerSpanContext) && ((JaegerSpanContext) ctx).isDebug();
 	}
 
 	private static String getCallSite(Method method, Object target) {
@@ -174,7 +174,7 @@ public class TracingAspect extends BaseAspect {
 		boolean found = false;
 		for (StackTraceElement element : elements) {
 			String className = element.getClassName();
-			if (element.getMethodName().equals(method.getName()) && className.equals(targetClassName)
+			if ((element.getMethodName().equals(method.getName()) && className.equals(targetClassName))
 					|| className.startsWith(targetClassName + "$$")) { // $$EnhancerBySpringCGLIB$$
 				found = true;
 				continue;

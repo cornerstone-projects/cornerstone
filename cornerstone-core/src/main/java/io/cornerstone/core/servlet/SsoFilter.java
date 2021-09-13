@@ -103,8 +103,8 @@ public class SsoFilter implements Filter {
 			throws IOException, ServletException {
 		HttpServletRequest request = (HttpServletRequest) req;
 		HttpServletResponse response = (HttpServletResponse) resp;
-		if (!isSameOrigin(request.getRequestURL().toString(), portalBaseUrl)) {
-			if (strictAccess)
+		if (!isSameOrigin(request.getRequestURL().toString(), this.portalBaseUrl)) {
+			if (this.strictAccess)
 				throw new AccessDeniedException("Please access via domain name");
 			chain.doFilter(req, resp);
 			return;
@@ -117,7 +117,7 @@ public class SsoFilter implements Filter {
 		}
 		SecurityContext sc = SecurityContextHolder.getContext();
 		Authentication auth = sc.getAuthentication();
-		if (auth != null && auth.isAuthenticated()) {
+		if ((auth != null) && auth.isAuthenticated()) {
 			chain.doFilter(req, resp);
 			return;
 		}
@@ -133,7 +133,7 @@ public class SsoFilter implements Filter {
 					String requestMethod = request.getHeader("Access-Control-Request-Method");
 					String requestHeaders = request.getHeader("Access-Control-Request-Headers");
 					String method = request.getMethod();
-					if (method.equalsIgnoreCase("OPTIONS") && (requestMethod != null || requestHeaders != null)) {
+					if (method.equalsIgnoreCase("OPTIONS") && ((requestMethod != null) || (requestHeaders != null))) {
 						// preflighted request
 						if (requestMethod != null)
 							response.setHeader("Access-Control-Allow-Methods", requestMethod);
@@ -147,7 +147,7 @@ public class SsoFilter implements Filter {
 		}
 
 		// check same origin
-		if (!isSameOrigin(request.getRequestURL().toString(), portalBaseUrl)) {
+		if (!isSameOrigin(request.getRequestURL().toString(), this.portalBaseUrl)) {
 			chain.doFilter(request, response);
 			return;
 		}
@@ -159,10 +159,10 @@ public class SsoFilter implements Filter {
 		} else {
 			URI apiUri;
 			try {
-				apiUri = new URI(portalApiUserSelfUrl.indexOf("://") > 0 ? portalApiUserSelfUrl
-						: portalBaseUrl + portalApiUserSelfUrl);
-			} catch (URISyntaxException e) {
-				e.printStackTrace();
+				apiUri = new URI(this.portalApiUserSelfUrl.indexOf("://") > 0 ? this.portalApiUserSelfUrl
+						: this.portalBaseUrl + this.portalApiUserSelfUrl);
+			} catch (URISyntaxException ex) {
+				ex.printStackTrace();
 				return;
 			}
 			StringBuilder cookie = new StringBuilder();
@@ -174,18 +174,18 @@ public class SsoFilter implements Filter {
 			RequestEntity<?> requestEntity = RequestEntity.get(apiUri).header("Cookie", cookie.toString())
 					.header("X-Real-IP", request.getRemoteAddr()).build();
 			try {
-				ResponseEntity<SimpleUser> responseEntity = restTemplate.exchange(requestEntity, SimpleUser.class);
+				ResponseEntity<SimpleUser> responseEntity = this.restTemplate.exchange(requestEntity, SimpleUser.class);
 				UserDetails ud = map(responseEntity.getBody());
 				auth = new UsernamePasswordAuthenticationToken(ud, ud.getPassword(), ud.getAuthorities());
 				sc.setAuthentication(auth);
 				request.getSession().setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, sc);
 				MDC.put("username", auth.getName());
-			} catch (HttpClientErrorException e) {
-				if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
+			} catch (HttpClientErrorException ex) {
+				if (ex.getStatusCode() == HttpStatus.NOT_FOUND) {
 					redirect(request, response);
 					return;
 				}
-				throw e;
+				throw ex;
 			}
 		}
 		chain.doFilter(request, response);
@@ -194,8 +194,8 @@ public class SsoFilter implements Filter {
 	protected boolean isProtected(String uri) {
 		if (uri.startsWith("/assets/"))
 			return false;
-		for (String s : excludePattern.split("\\s*,\\s*")) {
-			if (antPathMatcher.match(s, uri)) {
+		for (String s : this.excludePattern.split("\\s*,\\s*")) {
+			if (this.antPathMatcher.match(s, uri)) {
 				return false;
 			}
 		}
@@ -207,7 +207,7 @@ public class SsoFilter implements Filter {
 		if (userFromApi == null)
 			throw new AccessDeniedException("user not found");
 		try {
-			UserDetails user = userDetailsService.loadUserByUsername(userFromApi.getUsername());
+			UserDetails user = this.userDetailsService.loadUserByUsername(userFromApi.getUsername());
 			// reset passwordModifyDate to avoid CredentialsExpiredException
 			BeanWrapperImpl bw = new BeanWrapperImpl(user);
 			if (bw.isWritableProperty("passwordModifyDate"))
@@ -222,19 +222,19 @@ public class SsoFilter implements Filter {
 							authorities.add(ga);
 					}
 				}
-			} catch (UnsupportedOperationException e) {
+			} catch (UnsupportedOperationException ex) {
 				log.warn("Can not copy roles from portal server because collection is unmodifiable");
 			}
 			return user;
-		} catch (UsernameNotFoundException e) {
-			throw new AccessDeniedException(e.getMessage());
+		} catch (UsernameNotFoundException ex) {
+			throw new AccessDeniedException(ex.getMessage());
 		}
 	}
 
 	protected void redirect(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		if (RequestUtils.isRequestedFromApi(request)) {
 			// see WebSecurityConfiguration::authenticationFailureHandler
-			response.sendError(HttpServletResponse.SC_UNAUTHORIZED, messageSource.getMessage(
+			response.sendError(HttpServletResponse.SC_UNAUTHORIZED, this.messageSource.getMessage(
 					"ExceptionTranslationFilter.insufficientAuthentication", null, LocaleContextHolder.getLocale()));
 			return;
 		}
@@ -243,8 +243,8 @@ public class SsoFilter implements Filter {
 		if (queryString != null)
 			sb.append("?").append(queryString);
 		String targetUrl = sb.toString();
-		StringBuilder redirectUrl = new StringBuilder(portalLoginUrl.indexOf("://") > 0 ? "" : portalBaseUrl);
-		redirectUrl.append(portalLoginUrl).append("?targetUrl=").append(URLEncoder.encode(targetUrl, "UTF-8"));
+		StringBuilder redirectUrl = new StringBuilder(this.portalLoginUrl.indexOf("://") > 0 ? "" : this.portalBaseUrl);
+		redirectUrl.append(this.portalLoginUrl).append("?targetUrl=").append(URLEncoder.encode(targetUrl, "UTF-8"));
 		response.sendRedirect(redirectUrl.toString());
 	}
 
@@ -256,14 +256,14 @@ public class SsoFilter implements Filter {
 			if (cookieName.equalsIgnoreCase(cookie.getName()))
 				try {
 					return URLDecoder.decode(cookie.getValue(), DEFAULT_ENCODING);
-				} catch (UnsupportedEncodingException e) {
+				} catch (UnsupportedEncodingException ex) {
 					return cookie.getValue();
 				}
 		return null;
 	}
 
 	protected static boolean isSameOrigin(String a, String b) {
-		if (b.indexOf("://") < 0 || a.indexOf("://") < 0)
+		if ((b.indexOf("://") < 0) || (a.indexOf("://") < 0))
 			return true;
 		try {
 			String host1 = new URL(a).getHost();
@@ -276,9 +276,9 @@ public class SsoFilter implements Filter {
 				return true;
 			String[] arr1 = host1.split("\\.");
 			String[] arr2 = host2.split("\\.");
-			return arr1.length >= 2 && arr2.length >= 2 && arr1[arr1.length - 1].equals(arr2[arr2.length - 1])
+			return (arr1.length >= 2) && (arr2.length >= 2) && arr1[arr1.length - 1].equals(arr2[arr2.length - 1])
 					&& arr1[arr1.length - 2].equals(arr2[arr2.length - 2]);
-		} catch (MalformedURLException e) {
+		} catch (MalformedURLException ex) {
 			return false;
 		}
 	}
@@ -294,7 +294,7 @@ public class SsoFilter implements Filter {
 		private Set<String> roles = new LinkedHashSet<>(0);
 
 		public String getUsername() {
-			return username;
+			return this.username;
 		}
 
 		public void setUsername(String username) {
@@ -302,7 +302,7 @@ public class SsoFilter implements Filter {
 		}
 
 		public String getName() {
-			return name;
+			return this.name;
 		}
 
 		public void setName(String name) {
@@ -310,7 +310,7 @@ public class SsoFilter implements Filter {
 		}
 
 		public Set<String> getRoles() {
-			return roles;
+			return this.roles;
 		}
 
 		public void setRoles(Set<String> roles) {

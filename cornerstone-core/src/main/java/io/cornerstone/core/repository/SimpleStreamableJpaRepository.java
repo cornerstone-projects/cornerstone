@@ -50,7 +50,7 @@ public class SimpleStreamableJpaRepository<T, ID> extends SimpleJpaRepository<T,
 			throw new InvalidDataAccessApiUsageException(NO_SURROUNDING_TRANSACTION);
 		}
 		return getQuery(
-				(root, cq, cb) -> QueryByExamplePredicateBuilder.getPredicate(root, cb, example, escapeCharacter),
+				(root, cq, cb) -> QueryByExamplePredicateBuilder.getPredicate(root, cb, example, this.escapeCharacter),
 				example.getProbeType(), sort).getResultStream();
 	}
 

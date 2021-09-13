@@ -29,7 +29,7 @@ public class EventListenerForPublish
 
 	@PostConstruct
 	private void init() {
-		SessionFactoryImpl sessionFactory = entityManagerFactory.unwrap(SessionFactoryImpl.class);
+		SessionFactoryImpl sessionFactory = this.entityManagerFactory.unwrap(SessionFactoryImpl.class);
 		EventListenerRegistry registry = sessionFactory.getServiceRegistry().getService(EventListenerRegistry.class);
 		registry.getEventListenerGroup(EventType.POST_INSERT).appendListener(this);
 		registry.getEventListenerGroup(EventType.POST_UPDATE).appendListener(this);

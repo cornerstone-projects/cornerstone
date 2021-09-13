@@ -17,12 +17,12 @@ public class UpdateUserGeneration implements AnnotationValueGeneration<UpdateUse
 	@Override
 	public void initialize(UpdateUser annotation, Class<?> propertyType) {
 		if (UserDetails.class.isAssignableFrom(propertyType)) {
-			generator = (session, obj) -> {
+			this.generator = (session, obj) -> {
 				Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-				return auth != null && propertyType.isInstance(auth.getPrincipal()) ? auth.getPrincipal() : null;
+				return (auth != null) && propertyType.isInstance(auth.getPrincipal()) ? auth.getPrincipal() : null;
 			};
 		} else if (String.class == propertyType) {
-			generator = (session, obj) -> {
+			this.generator = (session, obj) -> {
 				Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 				return auth != null ? auth.getName() : null;
 			};
@@ -38,7 +38,7 @@ public class UpdateUserGeneration implements AnnotationValueGeneration<UpdateUse
 
 	@Override
 	public ValueGenerator<?> getValueGenerator() {
-		return generator;
+		return this.generator;
 	}
 
 	@Override

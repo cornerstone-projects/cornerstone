@@ -40,11 +40,11 @@ public class LoggingBodyHttpServletRequest extends HttpServletRequestWrapper {
 
 	@Override
 	public ServletInputStream getInputStream() throws IOException {
-		ServletInputStream temp = servletInputStream;
+		ServletInputStream temp = this.servletInputStream;
 		if (temp == null) {
 			synchronized (this) {
-				if ((temp = servletInputStream) == null) {
-					servletInputStream = temp = new ContentCachingInputStream(getRequest(), logger);
+				if ((temp = this.servletInputStream) == null) {
+					this.servletInputStream = temp = new ContentCachingInputStream(getRequest(), this.logger);
 				}
 			}
 		}
@@ -80,28 +80,28 @@ public class LoggingBodyHttpServletRequest extends HttpServletRequestWrapper {
 
 		@Override
 		public int readLine(byte[] b, final int off, final int len) throws IOException {
-			int count = is.readLine(b, off, len);
+			int count = this.is.readLine(b, off, len);
 			cache(b, off, count);
 			return count;
 		}
 
 		@Override
 		public int read(byte[] b, final int off, final int len) throws IOException {
-			int count = is.read(b, off, len);
+			int count = this.is.read(b, off, len);
 			cache(b, off, count);
 			return count;
 		}
 
 		private void cache(byte[] b, final int off, final int count) throws IOException {
 			if (count != -1)
-				cachedContent.write(b, off, count);
+				this.cachedContent.write(b, off, count);
 		}
 
 		@Override
 		public int read() throws IOException {
 			int ch = this.is.read();
 			if (ch != -1)
-				cachedContent.write(ch);
+				this.cachedContent.write(ch);
 			return ch;
 		}
 
@@ -125,12 +125,12 @@ public class LoggingBodyHttpServletRequest extends HttpServletRequestWrapper {
 			try {
 				this.is.close();
 			} finally {
-				if (cachedContent != null) {
-					byte[] bytes = cachedContent.toByteArray();
-					cachedContent = null;
-					String str = new String(bytes, 0, bytes.length, characterEncoding);
+				if (this.cachedContent != null) {
+					byte[] bytes = this.cachedContent.toByteArray();
+					this.cachedContent = null;
+					String str = new String(bytes, 0, bytes.length, this.characterEncoding);
 					str = JsonDesensitizer.DEFAULT_INSTANCE.desensitize(str);
-					logger.info("\n{}", str);
+					this.logger.info("\n{}", str);
 				}
 			}
 		}

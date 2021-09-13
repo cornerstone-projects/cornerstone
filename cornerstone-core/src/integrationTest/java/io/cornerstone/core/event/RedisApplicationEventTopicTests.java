@@ -26,30 +26,30 @@ class RedisApplicationEventTopicTests extends ApplicationEventTopicTestBase {
 	@Test
 	void publishLocalScopeEvent() {
 		TestEvent event = new TestEvent("");
-		eventPublisher.publish(event, Scope.LOCAL);
-		verify(testListener).listen(eq(event));
+		this.eventPublisher.publish(event, Scope.LOCAL);
+		verify(this.testListener).listen(eq(event));
 	}
 
 	@Test
 	void publishApplicationScopeEvent() throws Exception {
 		ResultCaptor<RedisConnection> resultCaptor = new ResultCaptor<>(Mockito::spy);
-		given(connectionFactory.getConnection()).willAnswer(resultCaptor);
+		given(this.connectionFactory.getConnection()).willAnswer(resultCaptor);
 		TestEvent event = new TestEvent("");
-		eventPublisher.publish(event, Scope.APPLICATION);
+		this.eventPublisher.publish(event, Scope.APPLICATION);
 		verify(resultCaptor.getResult()).publish(any(), any());
 		Thread.sleep(100); // wait network response
-		verify(testListener).listen(eq(event));
+		verify(this.testListener).listen(eq(event));
 	}
 
 	@Test
 	void publishGlobalScopeEvent() throws Exception {
 		ResultCaptor<RedisConnection> resultCaptor = new ResultCaptor<>(Mockito::spy);
-		given(connectionFactory.getConnection()).willAnswer(resultCaptor);
+		given(this.connectionFactory.getConnection()).willAnswer(resultCaptor);
 		TestEvent event = new TestEvent("");
-		eventPublisher.publish(event, Scope.GLOBAL);
+		this.eventPublisher.publish(event, Scope.GLOBAL);
 		verify(resultCaptor.getResult()).publish(any(), any());
-		Thread.sleep(100);// wait network response
-		verify(testListener).listen(eq(event));
+		Thread.sleep(100); // wait network response
+		verify(this.testListener).listen(eq(event));
 	}
 
 	static class Config {

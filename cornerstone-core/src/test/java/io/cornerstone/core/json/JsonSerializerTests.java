@@ -69,8 +69,8 @@ class JsonSerializerTests {
 		u.getDepartments().add(department);
 		u.getDepartments().add(department2);
 		u.setDepts(u.getDepartments().toArray(new Department[0]));
-		String json = mapper.writeValueAsString(u);
-		JsonNode root = mapper.readTree(json);
+		String json = this.mapper.writeValueAsString(u);
+		JsonNode root = this.mapper.readTree(json);
 		JsonNode node = root.get("department");
 		assertThat(node.isNumber()).isTrue();
 		assertThat(node.asLong()).isEqualTo(department.getId());
@@ -88,7 +88,7 @@ class JsonSerializerTests {
 	}
 
 	private void testFromIdSerializer(String json, Department department, Department department2) throws IOException {
-		User user = mapper.readValue(json, User.class);
+		User user = this.mapper.readValue(json, User.class);
 		assertThat(user.getDepartment().getId()).isEqualTo(department.getId());
 		assertThat(user.getDepartments().get(0).getId()).isEqualTo(department.getId());
 		assertThat(user.getDepartments().get(1).getId()).isEqualTo(department2.getId());

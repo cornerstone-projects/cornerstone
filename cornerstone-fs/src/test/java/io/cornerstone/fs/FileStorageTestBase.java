@@ -25,20 +25,20 @@ abstract class FileStorageTestBase {
 
 	@BeforeEach
 	void cleanup() {
-		delete(fs, "/");
+		delete(this.fs, "/");
 	}
 
 	@Test
 	void testDirectory() throws IOException {
-		assertThat(fs.isDirectory("/test")).isFalse();
-		assertThat(fs.mkdir("/test")).isTrue();
-		assertThat(fs.isDirectory("/test")).isTrue();
-		assertThat(fs.delete("/test")).isTrue();
-		assertThat(fs.isDirectory("/test/test2")).isFalse();
-		assertThat(fs.mkdir("/test/test2")).isTrue();
-		assertThat(fs.isDirectory("/test/test2")).isTrue();
-		assertThat(fs.delete("/test/test2")).isTrue();
-		assertThat(fs.delete("/test")).isTrue();
+		assertThat(this.fs.isDirectory("/test")).isFalse();
+		assertThat(this.fs.mkdir("/test")).isTrue();
+		assertThat(this.fs.isDirectory("/test")).isTrue();
+		assertThat(this.fs.delete("/test")).isTrue();
+		assertThat(this.fs.isDirectory("/test/test2")).isFalse();
+		assertThat(this.fs.mkdir("/test/test2")).isTrue();
+		assertThat(this.fs.isDirectory("/test/test2")).isTrue();
+		assertThat(this.fs.delete("/test/test2")).isTrue();
+		assertThat(this.fs.delete("/test")).isTrue();
 	}
 
 	@Test
@@ -46,23 +46,24 @@ abstract class FileStorageTestBase {
 		String text = "test";
 		String path = "/test/test2/test.txt";
 		String path2 = "/test/test2/test2.txt";
-		writeToFile(fs, text, path);
-		writeToFile(fs, text, path2);
-		assertThat(fs.isDirectory("/test")).isTrue();
-		assertThat(fs.isDirectory("/test/test2/")).isTrue();
-		assertThat(fs.open("/test/test2/")).isNull();
-		assertThat(fs.open("/test/test2/notexists.txt")).isNull();
-		try (BufferedReader br = new BufferedReader(new InputStreamReader(fs.open(path), StandardCharsets.UTF_8))) {
+		writeToFile(this.fs, text, path);
+		writeToFile(this.fs, text, path2);
+		assertThat(this.fs.isDirectory("/test")).isTrue();
+		assertThat(this.fs.isDirectory("/test/test2/")).isTrue();
+		assertThat(this.fs.open("/test/test2/")).isNull();
+		assertThat(this.fs.open("/test/test2/notexists.txt")).isNull();
+		try (BufferedReader br = new BufferedReader(
+				new InputStreamReader(this.fs.open(path), StandardCharsets.UTF_8))) {
 			assertThat(br.lines().collect(Collectors.joining("\n"))).isEqualTo(text);
 		}
-		assertThat(fs.exists("/test/")).isTrue();
-		assertThat(fs.exists(path)).isTrue();
-		assertThat(fs.delete("/test/test2/")).isFalse();
-		fs.delete(path);
-		assertThat(fs.delete("/test/test2/")).isFalse();
-		fs.delete(path2);
-		fs.delete("/test/test2/");
-		fs.delete("/test/");
+		assertThat(this.fs.exists("/test/")).isTrue();
+		assertThat(this.fs.exists(path)).isTrue();
+		assertThat(this.fs.delete("/test/test2/")).isFalse();
+		this.fs.delete(path);
+		assertThat(this.fs.delete("/test/test2/")).isFalse();
+		this.fs.delete(path2);
+		this.fs.delete("/test/test2/");
+		this.fs.delete("/test/");
 	}
 
 	@Test
@@ -71,55 +72,55 @@ abstract class FileStorageTestBase {
 		String path = "/test/test2/test.txt";
 		String path2 = "/test/test2/test2.txt";
 		String path3 = "/test/test3/test3.txt";
-		writeToFile(fs, text, path);
-		assertThat(fs.rename(path, path2)).isTrue();
-		assertThat(fs.exists(path)).isFalse();
-		assertThat(fs.exists(path2)).isTrue();
-		assertThat(fs.isDirectory(path2.substring(0, path2.lastIndexOf('/')))).isTrue();
-		assertThat(fs.rename(path2, path3)).isTrue();
-		assertThat(fs.exists(path2)).isFalse();
-		assertThat(fs.exists(path3)).isTrue();
-		assertThat(fs.isDirectory(path3.substring(0, path3.lastIndexOf('/')))).isTrue();
-		fs.delete(path3);
-		fs.delete(path3.substring(0, path3.lastIndexOf('/')));
-		fs.delete(path2.substring(0, path2.lastIndexOf('/')));
-		fs.delete("/test/");
+		writeToFile(this.fs, text, path);
+		assertThat(this.fs.rename(path, path2)).isTrue();
+		assertThat(this.fs.exists(path)).isFalse();
+		assertThat(this.fs.exists(path2)).isTrue();
+		assertThat(this.fs.isDirectory(path2.substring(0, path2.lastIndexOf('/')))).isTrue();
+		assertThat(this.fs.rename(path2, path3)).isTrue();
+		assertThat(this.fs.exists(path2)).isFalse();
+		assertThat(this.fs.exists(path3)).isTrue();
+		assertThat(this.fs.isDirectory(path3.substring(0, path3.lastIndexOf('/')))).isTrue();
+		this.fs.delete(path3);
+		this.fs.delete(path3.substring(0, path3.lastIndexOf('/')));
+		this.fs.delete(path2.substring(0, path2.lastIndexOf('/')));
+		this.fs.delete("/test/");
 	}
 
 	@Test
 	void testListFiles() throws IOException {
-		fs.mkdir("/test");
-		List<FileInfo> files = fs.listFiles("/");
+		this.fs.mkdir("/test");
+		List<FileInfo> files = this.fs.listFiles("/");
 		assertThat(files).isEmpty();
-		List<FileInfo> fileList = fs.listFilesAndDirectory("/");
+		List<FileInfo> fileList = this.fs.listFilesAndDirectory("/");
 		assertThat(fileList).hasSize(1);
 		assertThat(isFile(fileList, "test")).isFalse();
-		writeToFile(fs, "test", "/test.txt");
-		files = fs.listFiles("/");
+		writeToFile(this.fs, "test", "/test.txt");
+		files = this.fs.listFiles("/");
 		assertThat(files).hasSize(1);
-		fileList = fs.listFilesAndDirectory("/");
+		fileList = this.fs.listFilesAndDirectory("/");
 		assertThat(fileList).hasSize(2);
 		assertThat(isFile(fileList, "test.txt")).isTrue();
 		assertThat(isFile(fileList, "test")).isFalse();
 
-		fs.mkdir("/test/test2");
-		files = fs.listFiles("/test");
+		this.fs.mkdir("/test/test2");
+		files = this.fs.listFiles("/test");
 		assertThat(files.isEmpty()).isTrue();
-		fileList = fs.listFilesAndDirectory("/test");
+		fileList = this.fs.listFilesAndDirectory("/test");
 		assertThat(fileList).hasSize(1);
 		assertThat(isFile(fileList, "test2")).isFalse();
-		writeToFile(fs, "test", "/test/test.txt");
-		files = fs.listFiles("/test");
+		writeToFile(this.fs, "test", "/test/test.txt");
+		files = this.fs.listFiles("/test");
 		assertThat(files).hasSize(1);
-		fileList = fs.listFilesAndDirectory("/test");
+		fileList = this.fs.listFilesAndDirectory("/test");
 		assertThat(fileList).hasSize(2);
 		assertThat(isFile(fileList, "test.txt")).isTrue();
 		assertThat(isFile(fileList, "test2")).isFalse();
 
-		fs.delete("/test/test2/");
-		fs.delete("/test/test.txt");
-		fs.delete("/test.txt");
-		fs.delete("/test");
+		this.fs.delete("/test/test2/");
+		this.fs.delete("/test/test.txt");
+		this.fs.delete("/test.txt");
+		this.fs.delete("/test");
 	}
 
 	@Test
@@ -129,16 +130,16 @@ abstract class FileStorageTestBase {
 		// prepare
 		String text = "test";
 		for (int i = 0; i < 5; i++)
-			fs.mkdir(dir + "/testdir" + i);
+			this.fs.mkdir(dir + "/testdir" + i);
 		for (int i = 0; i < 5; i++)
-			writeToFile(fs, text, dir + "/test" + i + ".txt");
+			writeToFile(this.fs, text, dir + "/test" + i + ".txt");
 
 		int total = 0;
 		int limit = 2;
 		Paged<FileInfo> paged;
 		String marker = null;
 		do {
-			paged = fs.listFiles(dir, limit, marker);
+			paged = this.fs.listFiles(dir, limit, marker);
 			marker = paged.getNextMarker();
 			int size = paged.getResult().size();
 			total += size;
@@ -149,7 +150,7 @@ abstract class FileStorageTestBase {
 		total = 0;
 		limit = 5;
 		do {
-			paged = fs.listFilesAndDirectory(dir, limit, marker);
+			paged = this.fs.listFilesAndDirectory(dir, limit, marker);
 			marker = paged.getNextMarker();
 			int size = paged.getResult().size();
 			total += size;
@@ -159,10 +160,10 @@ abstract class FileStorageTestBase {
 
 		// cleanup
 		for (int i = 0; i < 5; i++)
-			fs.delete(dir + "/test" + i + ".txt");
+			this.fs.delete(dir + "/test" + i + ".txt");
 		for (int i = 0; i < 5; i++)
-			fs.delete(dir + "/testdir" + i);
-		fs.delete(dir);
+			this.fs.delete(dir + "/testdir" + i);
+		this.fs.delete(dir);
 	}
 
 	private static boolean isFile(List<FileInfo> files, String name) {

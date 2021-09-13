@@ -20,7 +20,7 @@ public interface CyclicSequence extends Sequence {
 			@Override
 			public boolean isSameCycle(LocalDateTime last, LocalDateTime now) {
 				return HOUR.isSameCycle(last, now)
-						&& now.get(ChronoField.MINUTE_OF_HOUR) == last.get(ChronoField.MINUTE_OF_HOUR);
+						&& (now.get(ChronoField.MINUTE_OF_HOUR) == last.get(ChronoField.MINUTE_OF_HOUR));
 
 			}
 
@@ -40,7 +40,7 @@ public interface CyclicSequence extends Sequence {
 			@Override
 			public boolean isSameCycle(LocalDateTime last, LocalDateTime now) {
 				return DAY.isSameCycle(last, now)
-						&& now.get(ChronoField.HOUR_OF_DAY) == last.get(ChronoField.HOUR_OF_DAY);
+						&& (now.get(ChronoField.HOUR_OF_DAY) == last.get(ChronoField.HOUR_OF_DAY));
 			}
 
 			@Override
@@ -58,7 +58,7 @@ public interface CyclicSequence extends Sequence {
 			@Override
 			public boolean isSameCycle(LocalDateTime last, LocalDateTime now) {
 				return MONTH.isSameCycle(last, now)
-						&& now.get(ChronoField.DAY_OF_YEAR) == last.get(ChronoField.DAY_OF_YEAR);
+						&& (now.get(ChronoField.DAY_OF_YEAR) == last.get(ChronoField.DAY_OF_YEAR));
 			}
 
 			@Override
@@ -76,7 +76,7 @@ public interface CyclicSequence extends Sequence {
 			@Override
 			public boolean isSameCycle(LocalDateTime last, LocalDateTime now) {
 				return YEAR.isSameCycle(last, now)
-						&& now.get(ChronoField.MONTH_OF_YEAR) == last.get(ChronoField.MONTH_OF_YEAR);
+						&& (now.get(ChronoField.MONTH_OF_YEAR) == last.get(ChronoField.MONTH_OF_YEAR));
 			}
 
 			@Override
@@ -118,11 +118,11 @@ public interface CyclicSequence extends Sequence {
 		}
 
 		public String getPattern() {
-			return pattern;
+			return this.pattern;
 		}
 
 		public String format(LocalDateTime datetime) {
-			return formatter.format(datetime);
+			return this.formatter.format(datetime);
 		}
 
 		public LocalDateTime getCycleEnd(LocalDateTime datetime) {

@@ -14,7 +14,7 @@ public abstract class AbstractArrayConverter<T> {
 	private final Class<?> clazz;
 
 	public AbstractArrayConverter() {
-		clazz = ResolvableType.forClass(getClass()).as(AbstractArrayConverter.class).resolveGeneric(0);
+		this.clazz = ResolvableType.forClass(getClass()).as(AbstractArrayConverter.class).resolveGeneric(0);
 	}
 
 	public String convertToDatabaseColumn(T[] array) {
@@ -29,9 +29,9 @@ public abstract class AbstractArrayConverter<T> {
 		if (string == null)
 			return null;
 		if (string.isEmpty())
-			return (T[]) Array.newInstance(clazz, 0);
+			return (T[]) Array.newInstance(this.clazz, 0);
 		String[] arr = string.split(SEPARATOR + "\\s*");
-		T[] array = (T[]) Array.newInstance(clazz, arr.length);
+		T[] array = (T[]) Array.newInstance(this.clazz, arr.length);
 		for (int i = 0; i < arr.length; i++)
 			array[i] = convert(arr[i]);
 		return array;

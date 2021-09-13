@@ -63,18 +63,18 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 	public void configure(WebSecurity web) {
 		List<String> ignoringPathPatterns = new ArrayList<>();
 		ignoringPathPatterns.addAll(Arrays.asList("/error", "/actuator/**", "/assets/**"));
-		ignoringPathPatterns.addAll(properties.getIgnoringPathPatterns());
+		ignoringPathPatterns.addAll(this.properties.getIgnoringPathPatterns());
 		web.ignoring().antMatchers(ignoringPathPatterns.toArray(new String[0]));
 	}
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		String[] permitAllPathPatterns;
-		if (properties.isProtecting()) {
+		if (this.properties.isProtecting()) {
 			List<String> patterns = new ArrayList<>();
-			patterns.addAll(Arrays.asList(properties.getLoginPage(), properties.getLoginProcessingUrl(),
-					properties.getLogoutUrl()));
-			patterns.addAll(properties.getPermitAllPathPatterns());
+			patterns.addAll(Arrays.asList(this.properties.getLoginPage(), this.properties.getLoginProcessingUrl(),
+					this.properties.getLogoutUrl()));
+			patterns.addAll(this.properties.getPermitAllPathPatterns());
 			permitAllPathPatterns = patterns.toArray(new String[0]);
 		} else {
 			permitAllPathPatterns = new String[] { "/**" };
@@ -82,7 +82,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 		ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry registry = http
 				.authorizeRequests();
 		registry.antMatchers(permitAllPathPatterns).permitAll();
-		properties.getAuthorizeRequestsMapping().forEach((k, v) -> {
+		this.properties.getAuthorizeRequestsMapping().forEach((k, v) -> {
 			registry.antMatchers(k).hasAnyAuthority(v.split("\\s*,\\s*"));
 		});
 		registry.anyRequest().authenticated();
@@ -93,11 +93,12 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 						RequestUtils::isRequestedFromApi);
 
 		setAuthenticationFilter(http.formLogin(),
-				new RestfulUsernamePasswordAuthenticationFilter(authenticationManager(), objectMapper));
-		http.formLogin().loginPage(properties.getLoginPage()).loginProcessingUrl(properties.getLoginProcessingUrl())
+				new RestfulUsernamePasswordAuthenticationFilter(authenticationManager(), this.objectMapper));
+		http.formLogin().loginPage(this.properties.getLoginPage())
+				.loginProcessingUrl(this.properties.getLoginProcessingUrl())
 				.successHandler(authenticationSuccessHandler(http.getSharedObject(RequestCache.class)))
-				.failureHandler(authenticationFailureHandler()).and().logout().logoutUrl(properties.getLogoutUrl())
-				.logoutSuccessUrl(properties.getLoginPage());
+				.failureHandler(authenticationFailureHandler()).and().logout().logoutUrl(this.properties.getLogoutUrl())
+				.logoutSuccessUrl(this.properties.getLoginPage());
 		if (Application.current().map(Application::isUnitTest).orElse(true)) {
 			http.httpBasic();
 		}
@@ -107,7 +108,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 	AuthenticationSuccessHandler authenticationSuccessHandler(RequestCache requestCache) {
 		SavedRequestAwareAuthenticationSuccessHandler handler = new SavedRequestAwareAuthenticationSuccessHandler();
-		handler.setDefaultTargetUrl(properties.getDefaultSuccessUrl());
+		handler.setDefaultTargetUrl(this.properties.getDefaultSuccessUrl());
 		if (requestCache != null) {
 			handler.setRequestCache(requestCache);
 		}
@@ -121,9 +122,9 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 					map.put("timestamp", new Date());
 					map.put("status", HttpStatus.OK.value());
 					map.put("message", HttpStatus.OK.getReasonPhrase());
-					map.put("path", properties.getLoginProcessingUrl());
+					map.put("path", WebSecurityConfiguration.this.properties.getLoginProcessingUrl());
 					map.put("targetUrl", url);
-					objectMapper.writeValue(response.getWriter(), map);
+					WebSecurityConfiguration.this.objectMapper.writeValue(response.getWriter(), map);
 					// see DefaultErrorAttributes::getErrorAttributes
 				} else {
 					super.sendRedirect(request, response, url);
@@ -138,7 +139,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 			if (RequestUtils.isRequestedFromApi(request)) {
 				response.sendError(SC_UNAUTHORIZED, ex.getLocalizedMessage());
 			} else {
-				response.sendRedirect(properties.getLoginPage() + "?error");
+				response.sendRedirect(this.properties.getLoginPage() + "?error");
 				// request.getRequestDispatcher(LOGIN_PAGE).forward(request, response);
 				// Method Not Allowed for LOGIN_PAGE
 			}

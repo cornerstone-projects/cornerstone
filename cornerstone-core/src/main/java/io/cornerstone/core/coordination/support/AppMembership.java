@@ -23,25 +23,25 @@ public class AppMembership {
 	}
 
 	public boolean isLeader() {
-		return membership.isLeader(group);
+		return this.membership.isLeader(this.group);
 	}
 
 	public String getLeader(String group) {
-		return membership.getLeader(group);
+		return this.membership.getLeader(group);
 	}
 
 	public List<String> getMembers(String group) {
-		return membership.getMembers(group);
+		return this.membership.getMembers(group);
 	}
 
 	@EventListener
 	void onEvent(AvailabilityChangeEvent<ReadinessState> event) {
 		switch (event.getState()) {
 		case ACCEPTING_TRAFFIC:
-			this.membership.join(group);
+			this.membership.join(this.group);
 			break;
 		case REFUSING_TRAFFIC:
-			this.membership.leave(group);
+			this.membership.leave(this.group);
 			break;
 		}
 	}

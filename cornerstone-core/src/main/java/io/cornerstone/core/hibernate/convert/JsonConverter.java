@@ -20,26 +20,26 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 
 public abstract class JsonConverter<T> implements AttributeConverter<T, String> {
 
-	private final static ObjectMapper objectMapper = new ObjectMapper()
+	private static final ObjectMapper objectMapper = new ObjectMapper()
 			.setSerializationInclusion(JsonInclude.Include.NON_NULL).disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
 
 	private final Type type;
 
 	public JsonConverter() {
-		type = ResolvableType.forClass(getClass()).as(JsonConverter.class).getGeneric(0).getType();
+		this.type = ResolvableType.forClass(getClass()).as(JsonConverter.class).getGeneric(0).getType();
 	}
 
 	@Override
 	public String convertToDatabaseColumn(T obj) {
 		if (obj == null)
 			return null;
-		if (obj instanceof Collection && ((Collection<?>) obj).isEmpty()
-				|| obj instanceof Map && ((Map<?, ?>) obj).isEmpty())
+		if (((obj instanceof Collection) && ((Collection<?>) obj).isEmpty())
+				|| ((obj instanceof Map) && ((Map<?, ?>) obj).isEmpty()))
 			return "";
 		try {
 			return objectMapper.writeValueAsString(obj);
-		} catch (Exception e) {
-			throw new IllegalArgumentException(obj + " cannot be serialized as json ", e);
+		} catch (Exception ex) {
+			throw new IllegalArgumentException(obj + " cannot be serialized as json ", ex);
 		}
 	}
 
@@ -49,8 +49,8 @@ public abstract class JsonConverter<T> implements AttributeConverter<T, String> 
 		if (string == null)
 			return null;
 		if (string.isEmpty()) {
-			if (type instanceof ParameterizedType) {
-				ParameterizedType pt = (ParameterizedType) type;
+			if (this.type instanceof ParameterizedType) {
+				ParameterizedType pt = (ParameterizedType) this.type;
 				if (List.class.isAssignableFrom((Class<?>) pt.getRawType())) {
 					return (T) new ArrayList<>();
 				} else if (Set.class.isAssignableFrom((Class<?>) pt.getRawType())) {
@@ -62,9 +62,9 @@ public abstract class JsonConverter<T> implements AttributeConverter<T, String> 
 			return null;
 		}
 		try {
-			return (T) objectMapper.readValue(string, objectMapper.constructType(type));
-		} catch (Exception e) {
-			throw new IllegalArgumentException(string + " is not valid json ", e);
+			return (T) objectMapper.readValue(string, objectMapper.constructType(this.type));
+		} catch (Exception ex) {
+			throw new IllegalArgumentException(string + " is not valid json ", ex);
 		}
 	}
 

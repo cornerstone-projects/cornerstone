@@ -58,14 +58,14 @@ class JsonDesensitizerTests {
 		Map<BiPredicate<String, Object>, Function<String, String>> mapping = desensitizer.getMapping();
 		mapping.clear();
 		assertThat(desensitizer.toJson(new User("username", "password", 12))).doesNotContain("\"******\"");
-		mapping.put((s, obj) -> s.equals("username") && obj instanceof User, s -> "------");
-		mapping.put((s, obj) -> s.equals("age") && obj instanceof User, s -> "0.0");
+		mapping.put((s, obj) -> s.equals("username") && (obj instanceof User), s -> "------");
+		mapping.put((s, obj) -> s.equals("age") && (obj instanceof User), s -> "0.0");
 		String json = desensitizer.toJson(new User("myname", "mypass", 12));
 		assertThat(json).contains("------");
 		assertThat(json).contains("\"mypass\"");
 		assertThat(json).doesNotContain("12");
 		assertThat(json).contains("0.0");
-		desensitizer.getDropping().add((s, obj) -> s.equals("age") && obj instanceof User);
+		desensitizer.getDropping().add((s, obj) -> s.equals("age") && (obj instanceof User));
 		json = desensitizer.toJson(new User("myname", "mypass", 12));
 		assertThat(json).contains("------");
 		assertThat(json).contains("\"mypass\"");

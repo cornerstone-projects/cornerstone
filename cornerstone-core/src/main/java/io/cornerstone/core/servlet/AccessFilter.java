@@ -58,7 +58,7 @@ public class AccessFilter implements Filter {
 
 	@Override
 	public void init(FilterConfig filterConfig) {
-		serverTag = " server:" + Application.current().map(a -> a.getInstanceId(true)).orElse(null);
+		this.serverTag = " server:" + Application.current().map(a -> a.getInstanceId(true)).orElse(null);
 	}
 
 	@Override
@@ -80,7 +80,7 @@ public class AccessFilter implements Filter {
 			s = "";
 		MDC.put("userAgent", " UserAgent:" + s);
 		s = request.getHeader("Referer");
-		if (s == null || !s.startsWith("http"))
+		if ((s == null) || !s.startsWith("http"))
 			s = "";
 		MDC.put("referer", " Referer:" + s);
 
@@ -99,7 +99,7 @@ public class AccessFilter implements Filter {
 				requestId = CodecUtils.generateRequestId();
 				response.setHeader(HTTP_HEADER_REQUEST_ID, requestId);
 			}
-			if (requestId.indexOf('.') < 0 && sessionId != null)
+			if ((requestId.indexOf('.') < 0) && (sessionId != null))
 				requestId = new StringBuilder(sessionId).append('.').append(requestId).toString();
 			request.setAttribute(HTTP_HEADER_REQUEST_ID, requestId);
 		}
@@ -109,26 +109,26 @@ public class AccessFilter implements Filter {
 		sb.append(requestId);
 		MDC.put(MDC_KEY_REQUEST, sb.toString());
 
-		MDC.put("server", serverTag);
+		MDC.put("server", this.serverTag);
 		long start = System.nanoTime();
 		try {
 			chain.doFilter(request, response);
 			long responseTime = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start);
-			if (responseTime > responseTimeThreshold) {
+			if (responseTime > this.responseTimeThreshold) {
 				StringBuilder msg = new StringBuilder();
 				msg.append(request.getQueryString()).append(" response time:").append(responseTime).append("ms");
-				accesWarnLog.warn(msg.toString());
+				this.accesWarnLog.warn(msg.toString());
 				Metrics.timer("http.access.slow", Arrays.asList(Tag.of("uri", uri))).record(responseTime,
 						TimeUnit.MILLISECONDS);
 			}
-		} catch (ServletException e) {
-			log.error(e.getMessage(), e);
-			throw e;
+		} catch (ServletException ex) {
+			log.error(ex.getMessage(), ex);
+			throw ex;
 		} finally {
-			if (print && !uri.startsWith("/assets/") && request.getHeader("Last-Event-ID") == null) {
+			if (this.print && !uri.startsWith("/assets/") && (request.getHeader("Last-Event-ID") == null)) {
 				long responseTime = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start);
 				MDC.put("responseTime", " responseTime:" + responseTime);
-				accessLog.info("");
+				this.accessLog.info("");
 				Metrics.timer("http.access").record(responseTime, TimeUnit.MILLISECONDS);
 			}
 			MDC.clear();

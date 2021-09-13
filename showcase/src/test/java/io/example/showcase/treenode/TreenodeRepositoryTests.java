@@ -19,7 +19,7 @@ class TreenodeRepositoryTests extends DataJpaTestBase {
 	@Test
 	void save() {
 		Treenode treenode = new Treenode("parent");
-		repository.saveAndFlush(treenode);
+		this.repository.saveAndFlush(treenode);
 
 		assertThat(treenode.getName()).isEqualTo(treenode.getName());
 		assertThat(treenode.getLevel()).isEqualTo(1);

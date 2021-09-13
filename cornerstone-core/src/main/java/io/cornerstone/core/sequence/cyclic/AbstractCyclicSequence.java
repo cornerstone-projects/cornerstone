@@ -31,7 +31,7 @@ public abstract class AbstractCyclicSequence implements CyclicSequence, Initiali
 	private int paddingLength = 4;
 
 	public String getSequenceName() {
-		return StringUtils.hasLength(sequenceName) ? sequenceName : beanName;
+		return StringUtils.hasLength(this.sequenceName) ? this.sequenceName : this.beanName;
 	}
 
 	@Override

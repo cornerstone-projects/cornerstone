@@ -37,7 +37,7 @@ class EntityControllerTests extends WebMvcWithDataJpaTestBase {
 		c.setDisabled(Boolean.TRUE);
 
 		// create
-		TestEntity testEntity = restTemplate.postForObject(PATH_LIST, c, TestEntity.class);
+		TestEntity testEntity = this.restTemplate.postForObject(PATH_LIST, c, TestEntity.class);
 		assertThat(testEntity).isNotNull();
 		assertThat(testEntity.getId()).isNotNull();
 		assertThat(testEntity.getIdNo()).isEqualTo(c.getIdNo());
@@ -46,14 +46,14 @@ class EntityControllerTests extends WebMvcWithDataJpaTestBase {
 		Long id = testEntity.getId();
 
 		// read
-		assertThat(restTemplate.getForObject(PATH_DETAIL, TestEntity.class, id)).isEqualTo(testEntity);
+		assertThat(this.restTemplate.getForObject(PATH_DETAIL, TestEntity.class, id)).isEqualTo(testEntity);
 
 		// update partial
 		TestEntity c2 = new TestEntity();
 		c2.setIdNo(CitizenIdentificationNumberValidator.randomValue());
 		c2.setName("new name");
 		c2.setDisabled(Boolean.TRUE);
-		TestEntity c3 = restTemplate.patchForObject(PATH_DETAIL, c2, TestEntity.class, id);
+		TestEntity c3 = this.restTemplate.patchForObject(PATH_DETAIL, c2, TestEntity.class, id);
 		assertThat(c3).isNotNull();
 		assertThat(c3.getName()).isEqualTo(c2.getName());
 		assertThat(c3.getDisabled()).isEqualTo(c2.getDisabled());
@@ -62,20 +62,20 @@ class EntityControllerTests extends WebMvcWithDataJpaTestBase {
 		c3.setIdNo(CitizenIdentificationNumberValidator.randomValue());
 		c3.setName("name");
 		c3.setDisabled(Boolean.FALSE);
-		restTemplate.put(PATH_DETAIL, c3, id);
-		TestEntity c4 = restTemplate.getForObject(PATH_DETAIL, TestEntity.class, id);
+		this.restTemplate.put(PATH_DETAIL, c3, id);
+		TestEntity c4 = this.restTemplate.getForObject(PATH_DETAIL, TestEntity.class, id);
 		assertThat(c4).isNotNull();
 		assertThat(c4.getDisabled()).isEqualTo(c3.getDisabled());
 		assertThat(c4.getName()).isEqualTo(c3.getName());
 		assertThat(c4.getIdNo()).isEqualTo(testEntity.getIdNo()); // idNo not updatable
 
 		// delete
-		assertThatThrownBy(() -> restTemplate.delete(PATH_DETAIL, id)).isInstanceOf(BadRequest.class);
+		assertThatThrownBy(() -> this.restTemplate.delete(PATH_DETAIL, id)).isInstanceOf(BadRequest.class);
 
 		c4.setDisabled(Boolean.TRUE);
-		restTemplate.put(PATH_DETAIL, c4, id);
-		restTemplate.delete(PATH_DETAIL, id);
-		assertThatThrownBy(() -> restTemplate.getForObject(PATH_DETAIL, TestEntity.class, id))
+		this.restTemplate.put(PATH_DETAIL, c4, id);
+		this.restTemplate.delete(PATH_DETAIL, id);
+		assertThatThrownBy(() -> this.restTemplate.getForObject(PATH_DETAIL, TestEntity.class, id))
 				.isInstanceOf(NotFound.class);
 	}
 
@@ -88,10 +88,10 @@ class EntityControllerTests extends WebMvcWithDataJpaTestBase {
 			c.setIdNo(CitizenIdentificationNumberValidator.randomValue());
 			c.setName("test" + i);
 			c.setDisabled(Boolean.TRUE);
-			list.add(restTemplate.postForObject(PATH_LIST, c, TestEntity.class));
+			list.add(this.restTemplate.postForObject(PATH_LIST, c, TestEntity.class));
 		}
 
-		ResultPage<TestEntity> page = restTemplate.exchange(RequestEntity.method(GET, PATH_LIST).build(),
+		ResultPage<TestEntity> page = this.restTemplate.exchange(RequestEntity.method(GET, PATH_LIST).build(),
 				new ParameterizedTypeReference<ResultPage<TestEntity>>() {
 				}).getBody();
 		assertThat(page).isNotNull();
@@ -102,7 +102,7 @@ class EntityControllerTests extends WebMvcWithDataJpaTestBase {
 		assertThat(page.getTotalElements()).isEqualTo(size);
 		assertThat(page.getResult().get(0).getCreatedDate()).isNull(); // View.List view
 
-		page = restTemplate.exchange(RequestEntity.method(GET, PATH_LIST + "?page=2&size=1&sort=id,desc").build(),
+		page = this.restTemplate.exchange(RequestEntity.method(GET, PATH_LIST + "?page=2&size=1&sort=id,desc").build(),
 				new ParameterizedTypeReference<ResultPage<TestEntity>>() {
 				}).getBody();
 		assertThat(page).isNotNull();
@@ -110,7 +110,7 @@ class EntityControllerTests extends WebMvcWithDataJpaTestBase {
 		assertThat(page.getPage()).isEqualTo(2);
 		assertThat(page.getSize()).isEqualTo(1);
 
-		page = restTemplate.exchange(RequestEntity.method(GET, PATH_LIST + "?query=test0").build(),
+		page = this.restTemplate.exchange(RequestEntity.method(GET, PATH_LIST + "?query=test0").build(),
 				new ParameterizedTypeReference<ResultPage<TestEntity>>() {
 				}).getBody();
 		assertThat(page).isNotNull();
@@ -120,7 +120,7 @@ class EntityControllerTests extends WebMvcWithDataJpaTestBase {
 		assertThat(page.getTotalPages()).isEqualTo(1);
 		assertThat(page.getTotalElements()).isEqualTo(1);
 
-		ResultPage<TestEntity> page2 = restTemplate
+		ResultPage<TestEntity> page2 = this.restTemplate
 				.exchange(RequestEntity.method(GET, PATH_LIST + "?name=test0").build(),
 						new ParameterizedTypeReference<ResultPage<TestEntity>>() {
 						})
@@ -128,7 +128,7 @@ class EntityControllerTests extends WebMvcWithDataJpaTestBase {
 		assertThat(page2).isEqualTo(page);
 
 		for (TestEntity c : list)
-			restTemplate.delete(PATH_DETAIL, c.getId());
+			this.restTemplate.delete(PATH_DETAIL, c.getId());
 	}
 
 }

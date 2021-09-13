@@ -58,7 +58,7 @@ abstract class SequenceTestBase {
 		final ConcurrentHashMap<String, Long> map = new ConcurrentHashMap<>(getThreads() * getLoop() * 2);
 		final CountDownLatch cdl = new CountDownLatch(getThreads());
 		final AtomicInteger count = new AtomicInteger();
-		final Sequence seq = cyclic ? sample2Sequence : sample1Sequence;
+		final Sequence seq = cyclic ? this.sample2Sequence : this.sample1Sequence;
 		long time = System.currentTimeMillis();
 		for (int i = 0; i < getThreads(); i++) {
 			executorService.execute(() -> {
@@ -70,8 +70,8 @@ abstract class SequenceTestBase {
 						Long old = map.putIfAbsent(id, time2);
 						if (old == null)
 							count.incrementAndGet();
-					} catch (Throwable e) {
-						e.printStackTrace();
+					} catch (Throwable ex) {
+						ex.printStackTrace();
 					}
 
 				}

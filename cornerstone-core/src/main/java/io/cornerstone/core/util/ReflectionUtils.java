@@ -28,7 +28,7 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class ReflectionUtils {
 
-	public final static ParameterNameDiscoverer parameterNameDiscoverer = new DefaultParameterNameDiscoverer();
+	public static final ParameterNameDiscoverer parameterNameDiscoverer = new DefaultParameterNameDiscoverer();
 
 	private static final boolean JDK9PLUS = ClassUtils.isPresent("java.lang.StackWalker",
 			System.class.getClassLoader());
@@ -42,11 +42,13 @@ public class ReflectionUtils {
 		Set<Class<?>> set = new HashSet<>();
 		if (clazz.isInterface()) {
 			set.add(clazz);
-			for (Class<?> intf : clazz.getInterfaces())
+			for (Class<?> intf : clazz.getInterfaces()) {
 				set.addAll(getAllInterfaces(intf));
+			}
 		} else {
-			for (Class<?> intf : ClassUtils.getAllInterfacesForClassAsSet(clazz))
+			for (Class<?> intf : ClassUtils.getAllInterfacesForClassAsSet(clazz)) {
 				set.addAll(getAllInterfaces(intf));
+			}
 		}
 		return set;
 	}
@@ -67,17 +69,18 @@ public class ReflectionUtils {
 		try {
 			method = Proxy.isProxyClass(clz) ? sig.getMethod()
 					: clz.getDeclaredMethod(sig.getName(), sig.getParameterTypes());
-		} catch (NoSuchMethodException e) {
+		} catch (NoSuchMethodException ex) {
 			method = sig.getMethod();
 		}
 		return getParameterNames(method);
 	}
 
 	private static String[] doGetParameterNames(Executable executable) {
-		if ((executable instanceof Method))
+		if ((executable instanceof Method)) {
 			return parameterNameDiscoverer.getParameterNames((Method) executable);
-		else
+		} else {
 			return parameterNameDiscoverer.getParameterNames((Constructor<?>) executable);
+		}
 	}
 
 	public static Field getField(Class<?> clazz, String name) throws NoSuchFieldException {
@@ -85,9 +88,10 @@ public class ReflectionUtils {
 			Field f = clazz.getDeclaredField(name);
 			f.setAccessible(true);
 			return f;
-		} catch (NoSuchFieldException e) {
-			if (clazz == Object.class)
-				throw e;
+		} catch (NoSuchFieldException ex) {
+			if (clazz == Object.class) {
+				throw ex;
+			}
 			return getField(clazz.getSuperclass(), name);
 		}
 
@@ -98,8 +102,8 @@ public class ReflectionUtils {
 		try {
 			Field f = getField(o.getClass(), name);
 			return (T) f.get(o);
-		} catch (Exception e) {
-			throw new RuntimeException(e.getMessage(), e);
+		} catch (Exception ex) {
+			throw new RuntimeException(ex.getMessage(), ex);
 		}
 	}
 
@@ -107,8 +111,8 @@ public class ReflectionUtils {
 		try {
 			Field f = getField(o.getClass(), name);
 			f.set(o, value);
-		} catch (Exception e) {
-			throw new RuntimeException(e.getMessage(), e);
+		} catch (Exception ex) {
+			throw new RuntimeException(ex.getMessage(), ex);
 		}
 	}
 
@@ -126,22 +130,25 @@ public class ReflectionUtils {
 
 	public static String stringify(Method method, boolean fullParameterName, boolean excludeDeclaringClass) {
 		StringBuilder sb = new StringBuilder();
-		if (!excludeDeclaringClass)
+		if (!excludeDeclaringClass) {
 			sb.append(method.getDeclaringClass().getName()).append(".");
+		}
 		sb.append(method.getName()).append("(");
 		Class<?>[] parameterTypes = method.getParameterTypes();
 		for (int i = 0; i < parameterTypes.length; i++) {
 			sb.append(fullParameterName ? parameterTypes[i].getName() : parameterTypes[i].getSimpleName());
-			if (i < parameterTypes.length - 1)
+			if (i < (parameterTypes.length - 1)) {
 				sb.append(',');
+			}
 		}
 		sb.append(")");
 		return sb.toString();
 	}
 
 	public static Object invokeDefaultMethod(Object object, Method method, Object[] arguments) throws Throwable {
-		if (!method.isDefault())
+		if (!method.isDefault()) {
 			throw new IllegalArgumentException("Method is not default: " + method);
+		}
 		Class<?> objectType = method.getDeclaringClass();
 		MethodHandle mh = defaultMethods.computeIfAbsent(new MethodCacheKey(object, method), key -> {
 			try {
@@ -157,8 +164,8 @@ public class ReflectionUtils {
 					constructor.setAccessible(true);
 					return constructor.newInstance(objectType).in(objectType).unreflectSpecial(m, objectType).bindTo(o);
 				}
-			} catch (Exception e) {
-				throw new RuntimeException(e);
+			} catch (Exception ex) {
+				throw new RuntimeException(ex);
 			}
 		});
 		return mh.invokeWithArguments(arguments);

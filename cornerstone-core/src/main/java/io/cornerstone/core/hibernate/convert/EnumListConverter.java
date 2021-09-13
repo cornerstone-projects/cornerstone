@@ -15,7 +15,7 @@ public abstract class EnumListConverter<T extends Enum<T>> implements AttributeC
 
 	@SuppressWarnings("unchecked")
 	public EnumListConverter() {
-		enumType = (Class<T>) ResolvableType.forClass(getClass()).as(EnumListConverter.class).resolveGeneric(0);
+		this.enumType = (Class<T>) ResolvableType.forClass(getClass()).as(EnumListConverter.class).resolveGeneric(0);
 	}
 
 	@Override
@@ -39,7 +39,7 @@ public abstract class EnumListConverter<T extends Enum<T>> implements AttributeC
 		String[] names = string.split(SEPARATOR);
 		List<T> list = new ArrayList<>();
 		for (String name : names)
-			list.add(Enum.valueOf(enumType, name));
+			list.add(Enum.valueOf(this.enumType, name));
 		return list;
 	}
 

@@ -34,8 +34,9 @@ public class DefaultApplication implements Application {
 	public DefaultApplication() {
 		boolean createdBySpring = StackWalker.getInstance(RETAIN_CLASS_REFERENCE).walk(
 				s -> s.map(StackFrame::getDeclaringClass).anyMatch(c -> c == AbstractAutowireCapableBeanFactory.class));
-		if (createdBySpring)
+		if (createdBySpring) {
 			currentApplication = this;
+		}
 	}
 
 	@Override
@@ -49,15 +50,16 @@ public class DefaultApplication implements Application {
 	}
 
 	private static Optional<String> findHostAddress() throws IOException {
-		Enumeration<NetworkInterface> e = NetworkInterface.getNetworkInterfaces();
-		while (e.hasMoreElements()) {
-			NetworkInterface n = e.nextElement();
+		Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces();
+		while (en.hasMoreElements()) {
+			NetworkInterface n = en.nextElement();
 			Enumeration<InetAddress> ee = n.getInetAddresses();
 			while (ee.hasMoreElements()) {
 				InetAddress addr = ee.nextElement();
-				if (addr.isLoopbackAddress())
+				if (addr.isLoopbackAddress()) {
 					continue;
-				if (addr.isSiteLocalAddress() && addr instanceof Inet4Address) {
+				}
+				if (addr.isSiteLocalAddress() && (addr instanceof Inet4Address)) {
 					return Optional.of(addr.getHostAddress());
 				}
 			}
@@ -74,8 +76,9 @@ public class DefaultApplication implements Application {
 			String profiles = System.getProperty(ACTIVE_PROFILES_PROPERTY_NAME);
 			if (profiles == null) {
 				profiles = System.getenv(ACTIVE_PROFILES_PROPERTY_NAME.replaceAll("\\.", "_").toUpperCase());
-				if (profiles == null)
+				if (profiles == null) {
 					System.setProperty(ACTIVE_PROFILES_PROPERTY_NAME, "dev");
+				}
 			}
 		}
 

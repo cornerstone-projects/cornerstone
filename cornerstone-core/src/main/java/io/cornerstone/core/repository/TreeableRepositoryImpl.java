@@ -25,26 +25,26 @@ public class TreeableRepositoryImpl<T extends AbstractTreeableEntity<T>> impleme
 		T parent = entity.getParent();
 		if (parent != null) {
 			Class<T> entityClass = (Class<T>) ProxyUtils.getUserClass(parent);
-			if (parent.getClass() != entityClass // uninitialized proxy
-					|| parent.getId() != null && parent.getFullId() == null) {
-				parent = entityManager.find(entityClass, parent.getId());
+			if ((parent.getClass() != entityClass // uninitialized proxy
+			) || ((parent.getId() != null) && (parent.getFullId() == null))) {
+				parent = this.entityManager.find(entityClass, parent.getId());
 				entity.setParent(parent);
 			}
 		}
 		if (entity.isNew()) {
 			entity.setLevel(parent != null ? parent.getLevel() + 1 : 1);
 			entity.setFullId(UUID.randomUUID().toString());
-			entityManager.persist(entity);
-			entityManager.flush();
+			this.entityManager.persist(entity);
+			this.entityManager.flush();
 			String fullId = String.valueOf(entity.getId()) + ".";
 			if (parent != null)
 				fullId = parent.getFullId() + fullId;
 			entity.setFullId(fullId);
 			return entity;
 		} else {
-			boolean positionChanged = (parent == null && entity.getLevel() != 1
-					|| parent != null && (entity.getLevel() - parent.getLevel() != 1
-							|| !entity.getFullId().startsWith(parent.getFullId())));
+			boolean positionChanged = (((parent == null) && (entity.getLevel() != 1))
+					|| ((parent != null) && (((entity.getLevel() - parent.getLevel()) != 1)
+							|| !entity.getFullId().startsWith(parent.getFullId()))));
 			if (positionChanged) {
 				String fullId = String.valueOf(entity.getId()) + ".";
 				if (parent != null)
@@ -54,7 +54,7 @@ public class TreeableRepositoryImpl<T extends AbstractTreeableEntity<T>> impleme
 				if (parent != null)
 					entity.setParent(parent); // recalculate fullname
 			}
-			S merged = entityManager.merge(entity);
+			S merged = this.entityManager.merge(entity);
 			if (positionChanged) {
 				Collection<T> children = merged.getChildren();
 				if (children != null) {
@@ -69,7 +69,7 @@ public class TreeableRepositoryImpl<T extends AbstractTreeableEntity<T>> impleme
 	@Override
 	public <S extends T> S saveAndFlush(S entity) {
 		S result = save(entity);
-		entityManager.flush();
+		this.entityManager.flush();
 		return result;
 	}
 
@@ -85,7 +85,7 @@ public class TreeableRepositoryImpl<T extends AbstractTreeableEntity<T>> impleme
 	@Override
 	public <S extends T> List<S> saveAllAndFlush(Iterable<S> entities) {
 		List<S> result = saveAll(entities);
-		entityManager.flush();
+		this.entityManager.flush();
 		return result;
 	}
 }

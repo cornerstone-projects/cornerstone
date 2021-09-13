@@ -30,6 +30,7 @@ public class EntityOperationEvent<T extends Persistable<?>> extends BaseEvent<T>
 
 	@Override
 	public String toString() {
-		return getClass().getName() + "[type=" + type + ", source=" + source.getClass().getName() + "(" + source + ")]";
+		return getClass().getName() + "[type=" + this.type + ", source=" + this.source.getClass().getName() + "("
+				+ this.source + ")]";
 	}
 }

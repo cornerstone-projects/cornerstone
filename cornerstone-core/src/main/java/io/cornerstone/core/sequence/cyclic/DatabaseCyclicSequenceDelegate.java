@@ -28,46 +28,46 @@ public class DatabaseCyclicSequenceDelegate extends AbstractDatabaseCyclicSequen
 			databaseProduct = DatabaseProduct.parse(dbmd.getDatabaseProductName().toLowerCase(Locale.ROOT));
 		}
 		if (databaseProduct == DatabaseProduct.MYSQL)
-			seq = new MySQLCyclicSequence();
+			this.seq = new MySQLCyclicSequence();
 		else if (databaseProduct == DatabaseProduct.MARIADB)
-			seq = new MariaDBCyclicSequence();
+			this.seq = new MariaDBCyclicSequence();
 		else if (databaseProduct == DatabaseProduct.POSTGRESQL)
-			seq = new PostgreSQLCyclicSequence();
+			this.seq = new PostgreSQLCyclicSequence();
 		else if (databaseProduct == DatabaseProduct.ORACLE)
-			seq = new OracleCyclicSequence();
+			this.seq = new OracleCyclicSequence();
 		else if (databaseProduct == DatabaseProduct.DB2)
-			seq = new DB2CyclicSequence();
+			this.seq = new DB2CyclicSequence();
 		else if (databaseProduct == DatabaseProduct.INFORMIX)
-			seq = new InformixCyclicSequence();
+			this.seq = new InformixCyclicSequence();
 		else if (databaseProduct == DatabaseProduct.SQLSERVER)
-			seq = new SqlServerCyclicSequence();
+			this.seq = new SqlServerCyclicSequence();
 		else if (databaseProduct == DatabaseProduct.SYBASE)
-			seq = new SybaseCyclicSequence();
+			this.seq = new SybaseCyclicSequence();
 		else if (databaseProduct == DatabaseProduct.H2)
-			seq = new H2CyclicSequence();
+			this.seq = new H2CyclicSequence();
 		else if (databaseProduct == DatabaseProduct.HSQL)
-			seq = new HSQLCyclicSequence();
+			this.seq = new HSQLCyclicSequence();
 		else if (databaseProduct == DatabaseProduct.DERBY)
-			seq = new DerbyCyclicSequence();
+			this.seq = new DerbyCyclicSequence();
 		else if (databaseProduct == DatabaseProduct.CUBRID)
-			seq = new CubridCyclicSequence();
+			this.seq = new CubridCyclicSequence();
 		else if (databaseProduct == DatabaseProduct.FIREBIRD)
-			seq = new FirebirdCyclicSequence();
+			this.seq = new FirebirdCyclicSequence();
 		else
 			throw new RuntimeException("not implemented for database " + databaseProduct);
-		seq.setDataSource(getDataSource());
+		this.seq.setDataSource(getDataSource());
 		if (getCacheSize() > 1)
-			seq.setCacheSize(getCacheSize());
-		seq.setCycleType(getCycleType());
-		seq.setPaddingLength(getPaddingLength());
-		seq.setTableName(getTableName());
-		seq.setSequenceName(getSequenceName());
-		seq.afterPropertiesSet();
+			this.seq.setCacheSize(getCacheSize());
+		this.seq.setCycleType(getCycleType());
+		this.seq.setPaddingLength(getPaddingLength());
+		this.seq.setTableName(getTableName());
+		this.seq.setSequenceName(getSequenceName());
+		this.seq.afterPropertiesSet();
 	}
 
 	@Override
 	public String nextStringValue() {
-		return seq.nextStringValue();
+		return this.seq.nextStringValue();
 	}
 
 }

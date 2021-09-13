@@ -20,7 +20,7 @@ public class UpdatePasswordRequest implements Serializable {
 
 	@JsonIgnore
 	public boolean isWrongConfirmedPassword() {
-		return !password.equals(confirmedPassword);
+		return !this.password.equals(this.confirmedPassword);
 	}
 
 }

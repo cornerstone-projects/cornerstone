@@ -74,10 +74,10 @@ public class UserController extends AbstractEntityController<User, Long> {
 	public void updatePassword(@PathVariable Long id, @RequestBody @Valid UpdatePasswordRequest request) {
 		if (request.isWrongConfirmedPassword())
 			throw badRequest("wrong.confirmed.password");
-		userRepository.findById(id).map(user -> {
+		this.userRepository.findById(id).map(user -> {
 			user.setPassword(request.getPassword());
 			encodePassword(user);
-			return userRepository.save(user);
+			return this.userRepository.save(user);
 		}).orElseThrow(() -> notFound(id));
 	}
 
@@ -88,7 +88,7 @@ public class UserController extends AbstractEntityController<User, Long> {
 		return ResponseEntity.status(OK).contentType(new MediaType("text", "csv", cs)).body(os -> {
 			try (PrintWriter writer = new PrintWriter(new OutputStreamWriter(os, cs), true)) {
 				writer.write("id,username,name,phone,roles,disabled");
-				userRepository.forEach(sort, u -> {
+				this.userRepository.forEach(sort, u -> {
 					writer.write('\n');
 					writer.write(String.format("%s,%s,%s,%s,%s,%b", String.valueOf(u.getId()), u.getUsername(),
 							u.getName(), u.getPhone(), u.getRoles() != null ? String.join(" ", u.getRoles()) : "",
@@ -102,7 +102,7 @@ public class UserController extends AbstractEntityController<User, Long> {
 	public void upload(@RequestBody InputStreamResource input) {
 		try (BufferedReader reader = new BufferedReader(
 				new InputStreamReader(input.getInputStream(), StandardCharsets.UTF_8))) {
-			int batchSize = applicationContext.getEnvironment().getProperty(
+			int batchSize = this.applicationContext.getEnvironment().getProperty(
 					"spring.jpa.properties." + AvailableSettings.STATEMENT_BATCH_SIZE, Integer.class,
 					Integer.valueOf(Dialect.DEFAULT_BATCH_SIZE));
 			String line;
@@ -121,12 +121,12 @@ public class UserController extends AbstractEntityController<User, Long> {
 				user.setDisabled(Boolean.valueOf(arr[4]));
 				batch.add(user);
 				if (batch.size() == batchSize) {
-					userRepository.saveAll(batch);
+					this.userRepository.saveAll(batch);
 					batch.clear();
 				}
 			}
 			if (!batch.isEmpty()) {
-				userRepository.saveAll(batch);
+				this.userRepository.saveAll(batch);
 			}
 		} catch (IOException ex) {
 			throw new RuntimeException(ex.getMessage(), ex);
@@ -135,12 +135,12 @@ public class UserController extends AbstractEntityController<User, Long> {
 
 	private void encodePassword(User user) {
 		if (StringUtils.hasLength(user.getPassword()))
-			user.setPassword(passwordEncoder.encode(user.getPassword()));
+			user.setPassword(this.passwordEncoder.encode(user.getPassword()));
 	}
 
 	@Override
 	protected void beforeSave(User user) {
-		if (userRepository.existsByUsername(user.getUsername()))
+		if (this.userRepository.existsByUsername(user.getUsername()))
 			throw badRequest("username.already.exists");
 		encodePassword(user);
 	}

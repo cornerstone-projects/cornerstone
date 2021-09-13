@@ -29,7 +29,7 @@ abstract class AbstractContainer {
 	}
 
 	protected String getImage() {
-		String image = env.getProperty(IMAGE);
+		String image = this.env.getProperty(IMAGE);
 		if (image == null)
 			image = getImageName() + ':' + getImageTag();
 		return image;
@@ -48,8 +48,8 @@ abstract class AbstractContainer {
 					env.put(f.getName(), String.valueOf(f.get(null)));
 				}
 			}
-		} catch (Exception e) {
-			throw new RuntimeException(e.getMessage(), e);
+		} catch (Exception ex) {
+			throw new RuntimeException(ex.getMessage(), ex);
 		}
 		return env;
 	}

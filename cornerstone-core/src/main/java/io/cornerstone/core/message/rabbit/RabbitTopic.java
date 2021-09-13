@@ -46,31 +46,31 @@ public abstract class RabbitTopic<T extends Serializable> implements Topic<T> {
 		Class<?> clazz = ResolvableType.forClass(getClass()).as(RabbitTopic.class).resolveGeneric(0);
 		if (clazz == null)
 			throw new IllegalArgumentException(getClass().getName() + " should be generic");
-		routingKey = clazz.getName();
+		this.routingKey = clazz.getName();
 	}
 
 	@PostConstruct
 	public void init() {
-		amqpAdmin.declareExchange(new TopicExchange(exchange, true, false));
-		Queue queue = amqpAdmin.declareQueue();
+		this.amqpAdmin.declareExchange(new TopicExchange(this.exchange, true, false));
+		Queue queue = this.amqpAdmin.declareQueue();
 		if (queue != null) {
-			queueName = queue.getName();
-			amqpAdmin.declareBinding(
-					new Binding(queueName, DestinationType.QUEUE, exchange, getRoutingKey(Scope.GLOBAL), null));
-			amqpAdmin.declareBinding(
-					new Binding(queueName, DestinationType.QUEUE, exchange, getRoutingKey(Scope.APPLICATION), null));
+			this.queueName = queue.getName();
+			this.amqpAdmin.declareBinding(new Binding(this.queueName, DestinationType.QUEUE, this.exchange,
+					getRoutingKey(Scope.GLOBAL), null));
+			this.amqpAdmin.declareBinding(new Binding(this.queueName, DestinationType.QUEUE, this.exchange,
+					getRoutingKey(Scope.APPLICATION), null));
 		}
 	}
 
 	@PreDestroy
 	public void destroy() {
-		amqpAdmin.deleteQueue(queueName);
+		this.amqpAdmin.deleteQueue(this.queueName);
 	}
 
 	protected String getRoutingKey(Scope scope) {
-		if (scope == null || scope == Scope.LOCAL)
+		if ((scope == null) || (scope == Scope.LOCAL))
 			return null;
-		StringBuilder sb = new StringBuilder(routingKey).append(".");
+		StringBuilder sb = new StringBuilder(this.routingKey).append(".");
 		if (scope == Scope.APPLICATION)
 			Application.current().ifPresent(a -> sb.append(a.getName()));
 		return sb.toString();
@@ -82,12 +82,12 @@ public abstract class RabbitTopic<T extends Serializable> implements Topic<T> {
 			scope = Scope.GLOBAL;
 		if (scope == Scope.LOCAL) {
 			Runnable task = () -> subscribe(message);
-			if (taskExecutor != null)
-				taskExecutor.execute(task);
+			if (this.taskExecutor != null)
+				this.taskExecutor.execute(task);
 			else
 				task.run();
 		} else {
-			rabbitTemplate.convertAndSend(exchange, getRoutingKey(scope), message);
+			this.rabbitTemplate.convertAndSend(this.exchange, getRoutingKey(scope), message);
 		}
 	}
 }

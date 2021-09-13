@@ -24,27 +24,28 @@ class RabbitApplicationEventTopicTests extends ApplicationEventTopicTestBase {
 	@Test
 	void publishLocalScopeEvent() {
 		TestEvent event = new TestEvent("");
-		eventPublisher.publish(event, Scope.LOCAL);
-		verify(rabbitTemplate, times(0)).convertAndSend(any(String.class), any(String.class), any(TestEvent.class));
-		verify(testListener).listen(eq(event));
+		this.eventPublisher.publish(event, Scope.LOCAL);
+		verify(this.rabbitTemplate, times(0)).convertAndSend(any(String.class), any(String.class),
+				any(TestEvent.class));
+		verify(this.testListener).listen(eq(event));
 	}
 
 	@Test
 	void publishApplicationScopeEvent() throws Exception {
 		TestEvent event = new TestEvent("");
-		eventPublisher.publish(event, Scope.APPLICATION);
-		verify(rabbitTemplate).convertAndSend(any(String.class), any(String.class), eq(event));
+		this.eventPublisher.publish(event, Scope.APPLICATION);
+		verify(this.rabbitTemplate).convertAndSend(any(String.class), any(String.class), eq(event));
 		Thread.sleep(100); // wait network response
-		verify(testListener).listen(eq(event));
+		verify(this.testListener).listen(eq(event));
 	}
 
 	@Test
 	void publishGlobalScopeEvent() throws Exception {
 		TestEvent event = new TestEvent("");
-		eventPublisher.publish(event, Scope.GLOBAL);
-		verify(rabbitTemplate).convertAndSend(any(String.class), any(String.class), eq(event));
-		Thread.sleep(100);// wait network response
-		verify(testListener).listen(eq(event));
+		this.eventPublisher.publish(event, Scope.GLOBAL);
+		verify(this.rabbitTemplate).convertAndSend(any(String.class), any(String.class), eq(event));
+		Thread.sleep(100); // wait network response
+		verify(this.testListener).listen(eq(event));
 	}
 
 }

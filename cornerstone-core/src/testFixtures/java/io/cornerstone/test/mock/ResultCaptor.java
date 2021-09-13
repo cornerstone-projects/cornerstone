@@ -20,14 +20,14 @@ public class ResultCaptor<T> implements Answer<T> {
 	}
 
 	public T getResult() {
-		return result;
+		return this.result;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public T answer(InvocationOnMock invocationOnMock) throws Throwable {
-		result = operator.apply((T) invocationOnMock.callRealMethod());
-		return result;
+		this.result = this.operator.apply((T) invocationOnMock.callRealMethod());
+		return this.result;
 	}
 
 }

@@ -26,7 +26,7 @@ public abstract class AbstractTreeableEntityController<T extends AbstractTreeabl
 	@JsonView(View.List.class)
 	public List<T> children(@PathVariable Long id, @RequestParam(required = false) String query, @ApiIgnore T example) {
 		Specification<T> spec = (root, cq, cb) -> {
-			Predicate predicate = (id == null || id < 1) ? cb.isNull(root.get("parent"))
+			Predicate predicate = ((id == null) || (id < 1)) ? cb.isNull(root.get("parent"))
 					: cb.equal(root.get("parent").get("id"), id);
 			if (StringUtils.hasText(query)) {
 				predicate = cb.and(predicate, getQuerySpecification(query).toPredicate(root, cq, cb));
@@ -35,7 +35,7 @@ public abstract class AbstractTreeableEntityController<T extends AbstractTreeabl
 			}
 			return predicate;
 		};
-		return specificationExecutor.findAll(spec);
+		return this.specificationExecutor.findAll(spec);
 	}
 
 	@Override
@@ -61,7 +61,7 @@ public abstract class AbstractTreeableEntityController<T extends AbstractTreeabl
 					cb.equal(root.get("name"), entity.getName()));
 			return id != null ? cb.and(p, cb.notEqual(root.get("id"), id)) : p;
 		};
-		if (specificationExecutor.count(spec) > 0)
+		if (this.specificationExecutor.count(spec) > 0)
 			throw badRequest("name.already.exists");
 	}
 

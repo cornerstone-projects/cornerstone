@@ -13,8 +13,8 @@ public interface CheckedSupplier<T, E extends Throwable> {
 		return () -> {
 			try {
 				return get();
-			} catch (Throwable e) {
-				return ExceptionUtils.sneakyThrow(e);
+			} catch (Throwable ex) {
+				return ExceptionUtils.sneakyThrow(ex);
 			}
 		};
 	}

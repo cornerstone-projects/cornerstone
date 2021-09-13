@@ -45,29 +45,29 @@ class PublishAwareTests extends DataJpaTestBase {
 
 	@AfterEach
 	private void cleanup() {
-		repository.deleteAll();
+		this.repository.deleteAll();
 	}
 
 	@Test
 	void cud() {
-		TestEntity entity = repository.save(new TestEntity());
-		verify(testListener).on(eventCaptor.capture());
-		EntityOperationEvent<TestEntity> event = eventCaptor.getValue();
+		TestEntity entity = this.repository.save(new TestEntity());
+		verify(this.testListener).on(this.eventCaptor.capture());
+		EntityOperationEvent<TestEntity> event = this.eventCaptor.getValue();
 		assertThat(event).isNotNull();
 		assertThat(event.getType()).isSameAs(CREATE);
-		reset(testListener);
+		reset(this.testListener);
 
 		entity.setName("test");
-		entity = repository.save(entity);
-		verify(testListener).on(eventCaptor.capture());
-		event = eventCaptor.getValue();
+		entity = this.repository.save(entity);
+		verify(this.testListener).on(this.eventCaptor.capture());
+		event = this.eventCaptor.getValue();
 		assertThat(event).isNotNull();
 		assertThat(event.getType()).isSameAs(UPDATE);
-		reset(testListener);
+		reset(this.testListener);
 
-		repository.delete(entity);
-		verify(testListener).on(eventCaptor.capture());
-		event = eventCaptor.getValue();
+		this.repository.delete(entity);
+		verify(this.testListener).on(this.eventCaptor.capture());
+		event = this.eventCaptor.getValue();
 		assertThat(event).isNotNull();
 		assertThat(event.getType()).isSameAs(DELETE);
 
@@ -75,18 +75,18 @@ class PublishAwareTests extends DataJpaTestBase {
 
 	@Test
 	void saveAndUpdate() {
-		testService.saveAndUpdate();
-		verify(testListener).on(eventCaptor.capture());
-		EntityOperationEvent<TestEntity> event = eventCaptor.getValue();
+		this.testService.saveAndUpdate();
+		verify(this.testListener).on(this.eventCaptor.capture());
+		EntityOperationEvent<TestEntity> event = this.eventCaptor.getValue();
 		assertThat(event).isNotNull();
 		assertThat(event.getType()).isSameAs(CREATE);
 	}
 
 	@Test
 	void saveAndUpdateAndDelete() {
-		testService.saveAndUpdateAndDelete();
-		verify(testListener).on(eventCaptor.capture());
-		EntityOperationEvent<TestEntity> event = eventCaptor.getValue();
+		this.testService.saveAndUpdateAndDelete();
+		verify(this.testListener).on(this.eventCaptor.capture());
+		EntityOperationEvent<TestEntity> event = this.eventCaptor.getValue();
 		assertThat(event).isNotNull();
 		assertThat(event.getType()).isSameAs(DELETE);
 	}
@@ -127,17 +127,17 @@ class PublishAwareTests extends DataJpaTestBase {
 
 		@Transactional
 		public void saveAndUpdate() {
-			TestEntity entity = repository.save(new TestEntity());
+			TestEntity entity = this.repository.save(new TestEntity());
 			entity.setName("test");
-			entity = repository.save(entity);
+			entity = this.repository.save(entity);
 		}
 
 		@Transactional
 		public void saveAndUpdateAndDelete() {
-			TestEntity entity = repository.save(new TestEntity());
+			TestEntity entity = this.repository.save(new TestEntity());
 			entity.setName("test");
-			entity = repository.save(entity);
-			repository.delete(entity);
+			entity = this.repository.save(entity);
+			this.repository.delete(entity);
 		}
 	}
 

@@ -80,12 +80,12 @@ public class LoggingBodyHttpServletResponse extends HttpServletResponseWrapper {
 
 	@Override
 	public ServletOutputStream getOutputStream() throws IOException {
-		ServletOutputStream temp = streamOutputStream;
+		ServletOutputStream temp = this.streamOutputStream;
 		if (temp == null) {
 			synchronized (this) {
-				if ((temp = streamOutputStream) == null)
-					streamOutputStream = temp = new ResponseServletOutputStream(getResponse(), logger,
-							characterEncoding, cachedContent);
+				if ((temp = this.streamOutputStream) == null)
+					this.streamOutputStream = temp = new ResponseServletOutputStream(getResponse(), this.logger,
+							this.characterEncoding, this.cachedContent);
 			}
 		}
 		return temp;
@@ -94,7 +94,7 @@ public class LoggingBodyHttpServletResponse extends HttpServletResponseWrapper {
 	@Override
 	public PrintWriter getWriter() throws IOException {
 		if (this.writer == null) {
-			this.writer = new ResponsePrintWriter(getOutputStream(), characterEncoding);
+			this.writer = new ResponsePrintWriter(getOutputStream(), this.characterEncoding);
 		}
 		return this.writer;
 	}
@@ -120,13 +120,13 @@ public class LoggingBodyHttpServletResponse extends HttpServletResponseWrapper {
 		@Override
 		public void write(int b) throws IOException {
 			this.os.write(b);
-			cachedContent.write(b);
+			this.cachedContent.write(b);
 		}
 
 		@Override
 		public void write(byte[] b, int off, int len) throws IOException {
 			this.os.write(b, off, len);
-			cachedContent.write(b, off, len);
+			this.cachedContent.write(b, off, len);
 		}
 
 		@Override
@@ -144,17 +144,17 @@ public class LoggingBodyHttpServletResponse extends HttpServletResponseWrapper {
 			try {
 				this.os.close();
 			} finally {
-				if (cachedContent != null) {
-					byte[] bytes = cachedContent.toByteArray();
-					cachedContent = null;
+				if (this.cachedContent != null) {
+					byte[] bytes = this.cachedContent.toByteArray();
+					this.cachedContent = null;
 					if (bytes.length > 0) {
-						String str = new String(bytes, 0, bytes.length, characterEncoding);
+						String str = new String(bytes, 0, bytes.length, this.characterEncoding);
 						str = JsonDesensitizer.DEFAULT_INSTANCE.desensitize(str);
 						String method = MDC.get("method");
 						String url = MDC.get("url");
 						MDC.remove("method");
 						MDC.remove("url");
-						logger.info("\n{}", str);
+						this.logger.info("\n{}", str);
 						MDC.put("method", method);
 						MDC.put("url", url);
 					}

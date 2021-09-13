@@ -34,28 +34,30 @@ public class RabbitTopicTests extends TopicTestBase {
 
 	@Test
 	void publishLocalScopeMessage() {
-		testTopic.publish("test", Scope.LOCAL);
-		verify(rabbitTemplate, times(0)).convertAndSend(any(String.class), routingKeyCaptor.capture(),
+		this.testTopic.publish("test", Scope.LOCAL);
+		verify(this.rabbitTemplate, times(0)).convertAndSend(any(String.class), this.routingKeyCaptor.capture(),
 				any(Object.class));
-		verify(messageProcessor).process(eq("test"));
+		verify(this.messageProcessor).process(eq("test"));
 	}
 
 	@Test
 	void publishApplicationScopeMessage() throws Exception {
-		testTopic.publish("test", Scope.APPLICATION);
-		verify(rabbitTemplate).convertAndSend(any(String.class), routingKeyCaptor.capture(), any(Object.class));
-		assertThat(routingKeyCaptor.getValue()).endsWith('.' + application.getName());
+		this.testTopic.publish("test", Scope.APPLICATION);
+		verify(this.rabbitTemplate).convertAndSend(any(String.class), this.routingKeyCaptor.capture(),
+				any(Object.class));
+		assertThat(this.routingKeyCaptor.getValue()).endsWith('.' + this.application.getName());
 		Thread.sleep(100); // wait network response
-		verify(messageProcessor).process(eq("test"));
+		verify(this.messageProcessor).process(eq("test"));
 	}
 
 	@Test
 	void publishGlobalScopeMessage() throws Exception {
-		testTopic.publish("test", Scope.GLOBAL);
-		verify(rabbitTemplate).convertAndSend(any(String.class), routingKeyCaptor.capture(), any(Object.class));
-		assertThat(routingKeyCaptor.getValue()).doesNotEndWith('.' + application.getName());
+		this.testTopic.publish("test", Scope.GLOBAL);
+		verify(this.rabbitTemplate).convertAndSend(any(String.class), this.routingKeyCaptor.capture(),
+				any(Object.class));
+		assertThat(this.routingKeyCaptor.getValue()).doesNotEndWith('.' + this.application.getName());
 		Thread.sleep(100); // wait network response
-		verify(messageProcessor).process(eq("test"));
+		verify(this.messageProcessor).process(eq("test"));
 	}
 
 	static class Config {
@@ -80,7 +82,7 @@ public class RabbitTopicTests extends TopicTestBase {
 		@RabbitListener(queues = "#{@testTopic.queueName}")
 		@Override
 		public void subscribe(String message) {
-			messageProcessor.process(message);
+			this.messageProcessor.process(message);
 		}
 
 	}

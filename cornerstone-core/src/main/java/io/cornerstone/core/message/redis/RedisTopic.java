@@ -47,20 +47,21 @@ public abstract class RedisTopic<T extends Serializable> implements io.cornersto
 
 	public RedisTopic() {
 		Class<?> clazz = ResolvableType.forClass(getClass()).as(RedisTopic.class).resolveGeneric(0);
-		if (clazz == null)
+		if (clazz == null) {
 			throw new IllegalArgumentException(getClass().getName() + " should be generic");
-		channelName = clazz.getName();
+		}
+		this.channelName = clazz.getName();
 	}
 
 	@PostConstruct
 	public void afterPropertiesSet() {
 		Topic globalTopic = new ChannelTopic(getChannelName(Scope.GLOBAL));
 		Topic applicationTopic = new ChannelTopic(getChannelName(Scope.APPLICATION));
-		if (globalRedisTemplate != null) {
-			doSubscribe(globalRedisMessageListenerContainer, globalRedisTemplate, globalTopic);
-			doSubscribe(redisMessageListenerContainer, redisTemplate, applicationTopic);
+		if (this.globalRedisTemplate != null) {
+			doSubscribe(this.globalRedisMessageListenerContainer, this.globalRedisTemplate, globalTopic);
+			doSubscribe(this.redisMessageListenerContainer, this.redisTemplate, applicationTopic);
 		} else {
-			doSubscribe(redisMessageListenerContainer, redisTemplate, globalTopic, applicationTopic);
+			doSubscribe(this.redisMessageListenerContainer, this.redisTemplate, globalTopic, applicationTopic);
 		}
 	}
 
@@ -72,21 +73,22 @@ public abstract class RedisTopic<T extends Serializable> implements io.cornersto
 				T msg = (T) template.getValueSerializer().deserialize(message.getBody());
 				log.info("Receive published message: {}", msg);
 				subscribe(msg);
-			} catch (SerializationException e) {
+			} catch (SerializationException ex) {
 				// message from other app
-				if (ExceptionUtils.getRootCause(e) instanceof ClassNotFoundException) {
-					log.warn(e.getMessage());
+				if (ExceptionUtils.getRootCause(ex) instanceof ClassNotFoundException) {
+					log.warn(ex.getMessage());
 				} else {
-					throw e;
+					throw ex;
 				}
 			}
 		}, Arrays.asList(topics));
 	}
 
 	private String getChannelName(Scope scope) {
-		StringBuilder sb = new StringBuilder(channelName).append(".");
-		if (scope == Scope.APPLICATION)
+		StringBuilder sb = new StringBuilder(this.channelName).append(".");
+		if (scope == Scope.APPLICATION) {
 			Application.current().ifPresent(a -> sb.append(a.getName()));
+		}
 		return sb.toString();
 	}
 
@@ -95,15 +97,17 @@ public abstract class RedisTopic<T extends Serializable> implements io.cornersto
 		log.info("Publishing {} message: {}", scope.name(), message);
 		if (scope == Scope.LOCAL) {
 			Runnable task = () -> subscribe(message);
-			if (taskExecutor != null)
-				taskExecutor.execute(task);
-			else
+			if (this.taskExecutor != null) {
+				this.taskExecutor.execute(task);
+			} else {
 				task.run();
+			}
 		} else {
-			if (globalRedisTemplate != null && scope == Scope.GLOBAL)
-				globalRedisTemplate.convertAndSend(getChannelName(scope), message);
-			else
-				redisTemplate.convertAndSend(getChannelName(scope), message);
+			if ((this.globalRedisTemplate != null) && (scope == Scope.GLOBAL)) {
+				this.globalRedisTemplate.convertAndSend(getChannelName(scope), message);
+			} else {
+				this.redisTemplate.convertAndSend(getChannelName(scope), message);
+			}
 		}
 	}
 

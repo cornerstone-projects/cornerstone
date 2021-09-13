@@ -59,18 +59,19 @@ class RedisConfigurationTests {
 
 	@Test
 	void testRedisProperties() {
-		assertThat(globalRedisProperties.getHost()).isEqualTo(defaultRedisProperties.getHost());
-		assertThat(globalRedisProperties.getPort()).isEqualTo(defaultRedisProperties.getPort());
-		assertThat(globalRedisProperties.getDatabase()).isNotEqualTo(defaultRedisProperties.getDatabase());
-		assertThat(globalRedisProperties.getClientName()).isNotEqualTo(defaultRedisProperties.getClientName());
+		assertThat(this.globalRedisProperties.getHost()).isEqualTo(this.defaultRedisProperties.getHost());
+		assertThat(this.globalRedisProperties.getPort()).isEqualTo(this.defaultRedisProperties.getPort());
+		assertThat(this.globalRedisProperties.getDatabase()).isNotEqualTo(this.defaultRedisProperties.getDatabase());
+		assertThat(this.globalRedisProperties.getClientName())
+				.isNotEqualTo(this.defaultRedisProperties.getClientName());
 	}
 
 	@Test
 	void testRedisTemplate() {
-		assertThat(redisTemplate).isNotSameAs(globalRedisTemplate);
+		assertThat(this.redisTemplate).isNotSameAs(this.globalRedisTemplate);
 		String key = "test";
-		ValueOperations<String, Object> ops = redisTemplate.opsForValue();
-		ValueOperations<String, Object> globalOps = globalRedisTemplate.opsForValue();
+		ValueOperations<String, Object> ops = this.redisTemplate.opsForValue();
+		ValueOperations<String, Object> globalOps = this.globalRedisTemplate.opsForValue();
 		ops.set(key, "redisTemplate");
 		globalOps.set(key, "globalRedisTemplate");
 		assertThat(ops.get(key)).isNotEqualTo(globalOps.get(key));
@@ -78,10 +79,10 @@ class RedisConfigurationTests {
 
 	@Test
 	void testStringRedisTemplate() {
-		assertThat(stringRedisTemplate).isNotSameAs(globalStringRedisTemplate);
+		assertThat(this.stringRedisTemplate).isNotSameAs(this.globalStringRedisTemplate);
 		String key = "test";
-		ValueOperations<String, String> ops = stringRedisTemplate.opsForValue();
-		ValueOperations<String, String> globalOps = globalStringRedisTemplate.opsForValue();
+		ValueOperations<String, String> ops = this.stringRedisTemplate.opsForValue();
+		ValueOperations<String, String> globalOps = this.globalStringRedisTemplate.opsForValue();
 		ops.set(key, "stringRedisTemplate");
 		globalOps.set(key, "globalStringRedisTemplate");
 		assertThat(ops.get(key)).isNotEqualTo(globalOps.get(key));

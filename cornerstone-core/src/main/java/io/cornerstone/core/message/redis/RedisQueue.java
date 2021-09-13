@@ -37,43 +37,46 @@ public abstract class RedisQueue<T extends Serializable> implements Queue<T> {
 
 	public RedisQueue() {
 		Class<?> clazz = ResolvableType.forClass(getClass()).as(RedisQueue.class).resolveGeneric(0);
-		if (clazz == null)
+		if (clazz == null) {
 			throw new IllegalArgumentException(getClass().getName() + " should be generic");
-		queueName = clazz.getName();
+		}
+		this.queueName = clazz.getName();
 	}
 
 	@PostConstruct
 	public void afterPropertiesSet() {
-		queue = new DefaultRedisList<>(queueName, redisTemplate);
-		if (consuming) {
+		this.queue = new DefaultRedisList<>(this.queueName, this.redisTemplate);
+		if (this.consuming) {
 			Runnable task = () -> {
-				while (!stopConsuming.get()) {
+				while (!this.stopConsuming.get()) {
 					try {
-						consume(queue.take());
-					} catch (Throwable e) {
-						if (Thread.interrupted())
+						consume(this.queue.take());
+					} catch (Throwable ex) {
+						if (Thread.interrupted()) {
 							break;
-						log.error(e.getMessage(), e);
+						}
+						log.error(ex.getMessage(), ex);
 					}
 				}
 			};
-			worker = new Thread(task, "redis-queue-consumer-" + getClass().getSimpleName());
-			worker.setDaemon(true);
-			worker.start();
+			this.worker = new Thread(task, "redis-queue-consumer-" + getClass().getSimpleName());
+			this.worker.setDaemon(true);
+			this.worker.start();
 		}
 	}
 
 	@PreDestroy
 	public void stop() {
-		if (stopConsuming.compareAndSet(false, true)) {
-			if (worker != null)
-				worker.interrupt();
+		if (this.stopConsuming.compareAndSet(false, true)) {
+			if (this.worker != null) {
+				this.worker.interrupt();
+			}
 		}
 	}
 
 	@Override
 	public void produce(T message) {
-		queue.add(message);
+		this.queue.add(message);
 	}
 
 }

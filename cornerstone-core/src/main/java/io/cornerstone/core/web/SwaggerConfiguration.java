@@ -121,10 +121,10 @@ public class SwaggerConfiguration {
 
 		ApiParam build() {
 			Map<String, Object> attributes = new HashMap<>();
-			attributes.put("value", value);
-			attributes.put("defaultValue", defaultValue);
-			attributes.put("example", example);
-			attributes.put("allowMultiple", allowMultiple);
+			attributes.put("value", this.value);
+			attributes.put("defaultValue", this.defaultValue);
+			attributes.put("example", this.example);
+			attributes.put("allowMultiple", this.allowMultiple);
 			return AnnotationUtils.synthesizeAnnotation(attributes, ApiParam.class, null);
 		}
 	}

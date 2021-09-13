@@ -23,8 +23,8 @@ public class MySQLSimpleSequence extends AbstractDatabaseSimpleSequence {
 	public void afterPropertiesSet() {
 		try {
 			createTable(getDataSource(), getTableName(), getSequenceName());
-		} catch (SQLException e) {
-			logger.error(e.getMessage(), e);
+		} catch (SQLException ex) {
+			this.logger.error(ex.getMessage(), ex);
 		}
 	}
 
@@ -33,13 +33,13 @@ public class MySQLSimpleSequence extends AbstractDatabaseSimpleSequence {
 		int cacheSize = getCacheSize();
 		if (cacheSize > 1) {
 			synchronized (this) {
-				if (maxId == nextId) {
-					maxId = incrementAndGet(cacheSize);
-					nextId = maxId - cacheSize + 1;
+				if (this.maxId == this.nextId) {
+					this.maxId = incrementAndGet(cacheSize);
+					this.nextId = (this.maxId - cacheSize) + 1;
 				} else {
-					nextId++;
+					this.nextId++;
 				}
-				return nextId;
+				return this.nextId;
 			}
 		}
 		return incrementAndGet(1);
@@ -72,8 +72,8 @@ public class MySQLSimpleSequence extends AbstractDatabaseSimpleSequence {
 			try (Statement stmt = con.createStatement()) {
 				String sequenceName = getSequenceName();
 				stmt.executeUpdate("UPDATE `" + getTableName() + "` SET VALUE = 0 WHERE NAME='" + sequenceName + "'");
-				nextId = 0;
-				maxId = 0;
+				this.nextId = 0;
+				this.maxId = 0;
 			}
 		} catch (SQLException ex) {
 			throw new DataAccessResourceFailureException(ex.getMessage(), ex);

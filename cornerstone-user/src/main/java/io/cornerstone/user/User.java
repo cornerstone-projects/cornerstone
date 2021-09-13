@@ -63,15 +63,15 @@ public class User extends AbstractAuditableEntity implements UserDetails, Versio
 	@JsonIgnore
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		if (roles == null)
+		if (this.roles == null)
 			return Collections.emptyList();
-		return roles.stream().map(SimpleGrantedAuthority::new).collect(toList());
+		return this.roles.stream().map(SimpleGrantedAuthority::new).collect(toList());
 	}
 
 	@JsonIgnore
 	@Override
 	public boolean isEnabled() {
-		return disabled == null || !disabled;
+		return (this.disabled == null) || !this.disabled;
 	}
 
 	@JsonIgnore

@@ -53,7 +53,7 @@ public class TaskConfiguration {
 	@Bean
 	TaskSchedulerCustomizer taskSchedulerCustomizer() {
 		return taskScheduler -> taskScheduler.setErrorHandler(ex -> {
-			if (ex instanceof BulkheadFullException || ex instanceof RequestNotPermitted)
+			if ((ex instanceof BulkheadFullException) || (ex instanceof RequestNotPermitted))
 				log.warn("Error occurred in scheduled task: {}", ex.getLocalizedMessage());
 			else
 				log.error("Unexpected error occurred in scheduled task", ex);

@@ -14,7 +14,7 @@ public abstract class EnumArrayConverter<T extends Enum<T>> {
 	private Class<T> enumType;
 
 	public EnumArrayConverter() {
-		enumType = (Class<T>) ResolvableType.forClass(getClass()).as(EnumArrayConverter.class).resolveGeneric(0);
+		this.enumType = (Class<T>) ResolvableType.forClass(getClass()).as(EnumArrayConverter.class).resolveGeneric(0);
 	}
 
 	public String convertToDatabaseColumn(T[] array) {
@@ -32,11 +32,11 @@ public abstract class EnumArrayConverter<T extends Enum<T>> {
 		if (string == null)
 			return null;
 		if (string.isEmpty())
-			return (T[]) Array.newInstance(enumType, 0);
+			return (T[]) Array.newInstance(this.enumType, 0);
 		String[] arr = string.split(SEPARATOR + "\\s*");
-		T[] array = (T[]) Array.newInstance(enumType, arr.length);
+		T[] array = (T[]) Array.newInstance(this.enumType, arr.length);
 		for (int i = 0; i < arr.length; i++)
-			array[i] = Enum.valueOf(enumType, arr[i]);
+			array[i] = Enum.valueOf(this.enumType, arr[i]);
 		return array;
 	}
 

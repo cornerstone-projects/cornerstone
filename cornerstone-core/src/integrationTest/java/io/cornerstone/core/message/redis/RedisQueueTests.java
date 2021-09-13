@@ -27,8 +27,8 @@ class RedisQueueTests extends QueueTestBase {
 	@Test
 	void produce() {
 		ResultCaptor<RedisConnection> resultCaptor = new ResultCaptor<>(Mockito::spy);
-		given(connectionFactory.getConnection()).willAnswer(resultCaptor);
-		testQueue.produce("test");
+		given(this.connectionFactory.getConnection()).willAnswer(resultCaptor);
+		this.testQueue.produce("test");
 		verify(resultCaptor.getResult()).rPush(any(), any());
 	}
 
@@ -50,7 +50,7 @@ class RedisQueueTests extends QueueTestBase {
 
 		@Override
 		public void consume(String message) {
-			messageProcessor.process(message);
+			this.messageProcessor.process(message);
 		}
 
 	}

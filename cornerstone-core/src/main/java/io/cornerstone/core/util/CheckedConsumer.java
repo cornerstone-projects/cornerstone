@@ -13,8 +13,8 @@ public interface CheckedConsumer<T, E extends Throwable> {
 		return (t) -> {
 			try {
 				accept(t);
-			} catch (Throwable e) {
-				ExceptionUtils.sneakyThrow(e);
+			} catch (Throwable ex) {
+				ExceptionUtils.sneakyThrow(ex);
 			}
 		};
 	}

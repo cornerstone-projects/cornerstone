@@ -45,7 +45,7 @@ public class AopContext {
 
 	public static boolean isBypass(Class<?> clazz) {
 		Set<Class<?>> set = disabled.get();
-		if (set != null && set.contains(clazz))
+		if ((set != null) && set.contains(clazz))
 			return true;
 		List<Class<?>> list = bypass.get();
 		if (list == null) {

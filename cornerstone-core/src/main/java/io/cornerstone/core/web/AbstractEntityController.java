@@ -50,22 +50,25 @@ public abstract class AbstractEntityController<T, ID> extends BaseRestController
 	@SuppressWarnings("unchecked")
 	protected AbstractEntityController() {
 		ResolvableType rt = ResolvableType.forClass(getClass()).as(AbstractEntityController.class);
-		entityClass = (Class<T>) rt.getGeneric(0).resolve();
-		idClass = (Class<ID>) rt.getGeneric(1).resolve();
+		this.entityClass = (Class<T>) rt.getGeneric(0).resolve();
+		this.idClass = (Class<ID>) rt.getGeneric(1).resolve();
 	}
 
 	@SuppressWarnings("unchecked")
 	@PostConstruct
 	private void init() {
-		repository = (JpaRepository<T, ID>) applicationContext
-				.getBeanProvider(ResolvableType.forClassWithGenerics(JpaRepository.class, entityClass, idClass), false)
+		this.repository = (JpaRepository<T, ID>) this.applicationContext
+				.getBeanProvider(
+						ResolvableType.forClassWithGenerics(JpaRepository.class, this.entityClass, this.idClass), false)
 				.getObject();
-		specificationExecutor = (JpaSpecificationExecutor<T>) applicationContext.getBeanProvider(
-				ResolvableType.forClassWithGenerics(JpaSpecificationExecutor.class, entityClass), false).getObject();
+		this.specificationExecutor = (JpaSpecificationExecutor<T>) this.applicationContext
+				.getBeanProvider(ResolvableType.forClassWithGenerics(JpaSpecificationExecutor.class, this.entityClass),
+						false)
+				.getObject();
 	}
 
 	public String getEntityName() {
-		return StringUtils.uncapitalize(entityClass.getSimpleName());
+		return StringUtils.uncapitalize(this.entityClass.getSimpleName());
 	}
 
 	@JsonView({ View.List.class })
@@ -73,10 +76,10 @@ public abstract class AbstractEntityController<T, ID> extends BaseRestController
 	public ResultPage<T> list(@PageableDefault(sort = "id", direction = DESC) Pageable pageable,
 			@RequestParam(required = false) String query, @ApiIgnore T example) {
 		Page<T> page;
-		if (specificationExecutor != null && StringUtils.hasText(query)) {
-			page = specificationExecutor.findAll(getQuerySpecification(query), pageable);
+		if ((this.specificationExecutor != null) && StringUtils.hasText(query)) {
+			page = this.specificationExecutor.findAll(getQuerySpecification(query), pageable);
 		} else {
-			page = repository.findAll(Example.of(example, getExampleMatcher()), pageable);
+			page = this.repository.findAll(Example.of(example, getExampleMatcher()), pageable);
 		}
 		return ResultPage.of(page);
 	}
@@ -84,37 +87,37 @@ public abstract class AbstractEntityController<T, ID> extends BaseRestController
 	@PostMapping(PATH_LIST)
 	public T save(@RequestBody @JsonView(View.Creation.class) @Valid T entity) {
 		beforeSave(entity);
-		return repository.save(entity);
+		return this.repository.save(entity);
 	}
 
 	@GetMapping(PATH_DETAIL)
 	public T get(@PathVariable ID id) {
-		return repository.findById(id).orElseThrow(() -> notFound(id));
+		return this.repository.findById(id).orElseThrow(() -> notFound(id));
 	}
 
 	@PutMapping(PATH_DETAIL)
 	public void update(@PathVariable ID id, @RequestBody @JsonView(View.Update.class) @Valid T entity) {
 		beforeUpdate(id, entity);
-		repository.findById(id).map(en -> {
+		this.repository.findById(id).map(en -> {
 			BeanUtils.copyPropertiesInJsonView(entity, en, determineViewForUpdate(entity));
-			return repository.save(en);
+			return this.repository.save(en);
 		}).orElseThrow(() -> notFound(id));
 	}
 
 	@PatchMapping(PATH_DETAIL)
 	public T patch(@PathVariable ID id, @RequestBody @JsonView(View.Update.class) @Valid T entity) {
 		beforePatch(id, entity);
-		return repository.findById(id).map(en -> {
+		return this.repository.findById(id).map(en -> {
 			BeanUtils.copyNonNullProperties(entity, en);
-			return repository.save(en);
+			return this.repository.save(en);
 		}).orElseThrow(() -> notFound(id));
 	}
 
 	@DeleteMapping(PATH_DETAIL)
 	public void delete(@PathVariable ID id) {
-		T entity = repository.findById(id).orElseThrow(() -> notFound(id));
+		T entity = this.repository.findById(id).orElseThrow(() -> notFound(id));
 		beforeDelete(entity);
-		repository.delete(entity);
+		this.repository.delete(entity);
 	}
 
 	protected Specification<T> getQuerySpecification(String query) {
@@ -144,9 +147,9 @@ public abstract class AbstractEntityController<T, ID> extends BaseRestController
 
 	protected Class<?> determineViewForUpdate(T entity) {
 		return findViewForEntity(
-				(entity instanceof Versioned && ((Versioned) entity).getVersion() == null) ? View.Edit.class
+				((entity instanceof Versioned) && (((Versioned) entity).getVersion() == null)) ? View.Edit.class
 						: View.Update.class,
-				entityClass);
+				this.entityClass);
 	}
 
 	private static Class<?> findViewForEntity(Class<?> defaultView, Class<?> entityClass) {

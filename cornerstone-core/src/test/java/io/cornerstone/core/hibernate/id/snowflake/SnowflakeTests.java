@@ -23,11 +23,11 @@ class SnowflakeTests extends DataJpaTestBase {
 
 	@Test
 	void test() {
-		Long id1 = repository.save(new TestEntity()).getId();
-		Long id2 = repository.save(new TestEntity()).getId();
+		Long id1 = this.repository.save(new TestEntity()).getId();
+		Long id2 = this.repository.save(new TestEntity()).getId();
 		assertThat(id1).isGreaterThan(100000000);
 		assertThat(id2).isGreaterThan(id1);
-		Snowflake sf = snowflakeProperties.build();
+		Snowflake sf = this.snowflakeProperties.build();
 		assertThat(sf.parse(id1).getWorkerId()).isEqualTo(sf.parse(id2).getWorkerId());
 		assertThat(sf.parse(id1).getTimestamp()).isLessThanOrEqualTo(sf.parse(id2).getTimestamp());
 	}

@@ -37,7 +37,7 @@ public class PublishAspect extends BaseAspect implements TransactionSynchronizat
 	private EventPublisher eventPublisher;
 
 	public PublishAspect() {
-		order = 1;
+		this.order = 1;
 	}
 
 	@Pointcut("execution(public void javax.persistence.EntityManager.persist(..))")
@@ -63,7 +63,7 @@ public class PublishAspect extends BaseAspect implements TransactionSynchronizat
 	@Override
 	public void afterCommit() {
 		List<AbstractEvent> events = getHibernateEvents(false);
-		if (events == null || events.isEmpty())
+		if ((events == null) || events.isEmpty())
 			return;
 		Map<Persistable<?>, EntityOperationType> actions = new HashMap<>();
 		for (AbstractEvent event : events) {
@@ -82,14 +82,14 @@ public class PublishAspect extends BaseAspect implements TransactionSynchronizat
 				continue;
 			}
 			EntityOperationType previousAction = actions.get(entity);
-			if (action == UPDATE && previousAction == CREATE)
+			if ((action == UPDATE) && (previousAction == CREATE))
 				action = CREATE;
 			actions.put((Persistable<?>) entity, action);
 		}
 		actions.forEach((k, v) -> {
 			PublishAware publishAware = ReflectionUtils.getEntityClass(k).getAnnotation(PublishAware.class);
 			if (publishAware != null)
-				eventPublisher.publish(new EntityOperationEvent<>(k, v), publishAware.scope());
+				this.eventPublisher.publish(new EntityOperationEvent<>(k, v), publishAware.scope());
 		});
 	}
 

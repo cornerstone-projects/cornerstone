@@ -22,7 +22,7 @@ public class OrganizationCodeValidator implements ConstraintValidator<Organizati
 	}
 
 	public static boolean isValid(String input) {
-		if (input == null || input.length() != 9)
+		if ((input == null) || (input.length() != 9))
 			return false;
 		char[] bits = Arrays.copyOfRange(input.toCharArray(), 0, input.length() - 1);
 		char checkBit = input.charAt(input.length() - 1);
@@ -33,14 +33,14 @@ public class OrganizationCodeValidator implements ConstraintValidator<Organizati
 		int sum = 0;
 		for (int i = 0; i < bits.length; i++) {
 			char ch = bits[i];
-			int bit = ch > '9' ? (ch - 'A' + 10) : bits[i] - '0';
+			int bit = ch > '9' ? ((ch - 'A') + 10) : bits[i] - '0';
 			sum += bit * power[i];
 		}
 		return sum;
 	}
 
 	private static char getCheckBit(int sum) {
-		int i = 11 - sum % 11;
+		int i = 11 - (sum % 11);
 		return i == 10 ? 'X' : i == 11 ? '0' : (char) (i + '0');
 	}
 

@@ -63,16 +63,16 @@ class FtpFileStorageTests extends FileStorageTestBase {
 				try {
 					for (int k = 0; k < loop; k++) {
 						String text = "test" + j + "-" + k;
-						writeToFile(fs, text, path);
+						writeToFile(this.fs, text, path);
 						try (BufferedReader br = new BufferedReader(
-								new InputStreamReader(fs.open(path), StandardCharsets.UTF_8))) {
+								new InputStreamReader(this.fs.open(path), StandardCharsets.UTF_8))) {
 							if (!text.equals(br.lines().collect(Collectors.joining("\n"))))
 								errors.incrementAndGet();
 						}
-						fs.delete(path);
+						this.fs.delete(path);
 					}
-				} catch (Exception e) {
-					e.printStackTrace();
+				} catch (Exception ex) {
+					ex.printStackTrace();
 					errors.incrementAndGet();
 				} finally {
 

@@ -29,7 +29,7 @@ class TestEntity implements Persistable<Long>, Serializable {
 	@Nullable
 	@Override
 	public Long getId() {
-		return id;
+		return this.id;
 	}
 
 	protected void setId(@Nullable Long id) {

@@ -15,32 +15,32 @@ abstract class JdbcDatabase<T extends JdbcDatabaseContainer<?>> extends Abstract
 
 	@SuppressWarnings("unchecked")
 	JdbcDatabase() {
-		containerClass = (Class<T>) ResolvableType.forClass(getClass()).as(JdbcDatabase.class).resolveGeneric(0);
+		this.containerClass = (Class<T>) ResolvableType.forClass(getClass()).as(JdbcDatabase.class).resolveGeneric(0);
 	}
 
 	@Override
 	protected String getImageName() {
 		try {
-			return (String) containerClass.getDeclaredField("IMAGE").get(null);
-		} catch (Exception e) {
+			return (String) this.containerClass.getDeclaredField("IMAGE").get(null);
+		} catch (Exception ex) {
 
 		}
 		try {
-			return (String) containerClass.getDeclaredField("NAME").get(null);
-		} catch (Exception e) {
+			return (String) this.containerClass.getDeclaredField("NAME").get(null);
+		} catch (Exception ex) {
 
 		}
-		return containerClass.getSimpleName().toLowerCase();
+		return this.containerClass.getSimpleName().toLowerCase();
 	}
 
 	@Override
 	protected T createContainer() {
 		try {
-			T container = containerClass.getConstructor(String.class).newInstance(getImage());
+			T container = this.containerClass.getConstructor(String.class).newInstance(getImage());
 			container.start();
 			return container;
-		} catch (Exception e) {
-			throw new RuntimeException(e.getMessage(), e);
+		} catch (Exception ex) {
+			throw new RuntimeException(ex.getMessage(), ex);
 		}
 	}
 

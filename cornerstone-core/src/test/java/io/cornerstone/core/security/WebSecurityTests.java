@@ -66,7 +66,7 @@ class WebSecurityTests extends ControllerTestBase {
 
 	@Test
 	void testAuthenticationFailure() {
-		TestRestTemplate restTemplate = testRestTemplate;
+		TestRestTemplate restTemplate = this.testRestTemplate;
 		ResponseEntity<String> response = restTemplate.withBasicAuth("invalid_user", "*******")
 				.getForEntity(TEST_DEFAULT_SUCCESS_URL, String.class);
 		assertThat(response.getStatusCode()).isSameAs(UNAUTHORIZED);
@@ -115,7 +115,7 @@ class WebSecurityTests extends ControllerTestBase {
 	@Test
 	void testAccessWithUnauthenticated() {
 		ResponseEntity<String> response = executeWithNoRedirects(template -> template
-				.exchange(RequestEntity.method(POST, testRestTemplate.getRootUri() + TEST_DEFAULT_SUCCESS_URL)
+				.exchange(RequestEntity.method(POST, this.testRestTemplate.getRootUri() + TEST_DEFAULT_SUCCESS_URL)
 						.header(ACCEPT, TEXT_HTML_VALUE).build(), String.class));
 		// GET always follow redirects
 		assertThat(response.getStatusCode()).isSameAs(FOUND);
@@ -125,13 +125,13 @@ class WebSecurityTests extends ControllerTestBase {
 	@Test
 	void testRestfulAccessWithUnauthenticated() {
 		ResponseEntity<Map<String, Object>> response = executeWithNoRedirects(template -> template.exchange(
-				RequestEntity.method(POST, testRestTemplate.getRootUri() + TEST_DEFAULT_SUCCESS_URL)
+				RequestEntity.method(POST, this.testRestTemplate.getRootUri() + TEST_DEFAULT_SUCCESS_URL)
 						.header(ACCEPT, APPLICATION_JSON_VALUE).build(),
 				new ParameterizedTypeReference<Map<String, Object>>() {
 				}));
 		assertThat(response.getStatusCode()).isSameAs(UNAUTHORIZED);
 		assertThat(response.getBody().get("status")).isEqualTo(UNAUTHORIZED.value());
-		assertThat(response.getBody().get("message")).isEqualTo(messageSource.getMessage(
+		assertThat(response.getBody().get("message")).isEqualTo(this.messageSource.getMessage(
 				"ExceptionTranslationFilter.insufficientAuthentication", null, LocaleContextHolder.getLocale()));
 		assertThat(response.getBody().get("path")).isEqualTo(TEST_DEFAULT_SUCCESS_URL);
 	}
@@ -158,7 +158,7 @@ class WebSecurityTests extends ControllerTestBase {
 		Map<String, String> data = new LinkedHashMap<>();
 		data.put("username", username);
 		data.put("password", password);
-		return testRestTemplate.exchange(RequestEntity.method(POST, TEST_LOGIN_PROCESSING_URL).body(data),
+		return this.testRestTemplate.exchange(RequestEntity.method(POST, TEST_LOGIN_PROCESSING_URL).body(data),
 				new ParameterizedTypeReference<Map<String, Object>>() {
 				});
 	}
@@ -168,8 +168,9 @@ class WebSecurityTests extends ControllerTestBase {
 		data.add("username", username);
 		data.add("password", password);
 		return executeWithNoRedirects(template -> template.exchange(RequestEntity
-				.method(POST, testRestTemplate.getRootUri() + TEST_LOGIN_PROCESSING_URL).header(ACCEPT, TEXT_HTML_VALUE)
-				.header(CONTENT_TYPE, APPLICATION_FORM_URLENCODED_VALUE).body(data), String.class));
+				.method(POST, this.testRestTemplate.getRootUri() + TEST_LOGIN_PROCESSING_URL)
+				.header(ACCEPT, TEXT_HTML_VALUE).header(CONTENT_TYPE, APPLICATION_FORM_URLENCODED_VALUE).body(data),
+				String.class));
 	}
 
 	private <T> T executeWithNoRedirects(Function<RestTemplate, T> function) {
@@ -179,7 +180,7 @@ class WebSecurityTests extends ControllerTestBase {
 			SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
 			requestFactory.setOutputStreaming(false);
 			RestTemplate template = new RestTemplate(requestFactory);
-			template.setErrorHandler(testRestTemplate.getRestTemplate().getErrorHandler());
+			template.setErrorHandler(this.testRestTemplate.getRestTemplate().getErrorHandler());
 			return function.apply(template);
 		} finally {
 			HttpURLConnection.setFollowRedirects(true); // restore defaults

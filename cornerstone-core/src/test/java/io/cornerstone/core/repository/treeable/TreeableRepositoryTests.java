@@ -30,16 +30,16 @@ class TreeableRepositoryTests extends DataJpaTestBase {
 		parent.addChild(child1);
 		child0.addChild(grandchild0);
 		child0.addChild(grandchild1);
-		repository.save(parent);
-		repository.save(child0);
-		repository.save(child1);
-		repository.save(grandchild0);
-		repository.save(grandchild1);
+		this.repository.save(parent);
+		this.repository.save(child0);
+		this.repository.save(child1);
+		this.repository.save(grandchild0);
+		this.repository.save(grandchild1);
 		flushAndClear();
 
 		Long id = parent.getId();
 		assertThat(id).isNotNull();
-		TestEntity savedParent = repository.findById(id).orElseThrow(IllegalStateException::new);
+		TestEntity savedParent = this.repository.findById(id).orElseThrow(IllegalStateException::new);
 		assertThat(savedParent.getName()).isEqualTo(parent.getName());
 		assertThat(savedParent.getLevel()).isEqualTo(1);
 		assertThat(savedParent.getFullId()).isEqualTo("1.");
@@ -69,11 +69,11 @@ class TreeableRepositoryTests extends DataJpaTestBase {
 		assertThat(savedGrandchild1.getFullId()).isEqualTo("1.2.5.");
 
 		savedChild0.setParent(savedChild1);
-		repository.save(savedChild0);
+		this.repository.save(savedChild0);
 		flushAndClear();
 		id = savedChild0.getId();
 		assertThat(id).isNotNull();
-		savedChild0 = repository.findById(id).orElseThrow(IllegalStateException::new);
+		savedChild0 = this.repository.findById(id).orElseThrow(IllegalStateException::new);
 		assertThat(savedChild0.getName()).isEqualTo(child0.getName());
 		assertThat(savedChild0.getLevel()).isEqualTo(3);
 		assertThat(savedChild0.getFullId()).isEqualTo("1.3.2.");

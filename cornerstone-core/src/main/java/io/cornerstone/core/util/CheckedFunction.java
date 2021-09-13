@@ -13,8 +13,8 @@ public interface CheckedFunction<T, R, E extends Throwable> {
 		return t -> {
 			try {
 				return apply(t);
-			} catch (Throwable e) {
-				return ExceptionUtils.sneakyThrow(e);
+			} catch (Throwable ex) {
+				return ExceptionUtils.sneakyThrow(ex);
 			}
 		};
 	}

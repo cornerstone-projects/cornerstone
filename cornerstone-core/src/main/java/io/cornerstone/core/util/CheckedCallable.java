@@ -13,8 +13,8 @@ public interface CheckedCallable<T, E extends Throwable> {
 		return () -> {
 			try {
 				return call();
-			} catch (Throwable e) {
-				return ExceptionUtils.sneakyThrow(e);
+			} catch (Throwable ex) {
+				return ExceptionUtils.sneakyThrow(ex);
 			}
 		};
 	}

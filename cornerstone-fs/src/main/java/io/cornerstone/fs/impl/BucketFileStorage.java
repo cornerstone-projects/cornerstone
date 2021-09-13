@@ -130,9 +130,9 @@ public abstract class BucketFileStorage extends AbstractFileStorage {
 
 	@Override
 	public Paged<FileInfo> listFiles(String path, int limit, String marker) {
-		if (limit < 1 || limit > MAX_PAGE_SIZE)
+		if ((limit < 1) || (limit > MAX_PAGE_SIZE))
 			limit = DEFAULT_PAGE_SIZE;
-		if (marker != null && marker.isEmpty())
+		if ((marker != null) && marker.isEmpty())
 			marker = null;
 		List<FileInfo> list = new ArrayList<>();
 		String nextMarker = marker;
@@ -141,7 +141,7 @@ public abstract class BucketFileStorage extends AbstractFileStorage {
 			Paged<FileInfo> result = doListFiles(path, limit - list.size(), nextMarker);
 			list.addAll(result.getResult());
 			nextMarker = result.getNextMarker();
-		} while (list.size() < limit && nextMarker != null);
+		} while ((list.size() < limit) && (nextMarker != null));
 		return new Paged<>(marker, nextMarker, list);
 	}
 
@@ -173,9 +173,9 @@ public abstract class BucketFileStorage extends AbstractFileStorage {
 
 	@Override
 	public Paged<FileInfo> listFilesAndDirectory(String path, int limit, String marker) {
-		if (limit < 1 || limit > MAX_PAGE_SIZE)
+		if ((limit < 1) || (limit > MAX_PAGE_SIZE))
 			limit = DEFAULT_PAGE_SIZE;
-		if (marker != null && marker.isEmpty())
+		if ((marker != null) && marker.isEmpty())
 			marker = null;
 		return doListFilesAndDirectory(path, limit, marker);
 	}

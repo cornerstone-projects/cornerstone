@@ -45,19 +45,20 @@ public class RedisConfigurationSupport {
 			Constructor<?> ctor = configurationClass.getDeclaredConstructor(RedisProperties.class, ObjectProvider.class,
 					ObjectProvider.class);
 			ctor.setAccessible(true);
-			configuration = ctor.newInstance(properties, sentinelConfigurationProvider, clusterConfigurationProvider);
-		} catch (Exception e) {
-			throw new RuntimeException(e.getMessage(), e);
+			this.configuration = ctor.newInstance(properties, sentinelConfigurationProvider,
+					clusterConfigurationProvider);
+		} catch (Exception ex) {
+			throw new RuntimeException(ex.getMessage(), ex);
 		}
 	}
 
 	protected DefaultClientResources lettuceClientResources() {
 		try {
-			Method m = configuration.getClass().getDeclaredMethod("lettuceClientResources");
+			Method m = this.configuration.getClass().getDeclaredMethod("lettuceClientResources");
 			m.setAccessible(true);
-			return (DefaultClientResources) m.invoke(configuration);
-		} catch (Exception e) {
-			throw new RuntimeException(e.getMessage(), e);
+			return (DefaultClientResources) m.invoke(this.configuration);
+		} catch (Exception ex) {
+			throw new RuntimeException(ex.getMessage(), ex);
 		}
 	}
 
@@ -65,12 +66,12 @@ public class RedisConfigurationSupport {
 			ObjectProvider<LettuceClientConfigurationBuilderCustomizer> builderCustomizers,
 			ClientResources clientResources) {
 		try {
-			Method m = configuration.getClass().getDeclaredMethod("redisConnectionFactory", ObjectProvider.class,
+			Method m = this.configuration.getClass().getDeclaredMethod("redisConnectionFactory", ObjectProvider.class,
 					ClientResources.class);
 			m.setAccessible(true);
-			return (LettuceConnectionFactory) m.invoke(configuration, builderCustomizers, clientResources);
-		} catch (Exception e) {
-			throw new RuntimeException(e.getMessage(), e);
+			return (LettuceConnectionFactory) m.invoke(this.configuration, builderCustomizers, clientResources);
+		} catch (Exception ex) {
+			throw new RuntimeException(ex.getMessage(), ex);
 		}
 	}
 
@@ -95,27 +96,31 @@ public class RedisConfigurationSupport {
 	}
 
 	protected RedisConnectionFactory wrap(RedisConnectionFactory redisConnectionFactory) {
-		if (redisConnectionFactory instanceof TracingRedisConnectionFactory)
+		if (redisConnectionFactory instanceof TracingRedisConnectionFactory) {
 			return redisConnectionFactory;
+		}
 		TracingConfiguration.Builder builder = new TracingConfiguration.Builder(GlobalTracer.get())
 				.traceWithActiveSpanOnly(true).extensionTag(Tags.SPAN_KIND.getKey(), Tags.SPAN_KIND_CLIENT);
 		StringBuilder service = new StringBuilder("redis");
 		RedisProperties properties = getProperties();
-		if (properties.getSentinel() != null && properties.getSentinel().getNodes() != null) {
+		if ((properties.getSentinel() != null) && (properties.getSentinel().getNodes() != null)) {
 			properties.getSentinel().getNodes();
 			builder.extensionTag("peer.address", String.join(",", properties.getSentinel().getNodes()));
 			service.append("-sentinel");
-		} else if (properties.getCluster() != null && properties.getCluster().getNodes() != null) {
+		} else if ((properties.getCluster() != null) && (properties.getCluster().getNodes() != null)) {
 			builder.extensionTag("peer.address", String.join(",", properties.getCluster().getNodes()));
 			service.append("-cluster");
 		} else {
-			if (properties.isSsl())
+			if (properties.isSsl()) {
 				service.append("s");
+			}
 			service.append("://").append(properties.getHost());
-			if (properties.getPort() != 6379)
+			if (properties.getPort() != 6379) {
 				service.append(":").append(properties.getPort());
-			if (properties.getDatabase() > 0)
+			}
+			if (properties.getDatabase() > 0) {
 				service.append("/").append(properties.getDatabase());
+			}
 		}
 		builder.extensionTag(Tags.PEER_SERVICE.getKey(), service.toString());
 		return new TracingRedisConnectionFactory(redisConnectionFactory, builder.build());

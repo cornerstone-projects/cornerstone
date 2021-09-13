@@ -39,7 +39,7 @@ class PredicateBuilderTests extends DataJpaTestBase {
 
 	@Test
 	void testIsConstant() {
-		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+		CriteriaBuilder cb = this.entityManager.getCriteriaBuilder();
 		CriteriaQuery<TestEntity> cq = cb.createQuery(TestEntity.class);
 		Root<TestEntity> root = cq.from(TestEntity.class);
 		assertThat(isConstantTrue(cb.isTrue(cb.literal(true)))).isTrue();
@@ -59,7 +59,7 @@ class PredicateBuilderTests extends DataJpaTestBase {
 
 	@Test
 	void testExample() {
-		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+		CriteriaBuilder cb = this.entityManager.getCriteriaBuilder();
 		CriteriaQuery<TestEntity> cq = cb.createQuery(TestEntity.class);
 		Root<TestEntity> root = cq.from(TestEntity.class);
 		ExampleMatcher matcher = ExampleMatcher.matching().withMatcher("name", match -> match.contains());
@@ -85,15 +85,15 @@ class PredicateBuilderTests extends DataJpaTestBase {
 		for (int i = 0; i < size; i++) {
 			TestEntity entity = new TestEntity();
 			Set<String> names = new HashSet<>();
-			for (int j = 0; j < i + 1; j++)
+			for (int j = 0; j < (i + 1); j++)
 				names.add("name" + j);
 			entity.setNames(names);
-			repository.save(entity);
+			this.repository.save(entity);
 		}
 		for (int i = 0; i < size; i++) {
 			String name = "name" + i;
 			long expected = size - i;
-			assertThat(repository.count((root, cq, cb) -> contains(root, cb, "names", name))).isEqualTo(expected);
+			assertThat(this.repository.count((root, cq, cb) -> contains(root, cb, "names", name))).isEqualTo(expected);
 		}
 	}
 
@@ -103,15 +103,16 @@ class PredicateBuilderTests extends DataJpaTestBase {
 		for (int i = 0; i < size; i++) {
 			TestEntity entity = new TestEntity();
 			Set<String> names = new HashSet<>();
-			for (int j = 0; j < i + 1; j++)
+			for (int j = 0; j < (i + 1); j++)
 				names.add("prefix" + "name" + j + "suffix");
 			entity.setNames(names);
-			repository.save(entity);
+			this.repository.save(entity);
 		}
 		for (int i = 0; i < size; i++) {
 			String name = "name" + i;
 			long expected = size - i;
-			assertThat(repository.count((root, cq, cb) -> itemContains(root, cb, "names", name))).isEqualTo(expected);
+			assertThat(this.repository.count((root, cq, cb) -> itemContains(root, cb, "names", name)))
+					.isEqualTo(expected);
 		}
 	}
 
@@ -121,15 +122,16 @@ class PredicateBuilderTests extends DataJpaTestBase {
 		for (int i = 0; i < size; i++) {
 			TestEntity entity = new TestEntity();
 			Set<String> names = new HashSet<>();
-			for (int j = 0; j < i + 1; j++)
+			for (int j = 0; j < (i + 1); j++)
 				names.add("name" + j + "suffix");
 			entity.setNames(names);
-			repository.save(entity);
+			this.repository.save(entity);
 		}
 		for (int i = 0; i < size; i++) {
 			String name = "name" + i;
 			long expected = size - i;
-			assertThat(repository.count((root, cq, cb) -> itemStartsWith(root, cb, "names", name))).isEqualTo(expected);
+			assertThat(this.repository.count((root, cq, cb) -> itemStartsWith(root, cb, "names", name)))
+					.isEqualTo(expected);
 		}
 	}
 
@@ -139,15 +141,16 @@ class PredicateBuilderTests extends DataJpaTestBase {
 		for (int i = 0; i < size; i++) {
 			TestEntity entity = new TestEntity();
 			Set<String> names = new HashSet<>();
-			for (int j = 0; j < i + 1; j++)
+			for (int j = 0; j < (i + 1); j++)
 				names.add("prefix" + "name" + j);
 			entity.setNames(names);
-			repository.save(entity);
+			this.repository.save(entity);
 		}
 		for (int i = 0; i < size; i++) {
 			String name = "name" + i;
 			long expected = size - i;
-			assertThat(repository.count((root, cq, cb) -> itemEndsWith(root, cb, "names", name))).isEqualTo(expected);
+			assertThat(this.repository.count((root, cq, cb) -> itemEndsWith(root, cb, "names", name)))
+					.isEqualTo(expected);
 		}
 	}
 
@@ -157,18 +160,18 @@ class PredicateBuilderTests extends DataJpaTestBase {
 		for (int i = 0; i < size; i++) {
 			TestEntity entity = new TestEntity();
 			List<String> list = new ArrayList<>();
-			for (int j = 0; j < i + 1; j++)
+			for (int j = 0; j < (i + 1); j++)
 				list.add(String.valueOf(j));
 			entity.setName("name" + String.join("", list));
-			repository.save(entity);
+			this.repository.save(entity);
 		}
 		for (int i = 0; i < size; i++) {
 			List<String> list = new ArrayList<>();
-			for (int j = 0; j < i + 1; j++)
+			for (int j = 0; j < (i + 1); j++)
 				list.add(String.valueOf(j));
 			String name = "name" + String.join("", list) + ".*";
 			long expected = size - i;
-			assertThat(repository.count((root, cq, cb) -> regexpLike(root, cb, "name", name))).isEqualTo(expected);
+			assertThat(this.repository.count((root, cq, cb) -> regexpLike(root, cb, "name", name))).isEqualTo(expected);
 		}
 	}
 

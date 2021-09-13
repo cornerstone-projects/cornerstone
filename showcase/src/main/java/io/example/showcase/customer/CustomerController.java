@@ -17,7 +17,7 @@ public class CustomerController extends AbstractEntityController<Customer, Long>
 
 	@Override
 	protected void beforeSave(Customer customer) {
-		if (customerRepository.existsByIdNo(customer.getIdNo()))
+		if (this.customerRepository.existsByIdNo(customer.getIdNo()))
 			throw badRequest("idNo.already.exists");
 	}
 

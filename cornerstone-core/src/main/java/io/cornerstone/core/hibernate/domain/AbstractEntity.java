@@ -35,7 +35,7 @@ public abstract class AbstractEntity extends AbstractPersistable<Long> {
 	@JsonProperty("id")
 	@JsonView(Persistable.class)
 	protected String getIdAsString() {
-		return id != null ? String.valueOf(id) : null;
+		return this.id != null ? String.valueOf(this.id) : null;
 	}
 
 }

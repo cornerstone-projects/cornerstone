@@ -21,17 +21,17 @@ public abstract class AbstractFileStorage implements FileStorage, BeanNameAware 
 		path = FileUtils.normalizePath(path);
 		if (!path.startsWith("/"))
 			path = '/' + path;
-		return StringUtils.hasLength(baseUrl) ? baseUrl + path : path;
+		return StringUtils.hasLength(this.baseUrl) ? this.baseUrl + path : path;
 	}
 
 	@Override
 	public void setBeanName(String beanName) {
 		if (beanName.equalsIgnoreCase("FileStorage")) {
-			name = FileStorage.super.getName();
+			this.name = FileStorage.super.getName();
 		} else {
 			if (beanName.endsWith("FileStorage"))
 				beanName = beanName.substring(0, beanName.length() - "FileStorage".length());
-			name = beanName;
+			this.name = beanName;
 		}
 	}
 

@@ -28,9 +28,9 @@ abstract class ApplicationEventTopicTestBase {
 	void publish() throws Exception {
 		for (Scope s : Scope.values()) {
 			TestEvent event = new TestEvent(s.name());
-			eventPublisher.publish(event, s);
+			this.eventPublisher.publish(event, s);
 			Thread.sleep(100);
-			verify(testListener).listen(eq(event));
+			verify(this.testListener).listen(eq(event));
 		}
 	}
 

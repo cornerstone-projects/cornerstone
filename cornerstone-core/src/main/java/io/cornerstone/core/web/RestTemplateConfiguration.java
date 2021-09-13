@@ -19,8 +19,8 @@ public class RestTemplateConfiguration {
 
 	@Bean
 	RestTemplateBuilder restTemplateBuilder(RestTemplateBuilderConfigurer restTemplateBuilderConfigurer) {
-		RestTemplateBuilder builder = new RestTemplateBuilder().setConnectTimeout(connectTimeout)
-				.setReadTimeout(readTimeout);
+		RestTemplateBuilder builder = new RestTemplateBuilder().setConnectTimeout(this.connectTimeout)
+				.setReadTimeout(this.readTimeout);
 		return restTemplateBuilderConfigurer.configure(builder);
 	}
 }

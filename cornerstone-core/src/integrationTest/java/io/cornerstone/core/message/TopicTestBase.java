@@ -21,9 +21,9 @@ public abstract class TopicTestBase extends MessageTestBase {
 	void publish() throws Exception {
 		for (Scope s : Scope.values()) {
 			String message = s.name();
-			testTopic.publish(message, s);
+			this.testTopic.publish(message, s);
 			Thread.sleep(100);
-			verify(messageProcessor).process(eq(message));
+			verify(this.messageProcessor).process(eq(message));
 		}
 	}
 

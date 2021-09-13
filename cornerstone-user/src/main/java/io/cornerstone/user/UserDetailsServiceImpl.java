@@ -16,15 +16,16 @@ public class UserDetailsServiceImpl implements UserDetailsService, UserDetailsPa
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		return userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException(username));
+		return this.userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException(username));
 	}
 
 	@Override
 	public UserDetails updatePassword(UserDetails user, String newPassword) {
 		String username = user.getUsername();
-		User u = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException(username));
+		User u = this.userRepository.findByUsername(username)
+				.orElseThrow(() -> new UsernameNotFoundException(username));
 		u.setPassword(newPassword);
-		userRepository.save(u);
+		this.userRepository.save(u);
 		return u;
 	}
 }

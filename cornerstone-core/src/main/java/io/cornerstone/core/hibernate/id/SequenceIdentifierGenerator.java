@@ -27,8 +27,8 @@ public class SequenceIdentifierGenerator implements IdentifierGenerator, Configu
 
 	@Override
 	public Serializable generate(SharedSessionContractImplementor session, Object obj) {
-		return type instanceof IntegerType ? sequence.nextIntValue()
-				: type instanceof StringType ? sequence.nextStringValue() : sequence.nextLongValue();
+		return this.type instanceof IntegerType ? this.sequence.nextIntValue()
+				: this.type instanceof StringType ? this.sequence.nextStringValue() : this.sequence.nextLongValue();
 	}
 
 	@Override
@@ -37,7 +37,7 @@ public class SequenceIdentifierGenerator implements IdentifierGenerator, Configu
 		String sequenceName = (String) params.get("sequenceName");
 		if (sequenceName == null)
 			throw new IllegalArgumentException("@GenericGenerator miss parameter \"sequenceName\"");
-		sequence = beanFactory.getBean(sequenceName, Sequence.class);
+		this.sequence = this.beanFactory.getBean(sequenceName, Sequence.class);
 	}
 
 }

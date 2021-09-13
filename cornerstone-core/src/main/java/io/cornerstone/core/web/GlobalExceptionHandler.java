@@ -31,7 +31,7 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler
 	public void handleMaxUploadSizeExceeded(HttpServletRequest request, HttpServletResponse response,
 			MaxUploadSizeExceededException ex) throws IOException {
-		response.sendError(HttpServletResponse.SC_REQUEST_ENTITY_TOO_LARGE, messageSource.getMessage(
+		response.sendError(HttpServletResponse.SC_REQUEST_ENTITY_TOO_LARGE, this.messageSource.getMessage(
 				"max.upload.size.exceeded", new Object[] { ex.getMaxUploadSize() }, LocaleContextHolder.getLocale()));
 	}
 

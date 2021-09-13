@@ -20,19 +20,19 @@ class AuditableTests extends DataJpaTestBase {
 	@Test
 	@WithMockUser(username = "admin")
 	void test() {
-		TestEntity entity = repository.save(new TestEntity());
+		TestEntity entity = this.repository.save(new TestEntity());
 		flushAndClear();
 
 		Long id = entity.getId();
 		assertThat(id).isNotNull();
-		entity = repository.findById(id).orElseThrow(IllegalStateException::new);
+		entity = this.repository.findById(id).orElseThrow(IllegalStateException::new);
 		assertThat(entity.getCreatedDate()).isNotNull();
 		assertThat(entity.getCreatedBy()).isEqualTo("admin");
 		assertThat(entity.getLastModifiedDate()).isNull();
 		assertThat(entity.getLastModifiedBy()).isNull();
 
 		entity.setName("test");
-		entity = repository.save(entity);
+		entity = this.repository.save(entity);
 		flushAndClear();
 
 		assertThat(entity.getCreatedDate()).isNotNull();

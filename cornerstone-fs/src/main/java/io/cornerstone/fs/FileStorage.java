@@ -105,9 +105,9 @@ public interface FileStorage {
 	List<FileInfo> listFiles(String path);
 
 	default Paged<FileInfo> listFiles(String path, int limit, String marker) {
-		if (limit < 1 || limit > MAX_PAGE_SIZE)
+		if ((limit < 1) || (limit > MAX_PAGE_SIZE))
 			limit = DEFAULT_PAGE_SIZE;
-		if (marker != null && marker.isEmpty())
+		if ((marker != null) && marker.isEmpty())
 			marker = null;
 		return Paged.from(listFiles(path), limit, marker, FileInfo::getName);
 	}
@@ -115,9 +115,9 @@ public interface FileStorage {
 	List<FileInfo> listFilesAndDirectory(String path);
 
 	default Paged<FileInfo> listFilesAndDirectory(String path, int limit, String marker) {
-		if (limit < 1 || limit > MAX_PAGE_SIZE)
+		if ((limit < 1) || (limit > MAX_PAGE_SIZE))
 			limit = DEFAULT_PAGE_SIZE;
-		if (marker != null && marker.isEmpty())
+		if ((marker != null) && marker.isEmpty())
 			marker = null;
 		return Paged.from(listFilesAndDirectory(path), limit, marker, FileInfo::getName);
 	}

@@ -29,15 +29,15 @@ public class CitizenIdentificationNumberValidator implements ConstraintValidator
 	}
 
 	public static boolean isValid(String input) {
-		if (input == null || input.length() != 18)
+		if ((input == null) || (input.length() != 18))
 			return false;
 		char[] bits = new char[input.length() - 1];
 		char checkBit = 0;
 		for (int i = 0; i < input.length(); i++) {
 			char ch = input.charAt(i);
-			if ((ch < '0' || ch > '9') && (ch != 'X' && i == input.length() - 1))
+			if (((ch < '0') || (ch > '9')) && ((ch != 'X') && (i == (input.length() - 1))))
 				return false;
-			if (i < input.length() - 1)
+			if (i < (input.length() - 1))
 				bits[i] = ch;
 			else
 				checkBit = ch;

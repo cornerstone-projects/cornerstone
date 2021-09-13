@@ -29,24 +29,24 @@ class CustomerRepositoryTests extends DataJpaTestBase {
 	void save() {
 		Customer customer = new Customer();
 		customer.setName("name");
-		assertThatThrownBy(() -> repository.save(customer)).isInstanceOf(DataIntegrityViolationException.class);
+		assertThatThrownBy(() -> this.repository.save(customer)).isInstanceOf(DataIntegrityViolationException.class);
 		customer.setIdNo("test");
 		customer.setPhone("123");
-		assertThatThrownBy(() -> repository.save(customer)).getRootCause()
+		assertThatThrownBy(() -> this.repository.save(customer)).getRootCause()
 				.isInstanceOf(ConstraintViolationException.class);
 		customer.setIdNo(CitizenIdentificationNumberValidator.randomValue());
-		assertThatThrownBy(() -> repository.save(customer)).getRootCause()
+		assertThatThrownBy(() -> this.repository.save(customer)).getRootCause()
 				.isInstanceOf(ConstraintViolationException.class);
 		customer.setPhone(MobilePhoneNumberValidator.randomValue());
-		Customer savedCustomer = repository.save(customer);
+		Customer savedCustomer = this.repository.save(customer);
 		Long id = savedCustomer.getId();
 		assertThat(id).isNotNull();
-		savedCustomer = repository.findById(id).orElseThrow(IllegalStateException::new);
+		savedCustomer = this.repository.findById(id).orElseThrow(IllegalStateException::new);
 		assertThat(savedCustomer.getName()).isEqualTo(customer.getName());
 		assertThat(savedCustomer.getIdNo()).isEqualTo(customer.getIdNo());
 		assertThat(savedCustomer.getPhone()).isEqualTo(customer.getPhone());
 		assertThat(savedCustomer.getCreatedDate()).isNotNull();
-		repository.delete(savedCustomer);
+		this.repository.delete(savedCustomer);
 	}
 
 }

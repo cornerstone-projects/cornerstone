@@ -33,7 +33,8 @@ public class Paged<T> implements Serializable {
 			if (start == -1)
 				return new Paged<>(marker, null, Collections.emptyList());
 		}
-		return new Paged<>(marker, start + limit < result.size() ? markerMapper.apply(result.get(start + limit)) : null,
+		return new Paged<>(marker,
+				(start + limit) < result.size() ? markerMapper.apply(result.get(start + limit)) : null,
 				result.subList(start, Math.min(start + limit, result.size())));
 	}
 

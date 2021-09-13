@@ -47,25 +47,25 @@ public class RedisLockService implements LockService {
 
 	@PreDestroy
 	private void destroy() {
-		scheduler.shutdown();
+		this.scheduler.shutdown();
 	}
 
 	@Override
 	public boolean tryLock(String name) {
 		String key = NAMESPACE + name;
 		String holder = holder();
-		Boolean success = stringRedisTemplate.opsForValue().setIfAbsent(key, holder, this.watchdogTimeout,
+		Boolean success = this.stringRedisTemplate.opsForValue().setIfAbsent(key, holder, this.watchdogTimeout,
 				TimeUnit.MILLISECONDS);
 		if (success == null)
 			throw new RuntimeException("Unexpected null");
 		if (success) {
-			long delay = watchdogTimeout / 3;
-			renewalFutures.computeIfAbsent(name, k -> scheduler.scheduleWithFixedDelay(() -> {
-				Boolean b = stringRedisTemplate.expire(key, this.watchdogTimeout, TimeUnit.MILLISECONDS);
+			long delay = this.watchdogTimeout / 3;
+			this.renewalFutures.computeIfAbsent(name, k -> this.scheduler.scheduleWithFixedDelay(() -> {
+				Boolean b = this.stringRedisTemplate.expire(key, this.watchdogTimeout, TimeUnit.MILLISECONDS);
 				if (b == null)
 					throw new RuntimeException("Unexpected null");
 				if (!b) {
-					ScheduledFuture<?> future = renewalFutures.remove(name);
+					ScheduledFuture<?> future = this.renewalFutures.remove(name);
 					if (future != null)
 						future.cancel(true);
 				}
@@ -79,11 +79,12 @@ public class RedisLockService implements LockService {
 	public void unlock(String name) {
 		String key = NAMESPACE + name;
 		String holder = holder();
-		Long ret = stringRedisTemplate.execute(compareAndDeleteScript, Collections.singletonList(key), holder);
+		Long ret = this.stringRedisTemplate.execute(this.compareAndDeleteScript, Collections.singletonList(key),
+				holder);
 		if (ret == null)
 			throw new RuntimeException("Unexpected null");
 		if (ret == 1) {
-			ScheduledFuture<?> future = renewalFutures.remove(name);
+			ScheduledFuture<?> future = this.renewalFutures.remove(name);
 			if (future != null)
 				future.cancel(true);
 		} else if (ret == 0) {
@@ -94,7 +95,7 @@ public class RedisLockService implements LockService {
 	}
 
 	String holder() {
-		return self + '$' + Thread.currentThread().getId();
+		return this.self + '$' + Thread.currentThread().getId();
 	}
 
 }

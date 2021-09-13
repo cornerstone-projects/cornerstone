@@ -44,23 +44,23 @@ public class RedisMembership implements Membership, SchedulingConfigurer {
 	@Override
 	public void join(String group) {
 		String key = NAMESPACE + group;
-		stringRedisTemplate.executePipelined((SessionCallback) redisOperations -> {
-			redisOperations.opsForList().remove(key, 1, self);
-			redisOperations.opsForList().leftPush(key, self);
+		this.stringRedisTemplate.executePipelined((SessionCallback) redisOperations -> {
+			redisOperations.opsForList().remove(key, 1, this.self);
+			redisOperations.opsForList().leftPush(key, this.self);
 			return null;
 		});
-		groups.add(group);
+		this.groups.add(group);
 	}
 
 	@Override
 	public void leave(String group) {
-		stringRedisTemplate.opsForList().remove(NAMESPACE + group, 0, self);
-		groups.remove(group);
+		this.stringRedisTemplate.opsForList().remove(NAMESPACE + group, 0, this.self);
+		this.groups.remove(group);
 	}
 
 	@Override
 	public boolean isLeader(String group) {
-		return self.equals(getLeader(group));
+		return this.self.equals(getLeader(group));
 	}
 
 	@Override
@@ -73,28 +73,28 @@ public class RedisMembership implements Membership, SchedulingConfigurer {
 
 	@Override
 	public List<String> getMembers(String group) {
-		return stringRedisTemplate.opsForList().range(NAMESPACE + group, 0, -1);
+		return this.stringRedisTemplate.opsForList().range(NAMESPACE + group, 0, -1);
 	}
 
 	@PreDestroy
 	public void destroy() {
-		for (String group : groups)
-			stringRedisTemplate.opsForList().remove(NAMESPACE + group, 0, self);
+		for (String group : this.groups)
+			this.stringRedisTemplate.opsForList().remove(NAMESPACE + group, 0, this.self);
 	}
 
 	@Override
 	public void configureTasks(ScheduledTaskRegistrar taskRegistrar) {
-		taskRegistrar.addFixedDelayTask(this::doHeartbeat, heartbeat);
+		taskRegistrar.addFixedDelayTask(this::doHeartbeat, this.heartbeat);
 	}
 
 	private void doHeartbeat() {
-		for (String group : groups) {
+		for (String group : this.groups) {
 			List<String> members = getMembers(group);
 
-			if (!members.contains(self))
-				stringRedisTemplate.opsForList().rightPush(NAMESPACE + group, self);
+			if (!members.contains(this.self))
+				this.stringRedisTemplate.opsForList().rightPush(NAMESPACE + group, this.self);
 			for (String member : members) {
-				if (member.equals(self))
+				if (member.equals(this.self))
 					continue;
 				boolean alive = false;
 				String url = "http://" + member + "/actuator/health";
@@ -116,10 +116,10 @@ public class RedisMembership implements Membership, SchedulingConfigurer {
 						}
 					}
 					conn.disconnect();
-				} catch (IOException e) {
+				} catch (IOException ex) {
 				}
 				if (!alive)
-					stringRedisTemplate.opsForList().remove(NAMESPACE + group, 0, member);
+					this.stringRedisTemplate.opsForList().remove(NAMESPACE + group, 0, member);
 			}
 		}
 	}

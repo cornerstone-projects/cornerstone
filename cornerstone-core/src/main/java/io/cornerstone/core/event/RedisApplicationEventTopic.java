@@ -17,7 +17,7 @@ public class RedisApplicationEventTopic extends RedisTopic<ApplicationEvent> imp
 
 	@Override
 	public void subscribe(ApplicationEvent event) {
-		ctx.publishEvent(event);
+		this.ctx.publishEvent(event);
 	}
 
 }

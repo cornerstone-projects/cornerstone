@@ -129,7 +129,7 @@ public interface Treeable<T extends Treeable<T, ID>, ID> {
 		T parent = t;
 		while (parent != null) {
 			ID parentId = parent.getId();
-			if (parentId != null && parentId.equals(this.getId()))
+			if ((parentId != null) && parentId.equals(this.getId()))
 				return true;
 			parent = parent.getParent();
 		}
@@ -137,11 +137,11 @@ public interface Treeable<T extends Treeable<T, ID>, ID> {
 	}
 
 	default boolean isDescendantOrSelfOf(T t) {
-		return t != null && t.isAncestorOrSelfOf((T) this);
+		return (t != null) && t.isAncestorOrSelfOf((T) this);
 	}
 
 	default T findAncestor(int level) {
-		if (level < 1 || level > this.getLevel())
+		if ((level < 1) || (level > this.getLevel()))
 			return null;
 		T parent = (T) this;
 		while (parent != null) {

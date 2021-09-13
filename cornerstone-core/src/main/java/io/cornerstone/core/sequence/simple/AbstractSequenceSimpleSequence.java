@@ -34,7 +34,7 @@ public abstract class AbstractSequenceSimpleSequence extends AbstractDatabaseSim
 			if (!isSequenceExists(conn, getActualSequenceName()))
 				stmt.execute(getCreateSequenceStatement());
 		} catch (SQLException ex) {
-			logger.warn(ex.getMessage());
+			this.logger.warn(ex.getMessage());
 		}
 	}
 

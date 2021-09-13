@@ -35,9 +35,9 @@ public class JsonTypeDescriptor extends AbstractTypeDescriptor<Object> implement
 	public void setParameterValues(Properties parameters) {
 		final XProperty xProperty = (XProperty) parameters.get(DynamicParameterizedType.XPROPERTY);
 		if (xProperty instanceof JavaXMember) {
-			type = ((JavaXMember) xProperty).getJavaType();
+			this.type = ((JavaXMember) xProperty).getJavaType();
 		} else {
-			type = ((ParameterType) parameters.get(PARAMETER_TYPE)).getReturnedClass();
+			this.type = ((ParameterType) parameters.get(PARAMETER_TYPE)).getReturnedClass();
 		}
 	}
 
@@ -62,8 +62,8 @@ public class JsonTypeDescriptor extends AbstractTypeDescriptor<Object> implement
 					obj = BeanUtils.instantiateClass(value.getClass());
 					BeanUtils.copyProperties(value, obj);
 					return obj;
-				} catch (Exception e) {
-					throw new RuntimeException(e);
+				} catch (Exception ex) {
+					throw new RuntimeException(ex);
 				}
 
 			}
@@ -74,36 +74,40 @@ public class JsonTypeDescriptor extends AbstractTypeDescriptor<Object> implement
 	public String toString(Object value) {
 		try {
 			return objectMapper.writeValueAsString(value);
-		} catch (Exception e) {
-			throw new IllegalArgumentException(value + " cannot be serialized as json ", e);
+		} catch (Exception ex) {
+			throw new IllegalArgumentException(value + " cannot be serialized as json ", ex);
 		}
 	}
 
 	@Override
 	public Object fromString(String string) {
-		if (string == null)
+		if (string == null) {
 			return null;
+		}
 		try {
-			return objectMapper.readValue(string, objectMapper.constructType(type));
-		} catch (IOException e) {
-			throw new RuntimeException(e);
+			return objectMapper.readValue(string, objectMapper.constructType(this.type));
+		} catch (IOException ex) {
+			throw new RuntimeException(ex);
 		}
 	}
 
 	@SuppressWarnings({ "unchecked" })
 	@Override
 	public <X> X unwrap(Object value, Class<X> type, WrapperOptions options) {
-		if (value == null)
+		if (value == null) {
 			return null;
-		if (String.class == type)
+		}
+		if (String.class == type) {
 			return (X) toString(value);
+		}
 		throw unknownUnwrap(type);
 	}
 
 	@Override
 	public <X> Object wrap(X value, WrapperOptions options) {
-		if (value == null)
+		if (value == null) {
 			return null;
+		}
 		return fromString(value.toString());
 	}
 

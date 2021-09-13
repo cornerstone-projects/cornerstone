@@ -19,7 +19,7 @@ class TestEntityController extends AbstractEntityController<TestEntity, Long> {
 
 	@Override
 	protected void beforeSave(TestEntity testEntity) {
-		if (testEntityRepository.existsByIdNo(testEntity.getIdNo()))
+		if (this.testEntityRepository.existsByIdNo(testEntity.getIdNo()))
 			throw badRequest("idNo.already.exists");
 	}
 

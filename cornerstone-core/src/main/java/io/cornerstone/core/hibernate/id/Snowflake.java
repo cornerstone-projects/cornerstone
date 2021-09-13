@@ -6,7 +6,7 @@ import lombok.Value;
 
 public class Snowflake {
 
-	private final static long EPOCH = 1556150400000L;
+	private static final long EPOCH = 1556150400000L;
 	private final int workerId;
 	private final int workerIdBits;
 	private final int sequenceBits;
@@ -19,50 +19,51 @@ public class Snowflake {
 	}
 
 	public Snowflake(int workerId, int workerIdBits, int sequenceBits) {
-		long maxWorkerId = -1L ^ -1L << workerIdBits;
-		if (workerId > maxWorkerId || workerId < 0) {
+		long maxWorkerId = -1L ^ (-1L << workerIdBits);
+		if ((workerId > maxWorkerId) || (workerId < 0)) {
 			throw new IllegalArgumentException(
 					String.format("workerId can't be greater than %d or less than 0", maxWorkerId));
 		}
 		this.workerId = workerId;
 		this.workerIdBits = workerIdBits;
 		this.sequenceBits = sequenceBits;
-		this.sequenceMask = -1L ^ -1L << sequenceBits;
+		this.sequenceMask = -1L ^ (-1L << sequenceBits);
 	}
 
 	public synchronized long nextId() {
 		long timestamp = System.currentTimeMillis();
-		if (timestamp == lastTimestamp) {
-			sequence = (sequence + 1) & sequenceMask;
-			if (sequence == 0) {
+		if (timestamp == this.lastTimestamp) {
+			this.sequence = (this.sequence + 1) & this.sequenceMask;
+			if (this.sequence == 0) {
 				timestamp = System.currentTimeMillis();
-				while (timestamp <= lastTimestamp) {
+				while (timestamp <= this.lastTimestamp) {
 					timestamp = System.currentTimeMillis();
 				}
 			}
-		} else if (timestamp > lastTimestamp) {
-			sequence = ThreadLocalRandom.current().nextInt(2);
+		} else if (timestamp > this.lastTimestamp) {
+			this.sequence = ThreadLocalRandom.current().nextInt(2);
 		} else {
-			long offset = lastTimestamp - timestamp;
+			long offset = this.lastTimestamp - timestamp;
 			if (offset < 5000) {
 				try {
 					Thread.sleep(offset + 1);
 					timestamp = System.currentTimeMillis();
-					sequence = ThreadLocalRandom.current().nextInt(2);
-				} catch (InterruptedException e) {
-					throw new IllegalStateException(e);
+					this.sequence = ThreadLocalRandom.current().nextInt(2);
+				} catch (InterruptedException ex) {
+					throw new IllegalStateException(ex);
 				}
 			} else {
 				throw new IllegalStateException(
 						String.format("Clock moved backwards. Refusing to generate id for %d milliseconds", offset));
 			}
 		}
-		lastTimestamp = timestamp;
-		return ((timestamp - EPOCH) << (sequenceBits + workerIdBits)) | (workerId << sequenceBits) | sequence;
+		this.lastTimestamp = timestamp;
+		return ((timestamp - EPOCH) << (this.sequenceBits + this.workerIdBits)) | (this.workerId << this.sequenceBits)
+				| this.sequence;
 	}
 
 	public Info parse(long id) {
-		return new Info(id, workerIdBits, sequenceBits);
+		return new Info(id, this.workerIdBits, this.sequenceBits);
 	}
 
 	@Value
@@ -73,9 +74,9 @@ public class Snowflake {
 
 		Info(long id, int workerIdBits, int sequenceBits) {
 			long duration = id >> (sequenceBits + workerIdBits);
-			timestamp = EPOCH + duration;
-			workerId = (int) ((id - (duration << (sequenceBits + workerIdBits))) >> (sequenceBits));
-			sequence = id - (duration << (sequenceBits + workerIdBits)) - (workerId << sequenceBits);
+			this.timestamp = EPOCH + duration;
+			this.workerId = (int) ((id - (duration << (sequenceBits + workerIdBits))) >> (sequenceBits));
+			this.sequence = id - (duration << (sequenceBits + workerIdBits)) - (this.workerId << sequenceBits);
 		}
 	}
 

@@ -42,12 +42,12 @@ class ConvertersTests extends DataJpaTestBase {
 		entity.setEnumSet(new LinkedHashSet<>(entity.getEnumList()));
 		entity.setTestComponentList(Arrays.asList(new TestComponent("a", 1, new BigDecimal("10.1")),
 				new TestComponent("b", 2, new BigDecimal("10.2")), new TestComponent("c", 3, new BigDecimal("10.3"))));
-		repository.save(entity);
+		this.repository.save(entity);
 		flushAndClear();
 
 		Long id = entity.getId();
 		assertThat(id).isNotNull();
-		TestEntity savedEntity = repository.findById(id).orElseThrow(IllegalStateException::new);
+		TestEntity savedEntity = this.repository.findById(id).orElseThrow(IllegalStateException::new);
 		assertThat(savedEntity).isNotSameAs(entity);
 		assertThat(savedEntity).isEqualTo(entity);
 	}

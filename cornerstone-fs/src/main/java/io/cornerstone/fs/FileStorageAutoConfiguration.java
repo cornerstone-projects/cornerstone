@@ -21,7 +21,7 @@ public class FileStorageAutoConfiguration {
 		URI uri = fileStorageProperties.getUri();
 		if (uri != null) {
 			String scheme = uri.getScheme();
-			return (scheme != null && scheme.startsWith("ftp")) ? new FtpFileStorage(fileStorageProperties)
+			return ((scheme != null) && scheme.startsWith("ftp")) ? new FtpFileStorage(fileStorageProperties)
 					: new LocalFileStorage(fileStorageProperties);
 		}
 		if (fileStorageProperties.getS3().getAccessKey() != null)

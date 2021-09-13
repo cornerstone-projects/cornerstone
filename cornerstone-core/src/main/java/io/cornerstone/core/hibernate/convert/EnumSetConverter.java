@@ -17,7 +17,7 @@ public abstract class EnumSetConverter<T extends Enum<T>> implements AttributeCo
 
 	@SuppressWarnings("unchecked")
 	public EnumSetConverter() {
-		enumType = (Class<T>) ResolvableType.forClass(getClass()).as(EnumSetConverter.class).resolveGeneric(0);
+		this.enumType = (Class<T>) ResolvableType.forClass(getClass()).as(EnumSetConverter.class).resolveGeneric(0);
 	}
 
 	@Override
@@ -41,7 +41,7 @@ public abstract class EnumSetConverter<T extends Enum<T>> implements AttributeCo
 		String[] names = string.split(SEPARATOR);
 		Set<T> set = new LinkedHashSet<>();
 		for (String name : names)
-			set.add(Enum.valueOf(enumType, name));
+			set.add(Enum.valueOf(this.enumType, name));
 		return set;
 	}
 

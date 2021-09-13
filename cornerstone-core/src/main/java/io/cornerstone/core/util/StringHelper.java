@@ -40,7 +40,8 @@ public class StringHelper {
 			int length = word.length();
 			char lastLetter = word.charAt(length - 1);
 			char secondLast = word.charAt(length - 2);
-			if ("sxzo".indexOf(lastLetter) >= 0 || (lastLetter == 'h' && (secondLast == 's' || secondLast == 'c'))) {
+			if (("sxzo".indexOf(lastLetter) >= 0)
+					|| ((lastLetter == 'h') && ((secondLast == 's') || (secondLast == 'c')))) {
 				plural = word + "es";
 			} else if (lastLetter == 'y') {
 				if ("aeiou".indexOf(secondLast) >= 0) {

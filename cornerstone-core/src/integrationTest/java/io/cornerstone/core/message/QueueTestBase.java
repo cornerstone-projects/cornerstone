@@ -13,9 +13,9 @@ public abstract class QueueTestBase extends MessageTestBase {
 
 	@Test
 	void consume() throws Exception {
-		testQueue.produce("test");
+		this.testQueue.produce("test");
 		Thread.sleep(100);
-		verify(messageProcessor).process(eq("test"));
+		verify(this.messageProcessor).process(eq("test"));
 	}
 
 }

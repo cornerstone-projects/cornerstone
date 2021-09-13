@@ -35,18 +35,18 @@ public class DefaultPropertiesPostProcessor implements EnvironmentPostProcessor,
 			List<PropertySource<?>> list = new YamlPropertySourceLoader()
 					.load(FILE_NAME, new ClassPathResource(FILE_NAME)).stream().filter(ps -> {
 						String onProfile = (String) ps.getProperty("spring.config.activate.on-profile");
-						if (onProfile != null && !environment.acceptsProfiles(Profiles.of(onProfile)))
+						if ((onProfile != null) && !environment.acceptsProfiles(Profiles.of(onProfile)))
 							return false;
 						String onCloudPlatform = (String) ps.getProperty("spring.config.activate.on-cloud-platform");
 						if (onCloudPlatform == null)
 							return true;
 						CloudPlatform cloudPlatform = CloudPlatform.getActive(environment);
-						return cloudPlatform != null && cloudPlatform.name().equalsIgnoreCase(onCloudPlatform);
+						return (cloudPlatform != null) && cloudPlatform.name().equalsIgnoreCase(onCloudPlatform);
 					}).collect(Collectors.toList());
 			Collections.reverse(list);
 			list.forEach(environment.getPropertySources()::addLast);
-		} catch (IOException e) {
-			throw new RuntimeException(e.getMessage(), e);
+		} catch (IOException ex) {
+			throw new RuntimeException(ex.getMessage(), ex);
 		}
 
 		String version = CornerstoneVersion.getVersion();

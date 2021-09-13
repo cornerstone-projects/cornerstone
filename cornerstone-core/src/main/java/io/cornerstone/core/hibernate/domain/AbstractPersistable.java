@@ -26,11 +26,6 @@ public abstract class AbstractPersistable<ID extends Serializable> implements Pe
 	}
 
 	@Override
-	public String toString() {
-		return String.format("Entity of type %s with id: %s", this.getClass().getName(), getId());
-	}
-
-	@Override
 	public boolean equals(Object obj) {
 		if (null == obj) {
 			return false;
@@ -52,5 +47,10 @@ public abstract class AbstractPersistable<ID extends Serializable> implements Pe
 		ID id = this.getId();
 		hashCode += id == null ? 0 : id.hashCode() * 31;
 		return hashCode;
+	}
+
+	@Override
+	public String toString() {
+		return String.format("Entity of type %s with id: %s", this.getClass().getName(), getId());
 	}
 }

@@ -94,14 +94,14 @@ public class JsonDesensitizer {
 							if (isNumeric(type) && isNumber(newValue)) {
 								jgen.writeFieldName(name);
 								jgen.writeNumber(newValue);
-							} else if ((type == Boolean.class || type == boolean.class)
+							} else if (((type == Boolean.class) || (type == boolean.class))
 									&& ("true".equals(newValue) || "false".equals(newValue))) {
 								jgen.writeBooleanField(name, Boolean.getBoolean(newValue));
 							} else {
 								jgen.writeStringField(name, newValue);
 							}
-						} catch (Exception e) {
-							e.printStackTrace();
+						} catch (Exception ex) {
+							ex.printStackTrace();
 						}
 					} else {
 						JsonDesensitize annotation = null;
@@ -111,7 +111,7 @@ public class JsonDesensitizer {
 							if (annotation == null)
 								annotation = AnnotationUtils.findAnnotation(
 										ReflectionUtils.getField(obj.getClass(), name), JsonDesensitize.class);
-						} catch (Exception e) {
+						} catch (Exception ex) {
 
 						}
 						if (annotation != null) {
@@ -123,7 +123,7 @@ public class JsonDesensitizer {
 								if (isNumeric(type) && isNumber(newValue)) {
 									jgen.writeFieldName(name);
 									jgen.writeNumber(newValue);
-								} else if ((type == Boolean.class || type == boolean.class)
+								} else if (((type == Boolean.class) || (type == boolean.class))
 										&& ("true".equals(newValue) || "false".equals(newValue))) {
 									jgen.writeBooleanField(name, Boolean.getBoolean(newValue));
 								} else {
@@ -139,14 +139,14 @@ public class JsonDesensitizer {
 				}
 			}
 		}).setFailOnUnknownId(false);
-		objectWriter = objectMapper.enable(SerializationFeature.INDENT_OUTPUT)
+		this.objectWriter = objectMapper.enable(SerializationFeature.INDENT_OUTPUT)
 				.addMixIn(Object.class, DesensitizerMixIn.class).writer(filters);
 	}
 
 	public String toJson(Object value) {
 		try {
-			return objectWriter.writeValueAsString(value);
-		} catch (Exception e) {
+			return this.objectWriter.writeValueAsString(value);
+		} catch (Exception ex) {
 			return null;
 		}
 	}
@@ -156,7 +156,7 @@ public class JsonDesensitizer {
 			JsonNode node = objectMapper.readTree(json);
 			desensitize(null, node, null);
 			return objectMapper.writeValueAsString(node);
-		} catch (IOException e) {
+		} catch (IOException ex) {
 			return json;
 		}
 	}
@@ -165,7 +165,7 @@ public class JsonDesensitizer {
 		if (node.isObject()) {
 			List<String> toBeDropped = new ArrayList<>();
 			node.fieldNames().forEachRemaining(name -> {
-				if (dropping.stream().anyMatch(p -> p.test(name, node)))
+				if (this.dropping.stream().anyMatch(p -> p.test(name, node)))
 					toBeDropped.add(name);
 			});
 			((ObjectNode) node).remove(toBeDropped);
@@ -181,7 +181,7 @@ public class JsonDesensitizer {
 				desensitize(null, element, node);
 			}
 		} else if (parent instanceof ObjectNode) {
-			mapping.forEach((k, v) -> {
+			this.mapping.forEach((k, v) -> {
 				if (k.test(nodeName, parent)) {
 					ObjectNode on = ((ObjectNode) parent);
 					String value = v.apply(node.isNull() ? null : node.asText());
@@ -192,7 +192,7 @@ public class JsonDesensitizer {
 							on.put(nodeName, Boolean.valueOf(value));
 						else
 							on.put(nodeName, value);
-					} catch (Exception e) {
+					} catch (Exception ex) {
 						on.put(nodeName, value);
 					}
 				}
@@ -201,15 +201,15 @@ public class JsonDesensitizer {
 	}
 
 	private static boolean isNumeric(Class<?> type) {
-		return Short.TYPE == type || Integer.TYPE == type || Long.TYPE == type || Float.TYPE == type
-				|| Double.TYPE == type || (Number.class.isAssignableFrom(type));
+		return (Short.TYPE == type) || (Integer.TYPE == type) || (Long.TYPE == type) || (Float.TYPE == type)
+				|| (Double.TYPE == type) || (Number.class.isAssignableFrom(type));
 	}
 
 	private static boolean isNumber(String value) {
 		try {
 			Double.parseDouble(value);
 			return true;
-		} catch (Exception e) {
+		} catch (Exception ex) {
 			return false;
 		}
 	}

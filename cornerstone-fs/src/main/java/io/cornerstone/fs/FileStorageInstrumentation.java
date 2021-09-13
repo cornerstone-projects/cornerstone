@@ -27,13 +27,13 @@ public class FileStorageInstrumentation {
 		try {
 			Object result = Tracing.executeCheckedCallable(ReflectionUtils.stringify(method), pjp::proceed, "name",
 					fileStorage.getName());
-			if (methodName.equals("write") && args.length > 2 && args[2] instanceof Long) {
+			if (methodName.equals("write") && (args.length > 2) && (args[2] instanceof Long)) {
 				Metrics.summary("fs.write.size", "name", fileStorage.getName()).record((Long) args[2]);
 			}
 			return result;
-		} catch (Exception e) {
+		} catch (Exception ex) {
 			error = true;
-			throw e;
+			throw ex;
 		} finally {
 			Metrics.timer("fs.operations", "name", fileStorage.getName(), "operation", methodName, "error",
 					String.valueOf(error)).record(System.nanoTime() - start, TimeUnit.NANOSECONDS);

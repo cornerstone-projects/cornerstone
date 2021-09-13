@@ -23,16 +23,11 @@ public class BaseEvent<T> extends ApplicationEvent {
 	}
 
 	public boolean isLocal() {
-		return Objects.equals(instanceId, currentInstanceId());
+		return Objects.equals(this.instanceId, currentInstanceId());
 	}
 
 	private static String currentInstanceId() {
 		return Application.current().map(a -> a.getInstanceId(true)).orElse(null);
-	}
-
-	@Override
-	public int hashCode() {
-		return super.hashCode();
 	}
 
 	@Override
@@ -50,12 +45,17 @@ public class BaseEvent<T> extends ApplicationEvent {
 	}
 
 	@Override
+	public int hashCode() {
+		return super.hashCode();
+	}
+
+	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder(getClass().getName());
-		if (!"".equals(source))
-			sb.append("[source=" + source + "]");
-		if (instanceId != null)
-			sb.append(" from ").append(instanceId);
+		if (!"".equals(this.source))
+			sb.append("[source=" + this.source + "]");
+		if (this.instanceId != null)
+			sb.append(" from ").append(this.instanceId);
 		return sb.toString();
 	}
 

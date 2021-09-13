@@ -14,7 +14,7 @@ public abstract class BaseRestController {
 	protected ApplicationContext applicationContext;
 
 	protected ResponseStatusException notFound(Object subject) {
-		return new ResponseStatusException(NOT_FOUND, applicationContext.getMessage("not.found",
+		return new ResponseStatusException(NOT_FOUND, this.applicationContext.getMessage("not.found",
 				new Object[] { String.valueOf(subject) }, LocaleContextHolder.getLocale()));
 	}
 
@@ -23,13 +23,13 @@ public abstract class BaseRestController {
 	}
 
 	protected ResponseStatusException invalidParam(String name) {
-		return new ResponseStatusException(BAD_REQUEST,
-				applicationContext.getMessage("invalid.param", new Object[] { name }, LocaleContextHolder.getLocale()));
+		return new ResponseStatusException(BAD_REQUEST, this.applicationContext.getMessage("invalid.param",
+				new Object[] { name }, LocaleContextHolder.getLocale()));
 	}
 
 	protected ResponseStatusException missingParam(String name) {
-		return new ResponseStatusException(BAD_REQUEST,
-				applicationContext.getMessage("missing.param", new Object[] { name }, LocaleContextHolder.getLocale()));
+		return new ResponseStatusException(BAD_REQUEST, this.applicationContext.getMessage("missing.param",
+				new Object[] { name }, LocaleContextHolder.getLocale()));
 	}
 
 	protected RuntimeException shouldNeverHappen() {

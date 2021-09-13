@@ -199,8 +199,8 @@ public class Tracing {
 					samplingPriority = (Integer) value;
 			}
 		}
-		return GlobalTracer.get().activeSpan() == null && isComponent
-				|| (samplingPriority != null && samplingPriority < 0);
+		return ((GlobalTracer.get().activeSpan() == null) && isComponent)
+				|| ((samplingPriority != null) && (samplingPriority < 0));
 	}
 
 	private static Span buildSpan(String operationName, Serializable... tags) {
@@ -212,11 +212,11 @@ public class Tracing {
 
 	private static void setTags(Span span, Serializable... tags) {
 		if (tags.length > 0) {
-			if (tags.length % 2 != 0)
+			if ((tags.length % 2) != 0)
 				throw new IllegalArgumentException("Tags should be key value pair");
-			for (int i = 0; i < tags.length / 2; i++) {
+			for (int i = 0; i < (tags.length / 2); i++) {
 				String name = String.valueOf(tags[i * 2]);
-				Serializable value = tags[i * 2 + 1];
+				Serializable value = tags[(i * 2) + 1];
 				if (value instanceof Number)
 					span.setTag(name, (Number) value);
 				else if (value instanceof Boolean)

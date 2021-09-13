@@ -108,7 +108,7 @@ public enum DatabaseProduct {
 			StringBuilder sb = new StringBuilder(getJdbcUrlPrefix());
 			sb.append("://");
 			sb.append(StringUtils.hasLength(host) ? host : "localhost");
-			if (port > 0 && port != getDefaultPort())
+			if ((port > 0) && (port != getDefaultPort()))
 				sb.append(":").append(port);
 			sb.append("/").append(databaseName);
 			if (StringUtils.hasLength(params)) {
@@ -125,7 +125,7 @@ public enum DatabaseProduct {
 		@Override
 		public String polishJdbcUrl(String jdbcUrl) {
 			String url = polishJdbcUrl(jdbcUrl, ":", ";");
-			if (url.indexOf(':', url.lastIndexOf('/')) > 0 && !url.endsWith(";"))
+			if ((url.indexOf(':', url.lastIndexOf('/')) > 0) && !url.endsWith(";"))
 				url = url + ";";
 			return url;
 		}
@@ -165,7 +165,7 @@ public enum DatabaseProduct {
 			StringBuilder sb = new StringBuilder(getJdbcUrlPrefix());
 			sb.append("-sqli://");
 			sb.append(StringUtils.hasLength(host) ? host : "localhost");
-			if (port > 0 && port != getDefaultPort())
+			if ((port > 0) && (port != getDefaultPort()))
 				sb.append(":").append(port);
 			sb.append("/").append(databaseName);
 			if (StringUtils.hasLength(params)) {
@@ -198,7 +198,7 @@ public enum DatabaseProduct {
 			StringBuilder sb = new StringBuilder(getJdbcUrlPrefix());
 			sb.append("://");
 			sb.append(StringUtils.hasLength(host) ? host : "localhost");
-			if (port > 0 && port != getDefaultPort())
+			if ((port > 0) && (port != getDefaultPort()))
 				sb.append(":").append(port);
 			sb.append(";DatabaseName=").append(databaseName);
 			if (StringUtils.hasLength(params)) {
@@ -284,7 +284,7 @@ public enum DatabaseProduct {
 			StringBuilder sb = new StringBuilder(getJdbcUrlPrefix());
 			sb.append(":tcp://");
 			sb.append(StringUtils.hasLength(host) ? host : "localhost");
-			if (port > 0 && port != getDefaultPort())
+			if ((port > 0) && (port != getDefaultPort()))
 				sb.append(":").append(port);
 			sb.append("/").append(databaseName);
 			if (StringUtils.hasLength(params)) {
@@ -317,7 +317,7 @@ public enum DatabaseProduct {
 			StringBuilder sb = new StringBuilder(getJdbcUrlPrefix());
 			sb.append(":hsql://");
 			sb.append(StringUtils.hasLength(host) ? host : "localhost");
-			if (port > 0 && port != getDefaultPort())
+			if ((port > 0) && (port != getDefaultPort()))
 				sb.append(":").append(port);
 			sb.append("/").append(databaseName);
 			if (StringUtils.hasLength(params)) {
@@ -350,7 +350,7 @@ public enum DatabaseProduct {
 			StringBuilder sb = new StringBuilder(getJdbcUrlPrefix());
 			sb.append("://");
 			sb.append(StringUtils.hasLength(host) ? host : "localhost");
-			if (port > 0 && port != getDefaultPort())
+			if ((port > 0) && (port != getDefaultPort()))
 				sb.append(":").append(port);
 			sb.append("/").append(databaseName);
 			if (StringUtils.hasLength(params)) {
@@ -487,8 +487,8 @@ public enum DatabaseProduct {
 					return Arrays.asList(s.split("\\s*,\\s*"));
 				}
 			}
-		} catch (IOException e) {
-			e.printStackTrace();
+		} catch (IOException ex) {
+			ex.printStackTrace();
 		}
 		return Collections.emptyList();
 	}
@@ -505,7 +505,7 @@ public enum DatabaseProduct {
 		StringBuilder sb = new StringBuilder(getJdbcUrlPrefix());
 		sb.append("://");
 		sb.append(StringUtils.hasLength(host) ? host : "localhost");
-		if (port > 0 && port != getDefaultPort())
+		if ((port > 0) && (port != getDefaultPort()))
 			sb.append(":").append(port);
 		sb.append("/").append(databaseName);
 		if (StringUtils.hasLength(params)) {

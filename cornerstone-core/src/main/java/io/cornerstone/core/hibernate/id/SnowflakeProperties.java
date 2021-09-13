@@ -23,8 +23,8 @@ public class SnowflakeProperties {
 
 	public static final String PREFIX = "snowflake";
 
-	@Getter(value = AccessLevel.NONE)
-	@Setter(value = AccessLevel.NONE)
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	@Autowired
 	private Environment env;
 
@@ -36,33 +36,33 @@ public class SnowflakeProperties {
 
 	@PostConstruct
 	private void init() throws Exception {
-		if (!env.containsProperty(PREFIX + ".worker-id")) {
+		if (!this.env.containsProperty(PREFIX + ".worker-id")) {
 			Application.current().ifPresentOrElse(app -> {
 				String ip = app.getHostAddress();
 				int index = ip.lastIndexOf('.');
 				String id;
 				if (index > 0) {
 					id = ip.substring(index + 1);
-					workerId = Integer.parseInt(id);
+					this.workerId = Integer.parseInt(id);
 				} else {
 					// IPv6
 					index = ip.lastIndexOf(':');
 					id = ip.substring(index + 1);
 					id = String.valueOf(NumberUtils.xToDecimal(16, id.toUpperCase()));
-					workerId = Integer.parseInt(id);
-					workerIdBits = 16;
-					if (workerId < 0)
-						workerId += 2 << workerIdBits;
+					this.workerId = Integer.parseInt(id);
+					this.workerIdBits = 16;
+					if (this.workerId < 0)
+						this.workerId += 2 << this.workerIdBits;
 				}
 				log.info(
 						"Extract snowflake workerId {} from host address {}, please configure {}.worker-id if multiple instances running in the same host",
-						workerId, app.getHostAddress(), PREFIX);
+						this.workerId, app.getHostAddress(), PREFIX);
 			}, () -> log.warn("Please configure {}.worker-id if multiple instances running", PREFIX));
 		}
 	}
 
 	public Snowflake build() {
-		return new Snowflake(workerId, workerIdBits, sequenceBits);
+		return new Snowflake(this.workerId, this.workerIdBits, this.sequenceBits);
 	}
 
 }

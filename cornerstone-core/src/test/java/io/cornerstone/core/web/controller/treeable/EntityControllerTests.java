@@ -34,20 +34,20 @@ class EntityControllerTests extends WebMvcWithDataJpaTestBase {
 
 		// create
 		TestEntity parent = new TestEntity("parent");
-		TestEntity testEntity = restTemplate.postForObject(PATH_LIST, parent, TestEntity.class);
+		TestEntity testEntity = this.restTemplate.postForObject(PATH_LIST, parent, TestEntity.class);
 		assertThat(testEntity).isNotNull();
 		assertThat(testEntity.getId()).isNotNull();
 		assertThat(testEntity.getName()).isEqualTo(parent.getName());
 		assertThat(testEntity.getLevel()).isEqualTo(1);
 
 		assertThatThrownBy(
-				() -> restTemplate.postForObject(PATH_LIST, new TestEntity(parent.getName()), TestEntity.class))
+				() -> this.restTemplate.postForObject(PATH_LIST, new TestEntity(parent.getName()), TestEntity.class))
 						.isInstanceOf(BadRequest.class);
 		// name already exists
 
 		TestEntity child = new TestEntity("child");
 		child.setParent(testEntity);
-		child = restTemplate.postForObject(PATH_LIST, child, TestEntity.class);
+		child = this.restTemplate.postForObject(PATH_LIST, child, TestEntity.class);
 		assertThat(child).isNotNull();
 		assertThat(child.getId()).isNotNull();
 		assertThat(child.getName()).isEqualTo("child");
@@ -55,101 +55,102 @@ class EntityControllerTests extends WebMvcWithDataJpaTestBase {
 		assertThat(child.getParent()).isNotNull();
 		assertThat(child.getParent().getId()).isEqualTo(testEntity.getId());
 		TestEntity te = new TestEntity(child.getParent(), child.getName(), 0);
-		assertThatThrownBy(() -> restTemplate.postForObject(PATH_LIST, te, TestEntity.class))
+		assertThatThrownBy(() -> this.restTemplate.postForObject(PATH_LIST, te, TestEntity.class))
 				.isInstanceOf(BadRequest.class);
 
 		TestEntity child2 = new TestEntity("child2");
 		child2.setParent(child.getParent());
-		child2 = restTemplate.postForObject(PATH_LIST, child2, TestEntity.class);
+		child2 = this.restTemplate.postForObject(PATH_LIST, child2, TestEntity.class);
 		assertThat(child2).isNotNull();
 		assertThat(child2.getId()).isNotNull();
 
 		// read
-		assertThat(restTemplate.getForObject(PATH_DETAIL, TestEntity.class, testEntity.getId())).isEqualTo(testEntity);
+		assertThat(this.restTemplate.getForObject(PATH_DETAIL, TestEntity.class, testEntity.getId()))
+				.isEqualTo(testEntity);
 
 		// update partial
 		TestEntity temp = new TestEntity("new name");
-		child = restTemplate.patchForObject(PATH_DETAIL, temp, TestEntity.class, child.getId());
+		child = this.restTemplate.patchForObject(PATH_DETAIL, temp, TestEntity.class, child.getId());
 		assertThat(child).isNotNull();
 		assertThat(child.getName()).isEqualTo(temp.getName());
 		assertThat(child.getParent()).isNotNull(); // parent not updated
 		assertThat(child.getLevel()).isEqualTo(2);
 		TestEntity te2 = new TestEntity(child.getParent(), child.getName(), 0);
 		Long child2Id = child2.getId();
-		assertThatThrownBy(() -> restTemplate.patchForObject(PATH_DETAIL, te2, TestEntity.class, child2Id))
+		assertThatThrownBy(() -> this.restTemplate.patchForObject(PATH_DETAIL, te2, TestEntity.class, child2Id))
 				.isInstanceOf(BadRequest.class);
 		// name already exists
 
 		// update full
 		temp.setName("name");
 		temp.setParent(null);
-		restTemplate.put(PATH_DETAIL, temp, child.getId());
-		child = restTemplate.getForObject(PATH_DETAIL, TestEntity.class, child.getId());
+		this.restTemplate.put(PATH_DETAIL, temp, child.getId());
+		child = this.restTemplate.getForObject(PATH_DETAIL, TestEntity.class, child.getId());
 		assertThat(child).isNotNull();
 		assertThat(child.getName()).isEqualTo("name");
 		assertThat(child.getParent()).isNull();
 		assertThat(child.getLevel()).isEqualTo(1);
 
 		// delete
-		restTemplate.delete(PATH_DETAIL, child2.getId());
-		restTemplate.delete(PATH_DETAIL, child.getId());
-		restTemplate.delete(PATH_DETAIL, testEntity.getId());
+		this.restTemplate.delete(PATH_DETAIL, child2.getId());
+		this.restTemplate.delete(PATH_DETAIL, child.getId());
+		this.restTemplate.delete(PATH_DETAIL, testEntity.getId());
 
-		assertThatThrownBy(() -> restTemplate.getForObject(PATH_DETAIL, TestEntity.class, testEntity.getId()))
+		assertThatThrownBy(() -> this.restTemplate.getForObject(PATH_DETAIL, TestEntity.class, testEntity.getId()))
 				.isInstanceOf(NotFound.class);
 
 	}
 
 	@Test
 	void list() throws Exception {
-		TestEntity parent1 = restTemplate.postForObject(PATH_LIST, new TestEntity("parent1", 1), TestEntity.class);
-		TestEntity parent2 = restTemplate.postForObject(PATH_LIST, new TestEntity("parent2", 2), TestEntity.class);
-		TestEntity child1 = restTemplate.postForObject(PATH_LIST, new TestEntity(parent1, "child1", 1),
+		TestEntity parent1 = this.restTemplate.postForObject(PATH_LIST, new TestEntity("parent1", 1), TestEntity.class);
+		TestEntity parent2 = this.restTemplate.postForObject(PATH_LIST, new TestEntity("parent2", 2), TestEntity.class);
+		TestEntity child1 = this.restTemplate.postForObject(PATH_LIST, new TestEntity(parent1, "child1", 1),
 				TestEntity.class);
-		TestEntity child2 = restTemplate.postForObject(PATH_LIST, new TestEntity(parent1, "child2", 1),
+		TestEntity child2 = this.restTemplate.postForObject(PATH_LIST, new TestEntity(parent1, "child2", 1),
 				TestEntity.class);
 
-		ResultPage<TestEntity> page = restTemplate.exchange(RequestEntity.method(GET, PATH_LIST).build(),
+		ResultPage<TestEntity> page = this.restTemplate.exchange(RequestEntity.method(GET, PATH_LIST).build(),
 				new ParameterizedTypeReference<ResultPage<TestEntity>>() {
 				}).getBody();
 
 		assertThat(page).isNotNull();
 		assertThat(page.getResult()).hasSize(4);
 
-		page = restTemplate.exchange(RequestEntity.method(GET, PATH_LIST + "?query=child").build(),
+		page = this.restTemplate.exchange(RequestEntity.method(GET, PATH_LIST + "?query=child").build(),
 				new ParameterizedTypeReference<ResultPage<TestEntity>>() {
 				}).getBody();
 		assertThat(page).isNotNull();
 		assertThat(page.getResult()).hasSize(2);
 
-		page = restTemplate.exchange(RequestEntity.method(GET, PATH_LIST + "?name=child").build(),
+		page = this.restTemplate.exchange(RequestEntity.method(GET, PATH_LIST + "?name=child").build(),
 				new ParameterizedTypeReference<ResultPage<TestEntity>>() {
 				}).getBody();
 		assertThat(page).isNotNull();
 		assertThat(page.getResult()).hasSize(2);
 
-		page = restTemplate.exchange(RequestEntity.method(GET, PATH_LIST + "?level=2").build(),
+		page = this.restTemplate.exchange(RequestEntity.method(GET, PATH_LIST + "?level=2").build(),
 				new ParameterizedTypeReference<ResultPage<TestEntity>>() {
 				}).getBody();
 		assertThat(page).isNotNull();
 		assertThat(page.getResult()).hasSize(2);
 
-		restTemplate.delete(PATH_DETAIL, child1.getId());
-		restTemplate.delete(PATH_DETAIL, child2.getId());
-		restTemplate.delete(PATH_DETAIL, parent1.getId());
-		restTemplate.delete(PATH_DETAIL, parent2.getId());
+		this.restTemplate.delete(PATH_DETAIL, child1.getId());
+		this.restTemplate.delete(PATH_DETAIL, child2.getId());
+		this.restTemplate.delete(PATH_DETAIL, parent1.getId());
+		this.restTemplate.delete(PATH_DETAIL, parent2.getId());
 	}
 
 	@Test
 	void children() throws Exception {
-		TestEntity parent1 = restTemplate.postForObject(PATH_LIST, new TestEntity("parent1", 1), TestEntity.class);
-		TestEntity parent2 = restTemplate.postForObject(PATH_LIST, new TestEntity("parent2", 2), TestEntity.class);
-		TestEntity child1 = restTemplate.postForObject(PATH_LIST, new TestEntity(parent1, "child1", 1),
+		TestEntity parent1 = this.restTemplate.postForObject(PATH_LIST, new TestEntity("parent1", 1), TestEntity.class);
+		TestEntity parent2 = this.restTemplate.postForObject(PATH_LIST, new TestEntity("parent2", 2), TestEntity.class);
+		TestEntity child1 = this.restTemplate.postForObject(PATH_LIST, new TestEntity(parent1, "child1", 1),
 				TestEntity.class);
-		TestEntity child2 = restTemplate.postForObject(PATH_LIST, new TestEntity(parent1, "child2", 1),
+		TestEntity child2 = this.restTemplate.postForObject(PATH_LIST, new TestEntity(parent1, "child2", 1),
 				TestEntity.class);
 
-		List<TestEntity> children = restTemplate.exchange(RequestEntity.method(GET, PATH_CHILDREN, 0).build(),
+		List<TestEntity> children = this.restTemplate.exchange(RequestEntity.method(GET, PATH_CHILDREN, 0).build(),
 				new ParameterizedTypeReference<List<TestEntity>>() {
 				}).getBody();
 
@@ -158,7 +159,7 @@ class EntityControllerTests extends WebMvcWithDataJpaTestBase {
 		assertThat(children).element(0).extracting("name").isEqualTo(parent1.getName());
 		assertThat(children).element(1).extracting("name").isEqualTo(parent2.getName());
 
-		children = restTemplate.exchange(RequestEntity.method(GET, PATH_CHILDREN, parent1.getId()).build(),
+		children = this.restTemplate.exchange(RequestEntity.method(GET, PATH_CHILDREN, parent1.getId()).build(),
 				new ParameterizedTypeReference<List<TestEntity>>() {
 				}).getBody();
 
@@ -166,7 +167,7 @@ class EntityControllerTests extends WebMvcWithDataJpaTestBase {
 		assertThat(children).element(0).extracting("name").isEqualTo(child1.getName());
 		assertThat(children).element(1).extracting("name").isEqualTo(child2.getName());
 
-		children = restTemplate.exchange(RequestEntity.method(GET, PATH_CHILDREN + "?query=parent", 0).build(),
+		children = this.restTemplate.exchange(RequestEntity.method(GET, PATH_CHILDREN + "?query=parent", 0).build(),
 				new ParameterizedTypeReference<List<TestEntity>>() {
 				}).getBody();
 
@@ -174,7 +175,7 @@ class EntityControllerTests extends WebMvcWithDataJpaTestBase {
 		assertThat(children).element(0).extracting("name").isEqualTo(parent1.getName());
 		assertThat(children).element(1).extracting("name").isEqualTo(parent2.getName());
 
-		children = restTemplate
+		children = this.restTemplate
 				.exchange(RequestEntity.method(GET, PATH_CHILDREN + "?query=" + parent2.getName(), 0).build(),
 						new ParameterizedTypeReference<List<TestEntity>>() {
 						})
@@ -183,7 +184,7 @@ class EntityControllerTests extends WebMvcWithDataJpaTestBase {
 		assertThat(children).hasSize(1);
 		assertThat(children).element(0).extracting("name").isEqualTo(parent2.getName());
 
-		children = restTemplate
+		children = this.restTemplate
 				.exchange(RequestEntity.method(GET, PATH_CHILDREN + "?query=child", parent1.getId()).build(),
 						new ParameterizedTypeReference<List<TestEntity>>() {
 						})
@@ -192,17 +193,17 @@ class EntityControllerTests extends WebMvcWithDataJpaTestBase {
 		assertThat(children).element(0).extracting("name").isEqualTo(child1.getName());
 		assertThat(children).element(1).extracting("name").isEqualTo(child2.getName());
 
-		children = restTemplate.exchange(
+		children = this.restTemplate.exchange(
 				RequestEntity.method(GET, PATH_CHILDREN + "?query=" + child2.getName(), parent1.getId()).build(),
 				new ParameterizedTypeReference<List<TestEntity>>() {
 				}).getBody();
 		assertThat(children).hasSize(1);
 		assertThat(children).element(0).extracting("name").isEqualTo(child2.getName());
 
-		restTemplate.delete(PATH_DETAIL, child1.getId());
-		restTemplate.delete(PATH_DETAIL, child2.getId());
-		restTemplate.delete(PATH_DETAIL, parent1.getId());
-		restTemplate.delete(PATH_DETAIL, parent2.getId());
+		this.restTemplate.delete(PATH_DETAIL, child1.getId());
+		this.restTemplate.delete(PATH_DETAIL, child2.getId());
+		this.restTemplate.delete(PATH_DETAIL, parent1.getId());
+		this.restTemplate.delete(PATH_DETAIL, parent2.getId());
 	}
 
 }
