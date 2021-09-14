@@ -4,7 +4,7 @@ plugins {
 	id 'io.spring.dependency-management'
 }
 
-sourceCompatibility = "11"
+sourceCompatibility = '11'
 
 repositories {
 	mavenCentral()
@@ -17,6 +17,9 @@ repositories {
 dependencyManagement {
 	imports {
 		mavenBom org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES
+	}
+	generatedPomCustomization {
+		enabled = false
 	}
 }
 
@@ -37,7 +40,6 @@ configurations {
 }
 
 dependencies {
-	implementation "org.springframework.boot:spring-boot-starter-log4j2"
 	testImplementation "org.springframework.boot:spring-boot-starter-test"
 	testImplementation "org.springframework.security:spring-security-test"
 	testRuntimeOnly "com.h2database:h2"
@@ -46,9 +48,10 @@ dependencies {
 }
 
 configurations.all {
-	exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
-	exclude group: 'com.google.code.gson', module: 'gson' // introduced by jaeger-client
-	exclude group: 'org.glassfish.jaxb', module: 'jaxb-runtime' // introduced by hibernate-core
+	resolutionStrategy.eachDependency {
+		if (it.requested.name == 'spring-boot-starter-logging')
+			it.useTarget "${it.requested.group}:spring-boot-starter-log4j2:${it.requested.version}"
+	}
 }
 
 tasks.withType(Test) {
