@@ -6,6 +6,8 @@ import java.util.concurrent.Executor;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.AmqpAdmin;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.Binding.DestinationType;
@@ -23,6 +25,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 public abstract class RabbitTopic<T extends Serializable> implements Topic<T> {
+
+	protected static Logger log = LoggerFactory.getLogger(RabbitTopic.class);
 
 	@Autowired
 	protected RabbitTemplate rabbitTemplate;
@@ -78,8 +82,7 @@ public abstract class RabbitTopic<T extends Serializable> implements Topic<T> {
 
 	@Override
 	public void publish(final T message, Scope scope) {
-		if (scope == null)
-			scope = Scope.GLOBAL;
+		log.info("Publishing {} message: {}", scope.name(), message);
 		if (scope == Scope.LOCAL) {
 			Runnable task = () -> subscribe(message);
 			if (this.taskExecutor != null)

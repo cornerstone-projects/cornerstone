@@ -21,6 +21,7 @@ public class RabbitApplicationEventTopic extends RabbitTopic<ApplicationEvent> i
 	@RabbitListener(queues = "#{@rabbitApplicationEventTopic.queueName}")
 	@Override
 	public void subscribe(ApplicationEvent event) {
+		log.info("Receive published message: {}", event);
 		this.ctx.publishEvent(event);
 	}
 
