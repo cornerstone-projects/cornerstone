@@ -3,6 +3,7 @@ package io.cornerstone.core;
 import static java.lang.StackWalker.Option.RETAIN_CLASS_REFERENCE;
 import static org.springframework.core.env.AbstractEnvironment.ACTIVE_PROFILES_PROPERTY_NAME;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.StackWalker.StackFrame;
 import java.net.Inet4Address;
@@ -14,6 +15,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.system.ApplicationHome;
 import org.springframework.context.ApplicationContext;
 import org.springframework.util.ClassUtils;
 
@@ -89,6 +91,13 @@ public class DefaultApplication implements Application {
 		Class<?> caller = StackWalker.getInstance(RETAIN_CLASS_REFERENCE)
 				.walk(stream1 -> stream1.skip(1).findFirst().map(StackFrame::getDeclaringClass)
 						.orElseThrow(() -> new RuntimeException("start() method should be called in main method")));
-		SpringApplication.run(caller, args);
+		ApplicationContext ctx = SpringApplication.run(caller, args);
+		File source = new ApplicationHome(caller).getSource();
+		if (source != null && source.getAbsolutePath().endsWith("/bin/main")) {
+			// run in eclipse
+			System.out.println("Press 'Enter' key to shutdown");
+			System.in.read();
+			System.exit(SpringApplication.exit(ctx));
+		}
 	}
 }
