@@ -6,22 +6,29 @@ import static org.springframework.core.env.AbstractEnvironment.ACTIVE_PROFILES_P
 import java.io.File;
 import java.io.IOException;
 import java.lang.StackWalker.StackFrame;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.util.Enumeration;
 import java.util.Optional;
 
+import javax.servlet.ServletContext;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.system.ApplicationHome;
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.ApplicationContext;
 import org.springframework.util.ClassUtils;
 
+import io.cornerstone.core.util.ReflectionUtils;
 import lombok.Getter;
 
-public class DefaultApplication implements Application {
+public class DefaultApplication extends SpringBootServletInitializer implements Application {
 
 	private static String hostName = "localhost";
 
@@ -98,6 +105,82 @@ public class DefaultApplication implements Application {
 			System.out.println("Press 'Enter' key to shutdown");
 			System.in.read();
 			System.exit(SpringApplication.exit(ctx));
+		}
+	}
+
+	@Override
+	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
+		return application.sources(getClass());
+	}
+
+	@Override
+	protected void deregisterJdbcDrivers(ServletContext servletContext) {
+		ClassLoader cl = Thread.currentThread().getContextClassLoader();
+		try {
+			String className = "com.mysql.cj.jdbc.AbandonedConnectionCleanupThread";
+			String methodName = "checkedShutdown";
+			if (ClassUtils.isPresent(className, cl)) {
+				ClassUtils.forName(className, cl).getMethod(methodName).invoke(null);
+			}
+		} catch (Throwable e) {
+			e.printStackTrace();
+		}
+		try {
+			String className = "com.mysql.jdbc.AbandonedConnectionCleanupThread";
+			String methodName = "checkedShutdown";
+			if (ClassUtils.isPresent(className, cl)) {
+				ClassUtils.forName(className, cl).getMethod(methodName).invoke(null);
+			}
+		} catch (Throwable e) {
+			e.printStackTrace();
+		}
+		super.deregisterJdbcDrivers(servletContext);
+		cancelTimers();
+		cleanupThreadLocals();
+	}
+
+	protected void cancelTimers() {
+		try {
+			for (Thread thread : Thread.getAllStackTraces().keySet())
+				if (thread.getClass().getSimpleName().equals("TimerThread"))
+					cancelTimer(thread);
+		} catch (Throwable e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void cancelTimer(Thread thread) throws Exception {
+		Object queue = ReflectionUtils.getFieldValue(thread, "queue");
+		Method m = queue.getClass().getDeclaredMethod("isEmpty");
+		m.setAccessible(true);
+		if ((boolean) m.invoke(queue)) {
+			// Timer::cancel
+			synchronized (queue) {
+				ReflectionUtils.setFieldValue(thread, "newTasksMayBeScheduled", false);
+				m = queue.getClass().getDeclaredMethod("clear");
+				m.setAccessible(true);
+				m.invoke(queue);
+				queue.notify();
+			}
+		}
+	}
+
+	protected void cleanupThreadLocals() {
+		try {
+			for (Thread thread : Thread.getAllStackTraces().keySet())
+				cleanupThreadLocals(thread);
+		} catch (Throwable e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void cleanupThreadLocals(Thread thread) throws Exception {
+		if ("JettyShutdownThread".equals(thread.getName()))
+			return; // see https://github.com/eclipse/jetty.project/issues/5782
+		for (String name : "threadLocals,inheritableThreadLocals".split(",")) {
+			Field f = Thread.class.getDeclaredField(name);
+			f.setAccessible(true);
+			f.set(thread, null);
 		}
 	}
 }
