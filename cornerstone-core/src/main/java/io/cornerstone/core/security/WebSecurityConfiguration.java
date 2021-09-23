@@ -165,7 +165,8 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 	DaoAuthenticationProvider daoAuthenticationProvider(ObjectProvider<UserDetailsService> userDetailsService,
 			ObjectProvider<PasswordEncoder> passwordEncoder,
 			ObjectProvider<UserDetailsPasswordService> userDetailsPasswordService,
-			ObjectProvider<List<UserAuthorityMapper>> userAuthorityMappers) {
+			ObjectProvider<List<UserAuthorityMapper>> userAuthorityMappers,
+			ObjectProvider<List<VerificationCodeChecker>> verificationCodeCheckers) {
 		UserDetailsService uds = userDetailsService.getIfAvailable(() -> new UserDetailsService() {
 			@Override
 			public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -177,6 +178,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 		passwordEncoder.ifAvailable(provider::setPasswordEncoder);
 		userDetailsPasswordService.ifAvailable(provider::setUserDetailsPasswordService);
 		userAuthorityMappers.ifAvailable(provider::setUserAuthorityMappers);
+		verificationCodeCheckers.ifAvailable(provider::setVerificationCodeCheckers);
 		return provider;
 	}
 

@@ -58,4 +58,12 @@ public class CodecUtils {
 		MDC.remove(MDC_KEY_REQUEST);
 	}
 
+	public static String randomDigitalString(int digits) {
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < digits; i++) {
+			sb.append(ThreadLocalRandom.current().nextInt(10));
+		}
+		return sb.toString();
+	}
+
 }

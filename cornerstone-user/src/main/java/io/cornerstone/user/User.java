@@ -16,6 +16,7 @@ import io.cornerstone.core.domain.View.Creation;
 import io.cornerstone.core.domain.View.Edit;
 import io.cornerstone.core.domain.View.Update;
 import io.cornerstone.core.hibernate.domain.AbstractAuditableEntity;
+import io.cornerstone.core.security.verification.VerificationAware;
 import io.cornerstone.core.validation.constraints.MobilePhoneNumber;
 import lombok.Getter;
 import lombok.Setter;
@@ -29,7 +30,7 @@ import static java.util.stream.Collectors.toList;
 @Entity
 @Getter
 @Setter
-public class User extends AbstractAuditableEntity implements UserDetails, Versioned {
+public class User extends AbstractAuditableEntity implements UserDetails, Versioned, VerificationAware {
 
 	private static final long serialVersionUID = 1L;
 
@@ -90,6 +91,12 @@ public class User extends AbstractAuditableEntity implements UserDetails, Versio
 	@Override
 	public boolean isCredentialsNonExpired() {
 		return true;
+	}
+
+	@JsonIgnore
+	@Override
+	public String getReceiver() {
+		return getPhone();
 	}
 
 	interface View {

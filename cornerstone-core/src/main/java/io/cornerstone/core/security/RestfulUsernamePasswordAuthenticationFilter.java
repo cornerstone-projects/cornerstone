@@ -12,6 +12,8 @@ import org.springframework.http.MediaType;
 import org.springframework.lang.Nullable;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.WebAuthenticationDetails;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 
@@ -26,6 +28,14 @@ public class RestfulUsernamePasswordAuthenticationFilter extends UsernamePasswor
 			ObjectMapper objectMapper) {
 		super(authenticationManager);
 		this.objectMapper = objectMapper;
+		setAuthenticationDetailsSource(new WebAuthenticationDetailsSource() {
+
+			@Override
+			public WebAuthenticationDetails buildDetails(HttpServletRequest context) {
+				return new DefaultWebAuthenticationDetails(context, body(context));
+			}
+
+		});
 	}
 
 	@Override
@@ -33,7 +43,6 @@ public class RestfulUsernamePasswordAuthenticationFilter extends UsernamePasswor
 	protected String obtainUsername(HttpServletRequest request) {
 		Map<String, String> requestBody = body(request);
 		if (requestBody != null) {
-			request.setAttribute(ATTR_NAME_REQUEST_BODY, requestBody);
 			return requestBody.get(getUsernameParameter());
 		}
 		return super.obtainUsername(request);
@@ -42,24 +51,29 @@ public class RestfulUsernamePasswordAuthenticationFilter extends UsernamePasswor
 	@Override
 	@Nullable
 	protected String obtainPassword(HttpServletRequest request) {
-		@SuppressWarnings("unchecked")
-		Map<String, String> requestBody = (Map<String, String>) request.getAttribute(ATTR_NAME_REQUEST_BODY);
+		Map<String, String> requestBody = body(request);
 		if (requestBody != null) {
-			request.removeAttribute(ATTR_NAME_REQUEST_BODY);
 			return requestBody.get(getPasswordParameter());
 		}
 		return super.obtainPassword(request);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Nullable
 	private Map<String, String> body(HttpServletRequest request) {
+		Map<String, String> requestBody = (Map<String, String>) request.getAttribute(ATTR_NAME_REQUEST_BODY);
+		if (requestBody != null) {
+			return requestBody;
+		}
 		String contentType = request.getContentType();
 		if (contentType != null) {
 			if (MediaType.parseMediaType(contentType).isCompatibleWith(APPLICATION_JSON)) {
 				try {
-					return this.objectMapper.readValue(request.getInputStream(),
+					requestBody = this.objectMapper.readValue(request.getInputStream(),
 							new TypeReference<Map<String, String>>() {
 							});
+					request.setAttribute(ATTR_NAME_REQUEST_BODY, requestBody);
+					return requestBody;
 				}
 				catch (Exception ex) {
 					log.error(ex.getMessage(), ex);
