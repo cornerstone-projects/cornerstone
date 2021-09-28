@@ -46,7 +46,7 @@ public class Snowflake {
 			long offset = this.lastTimestamp - timestamp;
 			if (offset < 5000) {
 				try {
-					Thread.sleep(offset + 1);
+					this.wait(offset + 1);
 					timestamp = System.currentTimeMillis();
 					this.sequence = ThreadLocalRandom.current().nextInt(2);
 				} catch (InterruptedException ex) {
