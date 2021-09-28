@@ -101,4 +101,6 @@ tasks.register('integrationTest', Test) {
 	shouldRunAfter test
 }
 
-// check.dependsOn integrationTest
+if (rootProject.hasProperty('integration')) {
+	check.dependsOn integrationTest
+}
