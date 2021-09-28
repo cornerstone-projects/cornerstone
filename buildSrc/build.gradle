@@ -13,10 +13,13 @@ for (Map.Entry<String,String> entry : projectProperties.entrySet()) {
 }
 
 repositories {
-	gradlePluginPortal()
-	maven {
-		url "${repoUrlPrefix}/gradle-plugins/"
-		allowInsecureProtocol true
+	if (rootProject.hasProperty('repoUrlPrefix')) {
+		maven {
+			url "${repoUrlPrefix}/gradle-plugins/"
+			allowInsecureProtocol true
+		}
+	} else {
+		gradlePluginPortal()
 	}
 }
 

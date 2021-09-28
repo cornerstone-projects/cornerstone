@@ -20,19 +20,20 @@ publishing {
 			suppressAllPomMetadataWarnings()
 		}
 	}
-	repositories {
-		maven {
-			if(version.endsWith("-SNAPSHOT")) {
-				url "${repoUrlPrefix}/maven-snapshots/"
-			} else {
-				url "${repoUrlPrefix}/maven-releases/"
-			}
-			allowInsecureProtocol true
-			credentials {
-				username repoUser
-				password repoPassword
+	if (rootProject.hasProperty('repoUrlPrefix')) {
+		repositories {
+			maven {
+				if(version.endsWith("-SNAPSHOT")) {
+					url "${repoUrlPrefix}/maven-snapshots/"
+				} else {
+					url "${repoUrlPrefix}/maven-releases/"
+				}
+				allowInsecureProtocol true
+				credentials {
+					username repoUser
+					password repoPassword
+				}
 			}
 		}
 	}
-	
 }
