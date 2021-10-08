@@ -25,8 +25,9 @@ public class MethodSecurityConfiguration extends GlobalMethodSecurityConfigurati
 			@Override
 			public Collection<ConfigAttribute> getAttributes(Method method, Class<?> targetClass) {
 				Collection<ConfigAttribute> attr = super.getAttributes(method, targetClass);
-				if (CollectionUtils.isEmpty(attr))
+				if (CollectionUtils.isEmpty(attr)) {
 					attr = findAttributes(targetClass);
+				}
 				return attr;
 			}
 

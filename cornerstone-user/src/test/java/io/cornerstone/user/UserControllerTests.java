@@ -1,5 +1,28 @@
 package io.cornerstone.user;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import io.cornerstone.core.domain.ResultPage;
+import io.cornerstone.test.ControllerTestBase;
+import org.junit.jupiter.api.Test;
+
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.RequestEntity;
+import org.springframework.http.ResponseEntity;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpMethod.DELETE;
 import static org.springframework.http.HttpMethod.GET;
@@ -12,29 +35,6 @@ import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.core.io.Resource;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.RequestEntity;
-import org.springframework.http.ResponseEntity;
-
-import io.cornerstone.core.domain.ResultPage;
-import io.cornerstone.test.ControllerTestBase;
 
 class UserControllerTests extends ControllerTestBase {
 
@@ -81,7 +81,8 @@ class UserControllerTests extends ControllerTestBase {
 		u2.setDisabled(true);
 		User u3 = restTemplate.patchForObject(PATH_DETAIL, u2, User.class, id);
 		assertThat(u3.getDisabled()).isEqualTo(u2.getDisabled());
-		assertThat(u3.getUsername()).isEqualTo(user.getUsername()); // username not updatable
+		assertThat(u3.getUsername()).isEqualTo(user.getUsername()); // username not
+																	// updatable
 		// update full
 		u3.setName("name");
 		u3.setDisabled(false);
@@ -90,7 +91,8 @@ class UserControllerTests extends ControllerTestBase {
 		assertThat(u4).isNotNull();
 		assertThat(u4.getDisabled()).isEqualTo(u3.getDisabled());
 		assertThat(u4.getName()).isEqualTo(u3.getName());
-		assertThat(u4.getUsername()).isEqualTo(user.getUsername()); // username not updatable
+		assertThat(u4.getUsername()).isEqualTo(user.getUsername()); // username not
+																	// updatable
 
 		// delete
 		assertThat(restTemplate.exchange(RequestEntity.method(DELETE, PATH_DETAIL, id).build(), void.class)
@@ -116,7 +118,8 @@ class UserControllerTests extends ControllerTestBase {
 		assertThat(page.getSize()).isEqualTo(10);
 		assertThat(page.getTotalPages()).isEqualTo(1);
 		assertThat(page.getTotalElements()).isEqualTo(2);
-		assertThat(page.getResult().get(0).getCreatedDate()).isNull(); // User.View.List view
+		assertThat(page.getResult().get(0).getCreatedDate()).isNull(); // User.View.List
+																		// view
 		response = restTemplate.exchange(
 				RequestEntity.method(GET, PATH_LIST + "?page=2&size=1&sort=username,desc").build(),
 				new ParameterizedTypeReference<ResultPage<User>>() {
@@ -161,7 +164,8 @@ class UserControllerTests extends ControllerTestBase {
 		User admin = page.getResult().get(0);
 		ResponseEntity<?> response = restTemplate.exchange(
 				RequestEntity.method(PUT, PATH_PASSWORD, admin.getId()).body(updatePasswordRequest), void.class);
-		assertThat(response.getStatusCode()).isSameAs(BAD_REQUEST); // caused by wrong confirmed password
+		assertThat(response.getStatusCode()).isSameAs(BAD_REQUEST); // caused by wrong
+																	// confirmed password
 
 		updatePasswordRequest.setConfirmedPassword(updatePasswordRequest.getPassword());
 		response = restTemplate.exchange(
@@ -171,7 +175,8 @@ class UserControllerTests extends ControllerTestBase {
 		response = restTemplate.exchange(RequestEntity.method(GET, PATH_LIST).build(),
 				new ParameterizedTypeReference<ResultPage<User>>() {
 				});
-		assertThat(response.getStatusCode()).isSameAs(UNAUTHORIZED); // caused by password changed
+		assertThat(response.getStatusCode()).isSameAs(UNAUTHORIZED); // caused by password
+																		// changed
 
 		restTemplate = restTemplate.withBasicAuth(ADMIN_USERNAME, updatePasswordRequest.getPassword());
 		response = restTemplate.exchange(RequestEntity.method(GET, PATH_LIST).build(),
@@ -181,7 +186,9 @@ class UserControllerTests extends ControllerTestBase {
 
 		updatePasswordRequest.setPassword(DEFAULT_PASSWORD);
 		updatePasswordRequest.setConfirmedPassword(updatePasswordRequest.getPassword());
-		restTemplate.put(PATH_PASSWORD, updatePasswordRequest, admin.getId()); // change password back
+		restTemplate.put(PATH_PASSWORD, updatePasswordRequest, admin.getId()); // change
+																				// password
+																				// back
 	}
 
 	@Test

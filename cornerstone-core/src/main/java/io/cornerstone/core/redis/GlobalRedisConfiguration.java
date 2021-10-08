@@ -3,6 +3,11 @@ package io.cornerstone.core.redis;
 import java.util.Optional;
 import java.util.concurrent.Executor;
 
+import io.cornerstone.core.redis.DefaultRedisConfiguration.DefaultRedisProperties;
+import io.cornerstone.core.redis.GlobalRedisConfiguration.GlobalRedisProperties;
+import io.lettuce.core.resource.ClientResources;
+import io.lettuce.core.resource.DefaultClientResources;
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -20,11 +25,6 @@ import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactor
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
-
-import io.cornerstone.core.redis.DefaultRedisConfiguration.DefaultRedisProperties;
-import io.cornerstone.core.redis.GlobalRedisConfiguration.GlobalRedisProperties;
-import io.lettuce.core.resource.ClientResources;
-import io.lettuce.core.resource.DefaultClientResources;
 
 @Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties(GlobalRedisProperties.class)

@@ -11,7 +11,8 @@ public interface CheckedRunnable<E extends Throwable> {
 		return () -> {
 			try {
 				run();
-			} catch (Throwable ex) {
+			}
+			catch (Throwable ex) {
 				ExceptionUtils.sneakyThrow(ex);
 			}
 		};

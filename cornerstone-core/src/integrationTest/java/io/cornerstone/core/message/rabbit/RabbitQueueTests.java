@@ -1,20 +1,20 @@
 package io.cornerstone.core.message.rabbit;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
-
+import io.cornerstone.core.message.MessageProcessor;
+import io.cornerstone.core.message.QueueTestBase;
+import io.cornerstone.test.containers.RabbitMQ;
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
+
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.ContextConfiguration;
 
-import io.cornerstone.core.message.MessageProcessor;
-import io.cornerstone.core.message.QueueTestBase;
-import io.cornerstone.test.containers.RabbitMQ;
-import lombok.RequiredArgsConstructor;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
 
 @ContextConfiguration(classes = { RabbitQueueTests.Config.class, RabbitMQ.class })
 class RabbitQueueTests extends QueueTestBase {

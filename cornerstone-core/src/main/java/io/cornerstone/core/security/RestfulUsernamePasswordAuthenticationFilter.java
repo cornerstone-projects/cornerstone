@@ -1,20 +1,19 @@
 package io.cornerstone.core.security;
 
-import static org.springframework.http.MediaType.APPLICATION_JSON;
-
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.http.MediaType;
 import org.springframework.lang.Nullable;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import lombok.extern.slf4j.Slf4j;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 
 @Slf4j
 public class RestfulUsernamePasswordAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
@@ -61,11 +60,13 @@ public class RestfulUsernamePasswordAuthenticationFilter extends UsernamePasswor
 					return this.objectMapper.readValue(request.getInputStream(),
 							new TypeReference<Map<String, String>>() {
 							});
-				} catch (Exception ex) {
+				}
+				catch (Exception ex) {
 					log.error(ex.getMessage(), ex);
 				}
 			}
 		}
 		return null;
 	}
+
 }

@@ -4,11 +4,10 @@ import java.util.List;
 
 import javax.persistence.Entity;
 
-import org.hibernate.annotations.Type;
-
 import io.cornerstone.core.hibernate.domain.AbstractEntity;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.Type;
 
 @Entity
 @Getter

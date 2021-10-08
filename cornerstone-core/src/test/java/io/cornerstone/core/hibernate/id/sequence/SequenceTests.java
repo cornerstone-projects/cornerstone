@@ -1,21 +1,21 @@
 package io.cornerstone.core.hibernate.id.sequence;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import javax.sql.DataSource;
-
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
-import org.springframework.context.annotation.Bean;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import org.springframework.test.context.ContextConfiguration;
 
 import io.cornerstone.core.hibernate.id.SnowflakeProperties;
 import io.cornerstone.core.sequence.CyclicSequence.CycleType;
 import io.cornerstone.core.sequence.Sequence;
 import io.cornerstone.core.sequence.cyclic.DatabaseCyclicSequenceDelegate;
 import io.cornerstone.test.DataJpaTestBase;
+import org.junit.jupiter.api.Test;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.context.annotation.Bean;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.test.context.ContextConfiguration;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @EnableJpaRepositories(basePackageClasses = TestEntityRepository.class)
 @EntityScan(basePackageClasses = TestEntity.class)
@@ -47,4 +47,5 @@ class SequenceTests extends DataJpaTestBase {
 		}
 
 	}
+
 }

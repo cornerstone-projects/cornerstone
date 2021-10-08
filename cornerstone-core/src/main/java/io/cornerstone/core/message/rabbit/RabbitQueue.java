@@ -4,14 +4,14 @@ import java.io.Serializable;
 
 import javax.annotation.PostConstruct;
 
+import io.cornerstone.core.message.Queue;
+import lombok.Getter;
+import lombok.Setter;
+
 import org.springframework.amqp.core.AmqpAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ResolvableType;
-
-import io.cornerstone.core.message.Queue;
-import lombok.Getter;
-import lombok.Setter;
 
 public abstract class RabbitQueue<T extends Serializable> implements Queue<T> {
 
@@ -31,8 +31,9 @@ public abstract class RabbitQueue<T extends Serializable> implements Queue<T> {
 
 	public RabbitQueue() {
 		Class<?> clazz = ResolvableType.forClass(getClass()).as(RabbitQueue.class).resolveGeneric(0);
-		if (clazz == null)
+		if (clazz == null) {
 			throw new IllegalArgumentException(getClass().getName() + " should be generic");
+		}
 		this.queueName = clazz.getName();
 	}
 

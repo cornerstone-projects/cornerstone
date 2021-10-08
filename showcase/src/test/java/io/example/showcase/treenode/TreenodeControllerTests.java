@@ -1,5 +1,16 @@
 package io.example.showcase.treenode;
 
+import java.util.List;
+
+import io.cornerstone.core.domain.ResultPage;
+import io.example.showcase.BaseControllerTests;
+import org.junit.jupiter.api.Test;
+
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.RequestEntity;
+import org.springframework.http.ResponseEntity;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpMethod.DELETE;
 import static org.springframework.http.HttpMethod.GET;
@@ -7,17 +18,6 @@ import static org.springframework.http.HttpMethod.PATCH;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.OK;
-
-import java.util.List;
-
-import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.RequestEntity;
-import org.springframework.http.ResponseEntity;
-
-import io.cornerstone.core.domain.ResultPage;
-import io.example.showcase.BaseControllerTests;
 
 class TreenodeControllerTests extends BaseControllerTests {
 

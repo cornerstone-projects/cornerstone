@@ -1,19 +1,20 @@
 package io.cornerstone.fs;
 
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
-import org.springframework.test.context.TestPropertySource;
+import io.cornerstone.core.util.CodecUtils;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import io.cornerstone.core.util.CodecUtils;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.test.context.TestPropertySource;
 
 @TestPropertySource(properties = { "file-storage.s3.bucket=test" })
 @Testcontainers
 class CephFileStorageTests extends FileStorageTestBase {
 
 	private static final String ACCESS_KEY = CodecUtils.nextId(32);
+
 	private static final String SECRET_KEY = CodecUtils.nextId(32);
 
 	@Container

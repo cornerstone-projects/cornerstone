@@ -1,5 +1,7 @@
 package io.cornerstone.core;
 
+import io.cornerstone.core.hibernate.convert.AbstractArrayConverter;
+
 import org.springframework.boot.autoconfigure.AutoConfigurationExcludeFilter;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -10,8 +12,6 @@ import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-
-import io.cornerstone.core.hibernate.convert.AbstractArrayConverter;
 
 @EnableTransactionManagement(order = 0, proxyTargetClass = true)
 @Configuration(proxyBeanMethods = false)

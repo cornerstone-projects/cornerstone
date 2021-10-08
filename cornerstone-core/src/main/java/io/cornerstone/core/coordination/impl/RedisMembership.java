@@ -14,14 +14,14 @@ import java.util.stream.Collectors;
 
 import javax.annotation.PreDestroy;
 
+import io.cornerstone.core.Application;
+import io.cornerstone.core.coordination.Membership;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.SessionCallback;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.scheduling.annotation.SchedulingConfigurer;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
-
-import io.cornerstone.core.Application;
-import io.cornerstone.core.coordination.Membership;
 
 public class RedisMembership implements Membership, SchedulingConfigurer {
 
@@ -66,8 +66,9 @@ public class RedisMembership implements Membership, SchedulingConfigurer {
 	@Override
 	public String getLeader(String group) {
 		List<String> list = getMembers(group);
-		if (!list.isEmpty())
+		if (!list.isEmpty()) {
 			return list.get(0);
+		}
 		return null;
 	}
 
@@ -78,8 +79,9 @@ public class RedisMembership implements Membership, SchedulingConfigurer {
 
 	@PreDestroy
 	public void destroy() {
-		for (String group : this.groups)
+		for (String group : this.groups) {
 			this.stringRedisTemplate.opsForList().remove(NAMESPACE + group, 0, this.self);
+		}
 	}
 
 	@Override
@@ -91,11 +93,13 @@ public class RedisMembership implements Membership, SchedulingConfigurer {
 		for (String group : this.groups) {
 			List<String> members = getMembers(group);
 
-			if (!members.contains(this.self))
+			if (!members.contains(this.self)) {
 				this.stringRedisTemplate.opsForList().rightPush(NAMESPACE + group, this.self);
+			}
 			for (String member : members) {
-				if (member.equals(this.self))
+				if (member.equals(this.self)) {
 					continue;
+				}
 				boolean alive = false;
 				String url = "http://" + member + "/actuator/health";
 				try {
@@ -116,10 +120,12 @@ public class RedisMembership implements Membership, SchedulingConfigurer {
 						}
 					}
 					conn.disconnect();
-				} catch (IOException ex) {
 				}
-				if (!alive)
+				catch (IOException ex) {
+				}
+				if (!alive) {
 					this.stringRedisTemplate.opsForList().remove(NAMESPACE + group, 0, member);
+				}
 			}
 		}
 	}

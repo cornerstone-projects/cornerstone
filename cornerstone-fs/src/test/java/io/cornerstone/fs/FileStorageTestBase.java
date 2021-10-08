@@ -1,7 +1,5 @@
 package io.cornerstone.fs;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -10,12 +8,14 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import io.cornerstone.test.SpringApplicationTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 
-import io.cornerstone.test.SpringApplicationTest;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringApplicationTest(classes = FileStorageAutoConfiguration.class, webEnvironment = WebEnvironment.NONE)
 abstract class FileStorageTestBase {
@@ -129,10 +129,12 @@ abstract class FileStorageTestBase {
 
 		// prepare
 		String text = "test";
-		for (int i = 0; i < 5; i++)
+		for (int i = 0; i < 5; i++) {
 			this.fs.mkdir(dir + "/testdir" + i);
-		for (int i = 0; i < 5; i++)
+		}
+		for (int i = 0; i < 5; i++) {
 			writeToFile(this.fs, text, dir + "/test" + i + ".txt");
+		}
 
 		int total = 0;
 		int limit = 2;
@@ -144,7 +146,8 @@ abstract class FileStorageTestBase {
 			int size = paged.getResult().size();
 			total += size;
 			assertThat(size).isLessThanOrEqualTo(limit);
-		} while (marker != null);
+		}
+		while (marker != null);
 		assertThat(total).isEqualTo(5);
 
 		total = 0;
@@ -155,21 +158,25 @@ abstract class FileStorageTestBase {
 			int size = paged.getResult().size();
 			total += size;
 			assertThat(size).isLessThanOrEqualTo(limit);
-		} while (marker != null);
+		}
+		while (marker != null);
 		assertThat(total).isEqualTo(10);
 
 		// cleanup
-		for (int i = 0; i < 5; i++)
+		for (int i = 0; i < 5; i++) {
 			this.fs.delete(dir + "/test" + i + ".txt");
-		for (int i = 0; i < 5; i++)
+		}
+		for (int i = 0; i < 5; i++) {
 			this.fs.delete(dir + "/testdir" + i);
+		}
 		this.fs.delete(dir);
 	}
 
 	private static boolean isFile(List<FileInfo> files, String name) {
 		for (FileInfo file : files) {
-			if (file.getName().equals(name))
+			if (file.getName().equals(name)) {
 				return file.isFile();
+			}
 		}
 		throw new IllegalArgumentException("file '" + name + "' not found");
 	}
@@ -181,21 +188,25 @@ abstract class FileStorageTestBase {
 	}
 
 	protected static void delete(FileStorage fs, String directory) {
-		if (directory == null)
+		if (directory == null) {
 			directory = "/";
-		if (!directory.endsWith("/"))
+		}
+		if (!directory.endsWith("/")) {
 			directory = directory + "/";
+		}
 		List<FileInfo> files = fs.listFilesAndDirectory(directory);
 		for (FileInfo entry : files) {
 			String path = directory + entry.getName();
 			if (entry.isFile()) {
 				fs.delete(path);
-			} else {
+			}
+			else {
 				delete(fs, path);
 			}
 		}
-		if (!directory.equals("/"))
+		if (!directory.equals("/")) {
 			fs.delete(directory);
+		}
 	}
 
 }

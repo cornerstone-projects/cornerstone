@@ -2,11 +2,11 @@ package io.cornerstone.test.containers;
 
 import javax.sql.DataSource;
 
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.context.annotation.Bean;
+import com.zaxxer.hikari.HikariDataSource;
 import org.testcontainers.containers.GenericContainer;
 
-import com.zaxxer.hikari.HikariDataSource;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
 
 @TestConfiguration(proxyBeanMethods = false)
 public class MySQL57 extends AbstractContainer {

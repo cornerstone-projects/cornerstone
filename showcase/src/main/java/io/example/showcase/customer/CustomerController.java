@@ -1,12 +1,12 @@
 package io.example.showcase.customer;
 
+import io.cornerstone.core.web.AbstractEntityController;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RestController;
-
-import io.cornerstone.core.web.AbstractEntityController;
 
 @RestController
 @Validated
@@ -17,14 +17,16 @@ public class CustomerController extends AbstractEntityController<Customer, Long>
 
 	@Override
 	protected void beforeSave(Customer customer) {
-		if (this.customerRepository.existsByIdNo(customer.getIdNo()))
+		if (this.customerRepository.existsByIdNo(customer.getIdNo())) {
 			throw badRequest("idNo.already.exists");
+		}
 	}
 
 	@Override
 	protected void beforeDelete(Customer customer) {
-		if (customer.getDisabled() != Boolean.TRUE)
+		if (customer.getDisabled() != Boolean.TRUE) {
 			throw badRequest("disable.before.delete");
+		}
 	}
 
 	@Override
@@ -40,4 +42,5 @@ public class CustomerController extends AbstractEntityController<Customer, Long>
 				.withMatcher("idNo", match -> match.contains().ignoreCase())
 				.withMatcher("name", match -> match.contains());
 	}
+
 }

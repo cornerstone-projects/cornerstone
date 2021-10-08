@@ -10,11 +10,11 @@ import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
+import io.cornerstone.core.json.JsonDesensitizer;
 import org.slf4j.Logger;
+
 import org.springframework.util.FastByteArrayOutputStream;
 import org.springframework.web.util.WebUtils;
-
-import io.cornerstone.core.json.JsonDesensitizer;
 
 /**
  * @See org.springframework.web.util.ContentCachingRequestWrapper
@@ -69,7 +69,7 @@ public class LoggingBodyHttpServletRequest extends HttpServletRequestWrapper {
 
 		private FastByteArrayOutputStream cachedContent;
 
-		public ContentCachingInputStream(ServletRequest request, Logger logger) throws IOException {
+		ContentCachingInputStream(ServletRequest request, Logger logger) throws IOException {
 			this.logger = logger;
 			this.is = request.getInputStream();
 			this.characterEncoding = request.getCharacterEncoding();
@@ -93,15 +93,17 @@ public class LoggingBodyHttpServletRequest extends HttpServletRequestWrapper {
 		}
 
 		private void cache(byte[] b, final int off, final int count) throws IOException {
-			if (count != -1)
+			if (count != -1) {
 				this.cachedContent.write(b, off, count);
+			}
 		}
 
 		@Override
 		public int read() throws IOException {
 			int ch = this.is.read();
-			if (ch != -1)
+			if (ch != -1) {
 				this.cachedContent.write(ch);
+			}
 			return ch;
 		}
 
@@ -124,7 +126,8 @@ public class LoggingBodyHttpServletRequest extends HttpServletRequestWrapper {
 		public void close() throws IOException {
 			try {
 				this.is.close();
-			} finally {
+			}
+			finally {
 				if (this.cachedContent != null) {
 					byte[] bytes = this.cachedContent.toByteArray();
 					this.cachedContent = null;
@@ -134,6 +137,7 @@ public class LoggingBodyHttpServletRequest extends HttpServletRequestWrapper {
 				}
 			}
 		}
+
 	}
 
 }

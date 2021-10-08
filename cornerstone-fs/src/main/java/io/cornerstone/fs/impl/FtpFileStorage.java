@@ -16,6 +16,11 @@ import java.util.TimeZone;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
+import io.cornerstone.core.util.FileUtils;
+import io.cornerstone.fs.FileInfo;
+import io.cornerstone.fs.FileStorageProperties;
+import io.cornerstone.fs.FileStorageProperties.Ftp;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPConnectionClosedException;
@@ -29,18 +34,14 @@ import org.apache.commons.pool2.PooledObjectFactory;
 import org.apache.commons.pool2.impl.DefaultPooledObject;
 import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
-import org.springframework.util.StringUtils;
 
-import io.cornerstone.core.util.FileUtils;
-import io.cornerstone.fs.FileInfo;
-import io.cornerstone.fs.FileStorageProperties;
-import io.cornerstone.fs.FileStorageProperties.Ftp;
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.util.StringUtils;
 
 @Slf4j
 public class FtpFileStorage extends AbstractFileStorage {
 
 	private final URI uri;
+
 	private final Ftp config;
 
 	private ObjectPool<FTPClient> pool;
@@ -61,9 +62,8 @@ public class FtpFileStorage extends AbstractFileStorage {
 				ftpClient.setDefaultTimeout(FtpFileStorage.this.config.getDefaultTimeout());
 				ftpClient.setDataTimeout(FtpFileStorage.this.config.getDataTimeout());
 				ftpClient.setControlEncoding(FtpFileStorage.this.config.getControlEncoding());
-				ftpClient.connect(FtpFileStorage.this.uri.getHost(),
-						FtpFileStorage.this.uri.getPort() > 0 ? FtpFileStorage.this.uri.getPort()
-								: ftpClient.getDefaultPort());
+				ftpClient.connect(FtpFileStorage.this.uri.getHost(), FtpFileStorage.this.uri.getPort() > 0
+						? FtpFileStorage.this.uri.getPort() : ftpClient.getDefaultPort());
 				if (!FTPReply.isPositiveCompletion(ftpClient.getReplyCode())) {
 					ftpClient.disconnect();
 					throw new IOException("FTP server refused connection.");
@@ -73,7 +73,8 @@ public class FtpFileStorage extends AbstractFileStorage {
 				if (userInfo != null) {
 					String[] arr = userInfo.split(":", 2);
 					b = ftpClient.login(arr[0], arr.length > 1 ? arr[1] : null);
-				} else {
+				}
+				else {
 					b = ftpClient.login("anonymous", "anonymous@test.com");
 				}
 				if (!b) {
@@ -84,7 +85,8 @@ public class FtpFileStorage extends AbstractFileStorage {
 						FtpFileStorage.this.config.isBinaryMode() ? FTP.BINARY_FILE_TYPE : FTP.ASCII_FILE_TYPE);
 				if (FtpFileStorage.this.config.isPassiveMode()) {
 					ftpClient.enterLocalPassiveMode();
-				} else {
+				}
+				else {
 					ftpClient.enterLocalActiveMode();
 				}
 				return ftpClient;
@@ -100,7 +102,8 @@ public class FtpFileStorage extends AbstractFileStorage {
 				FTPClient ftpClient = po.getObject();
 				try {
 					return ftpClient.sendNoOp() && (ftpClient.printWorkingDirectory() != null);
-				} catch (IOException ex) {
+				}
+				catch (IOException ex) {
 					return false;
 				}
 			}
@@ -111,18 +114,23 @@ public class FtpFileStorage extends AbstractFileStorage {
 				if (ftpClient.isConnected()) {
 					try {
 						ftpClient.logout();
-					} catch (FTPConnectionClosedException ex) {
+					}
+					catch (FTPConnectionClosedException ex) {
 						// Ignore
-					} catch (IOException ex) {
+					}
+					catch (IOException ex) {
 						if (!ex.getMessage().contains("Broken pipe")) {
 							log.error(ex.getMessage(), ex);
 						}
-					} finally {
+					}
+					finally {
 						try {
 							ftpClient.disconnect();
-						} catch (FTPConnectionClosedException ex) {
+						}
+						catch (FTPConnectionClosedException ex) {
 							// Ignore
-						} catch (IOException ex) {
+						}
+						catch (IOException ex) {
 							if (!ex.getMessage().contains("Broken pipe")) {
 								log.error(ex.getMessage(), ex);
 							}
@@ -200,14 +208,17 @@ public class FtpFileStorage extends AbstractFileStorage {
 					this.closed = true;
 					try {
 						super.close();
-					} finally {
+					}
+					finally {
 						try {
 							ftpClient.completePendingCommand();
 							FtpFileStorage.this.pool.returnObject(ftpClient);
-						} catch (Exception ex) {
+						}
+						catch (Exception ex) {
 							try {
 								FtpFileStorage.this.pool.invalidateObject(ftpClient);
-							} catch (Exception e1) {
+							}
+							catch (Exception e1) {
 								log.error(e1.getMessage(), e1);
 							}
 							log.error(ex.getMessage(), ex);
@@ -248,7 +259,8 @@ public class FtpFileStorage extends AbstractFileStorage {
 			if (ftpClient.getReplyCode() != 550) {
 				ftpClient.changeToParentDirectory();
 				return ftpClient.removeDirectory(pathname);
-			} else {
+			}
+			else {
 				return ftpClient.deleteFile(pathname);
 			}
 		});
@@ -262,7 +274,8 @@ public class FtpFileStorage extends AbstractFileStorage {
 				try {
 					Date d = new SimpleDateFormat("yyyyMMddHHmmss").parse(modificationTime);
 					return d.getTime() + (this.config.isUseLocaltime() ? 0 : TimeZone.getDefault().getRawOffset());
-				} catch (Exception ex) {
+				}
+				catch (Exception ex) {
 					log.error(ex.getMessage(), ex);
 				}
 			}
@@ -354,7 +367,8 @@ public class FtpFileStorage extends AbstractFileStorage {
 	protected <T> T executeWrapped(Callback<T> callback) {
 		try {
 			return execute(callback);
-		} catch (IOException ex) {
+		}
+		catch (IOException ex) {
 			throw new UncheckedIOException(ex);
 		}
 	}
@@ -368,27 +382,33 @@ public class FtpFileStorage extends AbstractFileStorage {
 			T val = callback.doWithFTPClient(ftpClient);
 			if (!(val instanceof FilterInputStream)) {
 				ftpClient.changeWorkingDirectory(workingDirectory);
-			} else {
+			}
+			else {
 				deferReturn = true;
 			}
 			return val;
-		} catch (IOException ioex) {
+		}
+		catch (IOException ioex) {
 			if (ftpClient != null) {
 				try {
 					this.pool.invalidateObject(ftpClient);
 					ftpClient = null;
-				} catch (Exception ex) {
+				}
+				catch (Exception ex) {
 					log.error(ex.getMessage(), ex);
 				}
 			}
 			throw ioex;
-		} catch (Exception ex) {
+		}
+		catch (Exception ex) {
 			throw new RuntimeException(ex);
-		} finally {
+		}
+		finally {
 			if ((ftpClient != null) && !deferReturn) {
 				try {
 					this.pool.returnObject(ftpClient);
-				} catch (Exception ex) {
+				}
+				catch (Exception ex) {
 					log.error(ex.getMessage(), ex);
 				}
 			}
@@ -396,7 +416,9 @@ public class FtpFileStorage extends AbstractFileStorage {
 	}
 
 	interface Callback<T> {
+
 		T doWithFTPClient(FTPClient ftpClient) throws IOException;
+
 	}
 
 }

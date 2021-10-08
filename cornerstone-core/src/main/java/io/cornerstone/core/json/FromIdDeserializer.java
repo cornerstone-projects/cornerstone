@@ -7,8 +7,6 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 
-import org.springframework.beans.BeanUtils;
-
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.JsonToken;
@@ -20,6 +18,8 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.deser.ContextualDeserializer;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
+
+import org.springframework.beans.BeanUtils;
 
 public class FromIdDeserializer extends StdDeserializer<Object> implements ContextualDeserializer {
 
@@ -44,26 +44,31 @@ public class FromIdDeserializer extends StdDeserializer<Object> implements Conte
 	@Override
 	public Object deserialize(JsonParser parser, DeserializationContext ctx)
 			throws IOException, JsonProcessingException {
-		if (this.type == null)
+		if (this.type == null) {
 			return null;
+		}
 		try {
 			if (this.type.isCollectionLikeType() || this.type.isArrayType()) {
 				Collection<Object> coll = null;
 				JavaType componentType = this.type.getContentType();
 				if (this.type.isArrayType()) {
 					coll = new ArrayList<>();
-				} else {
+				}
+				else {
 					Class<?> clazz = this.type.getRawClass();
 					if (this.type.isConcrete()) {
 						coll = (Collection<Object>) BeanUtils.instantiateClass(clazz);
-					} else if (clazz.isAssignableFrom(ArrayList.class)) {
+					}
+					else if (clazz.isAssignableFrom(ArrayList.class)) {
 						coll = new ArrayList<>();
-					} else {
+					}
+					else {
 						coll = new LinkedHashSet<>();
 					}
 				}
-				if (parser.currentToken() != JsonToken.START_ARRAY)
+				if (parser.currentToken() != JsonToken.START_ARRAY) {
 					throw new RuntimeException("Not array node");
+				}
 				while (parser.nextToken() != JsonToken.END_ARRAY) {
 					switch (parser.currentToken()) {
 					case START_OBJECT:
@@ -76,24 +81,30 @@ public class FromIdDeserializer extends StdDeserializer<Object> implements Conte
 				if (this.type.isArrayType()) {
 					List<Object> list = (List<Object>) coll;
 					Object array = Array.newInstance(componentType.getRawClass(), list.size());
-					for (int i = 0; i < list.size(); i++)
+					for (int i = 0; i < list.size(); i++) {
 						Array.set(array, i, list.get(i));
+					}
 					return array;
-				} else {
+				}
+				else {
 					return coll;
 				}
-			} else if (this.type.isConcrete()) {
+			}
+			else if (this.type.isConcrete()) {
 				Object obj;
 				if (!parser.currentToken().isScalarValue()) {
 					obj = parser.readValueAs(this.type.getRawClass());
-				} else {
+				}
+				else {
 					obj = convert(parser, parser.getText(), this.type);
 				}
 				return obj;
-			} else {
+			}
+			else {
 				throw new RuntimeException("cannot deserialize " + this.type);
 			}
-		} catch (Exception ex) {
+		}
+		catch (Exception ex) {
 			throw new RuntimeException(ex);
 		}
 	}

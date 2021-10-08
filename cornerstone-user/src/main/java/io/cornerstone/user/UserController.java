@@ -1,9 +1,5 @@
 package io.cornerstone.user;
 
-import static io.cornerstone.user.UserSetup.ADMIN_ROLE;
-import static org.springframework.data.domain.Sort.Direction.ASC;
-import static org.springframework.http.HttpStatus.OK;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -18,8 +14,14 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import io.cornerstone.core.domain.ResultPage;
+import io.cornerstone.core.domain.View;
+import io.cornerstone.core.web.AbstractEntityController;
 import org.hibernate.cfg.AvailableSettings;
 import org.hibernate.dialect.Dialect;
+import springfox.documentation.annotations.ApiIgnore;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.ExampleMatcher;
@@ -43,12 +45,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
-import com.fasterxml.jackson.annotation.JsonView;
-
-import io.cornerstone.core.domain.ResultPage;
-import io.cornerstone.core.domain.View;
-import io.cornerstone.core.web.AbstractEntityController;
-import springfox.documentation.annotations.ApiIgnore;
+import static io.cornerstone.user.UserSetup.ADMIN_ROLE;
+import static org.springframework.data.domain.Sort.Direction.ASC;
+import static org.springframework.http.HttpStatus.OK;
 
 @RestController
 @Validated
@@ -72,8 +71,9 @@ public class UserController extends AbstractEntityController<User, Long> {
 
 	@PutMapping(PATH_DETAIL + "/password")
 	public void updatePassword(@PathVariable Long id, @RequestBody @Valid UpdatePasswordRequest request) {
-		if (request.isWrongConfirmedPassword())
+		if (request.isWrongConfirmedPassword()) {
 			throw badRequest("wrong.confirmed.password");
+		}
 		this.userRepository.findById(id).map(user -> {
 			user.setPassword(request.getPassword());
 			encodePassword(user);
@@ -114,10 +114,12 @@ public class UserController extends AbstractEntityController<User, Long> {
 				user.setName(arr[1]);
 				user.setPhone(arr[2]);
 				String roles = arr[3];
-				if (roles.startsWith("\"") && roles.endsWith("\""))
+				if (roles.startsWith("\"") && roles.endsWith("\"")) {
 					roles = roles.substring(1, roles.length() - 1);
-				if (!roles.isEmpty())
+				}
+				if (!roles.isEmpty()) {
 					user.setRoles(new LinkedHashSet<>(Arrays.asList(roles.split(" "))));
+				}
 				user.setDisabled(Boolean.valueOf(arr[4]));
 				batch.add(user);
 				if (batch.size() == batchSize) {
@@ -128,20 +130,23 @@ public class UserController extends AbstractEntityController<User, Long> {
 			if (!batch.isEmpty()) {
 				this.userRepository.saveAll(batch);
 			}
-		} catch (IOException ex) {
+		}
+		catch (IOException ex) {
 			throw new RuntimeException(ex.getMessage(), ex);
 		}
 	}
 
 	private void encodePassword(User user) {
-		if (StringUtils.hasLength(user.getPassword()))
+		if (StringUtils.hasLength(user.getPassword())) {
 			user.setPassword(this.passwordEncoder.encode(user.getPassword()));
+		}
 	}
 
 	@Override
 	protected void beforeSave(User user) {
-		if (this.userRepository.existsByUsername(user.getUsername()))
+		if (this.userRepository.existsByUsername(user.getUsername())) {
 			throw badRequest("username.already.exists");
+		}
 		encodePassword(user);
 	}
 
@@ -152,8 +157,9 @@ public class UserController extends AbstractEntityController<User, Long> {
 
 	@Override
 	protected void beforeDelete(User user) {
-		if (user.getDisabled() != Boolean.TRUE)
+		if (user.getDisabled() != Boolean.TRUE) {
 			throw badRequest("disable.before.delete");
+		}
 	}
 
 	@Override

@@ -1,10 +1,11 @@
 package io.cornerstone.user;
 
-import static org.springframework.security.web.context.HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY;
-import static org.springframework.web.context.request.RequestAttributes.SCOPE_SESSION;
-
 import javax.transaction.Transactional;
 import javax.validation.Valid;
+
+import com.fasterxml.jackson.annotation.JsonView;
+import io.cornerstone.core.util.BeanUtils;
+import io.cornerstone.core.web.BaseRestController;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -20,10 +21,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 
-import com.fasterxml.jackson.annotation.JsonView;
-
-import io.cornerstone.core.util.BeanUtils;
-import io.cornerstone.core.web.BaseRestController;
+import static org.springframework.security.web.context.HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY;
+import static org.springframework.web.context.request.RequestAttributes.SCOPE_SESSION;
 
 @RestController
 @Validated
@@ -72,10 +71,12 @@ public class CurrentUserController extends BaseRestController {
 	@PutMapping(PATH_PASSWORD)
 	public void changePassword(@AuthenticationPrincipal User currentUser,
 			@RequestBody @Valid ChangePasswordRequest request) {
-		if (request.isWrongConfirmedPassword())
+		if (request.isWrongConfirmedPassword()) {
 			throw badRequest("wrong.confirmed.password");
-		if (!this.passwordEncoder.matches(request.getCurrentPassword(), currentUser.getPassword()))
+		}
+		if (!this.passwordEncoder.matches(request.getCurrentPassword(), currentUser.getPassword())) {
 			throw badRequest("wrong.current.password");
+		}
 		this.userRepository.findByUsername(currentUser.getUsername()).map(user -> {
 			user.setPassword(this.passwordEncoder.encode(request.getPassword()));
 			return this.userRepository.save(user);

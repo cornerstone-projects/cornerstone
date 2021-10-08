@@ -2,10 +2,10 @@ package io.cornerstone.core.event;
 
 import java.util.Objects;
 
-import org.springframework.context.ApplicationEvent;
-
 import io.cornerstone.core.Application;
 import lombok.Getter;
+
+import org.springframework.context.ApplicationEvent;
 
 public class BaseEvent<T> extends ApplicationEvent {
 
@@ -32,12 +32,15 @@ public class BaseEvent<T> extends ApplicationEvent {
 
 	@Override
 	public boolean equals(Object that) {
-		if (that == null)
+		if (that == null) {
 			return false;
-		if (this == that)
+		}
+		if (this == that) {
 			return true;
-		if (!getClass().isInstance(that))
+		}
+		if (!getClass().isInstance(that)) {
 			return false;
+		}
 		BaseEvent<?> be = (BaseEvent<?>) that;
 		// EventObject.source is transient
 		return Objects.equals(this.instanceId, be.instanceId) && Objects.equals(this.source, be.source)
@@ -52,10 +55,12 @@ public class BaseEvent<T> extends ApplicationEvent {
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder(getClass().getName());
-		if (!"".equals(this.source))
+		if (!"".equals(this.source)) {
 			sb.append("[source=" + this.source + "]");
-		if (this.instanceId != null)
+		}
+		if (this.instanceId != null) {
 			sb.append(" from ").append(this.instanceId);
+		}
 		return sb.toString();
 	}
 

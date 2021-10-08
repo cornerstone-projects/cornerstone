@@ -14,16 +14,16 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import lombok.Value;
+import lombok.experimental.UtilityClass;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.hibernate.proxy.HibernateProxy;
+
 import org.springframework.core.BridgeMethodResolver;
 import org.springframework.core.DefaultParameterNameDiscoverer;
 import org.springframework.core.ParameterNameDiscoverer;
 import org.springframework.util.ClassUtils;
-
-import lombok.Value;
-import lombok.experimental.UtilityClass;
 
 @UtilityClass
 public class ReflectionUtils {
@@ -45,7 +45,8 @@ public class ReflectionUtils {
 			for (Class<?> intf : clazz.getInterfaces()) {
 				set.addAll(getAllInterfaces(intf));
 			}
-		} else {
+		}
+		else {
 			for (Class<?> intf : ClassUtils.getAllInterfacesForClassAsSet(clazz)) {
 				set.addAll(getAllInterfaces(intf));
 			}
@@ -69,7 +70,8 @@ public class ReflectionUtils {
 		try {
 			method = Proxy.isProxyClass(clz) ? sig.getMethod()
 					: clz.getDeclaredMethod(sig.getName(), sig.getParameterTypes());
-		} catch (NoSuchMethodException ex) {
+		}
+		catch (NoSuchMethodException ex) {
 			method = sig.getMethod();
 		}
 		return getParameterNames(method);
@@ -78,7 +80,8 @@ public class ReflectionUtils {
 	private static String[] doGetParameterNames(Executable executable) {
 		if ((executable instanceof Method)) {
 			return parameterNameDiscoverer.getParameterNames((Method) executable);
-		} else {
+		}
+		else {
 			return parameterNameDiscoverer.getParameterNames((Constructor<?>) executable);
 		}
 	}
@@ -88,7 +91,8 @@ public class ReflectionUtils {
 			Field f = clazz.getDeclaredField(name);
 			f.setAccessible(true);
 			return f;
-		} catch (NoSuchFieldException ex) {
+		}
+		catch (NoSuchFieldException ex) {
 			if (clazz == Object.class) {
 				throw ex;
 			}
@@ -102,7 +106,8 @@ public class ReflectionUtils {
 		try {
 			Field f = getField(o.getClass(), name);
 			return (T) f.get(o);
-		} catch (Exception ex) {
+		}
+		catch (Exception ex) {
 			throw new RuntimeException(ex.getMessage(), ex);
 		}
 	}
@@ -111,7 +116,8 @@ public class ReflectionUtils {
 		try {
 			Field f = getField(o.getClass(), name);
 			f.set(o, value);
-		} catch (Exception ex) {
+		}
+		catch (Exception ex) {
 			throw new RuntimeException(ex.getMessage(), ex);
 		}
 	}
@@ -159,12 +165,14 @@ public class ReflectionUtils {
 							.findSpecial(objectType, m.getName(),
 									MethodType.methodType(m.getReturnType(), m.getParameterTypes()), objectType)
 							.bindTo(o);
-				} else {
+				}
+				else {
 					Constructor<Lookup> constructor = Lookup.class.getDeclaredConstructor(Class.class);
 					constructor.setAccessible(true);
 					return constructor.newInstance(objectType).in(objectType).unreflectSpecial(m, objectType).bindTo(o);
 				}
-			} catch (Exception ex) {
+			}
+			catch (Exception ex) {
 				throw new RuntimeException(ex);
 			}
 		});
@@ -173,8 +181,11 @@ public class ReflectionUtils {
 
 	@Value
 	private static class MethodCacheKey {
+
 		Object object;
+
 		Method method;
+
 	}
 
 	private static final Map<MethodCacheKey, MethodHandle> defaultMethods = new ConcurrentHashMap<>();

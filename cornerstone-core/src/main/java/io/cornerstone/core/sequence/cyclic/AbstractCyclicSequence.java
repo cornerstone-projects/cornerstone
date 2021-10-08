@@ -2,16 +2,16 @@ package io.cornerstone.core.sequence.cyclic;
 
 import java.time.LocalDateTime;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.BeanNameAware;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.util.StringUtils;
-
 import io.cornerstone.core.sequence.CyclicSequence;
 import io.cornerstone.core.util.NumberUtils;
 import lombok.Getter;
 import lombok.Setter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.springframework.beans.factory.BeanNameAware;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.util.StringUtils;
 
 public abstract class AbstractCyclicSequence implements CyclicSequence, InitializingBean, BeanNameAware {
 
@@ -48,12 +48,15 @@ public abstract class AbstractCyclicSequence implements CyclicSequence, Initiali
 		if (StringUtils.hasLength(beanName)) {
 			if (beanName.endsWith("CyclicSequence")) {
 				beanName = beanName.substring(0, beanName.length() - "CyclicSequence".length());
-			} else if (beanName.endsWith("Sequence")) {
+			}
+			else if (beanName.endsWith("Sequence")) {
 				beanName = beanName.substring(0, beanName.length() - "Sequence".length());
-			} else if (beanName.endsWith("Seq")) {
+			}
+			else if (beanName.endsWith("Seq")) {
 				beanName = beanName.substring(0, beanName.length() - "Seq".length());
 			}
 			this.beanName = beanName;
 		}
 	}
+
 }

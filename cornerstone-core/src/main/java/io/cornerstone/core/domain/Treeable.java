@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import org.springframework.lang.Nullable;
 import org.springframework.util.CollectionUtils;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @SuppressWarnings("unchecked")
 public interface Treeable<T extends Treeable<T, ID>, ID> {
@@ -63,32 +63,38 @@ public interface Treeable<T extends Treeable<T, ID>, ID> {
 	}
 
 	default T findDescendantOrSelfById(ID id) {
-		if (id == null)
+		if (id == null) {
 			throw new IllegalArgumentException("id must not be null");
-		if (id.equals(this.getId()))
+		}
+		if (id.equals(this.getId())) {
 			return (T) this;
+		}
 		Collection<T> children = getChildren();
 		if (children != null) {
 			for (T t : children) {
 				T tt = t.findDescendantOrSelfById(id);
-				if (tt != null)
+				if (tt != null) {
 					return tt;
+				}
 			}
 		}
 		return null;
 	}
 
 	default T findDescendantOrSelfByName(String name) {
-		if (name == null)
+		if (name == null) {
 			throw new IllegalArgumentException("name must not be null");
-		if (name.equals(this.getName()))
+		}
+		if (name.equals(this.getName())) {
 			return (T) this;
+		}
 		Collection<T> children = getChildren();
 		if (children != null) {
 			for (T t : children) {
 				T tt = t.findDescendantOrSelfByName(name);
-				if (tt != null)
+				if (tt != null) {
 					return tt;
+				}
 			}
 		}
 		return null;
@@ -115,8 +121,9 @@ public interface Treeable<T extends Treeable<T, ID>, ID> {
 
 	private void collect(T node, Collection<T> coll) {
 		coll.add(node);
-		if (node.isLeaf())
+		if (node.isLeaf()) {
 			return;
+		}
 		Collection<T> children = node.getChildren();
 		if (children != null) {
 			for (T obj : children) {
@@ -129,8 +136,9 @@ public interface Treeable<T extends Treeable<T, ID>, ID> {
 		T parent = t;
 		while (parent != null) {
 			ID parentId = parent.getId();
-			if ((parentId != null) && parentId.equals(this.getId()))
+			if ((parentId != null) && parentId.equals(this.getId())) {
 				return true;
+			}
 			parent = parent.getParent();
 		}
 		return false;
@@ -141,12 +149,14 @@ public interface Treeable<T extends Treeable<T, ID>, ID> {
 	}
 
 	default T findAncestor(int level) {
-		if ((level < 1) || (level > this.getLevel()))
+		if ((level < 1) || (level > this.getLevel())) {
 			return null;
+		}
 		T parent = (T) this;
 		while (parent != null) {
-			if (parent.getLevel() == level)
+			if (parent.getLevel() == level) {
 				return parent;
+			}
 			parent = parent.getParent();
 		}
 		return null;

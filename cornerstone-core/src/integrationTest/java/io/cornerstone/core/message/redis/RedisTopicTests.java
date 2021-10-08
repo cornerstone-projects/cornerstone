@@ -1,21 +1,5 @@
 package io.cornerstone.core.message.redis;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.verify;
-
-import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.Mockito;
-import org.springframework.boot.test.mock.mockito.SpyBean;
-import org.springframework.context.annotation.Bean;
-import org.springframework.data.redis.connection.RedisConnection;
-import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.test.context.ContextConfiguration;
-
 import io.cornerstone.core.Application;
 import io.cornerstone.core.DefaultApplication;
 import io.cornerstone.core.domain.Scope;
@@ -24,6 +8,22 @@ import io.cornerstone.core.message.TopicTestBase;
 import io.cornerstone.test.containers.Redis;
 import io.cornerstone.test.mock.ResultCaptor;
 import lombok.RequiredArgsConstructor;
+import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.Mockito;
+
+import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.data.redis.connection.RedisConnection;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.test.context.ContextConfiguration;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
 
 @ContextConfiguration(classes = { RedisTopicTests.Config.class, Redis.class })
 class RedisTopicTests extends TopicTestBase {

@@ -1,24 +1,24 @@
 package io.example.showcase.customer;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import io.cornerstone.core.domain.ResultPage;
+import io.cornerstone.core.validation.validators.CitizenIdentificationNumberValidator;
+import io.example.showcase.BaseControllerTests;
+import org.junit.jupiter.api.Test;
+
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.RequestEntity;
+import org.springframework.http.ResponseEntity;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpMethod.DELETE;
 import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.OK;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.RequestEntity;
-import org.springframework.http.ResponseEntity;
-
-import io.cornerstone.core.domain.ResultPage;
-import io.cornerstone.core.validation.validators.CitizenIdentificationNumberValidator;
-import io.example.showcase.BaseControllerTests;
 
 class CustomerControllerTests extends BaseControllerTests {
 
@@ -104,7 +104,8 @@ class CustomerControllerTests extends BaseControllerTests {
 		assertThat(page.getSize()).isEqualTo(10);
 		assertThat(page.getTotalPages()).isEqualTo(1);
 		assertThat(page.getTotalElements()).isEqualTo(size);
-		assertThat(page.getResult().get(0).getCreatedDate()).isNull(); // Customer.View.List view
+		assertThat(page.getResult().get(0).getCreatedDate()).isNull(); // Customer.View.List
+																		// view
 		response = restTemplate.exchange(RequestEntity.method(GET, PATH_LIST + "?page=2&size=1&sort=id,desc").build(),
 				new ParameterizedTypeReference<ResultPage<Customer>>() {
 				});
@@ -133,8 +134,9 @@ class CustomerControllerTests extends BaseControllerTests {
 				});
 		assertThat(response2.getBody()).isEqualTo(response.getBody());
 
-		for (Customer c : list)
+		for (Customer c : list) {
 			restTemplate.delete(PATH_DETAIL, c.getId());
+		}
 	}
 
 }

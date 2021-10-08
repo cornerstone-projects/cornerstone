@@ -1,11 +1,11 @@
 package io.cornerstone.core.hibernate.event;
 
+import io.cornerstone.core.event.BaseEvent;
+import lombok.Getter;
+
 import org.springframework.core.ResolvableType;
 import org.springframework.core.ResolvableTypeProvider;
 import org.springframework.data.domain.Persistable;
-
-import io.cornerstone.core.event.BaseEvent;
-import lombok.Getter;
 
 public class EntityOperationEvent<T extends Persistable<?>> extends BaseEvent<T> implements ResolvableTypeProvider {
 
@@ -33,4 +33,5 @@ public class EntityOperationEvent<T extends Persistable<?>> extends BaseEvent<T>
 		return getClass().getName() + "[type=" + this.type + ", source=" + this.source.getClass().getName() + "("
 				+ this.source + ")]";
 	}
+
 }

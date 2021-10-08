@@ -10,23 +10,23 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import org.hibernate.annotations.common.reflection.XProperty;
 import org.hibernate.annotations.common.reflection.java.JavaXMember;
 import org.hibernate.type.descriptor.WrapperOptions;
 import org.hibernate.type.descriptor.java.AbstractTypeDescriptor;
 import org.hibernate.type.descriptor.java.MutableMutabilityPlan;
 import org.hibernate.usertype.DynamicParameterizedType;
-import org.springframework.beans.BeanUtils;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import org.springframework.beans.BeanUtils;
 
 public class JsonTypeDescriptor extends AbstractTypeDescriptor<Object> implements DynamicParameterizedType {
 
 	private static final long serialVersionUID = -3758905487686034882L;
 
-	private final static ObjectMapper objectMapper = new ObjectMapper()
+	private static final ObjectMapper objectMapper = new ObjectMapper()
 			.setSerializationInclusion(JsonInclude.Include.NON_NULL).disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
 
 	private Type type;
@@ -36,7 +36,8 @@ public class JsonTypeDescriptor extends AbstractTypeDescriptor<Object> implement
 		final XProperty xProperty = (XProperty) parameters.get(DynamicParameterizedType.XPROPERTY);
 		if (xProperty instanceof JavaXMember) {
 			this.type = ((JavaXMember) xProperty).getJavaType();
-		} else {
+		}
+		else {
 			this.type = ((ParameterType) parameters.get(PARAMETER_TYPE)).getReturnedClass();
 		}
 	}
@@ -62,7 +63,8 @@ public class JsonTypeDescriptor extends AbstractTypeDescriptor<Object> implement
 					obj = BeanUtils.instantiateClass(value.getClass());
 					BeanUtils.copyProperties(value, obj);
 					return obj;
-				} catch (Exception ex) {
+				}
+				catch (Exception ex) {
 					throw new RuntimeException(ex);
 				}
 
@@ -74,7 +76,8 @@ public class JsonTypeDescriptor extends AbstractTypeDescriptor<Object> implement
 	public String toString(Object value) {
 		try {
 			return objectMapper.writeValueAsString(value);
-		} catch (Exception ex) {
+		}
+		catch (Exception ex) {
 			throw new IllegalArgumentException(value + " cannot be serialized as json ", ex);
 		}
 	}
@@ -86,7 +89,8 @@ public class JsonTypeDescriptor extends AbstractTypeDescriptor<Object> implement
 		}
 		try {
 			return objectMapper.readValue(string, objectMapper.constructType(this.type));
-		} catch (IOException ex) {
+		}
+		catch (IOException ex) {
 			throw new RuntimeException(ex);
 		}
 	}

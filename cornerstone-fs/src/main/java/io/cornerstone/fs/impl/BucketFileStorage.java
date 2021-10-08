@@ -7,11 +7,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.util.StringUtils;
-
 import io.cornerstone.core.util.FileUtils;
 import io.cornerstone.fs.FileInfo;
 import io.cornerstone.fs.Paged;
+
+import org.springframework.util.StringUtils;
 
 public abstract class BucketFileStorage extends AbstractFileStorage {
 
@@ -46,24 +46,29 @@ public abstract class BucketFileStorage extends AbstractFileStorage {
 	@Override
 	public boolean mkdir(String path) {
 		path = normalizePath(path);
-		if (!path.endsWith("/"))
+		if (!path.endsWith("/")) {
 			path += "/";
-		if (path.equals("/") || isDirectory(path))
+		}
+		if (path.equals("/") || isDirectory(path)) {
 			return true;
+		}
 		if (!isHierarchicalDirectory()) {
 			int lastIndex = path.lastIndexOf('/');
 			if (lastIndex > 0) {
 				int index = 0;
 				while (index < lastIndex) {
 					index = path.indexOf('/', index + 1);
-					if (index < 0)
+					if (index < 0) {
 						break;
-					if (!doMkdir(path.substring(0, index + 1)))
+					}
+					if (!doMkdir(path.substring(0, index + 1))) {
 						return false;
+					}
 				}
 			}
 			return true;
-		} else {
+		}
+		else {
 			return doMkdir(path);
 		}
 	}
@@ -72,17 +77,20 @@ public abstract class BucketFileStorage extends AbstractFileStorage {
 
 	@Override
 	public void write(InputStream is, String path, long contentLength, String contentType) throws IOException {
-		if (path.isEmpty() || path.endsWith("/"))
+		if (path.isEmpty() || path.endsWith("/")) {
 			throw new IllegalArgumentException("path " + path + " is directory");
+		}
 		path = normalizePath(path);
 		if (!isHierarchicalDirectory()) {
 			int lastIndex = path.lastIndexOf('/');
-			if (lastIndex > 0)
+			if (lastIndex > 0) {
 				mkdir(path.substring(0, lastIndex));
+			}
 		}
 		if (contentLength < 0) {
-			if (is instanceof ByteArrayInputStream)
+			if (is instanceof ByteArrayInputStream) {
 				contentLength = ((ByteArrayInputStream) is).available();
+			}
 		}
 		doWrite(is, path, contentLength, contentType);
 	}
@@ -98,13 +106,15 @@ public abstract class BucketFileStorage extends AbstractFileStorage {
 	@Override
 	public String getFileUrl(String path) {
 		String domain = getDomain();
-		if (!StringUtils.hasLength(domain))
+		if (!StringUtils.hasLength(domain)) {
 			return super.getFileUrl(path);
+		}
 		StringBuilder sb = new StringBuilder(isUseHttps() ? "https" : "http");
 		sb.append("://");
 		sb.append(domain);
-		if (!path.startsWith("/"))
+		if (!path.startsWith("/")) {
 			sb.append("/");
+		}
 		sb.append(path);
 		return sb.toString();
 	}
@@ -120,20 +130,24 @@ public abstract class BucketFileStorage extends AbstractFileStorage {
 		do {
 			Paged<FileInfo> paged = listFiles(path, getBatchSize(), marker);
 			list.addAll(paged.getResult());
-			if (list.size() > MAX_PAGE_SIZE)
+			if (list.size() > MAX_PAGE_SIZE) {
 				throw new IllegalArgumentException("Exceed max size:" + MAX_PAGE_SIZE);
+			}
 			marker = paged.getNextMarker();
-		} while (marker != null);
+		}
+		while (marker != null);
 		list.sort(COMPARATOR);
 		return list;
 	}
 
 	@Override
 	public Paged<FileInfo> listFiles(String path, int limit, String marker) {
-		if ((limit < 1) || (limit > MAX_PAGE_SIZE))
+		if ((limit < 1) || (limit > MAX_PAGE_SIZE)) {
 			limit = DEFAULT_PAGE_SIZE;
-		if ((marker != null) && marker.isEmpty())
+		}
+		if ((marker != null) && marker.isEmpty()) {
 			marker = null;
+		}
 		List<FileInfo> list = new ArrayList<>();
 		String nextMarker = marker;
 		do {
@@ -141,7 +155,8 @@ public abstract class BucketFileStorage extends AbstractFileStorage {
 			Paged<FileInfo> result = doListFiles(path, limit - list.size(), nextMarker);
 			list.addAll(result.getResult());
 			nextMarker = result.getNextMarker();
-		} while ((list.size() < limit) && (nextMarker != null));
+		}
+		while ((list.size() < limit) && (nextMarker != null));
 		return new Paged<>(marker, nextMarker, list);
 	}
 
@@ -163,20 +178,24 @@ public abstract class BucketFileStorage extends AbstractFileStorage {
 		do {
 			Paged<FileInfo> paged = listFilesAndDirectory(path, getBatchSize(), marker);
 			list.addAll(paged.getResult());
-			if (list.size() > MAX_PAGE_SIZE)
+			if (list.size() > MAX_PAGE_SIZE) {
 				throw new IllegalArgumentException("Exceed max size:" + MAX_PAGE_SIZE);
+			}
 			marker = paged.getNextMarker();
-		} while (marker != null);
+		}
+		while (marker != null);
 		list.sort(COMPARATOR);
 		return list;
 	}
 
 	@Override
 	public Paged<FileInfo> listFilesAndDirectory(String path, int limit, String marker) {
-		if ((limit < 1) || (limit > MAX_PAGE_SIZE))
+		if ((limit < 1) || (limit > MAX_PAGE_SIZE)) {
 			limit = DEFAULT_PAGE_SIZE;
-		if ((marker != null) && marker.isEmpty())
+		}
+		if ((marker != null) && marker.isEmpty()) {
 			marker = null;
+		}
 		return doListFilesAndDirectory(path, limit, marker);
 	}
 

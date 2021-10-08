@@ -16,27 +16,30 @@ import java.util.jar.Manifest;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import org.springframework.util.StringUtils;
-
 import lombok.experimental.UtilityClass;
+
+import org.springframework.util.StringUtils;
 
 @UtilityClass
 public class FileUtils {
 
 	public static String normalizePath(String input) {
-		if (!StringUtils.hasLength(input))
+		if (!StringUtils.hasLength(input)) {
 			return input;
+		}
 		List<String> list = new ArrayList<>();
 		for (String s : input.split("/|\\\\")) {
-			if (s.isEmpty())
+			if (s.isEmpty()) {
 				continue;
+			}
 			switch (s) {
 			case ".":
 				continue;
 			case "..":
 				if ((list.size() > 0) && !list.get(list.size() - 1).equals("..")) {
 					list.remove(list.size() - 1);
-				} else {
+				}
+				else {
 					list.add("..");
 				}
 				break;
@@ -46,16 +49,21 @@ public class FileUtils {
 			}
 		}
 		String path = String.join("/", list);
-		if (input.charAt(0) == '/')
+		if (input.charAt(0) == '/') {
 			path = '/' + path;
-		if (path.startsWith("../"))
+		}
+		if (path.startsWith("../")) {
 			path = path.substring(2);
-		while (path.startsWith("/../"))
+		}
+		while (path.startsWith("/../")) {
 			path = path.substring(3);
-		if (path.equals("/.."))
+		}
+		if (path.equals("/..")) {
 			path = "/";
-		if ((input.charAt(input.length() - 1) == '/') && (path.charAt(path.length() - 1) != '/'))
+		}
+		if ((input.charAt(input.length() - 1) == '/') && (path.charAt(path.length() - 1) != '/')) {
 			path = path + '/';
+		}
 		return path;
 	}
 
@@ -64,15 +72,18 @@ public class FileUtils {
 	}
 
 	public static File zip(File file, File zipFile) throws Exception {
-		if (zipFile == null)
+		if (zipFile == null) {
 			zipFile = defaultZipFileName(file);
-		if (!file.exists() || !file.canRead())
+		}
+		if (!file.exists() || !file.canRead()) {
 			throw new RuntimeException(file + "doesn't exist or cannot read");
+		}
 		if (file.isDirectory()) {
 			try (ZipOutputStream out = new ZipOutputStream(new FileOutputStream(zipFile))) {
 				zipDirctory(out, file, "");
 			}
-		} else {
+		}
+		else {
 			try (FileInputStream fis = new FileInputStream(file);
 					BufferedInputStream bis = new BufferedInputStream(fis);
 					FileOutputStream fos = new FileOutputStream(zipFile);
@@ -95,10 +106,12 @@ public class FileUtils {
 		String zipFile;
 		if (file.isDirectory()) {
 			zipFile = file.getAbsolutePath();
-			if (zipFile.endsWith("/") || zipFile.endsWith("\\"))
+			if (zipFile.endsWith("/") || zipFile.endsWith("\\")) {
 				zipFile = zipFile.substring(0, zipFile.length() - 1);
+			}
 			zipFile += ".zip";
-		} else {
+		}
+		else {
 			zipFile = file + ".zip";
 		}
 		return new File(zipFile);
@@ -107,15 +120,18 @@ public class FileUtils {
 	private static void zipDirctory(ZipOutputStream out, File file, String base) throws Exception {
 		if (file.isDirectory()) {
 			File[] fl = file.listFiles();
-			if (fl == null)
+			if (fl == null) {
 				return;
-			if (!base.isEmpty())
+			}
+			if (!base.isEmpty()) {
 				out.putNextEntry(new ZipEntry(base + "/"));
+			}
 			base = base.length() == 0 ? "" : base + "/";
 			for (File element : fl) {
 				zipDirctory(out, element, base + element.getName());
 			}
-		} else {
+		}
+		else {
 			out.putNextEntry(new ZipEntry(base));
 			FileInputStream in = new FileInputStream(file);
 			int b;
@@ -129,17 +145,20 @@ public class FileUtils {
 	public static Map<String, String> parseManifestFile(File jarfile) {
 		try (JarFile jar = new JarFile(jarfile)) {
 			Manifest mf = jar.getManifest();
-			if (mf == null)
+			if (mf == null) {
 				return null;
+			}
 			Attributes attrs = mf.getMainAttributes();
-			if (attrs == null)
+			if (attrs == null) {
 				return null;
+			}
 			Map<String, String> map = new HashMap<>();
 			mf.getMainAttributes().forEach((k, v) -> {
 				map.put(k.toString(), v.toString());
 			});
 			return map;
-		} catch (IOException ex) {
+		}
+		catch (IOException ex) {
 			ex.printStackTrace();
 			return null;
 		}

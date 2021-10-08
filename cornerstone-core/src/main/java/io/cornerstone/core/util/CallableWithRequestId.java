@@ -15,9 +15,11 @@ public class CallableWithRequestId<V> implements Callable<V> {
 		boolean requestIdGenerated = CodecUtils.putRequestIdIfAbsent();
 		try {
 			return this.delegate.call();
-		} finally {
-			if (requestIdGenerated)
+		}
+		finally {
+			if (requestIdGenerated) {
 				CodecUtils.removeRequestId();
+			}
 		}
 	}
 

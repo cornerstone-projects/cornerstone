@@ -4,16 +4,19 @@ import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.springframework.util.StringUtils;
-
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.util.StringUtils;
 
 @Slf4j
 public class NameableThreadFactory implements ThreadFactory {
 
 	private final AtomicInteger threadNumber = new AtomicInteger(1);
+
 	private final ThreadGroup group;
+
 	private final String namePrefix;
+
 	private final UncaughtExceptionHandler uncaughtExceptionHandler;
 
 	public NameableThreadFactory(String poolName) {
@@ -60,4 +63,5 @@ public class NameableThreadFactory implements ThreadFactory {
 		}
 		return t;
 	}
+
 }

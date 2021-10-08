@@ -7,11 +7,17 @@ import lombok.Value;
 public class Snowflake {
 
 	private static final long EPOCH = 1556150400000L;
+
 	private final int workerId;
+
 	private final int workerIdBits;
+
 	private final int sequenceBits;
+
 	private final long sequenceMask;
+
 	private long sequence = 0L;
+
 	private long lastTimestamp = -1L;
 
 	public Snowflake(int workerId) {
@@ -40,19 +46,23 @@ public class Snowflake {
 					timestamp = System.currentTimeMillis();
 				}
 			}
-		} else if (timestamp > this.lastTimestamp) {
+		}
+		else if (timestamp > this.lastTimestamp) {
 			this.sequence = ThreadLocalRandom.current().nextInt(2);
-		} else {
+		}
+		else {
 			long offset = this.lastTimestamp - timestamp;
 			if (offset < 5000) {
 				try {
 					this.wait(offset + 1);
 					timestamp = System.currentTimeMillis();
 					this.sequence = ThreadLocalRandom.current().nextInt(2);
-				} catch (InterruptedException ex) {
+				}
+				catch (InterruptedException ex) {
 					throw new IllegalStateException(ex);
 				}
-			} else {
+			}
+			else {
 				throw new IllegalStateException(
 						String.format("Clock moved backwards. Refusing to generate id for %d milliseconds", offset));
 			}
@@ -68,8 +78,11 @@ public class Snowflake {
 
 	@Value
 	public static class Info {
+
 		private long timestamp;
+
 		private int workerId;
+
 		private long sequence;
 
 		Info(long id, int workerIdBits, int sequenceBits) {
@@ -78,6 +91,7 @@ public class Snowflake {
 			this.workerId = (int) ((id - (duration << (sequenceBits + workerIdBits))) >> (sequenceBits));
 			this.sequence = id - (duration << (sequenceBits + workerIdBits)) - (this.workerId << sequenceBits);
 		}
+
 	}
 
 }

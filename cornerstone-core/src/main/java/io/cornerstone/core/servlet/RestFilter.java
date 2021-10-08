@@ -1,14 +1,5 @@
 package io.cornerstone.core.servlet;
 
-import static javax.servlet.DispatcherType.ERROR;
-import static javax.servlet.DispatcherType.REQUEST;
-import static org.springframework.http.HttpHeaders.ACCEPT;
-import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
-import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.http.MediaType.TEXT_PLAIN;
-import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
-
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
@@ -27,8 +18,18 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
+
+import static javax.servlet.DispatcherType.ERROR;
+import static javax.servlet.DispatcherType.REQUEST;
+import static org.springframework.http.HttpHeaders.ACCEPT;
+import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.http.MediaType.TEXT_PLAIN;
+import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 
 public class RestFilter implements Filter {
 
@@ -57,8 +58,9 @@ public class RestFilter implements Filter {
 				filterChain.doFilter(request, response);
 				return;
 			}
-			if (request.getContentType() == null)
+			if (request.getContentType() == null) {
 				request = new WrappedHttpServletRequest(request);
+			}
 		}
 
 		String contentType = request.getContentType();
@@ -67,7 +69,8 @@ public class RestFilter implements Filter {
 			if (isRequestDispatcher) {
 				if (request.getMethod().equals("GET") || request.getMethod().equals("DELETE")) {
 					LOGGER.info("");
-				} else {
+				}
+				else {
 					request = new LoggingBodyHttpServletRequest(request, LOGGER);
 				}
 			}
@@ -83,15 +86,16 @@ public class RestFilter implements Filter {
 			contentType = response.getContentType();
 			if (contentType != null) {
 				MediaType type = MediaType.parseMediaType(contentType);
-				if (type.isCompatibleWith(APPLICATION_JSON) || type.isCompatibleWith(TEXT_PLAIN))
+				if (type.isCompatibleWith(APPLICATION_JSON) || type.isCompatibleWith(TEXT_PLAIN)) {
 					response.getOutputStream().close();
+				}
 			}
 		}
 	}
 
 	private static class WrappedHttpServletRequest extends HttpServletRequestWrapper {
 
-		public WrappedHttpServletRequest(HttpServletRequest request) {
+		WrappedHttpServletRequest(HttpServletRequest request) {
 			super(request);
 		}
 

@@ -2,12 +2,12 @@ package io.cornerstone.test.containers;
 
 import javax.sql.DataSource;
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.core.ResolvableType;
+import com.zaxxer.hikari.HikariDataSource;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.JdbcDatabaseContainer;
 
-import com.zaxxer.hikari.HikariDataSource;
+import org.springframework.context.annotation.Bean;
+import org.springframework.core.ResolvableType;
 
 abstract class JdbcDatabase<T extends JdbcDatabaseContainer<?>> extends AbstractContainer {
 
@@ -22,12 +22,14 @@ abstract class JdbcDatabase<T extends JdbcDatabaseContainer<?>> extends Abstract
 	protected String getImageName() {
 		try {
 			return (String) this.containerClass.getDeclaredField("IMAGE").get(null);
-		} catch (Exception ex) {
+		}
+		catch (Exception ex) {
 
 		}
 		try {
 			return (String) this.containerClass.getDeclaredField("NAME").get(null);
-		} catch (Exception ex) {
+		}
+		catch (Exception ex) {
 
 		}
 		return this.containerClass.getSimpleName().toLowerCase();
@@ -39,13 +41,14 @@ abstract class JdbcDatabase<T extends JdbcDatabaseContainer<?>> extends Abstract
 			T container = this.containerClass.getConstructor(String.class).newInstance(getImage());
 			container.start();
 			return container;
-		} catch (Exception ex) {
+		}
+		catch (Exception ex) {
 			throw new RuntimeException(ex.getMessage(), ex);
 		}
 	}
 
 	@Bean
-	public DataSource dataSource(GenericContainer<?> container) throws Exception {
+	DataSource dataSource(GenericContainer<?> container) throws Exception {
 		@SuppressWarnings("unchecked")
 		T c = (T) container;
 		HikariDataSource ds = new HikariDataSource();

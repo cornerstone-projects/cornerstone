@@ -1,12 +1,12 @@
 package io.cornerstone.user;
 
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsPasswordService;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
-
-import lombok.RequiredArgsConstructor;
 
 @Component("userDetailsService")
 @RequiredArgsConstructor
@@ -28,4 +28,5 @@ public class UserDetailsServiceImpl implements UserDetailsService, UserDetailsPa
 		this.userRepository.save(u);
 		return u;
 	}
+
 }

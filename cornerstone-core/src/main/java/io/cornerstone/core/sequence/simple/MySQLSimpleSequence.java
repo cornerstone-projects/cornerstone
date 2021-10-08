@@ -23,7 +23,8 @@ public class MySQLSimpleSequence extends AbstractDatabaseSimpleSequence {
 	public void afterPropertiesSet() {
 		try {
 			createTable(getDataSource(), getTableName(), getSequenceName());
-		} catch (SQLException ex) {
+		}
+		catch (SQLException ex) {
 			this.logger.error(ex.getMessage(), ex);
 		}
 	}
@@ -36,7 +37,8 @@ public class MySQLSimpleSequence extends AbstractDatabaseSimpleSequence {
 				if (this.maxId == this.nextId) {
 					this.maxId = incrementAndGet(cacheSize);
 					this.nextId = (this.maxId - cacheSize) + 1;
-				} else {
+				}
+				else {
 					this.nextId++;
 				}
 				return this.nextId;
@@ -60,7 +62,8 @@ public class MySQLSimpleSequence extends AbstractDatabaseSimpleSequence {
 					return rs.getLong(1);
 				}
 			}
-		} catch (SQLException ex) {
+		}
+		catch (SQLException ex) {
 			throw new DataAccessResourceFailureException("Could not obtain LAST_INSERT_ID()", ex);
 		}
 	}
@@ -75,7 +78,8 @@ public class MySQLSimpleSequence extends AbstractDatabaseSimpleSequence {
 				this.nextId = 0;
 				this.maxId = 0;
 			}
-		} catch (SQLException ex) {
+		}
+		catch (SQLException ex) {
 			throw new DataAccessResourceFailureException(ex.getMessage(), ex);
 		}
 	}
@@ -89,7 +93,8 @@ public class MySQLSimpleSequence extends AbstractDatabaseSimpleSequence {
 			String schema = null;
 			try {
 				schema = conn.getSchema();
-			} catch (Throwable t) {
+			}
+			catch (Throwable th) {
 			}
 			for (String table : new LinkedHashSet<>(
 					Arrays.asList(tableName.toUpperCase(Locale.ROOT), tableName, tableName.toLowerCase(Locale.ROOT)))) {
@@ -109,11 +114,13 @@ public class MySQLSimpleSequence extends AbstractDatabaseSimpleSequence {
 				if (!rowExists) {
 					stmt.execute("INSERT INTO `" + tableName + "` VALUES('" + sequenceName + "',0,UNIX_TIMESTAMP())");
 				}
-			} else {
+			}
+			else {
 				stmt.execute("CREATE TABLE `" + tableName
 						+ "` (NAME VARCHAR(50) NOT NULL PRIMARY KEY, VALUE INT NOT NULL DEFAULT 0, LAST_UPDATED BIGINT NOT NULL) ");
 				stmt.execute("INSERT INTO `" + tableName + "` VALUES('" + sequenceName + "',0,UNIX_TIMESTAMP())");
 			}
 		}
 	}
+
 }

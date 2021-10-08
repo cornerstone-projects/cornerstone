@@ -7,11 +7,11 @@ import java.util.UUID;
 
 import javax.persistence.EntityManager;
 
+import io.cornerstone.core.hibernate.domain.AbstractTreeableEntity;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.ProxyUtils;
 import org.springframework.transaction.annotation.Transactional;
-
-import io.cornerstone.core.hibernate.domain.AbstractTreeableEntity;
 
 @Transactional
 public class TreeableRepositoryImpl<T extends AbstractTreeableEntity<T>> implements TreeableRepository<T> {
@@ -37,29 +37,34 @@ public class TreeableRepositoryImpl<T extends AbstractTreeableEntity<T>> impleme
 			this.entityManager.persist(entity);
 			this.entityManager.flush();
 			String fullId = String.valueOf(entity.getId()) + ".";
-			if (parent != null)
+			if (parent != null) {
 				fullId = parent.getFullId() + fullId;
+			}
 			entity.setFullId(fullId);
 			return entity;
-		} else {
+		}
+		else {
 			boolean positionChanged = (((parent == null) && (entity.getLevel() != 1))
 					|| ((parent != null) && (((entity.getLevel() - parent.getLevel()) != 1)
 							|| !entity.getFullId().startsWith(parent.getFullId()))));
 			if (positionChanged) {
 				String fullId = String.valueOf(entity.getId()) + ".";
-				if (parent != null)
+				if (parent != null) {
 					fullId = parent.getFullId() + fullId;
+				}
 				entity.setFullId(fullId);
 				entity.setLevel(fullId.split("\\.").length);
-				if (parent != null)
+				if (parent != null) {
 					entity.setParent(parent); // recalculate fullname
+				}
 			}
 			S merged = this.entityManager.merge(entity);
 			if (positionChanged) {
 				Collection<T> children = merged.getChildren();
 				if (children != null) {
-					for (T c : children)
+					for (T c : children) {
 						save(c);
+					}
 				}
 			}
 			return merged;
@@ -88,4 +93,5 @@ public class TreeableRepositoryImpl<T extends AbstractTreeableEntity<T>> impleme
 		this.entityManager.flush();
 		return result;
 	}
+
 }

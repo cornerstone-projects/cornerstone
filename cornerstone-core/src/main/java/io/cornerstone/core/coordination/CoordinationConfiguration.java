@@ -1,15 +1,15 @@
 package io.cornerstone.core.coordination;
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.data.redis.core.StringRedisTemplate;
-
 import io.cornerstone.core.coordination.impl.RedisLockService;
 import io.cornerstone.core.coordination.impl.RedisMembership;
 import io.cornerstone.core.coordination.impl.StandaloneLockService;
 import io.cornerstone.core.coordination.impl.StandaloneMembership;
 import io.cornerstone.core.redis.RedisEnabled;
+
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.core.StringRedisTemplate;
 
 @Configuration(proxyBeanMethods = false)
 public class CoordinationConfiguration {
@@ -37,4 +37,5 @@ public class CoordinationConfiguration {
 	Membership standaloneMembership() {
 		return new StandaloneMembership();
 	}
+
 }

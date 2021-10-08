@@ -1,21 +1,21 @@
 package io.cornerstone.core.sequence;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import lombok.Getter;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import lombok.Getter;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(SpringExtension.class)
 abstract class SequenceTestBase {
@@ -68,9 +68,11 @@ abstract class SequenceTestBase {
 						String id = seq.nextStringValue();
 						Long time2 = System.currentTimeMillis();
 						Long old = map.putIfAbsent(id, time2);
-						if (old == null)
+						if (old == null) {
 							count.incrementAndGet();
-					} catch (Throwable ex) {
+						}
+					}
+					catch (Throwable ex) {
 						ex.printStackTrace();
 					}
 

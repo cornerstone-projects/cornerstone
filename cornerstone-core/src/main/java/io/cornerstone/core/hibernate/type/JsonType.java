@@ -29,4 +29,5 @@ public class JsonType extends AbstractSingleColumnStandardBasicType<Object> impl
 	public void setParameterValues(Properties parameters) {
 		((JsonTypeDescriptor) getJavaTypeDescriptor()).setParameterValues(parameters);
 	}
+
 }

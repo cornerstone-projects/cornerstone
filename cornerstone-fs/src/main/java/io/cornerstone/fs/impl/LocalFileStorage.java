@@ -11,13 +11,13 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
-import org.springframework.util.Assert;
-import org.springframework.util.StreamUtils;
-
 import io.cornerstone.core.util.FileUtils;
 import io.cornerstone.fs.FileInfo;
 import io.cornerstone.fs.FileStorageProperties;
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.util.Assert;
+import org.springframework.util.StreamUtils;
 
 @Slf4j
 public class LocalFileStorage extends AbstractFileStorage {
@@ -34,11 +34,14 @@ public class LocalFileStorage extends AbstractFileStorage {
 	public void afterPropertiesSet() {
 		Assert.notNull(this.uri, "uri shouldn't be null");
 		this.directory = this.uri.isAbsolute() ? new File(this.uri) : new File(this.uri.getPath());
-		if (this.directory.isFile())
+		if (this.directory.isFile()) {
 			throw new IllegalStateException(this.directory + " is not directory");
-		if (!this.directory.exists())
-			if (!this.directory.mkdirs())
+		}
+		if (!this.directory.exists()) {
+			if (!this.directory.mkdirs()) {
 				log.error("mkdirs error:" + this.directory.getAbsolutePath());
+			}
+		}
 	}
 
 	@Override
@@ -55,8 +58,9 @@ public class LocalFileStorage extends AbstractFileStorage {
 	public InputStream open(String path) throws IOException {
 		path = normalizePath(path);
 		File file = new File(this.directory, path);
-		if (!file.exists() || file.isDirectory())
+		if (!file.exists() || file.isDirectory()) {
 			return null;
+		}
 		return new FileInputStream(file);
 	}
 
@@ -92,15 +96,17 @@ public class LocalFileStorage extends AbstractFileStorage {
 		File target = new File(toPath);
 		if (source.getParent().equals(target.getParent())) {
 			return source.renameTo(target);
-		} else {
+		}
+		else {
 			return target.getParentFile().mkdirs() && source.renameTo(target);
 		}
 	}
 
 	@Override
 	public boolean isDirectory(String path) {
-		if (path.isEmpty() || path.equals("/"))
+		if (path.isEmpty() || path.equals("/")) {
 			return true;
+		}
 		path = normalizePath(path);
 		return new File(this.directory, path).isDirectory();
 	}
@@ -112,8 +118,9 @@ public class LocalFileStorage extends AbstractFileStorage {
 		new File(this.directory, path).listFiles(f -> {
 			if (f.isFile()) {
 				list.add(new FileInfo(f.getName(), true, f.length(), f.lastModified()));
-				if (list.size() > MAX_PAGE_SIZE)
+				if (list.size() > MAX_PAGE_SIZE) {
 					throw new IllegalArgumentException("Exceed max size:" + MAX_PAGE_SIZE);
+				}
 			}
 			return false;
 		});
@@ -127,8 +134,9 @@ public class LocalFileStorage extends AbstractFileStorage {
 		final List<FileInfo> list = new ArrayList<>();
 		new File(this.directory, path).listFiles(f -> {
 			list.add(new FileInfo(f.getName(), f.isFile(), f.length(), f.lastModified()));
-			if (list.size() > MAX_PAGE_SIZE)
+			if (list.size() > MAX_PAGE_SIZE) {
 				throw new IllegalArgumentException("Exceed max size:" + MAX_PAGE_SIZE);
+			}
 			return false;
 		});
 		list.sort(COMPARATOR);
@@ -136,8 +144,9 @@ public class LocalFileStorage extends AbstractFileStorage {
 	}
 
 	private String normalizePath(String path) {
-		if (!path.startsWith("/"))
+		if (!path.startsWith("/")) {
 			path = "/" + path;
+		}
 		return FileUtils.normalizePath(path);
 	}
 

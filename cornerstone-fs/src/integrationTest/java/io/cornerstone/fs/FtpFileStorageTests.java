@@ -1,8 +1,5 @@
 package io.cornerstone.fs;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
@@ -13,12 +10,16 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
-import org.springframework.test.context.TestPropertySource;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
+
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.test.context.TestPropertySource;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 @TestPropertySource(properties = { "file-storage.ftp.data-timeout=30000", "file-storage.ftp.buffer-threshold=8",
 		"file-storage.ftp.pool.max-total=5" })
@@ -33,8 +34,9 @@ class FtpFileStorageTests extends FileStorageTestBase {
 	@Container
 	static GenericContainer<?> container = (new GenericContainer("panubo/vsftpd") {
 		GenericContainer<?> withFixedExposedPort() {
-			for (int port = 4559; port <= 4564; port++)
+			for (int port = 4559; port <= 4564; port++) {
 				addFixedExposedPort(port, port);
+			}
 			return this;
 		}
 	}).withFixedExposedPort().withExposedPorts(21).withEnv("FTP_USER", FTP_USER).withEnv("FTP_PASSWORD", FTP_PASSWORD)
@@ -66,15 +68,18 @@ class FtpFileStorageTests extends FileStorageTestBase {
 						writeToFile(this.fs, text, path);
 						try (BufferedReader br = new BufferedReader(
 								new InputStreamReader(this.fs.open(path), StandardCharsets.UTF_8))) {
-							if (!text.equals(br.lines().collect(Collectors.joining("\n"))))
+							if (!text.equals(br.lines().collect(Collectors.joining("\n")))) {
 								errors.incrementAndGet();
+							}
 						}
 						this.fs.delete(path);
 					}
-				} catch (Exception ex) {
+				}
+				catch (Exception ex) {
 					ex.printStackTrace();
 					errors.incrementAndGet();
-				} finally {
+				}
+				finally {
 
 					cdl.countDown();
 				}

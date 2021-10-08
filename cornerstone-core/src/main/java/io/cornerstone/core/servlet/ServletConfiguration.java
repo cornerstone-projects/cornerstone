@@ -5,6 +5,7 @@ import java.util.List;
 import javax.servlet.DispatcherType;
 
 import org.slf4j.MDC;
+
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -59,7 +60,7 @@ public class ServletConfiguration {
 	}
 
 	@Bean
-	@ConditionalOnBean(value = SsoFilter.class)
+	@ConditionalOnBean(SsoFilter.class)
 	FilterRegistrationBean<SsoFilter> ssoFilterRegistration(SsoFilter ssoFilter) {
 		FilterRegistrationBean<SsoFilter> registrationBean = new FilterRegistrationBean<>();
 		registrationBean.setFilter(ssoFilter);
@@ -73,8 +74,9 @@ public class ServletConfiguration {
 			List<ClientHttpRequestInterceptor> interceptors = restTemplate.getInterceptors();
 			interceptors.add((request, body, execution) -> {
 				String requestId = MDC.get(AccessFilter.MDC_KEY_REQUEST_ID);
-				if (requestId != null)
+				if (requestId != null) {
 					request.getHeaders().set(AccessFilter.HTTP_HEADER_REQUEST_ID, requestId);
+				}
 				return execution.execute(request, body);
 			});
 			interceptors.add(new LoggingClientHttpRequestInterceptor());

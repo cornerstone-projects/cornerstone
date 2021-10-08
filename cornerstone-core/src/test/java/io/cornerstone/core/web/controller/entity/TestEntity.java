@@ -5,7 +5,6 @@ import javax.persistence.Entity;
 import javax.persistence.Version;
 
 import com.fasterxml.jackson.annotation.JsonView;
-
 import io.cornerstone.core.domain.Versioned;
 import io.cornerstone.core.domain.View;
 import io.cornerstone.core.hibernate.domain.AbstractAuditableEntity;

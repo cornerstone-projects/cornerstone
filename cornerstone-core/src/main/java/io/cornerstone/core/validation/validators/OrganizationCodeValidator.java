@@ -16,14 +16,16 @@ public class OrganizationCodeValidator implements ConstraintValidator<Organizati
 
 	@Override
 	public boolean isValid(String input, ConstraintValidatorContext constraintValidatorContext) {
-		if (input == null)
+		if (input == null) {
 			return true;
+		}
 		return isValid(input);
 	}
 
 	public static boolean isValid(String input) {
-		if ((input == null) || (input.length() != 9))
+		if ((input == null) || (input.length() != 9)) {
 			return false;
+		}
 		char[] bits = Arrays.copyOfRange(input.toCharArray(), 0, input.length() - 1);
 		char checkBit = input.charAt(input.length() - 1);
 		return getCheckBit(getPowerSum(bits)) == checkBit;

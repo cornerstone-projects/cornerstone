@@ -1,7 +1,5 @@
 package io.cornerstone.user;
 
-import static java.util.stream.Collectors.toList;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
@@ -10,14 +8,9 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Version;
 
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
-
 import io.cornerstone.core.domain.Versioned;
 import io.cornerstone.core.domain.View.Creation;
 import io.cornerstone.core.domain.View.Edit;
@@ -26,6 +19,12 @@ import io.cornerstone.core.hibernate.domain.AbstractAuditableEntity;
 import io.cornerstone.core.validation.constraints.MobilePhoneNumber;
 import lombok.Getter;
 import lombok.Setter;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import static java.util.stream.Collectors.toList;
 
 @Entity
 @Getter
@@ -63,8 +62,9 @@ public class User extends AbstractAuditableEntity implements UserDetails, Versio
 	@JsonIgnore
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		if (this.roles == null)
+		if (this.roles == null) {
 			return Collections.emptyList();
+		}
 		return this.roles.stream().map(SimpleGrantedAuthority::new).collect(toList());
 	}
 
@@ -103,4 +103,5 @@ public class User extends AbstractAuditableEntity implements UserDetails, Versio
 		}
 
 	}
+
 }

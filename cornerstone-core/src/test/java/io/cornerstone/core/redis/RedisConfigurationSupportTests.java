@@ -1,13 +1,13 @@
 package io.cornerstone.core.redis;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-
+import io.lettuce.core.resource.DefaultClientResources;
 import org.junit.jupiter.api.Test;
+
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 
-import io.lettuce.core.resource.DefaultClientResources;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
 
 @SuppressWarnings("unchecked")
 class RedisConfigurationSupportTests {

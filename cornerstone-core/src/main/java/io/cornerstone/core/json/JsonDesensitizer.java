@@ -14,9 +14,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
 
-import org.springframework.beans.BeanWrapperImpl;
-import org.springframework.core.annotation.AnnotationUtils;
-
 import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -31,9 +28,11 @@ import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.PropertyWriter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
-
 import io.cornerstone.core.util.ReflectionUtils;
 import lombok.Getter;
+
+import org.springframework.beans.BeanWrapperImpl;
+import org.springframework.core.annotation.AnnotationUtils;
 
 public class JsonDesensitizer {
 
@@ -94,47 +93,58 @@ public class JsonDesensitizer {
 							if (isNumeric(type) && isNumber(newValue)) {
 								jgen.writeFieldName(name);
 								jgen.writeNumber(newValue);
-							} else if (((type == Boolean.class) || (type == boolean.class))
+							}
+							else if (((type == Boolean.class) || (type == boolean.class))
 									&& ("true".equals(newValue) || "false".equals(newValue))) {
 								jgen.writeBooleanField(name, Boolean.getBoolean(newValue));
-							} else {
+							}
+							else {
 								jgen.writeStringField(name, newValue);
 							}
-						} catch (Exception ex) {
+						}
+						catch (Exception ex) {
 							ex.printStackTrace();
 						}
-					} else {
+					}
+					else {
 						JsonDesensitize annotation = null;
 						try {
 							annotation = AnnotationUtils.findAnnotation(bw.getPropertyDescriptor(name).getReadMethod(),
 									JsonDesensitize.class);
-							if (annotation == null)
+							if (annotation == null) {
 								annotation = AnnotationUtils.findAnnotation(
 										ReflectionUtils.getField(obj.getClass(), name), JsonDesensitize.class);
-						} catch (Exception ex) {
+							}
+						}
+						catch (Exception ex) {
 
 						}
-						if (annotation != null) {
-							String newValue = annotation.value();
-							if (newValue.equals(JsonDesensitize.DEFAULT_NONE)) {
-								writer.serializeAsOmittedField(obj, jgen, provider);
-							} else {
-								Class<?> type = bw.getPropertyType(name);
-								if (isNumeric(type) && isNumber(newValue)) {
-									jgen.writeFieldName(name);
-									jgen.writeNumber(newValue);
-								} else if (((type == Boolean.class) || (type == boolean.class))
-										&& ("true".equals(newValue) || "false".equals(newValue))) {
-									jgen.writeBooleanField(name, Boolean.getBoolean(newValue));
-								} else {
-									jgen.writeStringField(name, newValue);
-								}
-							}
-						} else {
+						if (annotation == null) {
 							writer.serializeAsField(obj, jgen, provider);
+							return;
+						}
+
+						String newValue = annotation.value();
+						if (newValue.equals(JsonDesensitize.DEFAULT_NONE)) {
+							writer.serializeAsOmittedField(obj, jgen, provider);
+						}
+						else {
+							Class<?> type = bw.getPropertyType(name);
+							if (isNumeric(type) && isNumber(newValue)) {
+								jgen.writeFieldName(name);
+								jgen.writeNumber(newValue);
+							}
+							else if (((type == Boolean.class) || (type == boolean.class))
+									&& ("true".equals(newValue) || "false".equals(newValue))) {
+								jgen.writeBooleanField(name, Boolean.getBoolean(newValue));
+							}
+							else {
+								jgen.writeStringField(name, newValue);
+							}
 						}
 					}
-				} else if (!jgen.canOmitFields()) {
+				}
+				else if (!jgen.canOmitFields()) {
 					writer.serializeAsOmittedField(obj, jgen, provider);
 				}
 			}
@@ -146,7 +156,8 @@ public class JsonDesensitizer {
 	public String toJson(Object value) {
 		try {
 			return this.objectWriter.writeValueAsString(value);
-		} catch (Exception ex) {
+		}
+		catch (Exception ex) {
 			return null;
 		}
 	}
@@ -156,7 +167,8 @@ public class JsonDesensitizer {
 			JsonNode node = objectMapper.readTree(json);
 			desensitize(null, node, null);
 			return objectMapper.writeValueAsString(node);
-		} catch (IOException ex) {
+		}
+		catch (IOException ex) {
 			return json;
 		}
 	}
@@ -165,8 +177,9 @@ public class JsonDesensitizer {
 		if (node.isObject()) {
 			List<String> toBeDropped = new ArrayList<>();
 			node.fieldNames().forEachRemaining(name -> {
-				if (this.dropping.stream().anyMatch(p -> p.test(name, node)))
+				if (this.dropping.stream().anyMatch(p -> p.test(name, node))) {
 					toBeDropped.add(name);
+				}
 			});
 			((ObjectNode) node).remove(toBeDropped);
 			Iterator<Map.Entry<String, JsonNode>> iterator = node.fields();
@@ -174,25 +187,31 @@ public class JsonDesensitizer {
 				Map.Entry<String, JsonNode> entry = iterator.next();
 				desensitize(entry.getKey(), entry.getValue(), node);
 			}
-		} else if (node.isArray()) {
+		}
+		else if (node.isArray()) {
 			Iterator<JsonNode> iterator = node.elements();
 			while (iterator.hasNext()) {
 				JsonNode element = iterator.next();
 				desensitize(null, element, node);
 			}
-		} else if (parent instanceof ObjectNode) {
+		}
+		else if (parent instanceof ObjectNode) {
 			this.mapping.forEach((k, v) -> {
 				if (k.test(nodeName, parent)) {
 					ObjectNode on = ((ObjectNode) parent);
 					String value = v.apply(node.isNull() ? null : node.asText());
 					try {
-						if (node.isNumber())
+						if (node.isNumber()) {
 							on.put(nodeName, new BigDecimal(value));
-						else if (node.isBoolean())
+						}
+						else if (node.isBoolean()) {
 							on.put(nodeName, Boolean.valueOf(value));
-						else
+						}
+						else {
 							on.put(nodeName, value);
-					} catch (Exception ex) {
+						}
+					}
+					catch (Exception ex) {
 						on.put(nodeName, value);
 					}
 				}
@@ -209,7 +228,8 @@ public class JsonDesensitizer {
 		try {
 			Double.parseDouble(value);
 			return true;
-		} catch (Exception ex) {
+		}
+		catch (Exception ex) {
 			return false;
 		}
 	}

@@ -8,21 +8,26 @@ public abstract class AbstractCollectionConverter<T> {
 	public static final String SEPARATOR = ",";
 
 	protected static <T> String doConvertToDatabaseColumn(Collection<T> collection) {
-		if (collection == null)
+		if (collection == null) {
 			return null;
-		if (collection.isEmpty())
+		}
+		if (collection.isEmpty()) {
 			return "";
+		}
 		return String.join(SEPARATOR, collection.stream().map(Object::toString).collect(Collectors.toList()));
 	}
 
 	protected Collection<T> doConvertToEntityAttribute(String string) {
-		if (string == null)
+		if (string == null) {
 			return null;
+		}
 		String[] arr = string.split(SEPARATOR + "\\s*");
 		Collection<T> collection = collection();
-		for (String s : arr)
-			if (!s.isEmpty())
+		for (String s : arr) {
+			if (!s.isEmpty()) {
 				collection.add(convert(s));
+			}
+		}
 		return collection;
 	}
 

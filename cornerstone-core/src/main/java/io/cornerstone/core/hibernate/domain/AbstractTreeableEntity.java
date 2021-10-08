@@ -1,7 +1,5 @@
 package io.cornerstone.core.hibernate.domain;
 
-import static lombok.AccessLevel.PROTECTED;
-
 import java.io.Serializable;
 import java.util.Collection;
 
@@ -18,14 +16,10 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 
-import org.springframework.data.domain.Persistable;
-import org.springframework.lang.Nullable;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-
 import io.cornerstone.core.domain.Ordered;
 import io.cornerstone.core.domain.Treeable;
 import io.cornerstone.core.domain.View;
@@ -34,6 +28,11 @@ import io.cornerstone.core.json.ToIdSerializer;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
+
+import org.springframework.data.domain.Persistable;
+import org.springframework.lang.Nullable;
+
+import static lombok.AccessLevel.PROTECTED;
 
 @MappedSuperclass
 @Getter
@@ -63,7 +62,7 @@ public abstract class AbstractTreeableEntity<T extends AbstractTreeableEntity<T>
 	protected Integer displayOrder;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
+	@JoinColumn(foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
 	@JsonView(View.Edit.class)
 	@JsonSerialize(using = ToIdSerializer.class)
 	@JsonDeserialize(using = FromIdDeserializer.class)

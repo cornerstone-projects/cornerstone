@@ -1,16 +1,16 @@
 package io.cornerstone.core.repository.treeable;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import java.util.Collection;
 import java.util.Iterator;
 
+import io.cornerstone.test.DataJpaTestBase;
 import org.junit.jupiter.api.Test;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
-import io.cornerstone.test.DataJpaTestBase;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @EnableJpaRepositories(basePackageClasses = TestEntityRepository.class)
 @EntityScan(basePackageClasses = TestEntity.class)

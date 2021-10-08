@@ -1,16 +1,15 @@
 package io.cornerstone.core.json;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import java.util.Collections;
 import java.util.Map;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
 
-import org.junit.jupiter.api.Test;
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 class JsonDesensitizerTests {
 
@@ -84,20 +83,29 @@ class JsonDesensitizerTests {
 	@RequiredArgsConstructor
 	@Getter
 	static class User {
+
 		private final String username;
+
 		private final String password;
+
 		private final int age;
+
 		private User mate;
+
 	}
 
 	@RequiredArgsConstructor
 	@Getter
 	static class Person {
+
 		private final String name;
+
 		@JsonDesensitize("1**********")
 		private final String phone;
+
 		@JsonDesensitize
 		private final int age;
+
 	}
 
 }

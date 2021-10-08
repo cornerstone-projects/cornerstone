@@ -1,13 +1,13 @@
 package io.cornerstone.core.web.controller.entity;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.springframework.http.HttpMethod.GET;
-
 import java.util.ArrayList;
 import java.util.List;
 
+import io.cornerstone.core.domain.ResultPage;
+import io.cornerstone.core.validation.validators.CitizenIdentificationNumberValidator;
+import io.cornerstone.test.WebMvcWithDataJpaTestBase;
 import org.junit.jupiter.api.Test;
+
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.ParameterizedTypeReference;
@@ -16,9 +16,9 @@ import org.springframework.http.RequestEntity;
 import org.springframework.web.client.HttpClientErrorException.BadRequest;
 import org.springframework.web.client.HttpClientErrorException.NotFound;
 
-import io.cornerstone.core.domain.ResultPage;
-import io.cornerstone.core.validation.validators.CitizenIdentificationNumberValidator;
-import io.cornerstone.test.WebMvcWithDataJpaTestBase;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.springframework.http.HttpMethod.GET;
 
 @ComponentScan // scan @RestController in this package
 @EnableJpaRepositories(basePackageClasses = TestEntityRepository.class)
@@ -70,13 +70,13 @@ class EntityControllerTests extends WebMvcWithDataJpaTestBase {
 		assertThat(c4.getIdNo()).isEqualTo(testEntity.getIdNo()); // idNo not updatable
 
 		// delete
-		assertThatThrownBy(() -> this.restTemplate.delete(PATH_DETAIL, id)).isInstanceOf(BadRequest.class);
+		assertThatExceptionOfType(BadRequest.class).isThrownBy(() -> this.restTemplate.delete(PATH_DETAIL, id));
 
 		c4.setDisabled(Boolean.TRUE);
 		this.restTemplate.put(PATH_DETAIL, c4, id);
 		this.restTemplate.delete(PATH_DETAIL, id);
-		assertThatThrownBy(() -> this.restTemplate.getForObject(PATH_DETAIL, TestEntity.class, id))
-				.isInstanceOf(NotFound.class);
+		assertThatExceptionOfType(NotFound.class)
+				.isThrownBy(() -> this.restTemplate.getForObject(PATH_DETAIL, TestEntity.class, id));
 	}
 
 	@Test
@@ -127,8 +127,9 @@ class EntityControllerTests extends WebMvcWithDataJpaTestBase {
 				.getBody();
 		assertThat(page2).isEqualTo(page);
 
-		for (TestEntity c : list)
+		for (TestEntity c : list) {
 			this.restTemplate.delete(PATH_DETAIL, c.getId());
+		}
 	}
 
 }

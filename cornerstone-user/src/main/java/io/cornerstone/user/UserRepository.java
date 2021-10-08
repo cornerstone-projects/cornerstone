@@ -2,13 +2,13 @@ package io.cornerstone.user;
 
 import java.util.Optional;
 
+import io.cornerstone.core.repository.StreamableJpaRepository;
+
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.transaction.annotation.Transactional;
-
-import io.cornerstone.core.repository.StreamableJpaRepository;
 
 @Transactional(readOnly = true)
 public interface UserRepository extends StreamableJpaRepository<User, Long>, JpaSpecificationExecutor<User> {

@@ -1,14 +1,5 @@
 package io.cornerstone.core.hibernate.criteria;
 
-import static io.cornerstone.core.hibernate.criteria.PredicateBuilder.contains;
-import static io.cornerstone.core.hibernate.criteria.PredicateBuilder.isConstantFalse;
-import static io.cornerstone.core.hibernate.criteria.PredicateBuilder.isConstantTrue;
-import static io.cornerstone.core.hibernate.criteria.PredicateBuilder.itemContains;
-import static io.cornerstone.core.hibernate.criteria.PredicateBuilder.itemEndsWith;
-import static io.cornerstone.core.hibernate.criteria.PredicateBuilder.itemStartsWith;
-import static io.cornerstone.core.hibernate.criteria.PredicateBuilder.regexpLike;
-import static org.assertj.core.api.Assertions.assertThat;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -19,7 +10,9 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
+import io.cornerstone.test.DataJpaTestBase;
 import org.junit.jupiter.api.Test;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -27,7 +20,14 @@ import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
-import io.cornerstone.test.DataJpaTestBase;
+import static io.cornerstone.core.hibernate.criteria.PredicateBuilder.contains;
+import static io.cornerstone.core.hibernate.criteria.PredicateBuilder.isConstantFalse;
+import static io.cornerstone.core.hibernate.criteria.PredicateBuilder.isConstantTrue;
+import static io.cornerstone.core.hibernate.criteria.PredicateBuilder.itemContains;
+import static io.cornerstone.core.hibernate.criteria.PredicateBuilder.itemEndsWith;
+import static io.cornerstone.core.hibernate.criteria.PredicateBuilder.itemStartsWith;
+import static io.cornerstone.core.hibernate.criteria.PredicateBuilder.regexpLike;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @EnableJpaRepositories(basePackageClasses = TestEntityRepository.class)
 @EntityScan(basePackageClasses = TestEntity.class)
@@ -85,8 +85,9 @@ class PredicateBuilderTests extends DataJpaTestBase {
 		for (int i = 0; i < size; i++) {
 			TestEntity entity = new TestEntity();
 			Set<String> names = new HashSet<>();
-			for (int j = 0; j < (i + 1); j++)
+			for (int j = 0; j < (i + 1); j++) {
 				names.add("name" + j);
+			}
 			entity.setNames(names);
 			this.repository.save(entity);
 		}
@@ -103,8 +104,9 @@ class PredicateBuilderTests extends DataJpaTestBase {
 		for (int i = 0; i < size; i++) {
 			TestEntity entity = new TestEntity();
 			Set<String> names = new HashSet<>();
-			for (int j = 0; j < (i + 1); j++)
+			for (int j = 0; j < (i + 1); j++) {
 				names.add("prefix" + "name" + j + "suffix");
+			}
 			entity.setNames(names);
 			this.repository.save(entity);
 		}
@@ -122,8 +124,9 @@ class PredicateBuilderTests extends DataJpaTestBase {
 		for (int i = 0; i < size; i++) {
 			TestEntity entity = new TestEntity();
 			Set<String> names = new HashSet<>();
-			for (int j = 0; j < (i + 1); j++)
+			for (int j = 0; j < (i + 1); j++) {
 				names.add("name" + j + "suffix");
+			}
 			entity.setNames(names);
 			this.repository.save(entity);
 		}
@@ -141,8 +144,9 @@ class PredicateBuilderTests extends DataJpaTestBase {
 		for (int i = 0; i < size; i++) {
 			TestEntity entity = new TestEntity();
 			Set<String> names = new HashSet<>();
-			for (int j = 0; j < (i + 1); j++)
+			for (int j = 0; j < (i + 1); j++) {
 				names.add("prefix" + "name" + j);
+			}
 			entity.setNames(names);
 			this.repository.save(entity);
 		}
@@ -160,15 +164,17 @@ class PredicateBuilderTests extends DataJpaTestBase {
 		for (int i = 0; i < size; i++) {
 			TestEntity entity = new TestEntity();
 			List<String> list = new ArrayList<>();
-			for (int j = 0; j < (i + 1); j++)
+			for (int j = 0; j < (i + 1); j++) {
 				list.add(String.valueOf(j));
+			}
 			entity.setName("name" + String.join("", list));
 			this.repository.save(entity);
 		}
 		for (int i = 0; i < size; i++) {
 			List<String> list = new ArrayList<>();
-			for (int j = 0; j < (i + 1); j++)
+			for (int j = 0; j < (i + 1); j++) {
 				list.add(String.valueOf(j));
+			}
 			String name = "name" + String.join("", list) + ".*";
 			long expected = size - i;
 			assertThat(this.repository.count((root, cq, cb) -> regexpLike(root, cb, "name", name))).isEqualTo(expected);

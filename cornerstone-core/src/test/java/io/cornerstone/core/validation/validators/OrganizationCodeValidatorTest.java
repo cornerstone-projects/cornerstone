@@ -1,9 +1,9 @@
 package io.cornerstone.core.validation.validators;
 
+import org.junit.jupiter.api.Test;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-
-import org.junit.jupiter.api.Test;
 
 class OrganizationCodeValidatorTest {
 
@@ -33,8 +33,9 @@ class OrganizationCodeValidatorTest {
 
 	@Test
 	void testRandomValue() {
-		for (int i = 0; i < 100; i++)
+		for (int i = 0; i < 100; i++) {
 			assertThat(OrganizationCodeValidator.isValid(OrganizationCodeValidator.randomValue()), is(true));
+		}
 	}
 
 }

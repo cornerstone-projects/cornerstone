@@ -9,10 +9,10 @@ import java.util.concurrent.ThreadLocalRandom;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-import org.springframework.util.StringUtils;
-
 import io.cornerstone.core.util.NumberUtils;
 import io.cornerstone.core.validation.constraints.CitizenIdentificationNumber;
+
+import org.springframework.util.StringUtils;
 
 /**
  * GB11643-1999
@@ -23,32 +23,39 @@ public class CitizenIdentificationNumberValidator implements ConstraintValidator
 
 	@Override
 	public boolean isValid(String input, ConstraintValidatorContext constraintValidatorContext) {
-		if (!StringUtils.hasLength(input))
+		if (!StringUtils.hasLength(input)) {
 			return true;
+		}
 		return isValid(input);
 	}
 
 	public static boolean isValid(String input) {
-		if ((input == null) || (input.length() != 18))
+		if ((input == null) || (input.length() != 18)) {
 			return false;
+		}
 		char[] bits = new char[input.length() - 1];
 		char checkBit = 0;
 		for (int i = 0; i < input.length(); i++) {
 			char ch = input.charAt(i);
-			if (((ch < '0') || (ch > '9')) && ((ch != 'X') && (i == (input.length() - 1))))
+			if (((ch < '0') || (ch > '9')) && ((ch != 'X') && (i == (input.length() - 1)))) {
 				return false;
-			if (i < (input.length() - 1))
+			}
+			if (i < (input.length() - 1)) {
 				bits[i] = ch;
-			else
+			}
+			else {
 				checkBit = ch;
+			}
 		}
 		String province = input.substring(0, 2);
-		if (!provinces.contains(province))
+		if (!provinces.contains(province)) {
 			return false;
+		}
 		String dob = input.substring(6, 14);
 		try {
 			dateFormatter.parse(dob);
-		} catch (DateTimeParseException pe) {
+		}
+		catch (DateTimeParseException pe) {
 			return false;
 		}
 		return getCheckBit(getPowerSum(bits)) == checkBit;

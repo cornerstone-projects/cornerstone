@@ -1,8 +1,5 @@
 package io.cornerstone.core;
 
-import static java.lang.StackWalker.Option.RETAIN_CLASS_REFERENCE;
-import static org.springframework.core.env.AbstractEnvironment.ACTIVE_PROFILES_PROPERTY_NAME;
-
 import java.io.File;
 import java.io.IOException;
 import java.lang.StackWalker.StackFrame;
@@ -16,6 +13,9 @@ import java.util.Optional;
 
 import javax.servlet.ServletContext;
 
+import io.cornerstone.core.util.ReflectionUtils;
+import lombok.Getter;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory;
 import org.springframework.boot.SpringApplication;
@@ -25,8 +25,8 @@ import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
 import org.springframework.context.ApplicationContext;
 import org.springframework.util.ClassUtils;
 
-import io.cornerstone.core.util.ReflectionUtils;
-import lombok.Getter;
+import static java.lang.StackWalker.Option.RETAIN_CLASS_REFERENCE;
+import static org.springframework.core.env.AbstractEnvironment.ACTIVE_PROFILES_PROPERTY_NAME;
 
 public class DefaultApplication extends SpringBootServletInitializer implements Application {
 
@@ -122,8 +122,9 @@ public class DefaultApplication extends SpringBootServletInitializer implements 
 			if (ClassUtils.isPresent(className, cl)) {
 				ClassUtils.forName(className, cl).getMethod(methodName).invoke(null);
 			}
-		} catch (Throwable e) {
-			e.printStackTrace();
+		}
+		catch (Throwable ex) {
+			ex.printStackTrace();
 		}
 		try {
 			String className = "com.mysql.jdbc.AbandonedConnectionCleanupThread";
@@ -131,8 +132,9 @@ public class DefaultApplication extends SpringBootServletInitializer implements 
 			if (ClassUtils.isPresent(className, cl)) {
 				ClassUtils.forName(className, cl).getMethod(methodName).invoke(null);
 			}
-		} catch (Throwable e) {
-			e.printStackTrace();
+		}
+		catch (Throwable ex) {
+			ex.printStackTrace();
 		}
 		super.deregisterJdbcDrivers(servletContext);
 		cancelTimers();
@@ -141,11 +143,14 @@ public class DefaultApplication extends SpringBootServletInitializer implements 
 
 	protected void cancelTimers() {
 		try {
-			for (Thread thread : Thread.getAllStackTraces().keySet())
-				if (thread.getClass().getSimpleName().equals("TimerThread"))
+			for (Thread thread : Thread.getAllStackTraces().keySet()) {
+				if (thread.getClass().getSimpleName().equals("TimerThread")) {
 					cancelTimer(thread);
-		} catch (Throwable e) {
-			e.printStackTrace();
+				}
+			}
+		}
+		catch (Throwable ex) {
+			ex.printStackTrace();
 		}
 	}
 
@@ -167,20 +172,24 @@ public class DefaultApplication extends SpringBootServletInitializer implements 
 
 	protected void cleanupThreadLocals() {
 		try {
-			for (Thread thread : Thread.getAllStackTraces().keySet())
+			for (Thread thread : Thread.getAllStackTraces().keySet()) {
 				cleanupThreadLocals(thread);
-		} catch (Throwable e) {
-			e.printStackTrace();
+			}
+		}
+		catch (Throwable ex) {
+			ex.printStackTrace();
 		}
 	}
 
 	private void cleanupThreadLocals(Thread thread) throws Exception {
-		if ("JettyShutdownThread".equals(thread.getName()))
+		if ("JettyShutdownThread".equals(thread.getName())) {
 			return; // see https://github.com/eclipse/jetty.project/issues/5782
+		}
 		for (String name : "threadLocals,inheritableThreadLocals".split(",")) {
 			Field f = Thread.class.getDeclaredField(name);
 			f.setAccessible(true);
 			f.set(thread, null);
 		}
 	}
+
 }

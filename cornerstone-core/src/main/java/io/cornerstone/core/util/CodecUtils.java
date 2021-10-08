@@ -2,12 +2,11 @@ package io.cornerstone.core.util;
 
 import java.util.concurrent.ThreadLocalRandom;
 
-import org.slf4j.MDC;
-
 import io.cornerstone.core.tracing.Tracing;
 import io.opentracing.Span;
 import io.opentracing.util.GlobalTracer;
 import lombok.experimental.UtilityClass;
+import org.slf4j.MDC;
 
 @UtilityClass
 public class CodecUtils {
@@ -27,16 +26,18 @@ public class CodecUtils {
 	public static String nextId(int length) {
 		char[] chars = new char[length];
 		chars[0] = CHARS[ThreadLocalRandom.current().nextInt(length == 22 ? 8 : CHARS.length)];
-		for (int i = 1; i < chars.length; i++)
+		for (int i = 1; i < chars.length; i++) {
 			chars[i] = CHARS[ThreadLocalRandom.current().nextInt(CHARS.length)];
+		}
 		return new String(chars);
 	}
 
 	public static String generateRequestId() {
 		if (Tracing.isEnabled()) {
 			Span span = GlobalTracer.get().activeSpan();
-			if (span != null)
+			if (span != null) {
 				return span.context().toTraceId();
+			}
 		}
 		return nextId();
 	}

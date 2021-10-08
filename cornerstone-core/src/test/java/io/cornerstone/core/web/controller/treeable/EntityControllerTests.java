@@ -1,12 +1,11 @@
 package io.cornerstone.core.web.controller.treeable;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.springframework.http.HttpMethod.GET;
-
 import java.util.List;
 
+import io.cornerstone.core.domain.ResultPage;
+import io.cornerstone.test.WebMvcWithDataJpaTestBase;
 import org.junit.jupiter.api.Test;
+
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.ParameterizedTypeReference;
@@ -15,8 +14,9 @@ import org.springframework.http.RequestEntity;
 import org.springframework.web.client.HttpClientErrorException.BadRequest;
 import org.springframework.web.client.HttpClientErrorException.NotFound;
 
-import io.cornerstone.core.domain.ResultPage;
-import io.cornerstone.test.WebMvcWithDataJpaTestBase;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.springframework.http.HttpMethod.GET;
 
 @ComponentScan // scan @RestController in this package
 @EnableJpaRepositories(basePackageClasses = TestEntityRepository.class)
@@ -40,9 +40,8 @@ class EntityControllerTests extends WebMvcWithDataJpaTestBase {
 		assertThat(testEntity.getName()).isEqualTo(parent.getName());
 		assertThat(testEntity.getLevel()).isEqualTo(1);
 
-		assertThatThrownBy(
-				() -> this.restTemplate.postForObject(PATH_LIST, new TestEntity(parent.getName()), TestEntity.class))
-						.isInstanceOf(BadRequest.class);
+		assertThatExceptionOfType(BadRequest.class).isThrownBy(
+				() -> this.restTemplate.postForObject(PATH_LIST, new TestEntity(parent.getName()), TestEntity.class));
 		// name already exists
 
 		TestEntity child = new TestEntity("child");
@@ -55,8 +54,8 @@ class EntityControllerTests extends WebMvcWithDataJpaTestBase {
 		assertThat(child.getParent()).isNotNull();
 		assertThat(child.getParent().getId()).isEqualTo(testEntity.getId());
 		TestEntity te = new TestEntity(child.getParent(), child.getName(), 0);
-		assertThatThrownBy(() -> this.restTemplate.postForObject(PATH_LIST, te, TestEntity.class))
-				.isInstanceOf(BadRequest.class);
+		assertThatExceptionOfType(BadRequest.class)
+				.isThrownBy(() -> this.restTemplate.postForObject(PATH_LIST, te, TestEntity.class));
 
 		TestEntity child2 = new TestEntity("child2");
 		child2.setParent(child.getParent());
@@ -77,8 +76,8 @@ class EntityControllerTests extends WebMvcWithDataJpaTestBase {
 		assertThat(child.getLevel()).isEqualTo(2);
 		TestEntity te2 = new TestEntity(child.getParent(), child.getName(), 0);
 		Long child2Id = child2.getId();
-		assertThatThrownBy(() -> this.restTemplate.patchForObject(PATH_DETAIL, te2, TestEntity.class, child2Id))
-				.isInstanceOf(BadRequest.class);
+		assertThatExceptionOfType(BadRequest.class)
+				.isThrownBy(() -> this.restTemplate.patchForObject(PATH_DETAIL, te2, TestEntity.class, child2Id));
 		// name already exists
 
 		// update full
@@ -96,8 +95,8 @@ class EntityControllerTests extends WebMvcWithDataJpaTestBase {
 		this.restTemplate.delete(PATH_DETAIL, child.getId());
 		this.restTemplate.delete(PATH_DETAIL, testEntity.getId());
 
-		assertThatThrownBy(() -> this.restTemplate.getForObject(PATH_DETAIL, TestEntity.class, testEntity.getId()))
-				.isInstanceOf(NotFound.class);
+		assertThatExceptionOfType(NotFound.class)
+				.isThrownBy(() -> this.restTemplate.getForObject(PATH_DETAIL, TestEntity.class, testEntity.getId()));
 
 	}
 

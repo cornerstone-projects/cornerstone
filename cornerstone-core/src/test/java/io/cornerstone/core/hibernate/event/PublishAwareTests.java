@@ -1,16 +1,12 @@
 package io.cornerstone.core.hibernate.event;
 
-import static io.cornerstone.core.hibernate.event.EntityOperationType.CREATE;
-import static io.cornerstone.core.hibernate.event.EntityOperationType.DELETE;
-import static io.cornerstone.core.hibernate.event.EntityOperationType.UPDATE;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.verify;
-
+import io.cornerstone.core.event.EventPublisher;
+import io.cornerstone.test.DataJpaTestBase;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.test.mock.mockito.SpyBean;
@@ -22,8 +18,12 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import io.cornerstone.core.event.EventPublisher;
-import io.cornerstone.test.DataJpaTestBase;
+import static io.cornerstone.core.hibernate.event.EntityOperationType.CREATE;
+import static io.cornerstone.core.hibernate.event.EntityOperationType.DELETE;
+import static io.cornerstone.core.hibernate.event.EntityOperationType.UPDATE;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.verify;
 
 @ContextConfiguration(classes = { PublishAwareTests.Config.class })
 @EnableJpaRepositories(basePackageClasses = TestEntityRepository.class)
@@ -92,7 +92,7 @@ class PublishAwareTests extends DataJpaTestBase {
 	}
 
 	@EnableAspectJAutoProxy
-	static class Config {
+	public static class Config {
 
 		@Bean
 		EventPublisher eventPublisher() {
@@ -118,9 +118,10 @@ class PublishAwareTests extends DataJpaTestBase {
 		TestListener testListener() {
 			return new TestListener();
 		}
+
 	}
 
-	static class TestService {
+	public static class TestService {
 
 		@Autowired
 		TestEntityRepository repository;
@@ -139,14 +140,16 @@ class PublishAwareTests extends DataJpaTestBase {
 			entity = this.repository.save(entity);
 			this.repository.delete(entity);
 		}
+
 	}
 
-	static class TestListener {
+	public static class TestListener {
 
 		@EventListener
 		public void on(EntityOperationEvent<TestEntity> event) {
 
 		}
+
 	}
 
 }

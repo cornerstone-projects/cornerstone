@@ -1,8 +1,8 @@
 package io.cornerstone.core.util;
 
-import static java.util.Objects.requireNonNull;
-
 import java.util.function.Consumer;
+
+import static java.util.Objects.requireNonNull;
 
 @FunctionalInterface
 public interface CheckedConsumer<T, E extends Throwable> {
@@ -13,7 +13,8 @@ public interface CheckedConsumer<T, E extends Throwable> {
 		return (t) -> {
 			try {
 				accept(t);
-			} catch (Throwable ex) {
+			}
+			catch (Throwable ex) {
 				ExceptionUtils.sneakyThrow(ex);
 			}
 		};

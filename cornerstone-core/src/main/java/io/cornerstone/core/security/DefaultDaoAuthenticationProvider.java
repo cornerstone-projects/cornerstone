@@ -1,9 +1,9 @@
 package io.cornerstone.core.security;
 
-import static java.util.stream.Collectors.toList;
-
 import java.util.Collections;
 import java.util.List;
+
+import lombok.Setter;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -11,7 +11,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import lombok.Setter;
+import static java.util.stream.Collectors.toList;
 
 public class DefaultDaoAuthenticationProvider extends DaoAuthenticationProvider {
 

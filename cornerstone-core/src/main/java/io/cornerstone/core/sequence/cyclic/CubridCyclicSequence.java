@@ -9,8 +9,9 @@ public class CubridCyclicSequence extends AbstractSequenceCyclicSequence {
 	@Override
 	protected String getCreateSequenceStatement() {
 		StringBuilder sb = new StringBuilder("CREATE SERIAL ").append(getActualSequenceName());
-		if (getCacheSize() > 1)
+		if (getCacheSize() > 1) {
 			sb.append(" CACHE ").append(getCacheSize());
+		}
 		return sb.toString();
 	}
 

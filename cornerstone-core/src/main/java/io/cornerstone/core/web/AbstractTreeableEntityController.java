@@ -4,6 +4,12 @@ import java.util.List;
 
 import javax.persistence.criteria.Predicate;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import io.cornerstone.core.domain.View;
+import io.cornerstone.core.hibernate.criteria.PredicateBuilder;
+import io.cornerstone.core.hibernate.domain.AbstractTreeableEntity;
+import springfox.documentation.annotations.ApiIgnore;
+
 import org.springframework.data.domain.Example;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.lang.Nullable;
@@ -11,13 +17,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import com.fasterxml.jackson.annotation.JsonView;
-
-import io.cornerstone.core.domain.View;
-import io.cornerstone.core.hibernate.criteria.PredicateBuilder;
-import io.cornerstone.core.hibernate.domain.AbstractTreeableEntity;
-import springfox.documentation.annotations.ApiIgnore;
 
 public abstract class AbstractTreeableEntityController<T extends AbstractTreeableEntity<T>>
 		extends AbstractEntityController<T, Long> {
@@ -30,7 +29,8 @@ public abstract class AbstractTreeableEntityController<T extends AbstractTreeabl
 					: cb.equal(root.get("parent").get("id"), id);
 			if (StringUtils.hasText(query)) {
 				predicate = cb.and(predicate, getQuerySpecification(query).toPredicate(root, cq, cb));
-			} else {
+			}
+			else {
 				predicate = PredicateBuilder.andExample(root, cb, predicate, Example.of(example, getExampleMatcher()));
 			}
 			return predicate;
@@ -50,8 +50,9 @@ public abstract class AbstractTreeableEntityController<T extends AbstractTreeabl
 
 	@Override
 	protected void beforePatch(Long id, T entity) {
-		if (entity.getName() != null) // name present
+		if (entity.getName() != null) {
 			validateName(entity, id);
+		}
 	}
 
 	private void validateName(T entity, @Nullable Long id) {
@@ -61,8 +62,9 @@ public abstract class AbstractTreeableEntityController<T extends AbstractTreeabl
 					cb.equal(root.get("name"), entity.getName()));
 			return id != null ? cb.and(p, cb.notEqual(root.get("id"), id)) : p;
 		};
-		if (this.specificationExecutor.count(spec) > 0)
+		if (this.specificationExecutor.count(spec) > 0) {
 			throw badRequest("name.already.exists");
+		}
 	}
 
 }

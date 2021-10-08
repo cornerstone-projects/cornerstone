@@ -1,5 +1,12 @@
 package io.cornerstone.user;
 
+import io.cornerstone.test.ControllerTestBase;
+import org.junit.jupiter.api.Test;
+
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.http.RequestEntity;
+import org.springframework.http.ResponseEntity;
+
 import static io.cornerstone.user.CurrentUserController.PATH_PASSWORD;
 import static io.cornerstone.user.CurrentUserController.PATH_PROFILE;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -7,13 +14,6 @@ import static org.springframework.http.HttpMethod.PATCH;
 import static org.springframework.http.HttpMethod.PUT;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.OK;
-
-import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.http.RequestEntity;
-import org.springframework.http.ResponseEntity;
-
-import io.cornerstone.test.ControllerTestBase;
 
 class CurrentUserControllerTests extends ControllerTestBase {
 
@@ -60,17 +60,20 @@ class CurrentUserControllerTests extends ControllerTestBase {
 
 		ResponseEntity<?> response = restTemplate
 				.exchange(RequestEntity.method(PUT, PATH_PASSWORD).body(changePasswordRequest), void.class);
-		assertThat(response.getStatusCode()).isSameAs(BAD_REQUEST); // caused by wrong confirmed password
+		assertThat(response.getStatusCode()).isSameAs(BAD_REQUEST); // caused by wrong
+																	// confirmed password
 
 		changePasswordRequest.setConfirmedPassword(changePasswordRequest.getPassword());
 		response = restTemplate.exchange(RequestEntity.method(PUT, PATH_PASSWORD).body(changePasswordRequest),
 				void.class);
-		assertThat(response.getStatusCode()).isSameAs(BAD_REQUEST); // caused by missing current password
+		assertThat(response.getStatusCode()).isSameAs(BAD_REQUEST); // caused by missing
+																	// current password
 
 		changePasswordRequest.setCurrentPassword("******");
 		response = restTemplate.exchange(RequestEntity.method(PUT, PATH_PASSWORD).body(changePasswordRequest),
 				void.class);
-		assertThat(response.getStatusCode()).isSameAs(BAD_REQUEST); // caused by wrong current password
+		assertThat(response.getStatusCode()).isSameAs(BAD_REQUEST); // caused by wrong
+																	// current password
 
 		changePasswordRequest.setCurrentPassword(DEFAULT_PASSWORD);
 		response = restTemplate.exchange(RequestEntity.method(PUT, PATH_PASSWORD).body(changePasswordRequest),

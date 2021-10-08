@@ -10,8 +10,6 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
-import org.springframework.util.StringUtils;
-
 import com.amazonaws.ClientConfiguration;
 import com.amazonaws.Protocol;
 import com.amazonaws.auth.AWSCredentials;
@@ -27,11 +25,12 @@ import com.amazonaws.services.s3.model.ObjectListing;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
-
 import io.cornerstone.fs.FileInfo;
 import io.cornerstone.fs.FileStorageProperties;
 import io.cornerstone.fs.FileStorageProperties.S3;
 import io.cornerstone.fs.Paged;
+
+import org.springframework.util.StringUtils;
 
 public class S3FileStorage extends BucketFileStorage {
 
@@ -57,7 +56,8 @@ public class S3FileStorage extends BucketFileStorage {
 		if (StringUtils.hasText(this.config.getEndpoint())) {
 			builder.withPathStyleAccessEnabled(this.config.isPathStyleAccess()).withEndpointConfiguration(
 					new EndpointConfiguration(this.config.getEndpoint(), this.config.getRegion()));
-		} else {
+		}
+		else {
 			builder.withRegion(this.config.getRegion());
 		}
 		this.s3 = builder.build();
@@ -112,7 +112,8 @@ public class S3FileStorage extends BucketFileStorage {
 				return null;
 			}
 			return object.getObjectContent();
-		} catch (AmazonS3Exception ex) {
+		}
+		catch (AmazonS3Exception ex) {
 			if (NO_SUCH_KEY.equals(ex.getErrorCode())) {
 				return null;
 			}
@@ -131,7 +132,8 @@ public class S3FileStorage extends BucketFileStorage {
 		path = normalizePath(path);
 		try {
 			return this.s3.getObjectMetadata(getBucket(), path).getContentLength() == 0;
-		} catch (AmazonS3Exception ex) {
+		}
+		catch (AmazonS3Exception ex) {
 			if (!NOT_FOUND.equals(ex.getErrorCode())) {
 				throw ex;
 			}
@@ -158,7 +160,8 @@ public class S3FileStorage extends BucketFileStorage {
 			}
 			this.s3.deleteObject(getBucket(), path);
 			return true;
-		} else {
+		}
+		else {
 			this.s3.deleteObject(getBucket(), path);
 			return true;
 		}
@@ -172,7 +175,8 @@ public class S3FileStorage extends BucketFileStorage {
 		path = normalizePath(path);
 		try {
 			return this.s3.getObjectMetadata(getBucket(), path).getLastModified().getTime();
-		} catch (AmazonS3Exception ex) {
+		}
+		catch (AmazonS3Exception ex) {
 			if (NOT_FOUND.equals(ex.getErrorCode())) {
 				return 0;
 			}
@@ -205,13 +209,15 @@ public class S3FileStorage extends BucketFileStorage {
 			try {
 				ObjectMetadata om = this.s3.getObjectMetadata(getBucket(), path);
 				return om.getContentLength() == 0;
-			} catch (AmazonS3Exception ex) {
+			}
+			catch (AmazonS3Exception ex) {
 				if (NOT_FOUND.equals(ex.getErrorCode())) {
 					return false;
 				}
 				throw ex;
 			}
-		} else {
+		}
+		else {
 			if (!listFilesAndDirectory(path, 1, null).getResult().isEmpty()) {
 				return true;
 			}
@@ -230,7 +236,8 @@ public class S3FileStorage extends BucketFileStorage {
 					}
 				}
 				marker = paged.getNextMarker();
-			} while (marker != null);
+			}
+			while (marker != null);
 			return false;
 		}
 	}

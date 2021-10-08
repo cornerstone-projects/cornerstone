@@ -1,19 +1,19 @@
 package io.cornerstone.user;
 
-import static io.cornerstone.user.CurrentUserController.PATH_PASSWORD;
-import static io.cornerstone.user.CurrentUserController.PATH_PROFILE;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.springframework.http.HttpMethod.PATCH;
-import static org.springframework.http.HttpMethod.PUT;
-import static org.springframework.http.HttpStatus.OK;
-
+import io.cornerstone.test.ControllerMockTestBase;
 import org.junit.jupiter.api.Test;
+
 import org.springframework.http.RequestEntity;
 import org.springframework.web.client.HttpClientErrorException.BadRequest;
 import org.springframework.web.client.RestTemplate;
 
-import io.cornerstone.test.ControllerMockTestBase;
+import static io.cornerstone.user.CurrentUserController.PATH_PASSWORD;
+import static io.cornerstone.user.CurrentUserController.PATH_PROFILE;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.springframework.http.HttpMethod.PATCH;
+import static org.springframework.http.HttpMethod.PUT;
+import static org.springframework.http.HttpStatus.OK;
 
 class CurrentUserControllerMockTests extends ControllerMockTestBase {
 
@@ -49,9 +49,8 @@ class CurrentUserControllerMockTests extends ControllerMockTestBase {
 		assertThat(restTemplate.getForEntity(PATH_PROFILE, User.class).getStatusCode()).isSameAs(OK);
 
 		user.setPhone("123456");
-		assertThatThrownBy(
-				() -> restTemplate.exchange(RequestEntity.method(PATCH, PATH_PROFILE).body(user), User.class))
-						.isInstanceOf(BadRequest.class);
+		assertThatExceptionOfType(BadRequest.class).isThrownBy(
+				() -> restTemplate.exchange(RequestEntity.method(PATCH, PATH_PROFILE).body(user), User.class));
 	}
 
 	@Test
@@ -61,21 +60,18 @@ class CurrentUserControllerMockTests extends ControllerMockTestBase {
 		changePasswordRequest.setPassword("iamtest");
 		changePasswordRequest.setConfirmedPassword("iamtest2");
 
-		assertThatThrownBy(() -> restTemplate
-				.exchange(RequestEntity.method(PUT, PATH_PASSWORD).body(changePasswordRequest), void.class))
-						.isInstanceOf(BadRequest.class);
+		assertThatExceptionOfType(BadRequest.class).isThrownBy(() -> restTemplate
+				.exchange(RequestEntity.method(PUT, PATH_PASSWORD).body(changePasswordRequest), void.class));
 		// caused by wrong confirmed password
 
 		changePasswordRequest.setConfirmedPassword(changePasswordRequest.getPassword());
-		assertThatThrownBy(() -> restTemplate
-				.exchange(RequestEntity.method(PUT, PATH_PASSWORD).body(changePasswordRequest), void.class))
-						.isInstanceOf(BadRequest.class);
+		assertThatExceptionOfType(BadRequest.class).isThrownBy(() -> restTemplate
+				.exchange(RequestEntity.method(PUT, PATH_PASSWORD).body(changePasswordRequest), void.class));
 		// caused by missing current password
 
 		changePasswordRequest.setCurrentPassword("******");
-		assertThatThrownBy(() -> restTemplate
-				.exchange(RequestEntity.method(PUT, PATH_PASSWORD).body(changePasswordRequest), void.class))
-						.isInstanceOf(BadRequest.class);
+		assertThatExceptionOfType(BadRequest.class).isThrownBy(() -> restTemplate
+				.exchange(RequestEntity.method(PUT, PATH_PASSWORD).body(changePasswordRequest), void.class));
 		// caused by wrong current password
 
 		changePasswordRequest.setCurrentPassword(DEFAULT_PASSWORD);
@@ -89,7 +85,9 @@ class CurrentUserControllerMockTests extends ControllerMockTestBase {
 		changePasswordRequest.setCurrentPassword(changePasswordRequest.getPassword());
 		changePasswordRequest.setPassword(DEFAULT_PASSWORD);
 		changePasswordRequest.setConfirmedPassword(changePasswordRequest.getPassword());
-		newPasswordRestTemplate.put(PATH_PASSWORD, changePasswordRequest); // change password back
+		newPasswordRestTemplate.put(PATH_PASSWORD, changePasswordRequest); // change
+																			// password
+																			// back
 	}
 
 }

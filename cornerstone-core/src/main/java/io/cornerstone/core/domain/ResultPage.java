@@ -2,12 +2,11 @@ package io.cornerstone.core.domain;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import lombok.Data;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-
-import com.fasterxml.jackson.annotation.JsonView;
-
-import lombok.Data;
 
 @Data
 public class ResultPage<T> {

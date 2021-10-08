@@ -8,14 +8,14 @@ import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 import javax.persistence.Entity;
 
-import org.springframework.data.jpa.domain.AbstractPersistable;
-
 import io.cornerstone.core.hibernate.convert.EnumArrayConverter;
 import io.cornerstone.core.hibernate.convert.EnumListConverter;
 import io.cornerstone.core.hibernate.convert.EnumSetConverter;
 import io.cornerstone.core.hibernate.convert.JsonConverter;
 import lombok.Getter;
 import lombok.Setter;
+
+import org.springframework.data.jpa.domain.AbstractPersistable;
 
 @Entity
 @Getter
@@ -53,18 +53,22 @@ class TestEntity extends AbstractPersistable<Long> {
 	@Converter(autoApply = true)
 	static class TestEnumArrayConverter extends EnumArrayConverter<TestEnum>
 			implements AttributeConverter<TestEnum[], String> {
+
 	}
 
 	@Converter(autoApply = true)
 	static class TestEnumSetConverter extends EnumSetConverter<TestEnum> {
+
 	}
 
 	@Converter(autoApply = true)
 	static class TestEnumListConverter extends EnumListConverter<TestEnum> {
+
 	}
 
 	@Converter(autoApply = true)
 	static class TestComponentListConverter extends JsonConverter<List<TestComponent>> {
+
 	}
 
 }

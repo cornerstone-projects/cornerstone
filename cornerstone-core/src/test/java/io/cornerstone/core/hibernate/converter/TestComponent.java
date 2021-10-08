@@ -16,4 +16,5 @@ class TestComponent {
 	private Integer integer;
 
 	private BigDecimal bigDecimal;
+
 }

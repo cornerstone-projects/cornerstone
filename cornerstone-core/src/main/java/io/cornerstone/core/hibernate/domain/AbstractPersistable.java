@@ -4,14 +4,13 @@ import java.io.Serializable;
 
 import javax.persistence.MappedSuperclass;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.cornerstone.core.hibernate.type.JsonType;
 import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.TypeDefs;
+
 import org.springframework.data.domain.Persistable;
 import org.springframework.data.util.ProxyUtils;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import io.cornerstone.core.hibernate.type.JsonType;
 
 @TypeDefs({ @TypeDef(name = "json", typeClass = JsonType.class) })
 @MappedSuperclass
@@ -53,4 +52,5 @@ public abstract class AbstractPersistable<ID extends Serializable> implements Pe
 	public String toString() {
 		return String.format("Entity of type %s with id: %s", this.getClass().getName(), getId());
 	}
+
 }

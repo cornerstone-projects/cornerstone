@@ -10,15 +10,15 @@ import java.util.concurrent.TimeUnit;
 
 import javax.annotation.PreDestroy;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.data.redis.core.script.DefaultRedisScript;
-import org.springframework.data.redis.core.script.RedisScript;
-
 import io.cornerstone.core.Application;
 import io.cornerstone.core.coordination.LockService;
 import io.cornerstone.core.util.NameableThreadFactory;
 import lombok.Getter;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.script.DefaultRedisScript;
+import org.springframework.data.redis.core.script.RedisScript;
 
 public class RedisLockService implements LockService {
 
@@ -56,18 +56,21 @@ public class RedisLockService implements LockService {
 		String holder = holder();
 		Boolean success = this.stringRedisTemplate.opsForValue().setIfAbsent(key, holder, this.watchdogTimeout,
 				TimeUnit.MILLISECONDS);
-		if (success == null)
+		if (success == null) {
 			throw new RuntimeException("Unexpected null");
+		}
 		if (success) {
 			long delay = this.watchdogTimeout / 3;
 			this.renewalFutures.computeIfAbsent(name, k -> this.scheduler.scheduleWithFixedDelay(() -> {
 				Boolean b = this.stringRedisTemplate.expire(key, this.watchdogTimeout, TimeUnit.MILLISECONDS);
-				if (b == null)
+				if (b == null) {
 					throw new RuntimeException("Unexpected null");
+				}
 				if (!b) {
 					ScheduledFuture<?> future = this.renewalFutures.remove(name);
-					if (future != null)
+					if (future != null) {
 						future.cancel(true);
+					}
 				}
 			}, delay, delay, TimeUnit.MILLISECONDS));
 			return true;
@@ -81,15 +84,19 @@ public class RedisLockService implements LockService {
 		String holder = holder();
 		Long ret = this.stringRedisTemplate.execute(this.compareAndDeleteScript, Collections.singletonList(key),
 				holder);
-		if (ret == null)
+		if (ret == null) {
 			throw new RuntimeException("Unexpected null");
+		}
 		if (ret == 1) {
 			ScheduledFuture<?> future = this.renewalFutures.remove(name);
-			if (future != null)
+			if (future != null) {
 				future.cancel(true);
-		} else if (ret == 0) {
+			}
+		}
+		else if (ret == 0) {
 			throw new IllegalStateException("Lock[" + name + "] is not held by :" + holder);
-		} else if (ret == 2) {
+		}
+		else if (ret == 2) {
 			// lock hold timeout
 		}
 	}

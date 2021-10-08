@@ -5,6 +5,14 @@ import java.lang.reflect.Method;
 import java.util.Optional;
 import java.util.concurrent.Executor;
 
+import io.lettuce.core.resource.ClientResources;
+import io.lettuce.core.resource.DefaultClientResources;
+import io.opentracing.contrib.redis.common.TracingConfiguration;
+import io.opentracing.contrib.redis.spring.data2.connection.TracingRedisConnectionFactory;
+import io.opentracing.tag.Tags;
+import io.opentracing.util.GlobalTracer;
+import lombok.Getter;
+
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.data.redis.LettuceClientConfigurationBuilderCustomizer;
 import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
@@ -18,14 +26,6 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.util.ClassUtils;
-
-import io.lettuce.core.resource.ClientResources;
-import io.lettuce.core.resource.DefaultClientResources;
-import io.opentracing.contrib.redis.common.TracingConfiguration;
-import io.opentracing.contrib.redis.spring.data2.connection.TracingRedisConnectionFactory;
-import io.opentracing.tag.Tags;
-import io.opentracing.util.GlobalTracer;
-import lombok.Getter;
 
 public class RedisConfigurationSupport {
 
@@ -47,7 +47,8 @@ public class RedisConfigurationSupport {
 			ctor.setAccessible(true);
 			this.configuration = ctor.newInstance(properties, sentinelConfigurationProvider,
 					clusterConfigurationProvider);
-		} catch (Exception ex) {
+		}
+		catch (Exception ex) {
 			throw new RuntimeException(ex.getMessage(), ex);
 		}
 	}
@@ -57,7 +58,8 @@ public class RedisConfigurationSupport {
 			Method m = this.configuration.getClass().getDeclaredMethod("lettuceClientResources");
 			m.setAccessible(true);
 			return (DefaultClientResources) m.invoke(this.configuration);
-		} catch (Exception ex) {
+		}
+		catch (Exception ex) {
 			throw new RuntimeException(ex.getMessage(), ex);
 		}
 	}
@@ -70,7 +72,8 @@ public class RedisConfigurationSupport {
 					ClientResources.class);
 			m.setAccessible(true);
 			return (LettuceConnectionFactory) m.invoke(this.configuration, builderCustomizers, clientResources);
-		} catch (Exception ex) {
+		}
+		catch (Exception ex) {
 			throw new RuntimeException(ex.getMessage(), ex);
 		}
 	}
@@ -107,10 +110,12 @@ public class RedisConfigurationSupport {
 			properties.getSentinel().getNodes();
 			builder.extensionTag("peer.address", String.join(",", properties.getSentinel().getNodes()));
 			service.append("-sentinel");
-		} else if ((properties.getCluster() != null) && (properties.getCluster().getNodes() != null)) {
+		}
+		else if ((properties.getCluster() != null) && (properties.getCluster().getNodes() != null)) {
 			builder.extensionTag("peer.address", String.join(",", properties.getCluster().getNodes()));
 			service.append("-cluster");
-		} else {
+		}
+		else {
 			if (properties.isSsl()) {
 				service.append("s");
 			}

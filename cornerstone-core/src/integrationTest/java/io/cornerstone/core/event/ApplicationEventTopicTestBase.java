@@ -1,11 +1,10 @@
 package io.cornerstone.core.event;
 
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
-
+import io.cornerstone.core.domain.Scope;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.annotation.Bean;
@@ -13,7 +12,8 @@ import org.springframework.context.event.EventListener;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import io.cornerstone.core.domain.Scope;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
 
 @ContextConfiguration(classes = ApplicationEventTopicTestBase.Config.class)
 @ExtendWith(SpringExtension.class)
@@ -26,7 +26,7 @@ abstract class ApplicationEventTopicTestBase {
 	protected TestLisenter testListener;
 
 	@ParameterizedTest
-	@EnumSource(value = Scope.class)
+	@EnumSource(Scope.class)
 	void publish(Scope scope) throws Exception {
 		TestEvent event = new TestEvent(scope.name());
 		this.eventPublisher.publish(event, scope);
@@ -45,6 +45,7 @@ abstract class ApplicationEventTopicTestBase {
 		TestLisenter testLisenter() {
 			return new TestLisenter();
 		}
+
 	}
 
 	static class TestEvent extends BaseEvent<String> {
@@ -62,6 +63,7 @@ abstract class ApplicationEventTopicTestBase {
 		@EventListener
 		void listen(TestEvent event) {
 		}
+
 	}
 
 }

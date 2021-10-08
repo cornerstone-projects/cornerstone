@@ -14,7 +14,7 @@ public interface CyclicSequence extends Sequence {
 
 	CycleType getCycleType();
 
-	static enum CycleType {
+	enum CycleType {
 
 		MINUTE("yyyyMMddHHmm") {
 			@Override
@@ -112,7 +112,7 @@ public interface CyclicSequence extends Sequence {
 
 		private final DateTimeFormatter formatter;
 
-		private CycleType(String pattern) {
+		CycleType(String pattern) {
 			this.pattern = pattern;
 			this.formatter = DateTimeFormatter.ofPattern(pattern);
 		}

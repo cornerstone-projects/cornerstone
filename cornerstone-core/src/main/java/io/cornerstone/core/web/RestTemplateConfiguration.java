@@ -23,4 +23,5 @@ public class RestTemplateConfiguration {
 				.setReadTimeout(this.readTimeout);
 		return restTemplateBuilderConfigurer.configure(builder);
 	}
+
 }

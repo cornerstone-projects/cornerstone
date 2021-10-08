@@ -15,11 +15,11 @@ import java.util.LinkedHashSet;
 import java.util.Locale;
 import java.util.Map;
 
-import org.springframework.dao.DataAccessException;
-import org.springframework.dao.DataAccessResourceFailureException;
-
 import io.cornerstone.core.util.MaxAttemptsExceededException;
 import lombok.Value;
+
+import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DataAccessResourceFailureException;
 
 public abstract class AbstractSequenceCyclicSequence extends AbstractDatabaseCyclicSequence {
 
@@ -55,8 +55,9 @@ public abstract class AbstractSequenceCyclicSequence extends AbstractDatabaseCyc
 
 	protected String getCreateSequenceStatement() {
 		StringBuilder sb = new StringBuilder("CREATE SEQUENCE ").append(getActualSequenceName());
-		if (getCacheSize() > 1)
+		if (getCacheSize() > 1) {
 			sb.append(" CACHE ").append(getCacheSize());
+		}
 		return sb.toString();
 	}
 
@@ -81,7 +82,8 @@ public abstract class AbstractSequenceCyclicSequence extends AbstractDatabaseCyc
 		this.updateTimestampStatement = getUpdateTimestampStatement();
 		try {
 			createOrUpgradeTable();
-		} catch (SQLException ex) {
+		}
+		catch (SQLException ex) {
 			this.logger.error(ex.getMessage(), ex);
 		}
 	}
@@ -96,7 +98,8 @@ public abstract class AbstractSequenceCyclicSequence extends AbstractDatabaseCyc
 			String schema = null;
 			try {
 				schema = conn.getSchema();
-			} catch (Throwable t) {
+			}
+			catch (Throwable th) {
 			}
 			for (String table : new LinkedHashSet<>(
 					Arrays.asList(tableName.toUpperCase(Locale.ROOT), tableName, tableName.toLowerCase(Locale.ROOT)))) {
@@ -113,16 +116,18 @@ public abstract class AbstractSequenceCyclicSequence extends AbstractDatabaseCyc
 				try (ResultSet rs = stmt.executeQuery("SELECT * FROM " + tableName)) {
 					ResultSetMetaData rsmd = rs.getMetaData();
 					boolean legacy = true;
-					for (int i = 0; i < rsmd.getColumnCount(); i++)
+					for (int i = 0; i < rsmd.getColumnCount(); i++) {
 						if ("LAST_UPDATED".equalsIgnoreCase(rsmd.getColumnName(i + 1))) {
 							legacy = false;
 							break;
 						}
+					}
 					if (legacy) {
 						map = new LinkedHashMap<>();
 						rs.next();
-						for (int i = 0; i < rsmd.getColumnCount(); i++)
+						for (int i = 0; i < rsmd.getColumnCount(); i++) {
 							map.put(rsmd.getColumnName(i + 1), rs.getObject(i + 1));
+						}
 					}
 				}
 				if (map != null) {
@@ -153,7 +158,8 @@ public abstract class AbstractSequenceCyclicSequence extends AbstractDatabaseCyc
 					stmt.execute(getInsertStatement());
 					stmt.execute(getCreateSequenceStatement());
 				}
-			} else {
+			}
+			else {
 				stmt.execute(getCreateTableStatement());
 				stmt.execute(getInsertStatement());
 				stmt.execute(getCreateSequenceStatement());
@@ -172,9 +178,11 @@ public abstract class AbstractSequenceCyclicSequence extends AbstractDatabaseCyc
 				Result result = queryTimestampWithSequence(con, stmt);
 				LocalDateTime now = result.current;
 				if (sameCycle(result)) {
-					if (updateLastUpdated(con, now, ct.getCycleStart(ct.skipCycles(now, 1))))
+					if (updateLastUpdated(con, now, ct.getCycleStart(ct.skipCycles(now, 1)))) {
 						return getStringValue(now, getPaddingLength(), result.nextId);
-				} else {
+					}
+				}
+				else {
 					con.setAutoCommit(false);
 					try {
 						result = queryTimestampForUpdate(con, stmt);
@@ -184,21 +192,26 @@ public abstract class AbstractSequenceCyclicSequence extends AbstractDatabaseCyc
 							return getStringValue(result.current, getPaddingLength(), result.nextId);
 						}
 						con.commit();
-					} catch (Exception ex) {
+					}
+					catch (Exception ex) {
 						con.rollback();
 						throw new DataAccessResourceFailureException(ex.getMessage(), ex);
-					} finally {
+					}
+					finally {
 						con.setAutoCommit(true);
 					}
 				}
 				try {
 					Thread.sleep(((1 + maxAttempts) - remainingAttempts) * 50);
-				} catch (InterruptedException ex) {
+				}
+				catch (InterruptedException ex) {
 					this.logger.warn(ex.getMessage(), ex);
 				}
-			} while (--remainingAttempts > 0);
+			}
+			while (--remainingAttempts > 0);
 			throw new MaxAttemptsExceededException(maxAttempts);
-		} catch (SQLException ex) {
+		}
+		catch (SQLException ex) {
 			throw new DataAccessResourceFailureException("Could not obtain next value of sequence", ex);
 		}
 	}
@@ -227,8 +240,9 @@ public abstract class AbstractSequenceCyclicSequence extends AbstractDatabaseCyc
 			Timestamp currentTimestamp = rs.getTimestamp(2);
 			Timestamp lastTimestamp = rs.getTimestamp(3);
 			// keep monotonic incrementing
-			if (lastTimestamp.after(currentTimestamp))
+			if (lastTimestamp.after(currentTimestamp)) {
 				currentTimestamp = lastTimestamp;
+			}
 			return new Result(nextId, currentTimestamp.toLocalDateTime(), lastTimestamp.toLocalDateTime());
 		}
 	}
@@ -239,16 +253,22 @@ public abstract class AbstractSequenceCyclicSequence extends AbstractDatabaseCyc
 			Timestamp currentTimestamp = rs.getTimestamp(1);
 			Timestamp lastTimestamp = rs.getTimestamp(2);
 			// keep monotonic incrementing
-			if (lastTimestamp.after(currentTimestamp))
+			if (lastTimestamp.after(currentTimestamp)) {
 				currentTimestamp = lastTimestamp;
+			}
 			return new Result(0, currentTimestamp.toLocalDateTime(), lastTimestamp.toLocalDateTime());
 		}
 	}
 
 	@Value
 	private static class Result {
+
 		int nextId;
+
 		LocalDateTime current;
+
 		LocalDateTime last;
+
 	}
+
 }

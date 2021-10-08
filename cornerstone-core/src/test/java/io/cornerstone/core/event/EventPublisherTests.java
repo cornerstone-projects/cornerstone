@@ -1,15 +1,12 @@
 package io.cornerstone.core.event;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.BDDMockito.willAnswer;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
-
+import io.cornerstone.core.domain.Scope;
+import io.cornerstone.test.SpringApplicationTestBase;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
@@ -18,8 +15,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.event.EventListener;
 import org.springframework.test.context.ContextConfiguration;
 
-import io.cornerstone.core.domain.Scope;
-import io.cornerstone.test.SpringApplicationTestBase;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.BDDMockito.willAnswer;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 
 @TestMethodOrder(OrderAnnotation.class)
 @ContextConfiguration(classes = EventPublisherTests.Config.class)
@@ -84,6 +84,7 @@ class EventPublisherTests extends SpringApplicationTestBase {
 		TestLisenter testLisenter() {
 			return new TestLisenter();
 		}
+
 	}
 
 	static class TestLisenter {
@@ -91,6 +92,7 @@ class EventPublisherTests extends SpringApplicationTestBase {
 		@EventListener
 		void listen(TestEvent event) {
 		}
+
 	}
 
 	static class TestEvent extends BaseEvent<String> {
@@ -102,4 +104,5 @@ class EventPublisherTests extends SpringApplicationTestBase {
 		}
 
 	}
+
 }

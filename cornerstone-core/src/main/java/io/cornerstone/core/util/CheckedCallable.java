@@ -1,8 +1,8 @@
 package io.cornerstone.core.util;
 
-import static java.util.Objects.requireNonNull;
-
 import java.util.concurrent.Callable;
+
+import static java.util.Objects.requireNonNull;
 
 @FunctionalInterface
 public interface CheckedCallable<T, E extends Throwable> {
@@ -13,7 +13,8 @@ public interface CheckedCallable<T, E extends Throwable> {
 		return () -> {
 			try {
 				return call();
-			} catch (Throwable ex) {
+			}
+			catch (Throwable ex) {
 				return ExceptionUtils.sneakyThrow(ex);
 			}
 		};

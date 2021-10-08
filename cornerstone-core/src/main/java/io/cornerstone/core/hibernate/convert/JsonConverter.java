@@ -12,11 +12,11 @@ import java.util.Set;
 
 import javax.persistence.AttributeConverter;
 
-import org.springframework.core.ResolvableType;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+
+import org.springframework.core.ResolvableType;
 
 public abstract class JsonConverter<T> implements AttributeConverter<T, String> {
 
@@ -31,14 +31,17 @@ public abstract class JsonConverter<T> implements AttributeConverter<T, String> 
 
 	@Override
 	public String convertToDatabaseColumn(T obj) {
-		if (obj == null)
+		if (obj == null) {
 			return null;
+		}
 		if (((obj instanceof Collection) && ((Collection<?>) obj).isEmpty())
-				|| ((obj instanceof Map) && ((Map<?, ?>) obj).isEmpty()))
+				|| ((obj instanceof Map) && ((Map<?, ?>) obj).isEmpty())) {
 			return "";
+		}
 		try {
 			return objectMapper.writeValueAsString(obj);
-		} catch (Exception ex) {
+		}
+		catch (Exception ex) {
 			throw new IllegalArgumentException(obj + " cannot be serialized as json ", ex);
 		}
 	}
@@ -46,16 +49,19 @@ public abstract class JsonConverter<T> implements AttributeConverter<T, String> 
 	@SuppressWarnings("unchecked")
 	@Override
 	public T convertToEntityAttribute(String string) {
-		if (string == null)
+		if (string == null) {
 			return null;
+		}
 		if (string.isEmpty()) {
 			if (this.type instanceof ParameterizedType) {
 				ParameterizedType pt = (ParameterizedType) this.type;
 				if (List.class.isAssignableFrom((Class<?>) pt.getRawType())) {
 					return (T) new ArrayList<>();
-				} else if (Set.class.isAssignableFrom((Class<?>) pt.getRawType())) {
+				}
+				else if (Set.class.isAssignableFrom((Class<?>) pt.getRawType())) {
 					return (T) new LinkedHashSet<>();
-				} else if (Map.class.isAssignableFrom((Class<?>) pt.getRawType())) {
+				}
+				else if (Map.class.isAssignableFrom((Class<?>) pt.getRawType())) {
 					return (T) new LinkedHashMap<>();
 				}
 			}
@@ -63,7 +69,8 @@ public abstract class JsonConverter<T> implements AttributeConverter<T, String> 
 		}
 		try {
 			return (T) objectMapper.readValue(string, objectMapper.constructType(this.type));
-		} catch (Exception ex) {
+		}
+		catch (Exception ex) {
 			throw new IllegalArgumentException(string + " is not valid json ", ex);
 		}
 	}

@@ -1,10 +1,10 @@
 package io.cornerstone.core.hibernate.criteria;
 
+import io.cornerstone.test.containers.PostgreSQL;
 import org.junit.jupiter.api.Test;
+
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
-
-import io.cornerstone.test.containers.PostgreSQL;
 
 @ContextConfiguration(classes = PostgreSQL.class)
 class PostgreSQLPredicateBuilderTests extends PredicateBuilderTests {

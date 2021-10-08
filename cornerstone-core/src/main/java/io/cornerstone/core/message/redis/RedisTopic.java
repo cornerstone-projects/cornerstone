@@ -6,6 +6,12 @@ import java.util.concurrent.Executor;
 
 import javax.annotation.PostConstruct;
 
+import io.cornerstone.core.Application;
+import io.cornerstone.core.domain.Scope;
+import io.cornerstone.core.util.ExceptionUtils;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.ResolvableType;
@@ -14,12 +20,6 @@ import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.data.redis.listener.Topic;
 import org.springframework.data.redis.serializer.SerializationException;
-
-import io.cornerstone.core.Application;
-import io.cornerstone.core.domain.Scope;
-import io.cornerstone.core.util.ExceptionUtils;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public abstract class RedisTopic<T extends Serializable> implements io.cornerstone.core.message.Topic<T> {
@@ -60,7 +60,8 @@ public abstract class RedisTopic<T extends Serializable> implements io.cornersto
 		if (this.globalRedisTemplate != null) {
 			doSubscribe(this.globalRedisMessageListenerContainer, this.globalRedisTemplate, globalTopic);
 			doSubscribe(this.redisMessageListenerContainer, this.redisTemplate, applicationTopic);
-		} else {
+		}
+		else {
 			doSubscribe(this.redisMessageListenerContainer, this.redisTemplate, globalTopic, applicationTopic);
 		}
 	}
@@ -73,11 +74,13 @@ public abstract class RedisTopic<T extends Serializable> implements io.cornersto
 				T msg = (T) template.getValueSerializer().deserialize(message.getBody());
 				log.info("Receive published message: {}", msg);
 				subscribe(msg);
-			} catch (SerializationException ex) {
+			}
+			catch (SerializationException ex) {
 				// message from other app
 				if (ExceptionUtils.getRootCause(ex) instanceof ClassNotFoundException) {
 					log.warn(ex.getMessage());
-				} else {
+				}
+				else {
 					throw ex;
 				}
 			}
@@ -99,13 +102,16 @@ public abstract class RedisTopic<T extends Serializable> implements io.cornersto
 			Runnable task = () -> subscribe(message);
 			if (this.taskExecutor != null) {
 				this.taskExecutor.execute(task);
-			} else {
+			}
+			else {
 				task.run();
 			}
-		} else {
+		}
+		else {
 			if ((this.globalRedisTemplate != null) && (scope == Scope.GLOBAL)) {
 				this.globalRedisTemplate.convertAndSend(getChannelName(scope), message);
-			} else {
+			}
+			else {
 				this.redisTemplate.convertAndSend(getChannelName(scope), message);
 			}
 		}

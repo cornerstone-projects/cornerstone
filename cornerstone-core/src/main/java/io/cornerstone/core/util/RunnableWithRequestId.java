@@ -13,9 +13,11 @@ public class RunnableWithRequestId implements Runnable {
 		boolean requestIdGenerated = CodecUtils.putRequestIdIfAbsent();
 		try {
 			this.delegate.run();
-		} finally {
-			if (requestIdGenerated)
+		}
+		finally {
+			if (requestIdGenerated) {
 				CodecUtils.removeRequestId();
+			}
 		}
 	}
 

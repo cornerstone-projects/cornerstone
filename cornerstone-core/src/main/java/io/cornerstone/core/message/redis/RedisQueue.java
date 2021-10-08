@@ -7,14 +7,14 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
+import io.cornerstone.core.message.Queue;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ResolvableType;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.support.collections.DefaultRedisList;
-
-import io.cornerstone.core.message.Queue;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public abstract class RedisQueue<T extends Serializable> implements Queue<T> {
@@ -51,7 +51,8 @@ public abstract class RedisQueue<T extends Serializable> implements Queue<T> {
 				while (!this.stopConsuming.get()) {
 					try {
 						consume(this.queue.take());
-					} catch (Throwable ex) {
+					}
+					catch (Throwable ex) {
 						if (Thread.interrupted()) {
 							break;
 						}

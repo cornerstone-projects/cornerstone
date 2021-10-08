@@ -1,14 +1,12 @@
 package io.cornerstone.core.util;
 
-import static com.fasterxml.jackson.annotation.JsonProperty.Access.READ_ONLY;
-import static org.assertj.core.api.Assertions.assertThat;
-
-import org.junit.jupiter.api.Test;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
-
 import lombok.Data;
+import org.junit.jupiter.api.Test;
+
+import static com.fasterxml.jackson.annotation.JsonProperty.Access.READ_ONLY;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class BeanUtilsTests {
 
@@ -30,6 +28,7 @@ class BeanUtilsTests {
 		private String fullname;
 
 		interface View {
+
 			interface A {
 
 			}
@@ -37,7 +36,9 @@ class BeanUtilsTests {
 			interface B extends A {
 
 			}
+
 		}
+
 	}
 
 	@Test

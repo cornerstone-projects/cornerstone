@@ -108,16 +108,19 @@ public enum DatabaseProduct {
 			StringBuilder sb = new StringBuilder(getJdbcUrlPrefix());
 			sb.append("://");
 			sb.append(StringUtils.hasLength(host) ? host : "localhost");
-			if ((port > 0) && (port != getDefaultPort()))
+			if ((port > 0) && (port != getDefaultPort())) {
 				sb.append(":").append(port);
+			}
 			sb.append("/").append(databaseName);
 			if (StringUtils.hasLength(params)) {
 				params = params.replaceAll("&", ";");
-				if (!params.startsWith(":"))
+				if (!params.startsWith(":")) {
 					sb.append(":");
+				}
 				sb.append(params);
-				if (!params.endsWith(";"))
+				if (!params.endsWith(";")) {
 					sb.append(";");
+				}
 			}
 			return sb.toString();
 		}
@@ -125,8 +128,9 @@ public enum DatabaseProduct {
 		@Override
 		public String polishJdbcUrl(String jdbcUrl) {
 			String url = polishJdbcUrl(jdbcUrl, ":", ";");
-			if ((url.indexOf(':', url.lastIndexOf('/')) > 0) && !url.endsWith(";"))
+			if ((url.indexOf(':', url.lastIndexOf('/')) > 0) && !url.endsWith(";")) {
 				url = url + ";";
+			}
 			return url;
 		}
 
@@ -165,13 +169,15 @@ public enum DatabaseProduct {
 			StringBuilder sb = new StringBuilder(getJdbcUrlPrefix());
 			sb.append("-sqli://");
 			sb.append(StringUtils.hasLength(host) ? host : "localhost");
-			if ((port > 0) && (port != getDefaultPort()))
+			if ((port > 0) && (port != getDefaultPort())) {
 				sb.append(":").append(port);
+			}
 			sb.append("/").append(databaseName);
 			if (StringUtils.hasLength(params)) {
 				params = params.replaceAll("&", ":");
-				if (!params.startsWith(":"))
+				if (!params.startsWith(":")) {
 					sb.append(":");
+				}
 				sb.append(params);
 			}
 			return sb.toString();
@@ -198,16 +204,19 @@ public enum DatabaseProduct {
 			StringBuilder sb = new StringBuilder(getJdbcUrlPrefix());
 			sb.append("://");
 			sb.append(StringUtils.hasLength(host) ? host : "localhost");
-			if ((port > 0) && (port != getDefaultPort()))
+			if ((port > 0) && (port != getDefaultPort())) {
 				sb.append(":").append(port);
+			}
 			sb.append(";DatabaseName=").append(databaseName);
 			if (StringUtils.hasLength(params)) {
 				params = params.replaceAll("&", ";");
-				if (!params.startsWith(";"))
+				if (!params.startsWith(";")) {
 					sb.append(";");
+				}
 				sb.append(params);
-				if (!params.endsWith(";"))
+				if (!params.endsWith(";")) {
 					sb.append(";");
+				}
 			}
 			return sb.toString();
 		}
@@ -261,8 +270,9 @@ public enum DatabaseProduct {
 			sb.append(":").append(port);
 			sb.append("/").append(databaseName);
 			if (StringUtils.hasLength(params)) {
-				if (!params.startsWith("?"))
+				if (!params.startsWith("?")) {
 					sb.append("?");
+				}
 				sb.append(params);
 			}
 			return sb.toString();
@@ -284,13 +294,15 @@ public enum DatabaseProduct {
 			StringBuilder sb = new StringBuilder(getJdbcUrlPrefix());
 			sb.append(":tcp://");
 			sb.append(StringUtils.hasLength(host) ? host : "localhost");
-			if ((port > 0) && (port != getDefaultPort()))
+			if ((port > 0) && (port != getDefaultPort())) {
 				sb.append(":").append(port);
+			}
 			sb.append("/").append(databaseName);
 			if (StringUtils.hasLength(params)) {
 				params = params.replaceAll("&", ";");
-				if (!params.startsWith(";"))
+				if (!params.startsWith(";")) {
 					sb.append(";");
+				}
 				sb.append(params);
 			}
 			return sb.toString();
@@ -317,13 +329,15 @@ public enum DatabaseProduct {
 			StringBuilder sb = new StringBuilder(getJdbcUrlPrefix());
 			sb.append(":hsql://");
 			sb.append(StringUtils.hasLength(host) ? host : "localhost");
-			if ((port > 0) && (port != getDefaultPort()))
+			if ((port > 0) && (port != getDefaultPort())) {
 				sb.append(":").append(port);
+			}
 			sb.append("/").append(databaseName);
 			if (StringUtils.hasLength(params)) {
 				params = params.replaceAll("&", ";");
-				if (!params.startsWith(";"))
+				if (!params.startsWith(";")) {
 					sb.append(";");
+				}
 				sb.append(params);
 			}
 			return sb.toString();
@@ -350,13 +364,15 @@ public enum DatabaseProduct {
 			StringBuilder sb = new StringBuilder(getJdbcUrlPrefix());
 			sb.append("://");
 			sb.append(StringUtils.hasLength(host) ? host : "localhost");
-			if ((port > 0) && (port != getDefaultPort()))
+			if ((port > 0) && (port != getDefaultPort())) {
 				sb.append(":").append(port);
+			}
 			sb.append("/").append(databaseName);
 			if (StringUtils.hasLength(params)) {
 				params = params.replaceAll("&", ";");
-				if (!params.startsWith(";"))
+				if (!params.startsWith(";")) {
 					sb.append(";");
+				}
 				sb.append(params);
 			}
 			return sb.toString();
@@ -386,8 +402,9 @@ public enum DatabaseProduct {
 			sb.append(":").append(databaseName);
 			sb.append(":public::");
 			if (StringUtils.hasLength(params)) {
-				if (!params.startsWith("?"))
+				if (!params.startsWith("?")) {
 					sb.append("?");
+				}
 				sb.append(params);
 			}
 			return sb.toString();
@@ -421,8 +438,9 @@ public enum DatabaseProduct {
 			sb.append(":").append(port);
 			sb.append(":").append(databaseName);
 			if (StringUtils.hasLength(params)) {
-				if (!params.startsWith("?"))
+				if (!params.startsWith("?")) {
 					sb.append("?");
+				}
 				sb.append(params);
 			}
 			return sb.toString();
@@ -437,38 +455,54 @@ public enum DatabaseProduct {
 	public static DatabaseProduct parse(String nameOrUrl) {
 		nameOrUrl = nameOrUrl.trim();
 		if (nameOrUrl.toLowerCase(Locale.ROOT).startsWith("jdbc:")) {
-			for (DatabaseProduct p : values())
-				if (nameOrUrl.startsWith(p.getJdbcUrlPrefix()))
+			for (DatabaseProduct p : values()) {
+				if (nameOrUrl.startsWith(p.getJdbcUrlPrefix())) {
 					return p;
+				}
+			}
 			return null;
-		} else {
-			if (nameOrUrl.toLowerCase(Locale.ROOT).contains("mysql"))
+		}
+		else {
+			if (nameOrUrl.toLowerCase(Locale.ROOT).contains("mysql")) {
 				return MYSQL;
-			else if (nameOrUrl.toLowerCase(Locale.ROOT).contains("mariadb"))
+			}
+			else if (nameOrUrl.toLowerCase(Locale.ROOT).contains("mariadb")) {
 				return MARIADB;
-			else if (nameOrUrl.toLowerCase(Locale.ROOT).contains("postgres"))
+			}
+			else if (nameOrUrl.toLowerCase(Locale.ROOT).contains("postgres")) {
 				return POSTGRESQL;
-			else if (nameOrUrl.toLowerCase(Locale.ROOT).contains("oracle"))
+			}
+			else if (nameOrUrl.toLowerCase(Locale.ROOT).contains("oracle")) {
 				return ORACLE;
-			else if (nameOrUrl.toLowerCase(Locale.ROOT).startsWith("db2"))
+			}
+			else if (nameOrUrl.toLowerCase(Locale.ROOT).startsWith("db2")) {
 				return DB2;
-			else if (nameOrUrl.toLowerCase(Locale.ROOT).contains("informix"))
+			}
+			else if (nameOrUrl.toLowerCase(Locale.ROOT).contains("informix")) {
 				return INFORMIX;
-			else if (nameOrUrl.toLowerCase(Locale.ROOT).contains("microsoft"))
+			}
+			else if (nameOrUrl.toLowerCase(Locale.ROOT).contains("microsoft")) {
 				return SQLSERVER;
+			}
 			else if (nameOrUrl.toLowerCase(Locale.ROOT).contains("sql server")
-					|| nameOrUrl.equalsIgnoreCase("Adaptive Server Enterprise") || nameOrUrl.equals("ASE"))
+					|| nameOrUrl.equalsIgnoreCase("Adaptive Server Enterprise") || nameOrUrl.equals("ASE")) {
 				return SYBASE;
-			else if (nameOrUrl.toLowerCase(Locale.ROOT).equals("h2"))
+			}
+			else if (nameOrUrl.toLowerCase(Locale.ROOT).equals("h2")) {
 				return H2;
-			else if (nameOrUrl.toLowerCase(Locale.ROOT).contains("hsql"))
+			}
+			else if (nameOrUrl.toLowerCase(Locale.ROOT).contains("hsql")) {
 				return HSQL;
-			else if (nameOrUrl.toLowerCase(Locale.ROOT).contains("derby"))
+			}
+			else if (nameOrUrl.toLowerCase(Locale.ROOT).contains("derby")) {
 				return DERBY;
-			else if (nameOrUrl.toLowerCase(Locale.ROOT).contains("cubrid"))
+			}
+			else if (nameOrUrl.toLowerCase(Locale.ROOT).contains("cubrid")) {
 				return CUBRID;
-			else if (nameOrUrl.toLowerCase(Locale.ROOT).contains("firebird"))
+			}
+			else if (nameOrUrl.toLowerCase(Locale.ROOT).contains("firebird")) {
 				return FIREBIRD;
+			}
 		}
 		return null;
 	}
@@ -487,7 +521,8 @@ public enum DatabaseProduct {
 					return Arrays.asList(s.split("\\s*,\\s*"));
 				}
 			}
-		} catch (IOException ex) {
+		}
+		catch (IOException ex) {
 			ex.printStackTrace();
 		}
 		return Collections.emptyList();
@@ -505,12 +540,14 @@ public enum DatabaseProduct {
 		StringBuilder sb = new StringBuilder(getJdbcUrlPrefix());
 		sb.append("://");
 		sb.append(StringUtils.hasLength(host) ? host : "localhost");
-		if ((port > 0) && (port != getDefaultPort()))
+		if ((port > 0) && (port != getDefaultPort())) {
 			sb.append(":").append(port);
+		}
 		sb.append("/").append(databaseName);
 		if (StringUtils.hasLength(params)) {
-			if (!params.startsWith("?"))
+			if (!params.startsWith("?")) {
 				sb.append("?");
+			}
 			sb.append(params);
 		}
 		return sb.toString();
@@ -526,7 +563,8 @@ public enum DatabaseProduct {
 		for (Map.Entry<String, String> entry : properties.entrySet()) {
 			if (hasDelimiter) {
 				sb.append('&');
-			} else {
+			}
+			else {
 				sb.append('?');
 				hasDelimiter = true;
 			}
@@ -537,8 +575,9 @@ public enum DatabaseProduct {
 
 	protected String polishJdbcUrl(String jdbcUrl, String delimiter, String separator) {
 		String qs = getRecommendedJdbcUrlQueryString();
-		if (qs == null)
+		if (qs == null) {
 			return jdbcUrl;
+		}
 		int i = delimiter.equals(":") ? jdbcUrl.indexOf(delimiter, jdbcUrl.lastIndexOf('/'))
 				: jdbcUrl.indexOf(delimiter);
 		if (i > 0) {
@@ -547,17 +586,20 @@ public enum DatabaseProduct {
 			Map<String, String> map = new LinkedHashMap<>();
 			for (String s : (qs + separator + params).split(separator)) {
 				String[] arr = s.split("=", 2);
-				if (arr.length == 2)
+				if (arr.length == 2) {
 					map.put(arr[0], arr[1]);
+				}
 			}
 			StringBuilder sb = new StringBuilder();
 			if (map.size() > 0) {
-				for (Map.Entry<String, String> entry : map.entrySet())
+				for (Map.Entry<String, String> entry : map.entrySet()) {
 					sb.append(entry.getKey()).append("=").append(entry.getValue()).append(separator);
+				}
 				sb.deleteCharAt(sb.length() - 1);
 			}
 			return uri + delimiter + sb.toString();
-		} else {
+		}
+		else {
 			return jdbcUrl + delimiter + qs;
 		}
 	}

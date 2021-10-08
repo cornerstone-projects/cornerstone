@@ -28,4 +28,5 @@ public class GlobalErrorAttributes extends DefaultErrorAttributes {
 		}
 		return errorAttributes;
 	}
+
 }

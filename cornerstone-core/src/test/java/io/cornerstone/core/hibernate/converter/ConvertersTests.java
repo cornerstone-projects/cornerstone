@@ -1,21 +1,21 @@
 package io.cornerstone.core.hibernate.converter;
 
-import static io.cornerstone.core.hibernate.converter.TestEnum.A;
-import static io.cornerstone.core.hibernate.converter.TestEnum.B;
-import static io.cornerstone.core.hibernate.converter.TestEnum.C;
-import static org.assertj.core.api.Assertions.assertThat;
-
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 
+import io.cornerstone.test.DataJpaTestBase;
 import org.junit.jupiter.api.Test;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
-import io.cornerstone.test.DataJpaTestBase;
+import static io.cornerstone.core.hibernate.converter.TestEnum.A;
+import static io.cornerstone.core.hibernate.converter.TestEnum.B;
+import static io.cornerstone.core.hibernate.converter.TestEnum.C;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @EnableJpaRepositories(basePackageClasses = TestEntityRepository.class)
 @EntityScan(basePackageClasses = TestEntity.class)

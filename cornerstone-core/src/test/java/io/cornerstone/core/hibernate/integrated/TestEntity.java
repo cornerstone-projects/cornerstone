@@ -11,13 +11,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
-import org.hibernate.annotations.TypeDefs;
-import org.springframework.data.domain.Persistable;
-import org.springframework.lang.Nullable;
-
 import io.cornerstone.core.hibernate.convert.EnumArrayConverter;
 import io.cornerstone.core.hibernate.convert.EnumListConverter;
 import io.cornerstone.core.hibernate.convert.EnumSetConverter;
@@ -29,6 +22,13 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
+import org.hibernate.annotations.TypeDefs;
+
+import org.springframework.data.domain.Persistable;
+import org.springframework.lang.Nullable;
 
 @TypeDefs({ @TypeDef(name = "json", typeClass = JsonType.class) })
 @Entity
@@ -81,22 +81,28 @@ class TestEntity implements Persistable<Long> {
 	@Converter(autoApply = true)
 	static class TestEnumArrayConverter extends EnumArrayConverter<TestEnum>
 			implements AttributeConverter<TestEnum[], String> {
+
 	}
 
 	@Converter(autoApply = true)
 	static class TestEnumSetConverter extends EnumSetConverter<TestEnum> {
+
 	}
 
 	@Converter(autoApply = true)
 	static class TestEnumListConverter extends EnumListConverter<TestEnum> {
+
 	}
 
 	@Converter(autoApply = true)
 	static class TestComponentListConverter extends JsonConverter<List<TestComponent>> {
+
 	}
 
-	static enum TestEnum {
+	enum TestEnum {
+
 		A, B, C
+
 	}
 
 	@Data
@@ -109,6 +115,7 @@ class TestEntity implements Persistable<Long> {
 		private Integer integer;
 
 		private BigDecimal bigDecimal;
+
 	}
 
 	@Data
@@ -121,6 +128,7 @@ class TestEntity implements Persistable<Long> {
 		private Integer integer;
 
 		private BigDecimal bigDecimal;
+
 	}
 
 }

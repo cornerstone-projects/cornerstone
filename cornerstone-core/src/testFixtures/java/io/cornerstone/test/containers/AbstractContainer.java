@@ -5,13 +5,13 @@ import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
 
+import io.cornerstone.core.util.AopUtils;
+import org.testcontainers.containers.GenericContainer;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.env.Environment;
-import org.testcontainers.containers.GenericContainer;
-
-import io.cornerstone.core.util.AopUtils;
 
 abstract class AbstractContainer {
 
@@ -30,8 +30,9 @@ abstract class AbstractContainer {
 
 	protected String getImage() {
 		String image = this.env.getProperty(IMAGE);
-		if (image == null)
+		if (image == null) {
 			image = getImageName() + ':' + getImageTag();
+		}
 		return image;
 	}
 
@@ -48,7 +49,8 @@ abstract class AbstractContainer {
 					env.put(f.getName(), String.valueOf(f.get(null)));
 				}
 			}
-		} catch (Exception ex) {
+		}
+		catch (Exception ex) {
 			throw new RuntimeException(ex.getMessage(), ex);
 		}
 		return env;
@@ -57,17 +59,19 @@ abstract class AbstractContainer {
 	protected GenericContainer<?> createContainer() {
 		GenericContainer<?> container = new GenericContainer<>(getImage());
 		int exposedPort = getExposedPort();
-		if (exposedPort > 0)
+		if (exposedPort > 0) {
 			container.withExposedPorts(exposedPort);
+		}
 		Map<String, String> env = getEnv();
-		if (!env.isEmpty())
+		if (!env.isEmpty()) {
 			container.withEnv(env);
+		}
 		return container;
 	}
 
 	@Primary
 	@Bean(initMethod = "start")
-	public GenericContainer<?> container() {
+	GenericContainer<?> container() {
 		return createContainer();
 	}
 

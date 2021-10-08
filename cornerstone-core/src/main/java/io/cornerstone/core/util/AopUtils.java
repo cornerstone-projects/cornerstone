@@ -1,9 +1,9 @@
 package io.cornerstone.core.util;
 
+import lombok.experimental.UtilityClass;
+
 import org.springframework.aop.framework.Advised;
 import org.springframework.util.Assert;
-
-import lombok.experimental.UtilityClass;
 
 @UtilityClass
 public class AopUtils {
@@ -20,7 +20,8 @@ public class AopUtils {
 					return (T) target;
 				}
 			}
-		} catch (Throwable ex) {
+		}
+		catch (Throwable ex) {
 			throw new IllegalStateException("Failed to unwrap proxied object", ex);
 		}
 		return (T) candidate;
@@ -36,7 +37,8 @@ public class AopUtils {
 					return (T) getUltimateTargetObject(target);
 				}
 			}
-		} catch (Throwable ex) {
+		}
+		catch (Throwable ex) {
 			throw new IllegalStateException("Failed to unwrap proxied object", ex);
 		}
 		return (T) candidate;

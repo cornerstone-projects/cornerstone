@@ -1,8 +1,8 @@
 package io.cornerstone.core.util;
 
-import static java.util.Objects.requireNonNull;
-
 import java.util.function.Function;
+
+import static java.util.Objects.requireNonNull;
 
 @FunctionalInterface
 public interface CheckedFunction<T, R, E extends Throwable> {
@@ -13,7 +13,8 @@ public interface CheckedFunction<T, R, E extends Throwable> {
 		return t -> {
 			try {
 				return apply(t);
-			} catch (Throwable ex) {
+			}
+			catch (Throwable ex) {
 				return ExceptionUtils.sneakyThrow(ex);
 			}
 		};

@@ -18,22 +18,27 @@ public abstract class AbstractArrayConverter<T> {
 	}
 
 	public String convertToDatabaseColumn(T[] array) {
-		if (array == null)
+		if (array == null) {
 			return null;
-		if (array.length == 0)
+		}
+		if (array.length == 0) {
 			return "";
+		}
 		return String.join(SEPARATOR, Stream.of(array).map(Object::toString).collect(Collectors.toList()));
 	}
 
 	public T[] convertToEntityAttribute(String string) {
-		if (string == null)
+		if (string == null) {
 			return null;
-		if (string.isEmpty())
+		}
+		if (string.isEmpty()) {
 			return (T[]) Array.newInstance(this.clazz, 0);
+		}
 		String[] arr = string.split(SEPARATOR + "\\s*");
 		T[] array = (T[]) Array.newInstance(this.clazz, arr.length);
-		for (int i = 0; i < arr.length; i++)
+		for (int i = 0; i < arr.length; i++) {
 			array[i] = convert(arr[i]);
+		}
 		return array;
 	}
 

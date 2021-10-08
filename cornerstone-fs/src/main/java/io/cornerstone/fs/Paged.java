@@ -24,14 +24,17 @@ public class Paged<T> implements Serializable {
 		int start;
 		if (marker == null) {
 			start = 0;
-		} else {
+		}
+		else {
 			start = -1;
 			for (int i = 0; i < result.size(); i++) {
-				if (markerMapper.apply(result.get(i)).equals(marker))
+				if (markerMapper.apply(result.get(i)).equals(marker)) {
 					start = i;
+				}
 			}
-			if (start == -1)
+			if (start == -1) {
 				return new Paged<>(marker, null, Collections.emptyList());
+			}
 		}
 		return new Paged<>(marker,
 				(start + limit) < result.size() ? markerMapper.apply(result.get(start + limit)) : null,

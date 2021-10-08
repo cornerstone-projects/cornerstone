@@ -2,11 +2,6 @@ package io.cornerstone.core.hibernate.id;
 
 import javax.annotation.PostConstruct;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.core.env.Environment;
-import org.springframework.stereotype.Component;
-
 import io.cornerstone.core.Application;
 import io.cornerstone.core.util.NumberUtils;
 import lombok.AccessLevel;
@@ -14,6 +9,11 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.core.env.Environment;
+import org.springframework.stereotype.Component;
 
 @Component
 @ConfigurationProperties(SnowflakeProperties.PREFIX)
@@ -44,15 +44,17 @@ public class SnowflakeProperties {
 				if (index > 0) {
 					id = ip.substring(index + 1);
 					this.workerId = Integer.parseInt(id);
-				} else {
+				}
+				else {
 					// IPv6
 					index = ip.lastIndexOf(':');
 					id = ip.substring(index + 1);
 					id = String.valueOf(NumberUtils.xToDecimal(16, id.toUpperCase()));
 					this.workerId = Integer.parseInt(id);
 					this.workerIdBits = 16;
-					if (this.workerId < 0)
+					if (this.workerId < 0) {
 						this.workerId += 2 << this.workerIdBits;
+					}
 				}
 				log.info(
 						"Extract snowflake workerId {} from host address {}, please configure {}.worker-id if multiple instances running in the same host",

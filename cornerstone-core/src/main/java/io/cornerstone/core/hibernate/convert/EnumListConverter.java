@@ -20,26 +20,32 @@ public abstract class EnumListConverter<T extends Enum<T>> implements AttributeC
 
 	@Override
 	public String convertToDatabaseColumn(List<T> list) {
-		if (list == null)
+		if (list == null) {
 			return null;
-		if (list.isEmpty())
+		}
+		if (list.isEmpty()) {
 			return "";
+		}
 		List<String> names = new ArrayList<>();
-		for (Enum<?> en : list)
+		for (Enum<?> en : list) {
 			names.add(en.name());
+		}
 		return String.join(SEPARATOR, names);
 	}
 
 	@Override
 	public List<T> convertToEntityAttribute(String string) {
-		if (string == null)
+		if (string == null) {
 			return null;
-		if (string.isEmpty())
+		}
+		if (string.isEmpty()) {
 			return new ArrayList<>();
+		}
 		String[] names = string.split(SEPARATOR);
 		List<T> list = new ArrayList<>();
-		for (String name : names)
+		for (String name : names) {
 			list.add(Enum.valueOf(this.enumType, name));
+		}
 		return list;
 	}
 

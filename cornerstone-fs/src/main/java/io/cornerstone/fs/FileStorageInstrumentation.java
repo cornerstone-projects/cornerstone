@@ -3,14 +3,13 @@ package io.cornerstone.fs;
 import java.lang.reflect.Method;
 import java.util.concurrent.TimeUnit;
 
+import io.cornerstone.core.tracing.Tracing;
+import io.cornerstone.core.util.ReflectionUtils;
+import io.micrometer.core.instrument.Metrics;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
-
-import io.cornerstone.core.tracing.Tracing;
-import io.cornerstone.core.util.ReflectionUtils;
-import io.micrometer.core.instrument.Metrics;
 
 @Aspect
 public class FileStorageInstrumentation {
@@ -20,8 +19,9 @@ public class FileStorageInstrumentation {
 		Object[] args = pjp.getArgs();
 		Method method = ((MethodSignature) pjp.getSignature()).getMethod();
 		String methodName = method.getName();
-		if (methodName.startsWith("get") || methodName.startsWith("is"))
+		if (methodName.startsWith("get") || methodName.startsWith("is")) {
 			return pjp.proceed();
+		}
 		boolean error = false;
 		long start = System.nanoTime();
 		try {
@@ -31,10 +31,12 @@ public class FileStorageInstrumentation {
 				Metrics.summary("fs.write.size", "name", fileStorage.getName()).record((Long) args[2]);
 			}
 			return result;
-		} catch (Exception ex) {
+		}
+		catch (Exception ex) {
 			error = true;
 			throw ex;
-		} finally {
+		}
+		finally {
 			Metrics.timer("fs.operations", "name", fileStorage.getName(), "operation", methodName, "error",
 					String.valueOf(error)).record(System.nanoTime() - start, TimeUnit.NANOSECONDS);
 		}

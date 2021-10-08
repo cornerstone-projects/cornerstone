@@ -24,7 +24,10 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import io.cornerstone.core.util.RequestUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
+
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -48,9 +51,6 @@ import org.springframework.util.AntPathMatcher;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
-
-import io.cornerstone.core.util.RequestUtils;
-import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class SsoFilter implements Filter {
@@ -104,8 +104,9 @@ public class SsoFilter implements Filter {
 		HttpServletRequest request = (HttpServletRequest) req;
 		HttpServletResponse response = (HttpServletResponse) resp;
 		if (!isSameOrigin(request.getRequestURL().toString(), this.portalBaseUrl)) {
-			if (this.strictAccess)
+			if (this.strictAccess) {
 				throw new AccessDeniedException("Please access via domain name");
+			}
 			chain.doFilter(req, resp);
 			return;
 		}
@@ -123,25 +124,25 @@ public class SsoFilter implements Filter {
 		}
 		// check cors
 		String origin = request.getHeader("Origin");
-		if (origin != null) {
-			if (!("Upgrade".equalsIgnoreCase(request.getHeader("Connection"))
-					&& "WebSocket".equalsIgnoreCase(request.getHeader("Upgrade")))) {
-				String url = request.getRequestURL().toString();
-				if (!url.startsWith(origin)) {
-					response.setHeader("Access-Control-Allow-Origin", origin);
-					response.setHeader("Access-Control-Allow-Credentials", "true");
-					String requestMethod = request.getHeader("Access-Control-Request-Method");
-					String requestHeaders = request.getHeader("Access-Control-Request-Headers");
-					String method = request.getMethod();
-					if (method.equalsIgnoreCase("OPTIONS") && ((requestMethod != null) || (requestHeaders != null))) {
-						// preflighted request
-						if (requestMethod != null)
-							response.setHeader("Access-Control-Allow-Methods", requestMethod);
-						if (requestHeaders != null)
-							response.setHeader("Access-Control-Allow-Headers", requestHeaders);
-						response.setHeader("Access-Control-Max-Age", "36000");
-						return;
+		if (origin != null && !("Upgrade".equalsIgnoreCase(request.getHeader("Connection"))
+				&& "WebSocket".equalsIgnoreCase(request.getHeader("Upgrade")))) {
+			String url = request.getRequestURL().toString();
+			if (!url.startsWith(origin)) {
+				response.setHeader("Access-Control-Allow-Origin", origin);
+				response.setHeader("Access-Control-Allow-Credentials", "true");
+				String requestMethod = request.getHeader("Access-Control-Request-Method");
+				String requestHeaders = request.getHeader("Access-Control-Request-Headers");
+				String method = request.getMethod();
+				if (method.equalsIgnoreCase("OPTIONS") && ((requestMethod != null) || (requestHeaders != null))) {
+					// preflighted request
+					if (requestMethod != null) {
+						response.setHeader("Access-Control-Allow-Methods", requestMethod);
 					}
+					if (requestHeaders != null) {
+						response.setHeader("Access-Control-Allow-Headers", requestHeaders);
+					}
+					response.setHeader("Access-Control-Max-Age", "36000");
+					return;
 				}
 			}
 		}
@@ -156,21 +157,24 @@ public class SsoFilter implements Filter {
 		if (token == null) {
 			redirect(request, response);
 			return;
-		} else {
+		}
+		else {
 			URI apiUri;
 			try {
 				apiUri = new URI(this.portalApiUserSelfUrl.indexOf("://") > 0 ? this.portalApiUserSelfUrl
 						: this.portalBaseUrl + this.portalApiUserSelfUrl);
-			} catch (URISyntaxException ex) {
+			}
+			catch (URISyntaxException ex) {
 				ex.printStackTrace();
 				return;
 			}
 			StringBuilder cookie = new StringBuilder();
 			cookie.append(COOKIE_NAME_TOKEN).append("=").append(URLEncoder.encode(token, DEFAULT_ENCODING));
 			String session = getCookieValue(request, COOKIE_NAME_SESSION);
-			if (session != null)
+			if (session != null) {
 				cookie.append("; ").append(COOKIE_NAME_SESSION).append("=")
 						.append(URLEncoder.encode(session, DEFAULT_ENCODING));
+			}
 			RequestEntity<?> requestEntity = RequestEntity.get(apiUri).header("Cookie", cookie.toString())
 					.header("X-Real-IP", request.getRemoteAddr()).build();
 			try {
@@ -180,7 +184,8 @@ public class SsoFilter implements Filter {
 				sc.setAuthentication(auth);
 				request.getSession().setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, sc);
 				MDC.put("username", auth.getName());
-			} catch (HttpClientErrorException ex) {
+			}
+			catch (HttpClientErrorException ex) {
 				if (ex.getStatusCode() == HttpStatus.NOT_FOUND) {
 					redirect(request, response);
 					return;
@@ -192,8 +197,9 @@ public class SsoFilter implements Filter {
 	}
 
 	protected boolean isProtected(String uri) {
-		if (uri.startsWith("/assets/"))
+		if (uri.startsWith("/assets/")) {
 			return false;
+		}
 		for (String s : this.excludePattern.split("\\s*,\\s*")) {
 			if (this.antPathMatcher.match(s, uri)) {
 				return false;
@@ -204,29 +210,34 @@ public class SsoFilter implements Filter {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	protected UserDetails map(SimpleUser userFromApi) {
-		if (userFromApi == null)
+		if (userFromApi == null) {
 			throw new AccessDeniedException("user not found");
+		}
 		try {
 			UserDetails user = this.userDetailsService.loadUserByUsername(userFromApi.getUsername());
 			// reset passwordModifyDate to avoid CredentialsExpiredException
 			BeanWrapperImpl bw = new BeanWrapperImpl(user);
-			if (bw.isWritableProperty("passwordModifyDate"))
+			if (bw.isWritableProperty("passwordModifyDate")) {
 				bw.setPropertyValue("passwordModifyDate", null);
+			}
 			Collection authorities = user.getAuthorities();
 			try {
 				Set<String> roles = userFromApi.getRoles();
 				if (!CollectionUtils.isEmpty(roles)) {
 					List<GrantedAuthority> list = AuthorityUtils.createAuthorityList(roles.toArray(new String[0]));
 					for (GrantedAuthority ga : list) {
-						if (!authorities.contains(ga))
+						if (!authorities.contains(ga)) {
 							authorities.add(ga);
+						}
 					}
 				}
-			} catch (UnsupportedOperationException ex) {
+			}
+			catch (UnsupportedOperationException ex) {
 				log.warn("Can not copy roles from portal server because collection is unmodifiable");
 			}
 			return user;
-		} catch (UsernameNotFoundException ex) {
+		}
+		catch (UsernameNotFoundException ex) {
 			throw new AccessDeniedException(ex.getMessage());
 		}
 	}
@@ -240,8 +251,9 @@ public class SsoFilter implements Filter {
 		}
 		StringBuffer sb = request.getRequestURL();
 		String queryString = request.getQueryString();
-		if (queryString != null)
+		if (queryString != null) {
 			sb.append("?").append(queryString);
+		}
 		String targetUrl = sb.toString();
 		StringBuilder redirectUrl = new StringBuilder(this.portalLoginUrl.indexOf("://") > 0 ? "" : this.portalBaseUrl);
 		redirectUrl.append(this.portalLoginUrl).append("?targetUrl=").append(URLEncoder.encode(targetUrl, "UTF-8"));
@@ -250,40 +262,49 @@ public class SsoFilter implements Filter {
 
 	protected static String getCookieValue(HttpServletRequest request, String cookieName) {
 		Cookie[] cookies = request.getCookies();
-		if (cookies == null)
+		if (cookies == null) {
 			return null;
-		for (Cookie cookie : cookies)
-			if (cookieName.equalsIgnoreCase(cookie.getName()))
+		}
+		for (Cookie cookie : cookies) {
+			if (cookieName.equalsIgnoreCase(cookie.getName())) {
 				try {
 					return URLDecoder.decode(cookie.getValue(), DEFAULT_ENCODING);
-				} catch (UnsupportedEncodingException ex) {
+				}
+				catch (UnsupportedEncodingException ex) {
 					return cookie.getValue();
 				}
+			}
+		}
 		return null;
 	}
 
 	protected static boolean isSameOrigin(String a, String b) {
-		if ((b.indexOf("://") < 0) || (a.indexOf("://") < 0))
+		if ((b.indexOf("://") < 0) || (a.indexOf("://") < 0)) {
 			return true;
+		}
 		try {
 			String host1 = new URL(a).getHost();
-			if (host1 == null)
+			if (host1 == null) {
 				host1 = "localhost";
+			}
 			String host2 = new URL(b).getHost();
-			if (host2 == null)
+			if (host2 == null) {
 				host2 = "localhost";
-			if (host1.equalsIgnoreCase(host2))
+			}
+			if (host1.equalsIgnoreCase(host2)) {
 				return true;
+			}
 			String[] arr1 = host1.split("\\.");
 			String[] arr2 = host2.split("\\.");
 			return (arr1.length >= 2) && (arr2.length >= 2) && arr1[arr1.length - 1].equals(arr2[arr2.length - 1])
 					&& arr1[arr1.length - 2].equals(arr2[arr2.length - 2]);
-		} catch (MalformedURLException ex) {
+		}
+		catch (MalformedURLException ex) {
 			return false;
 		}
 	}
 
-	static class SimpleUser implements Serializable {
+	public static class SimpleUser implements Serializable {
 
 		private static final long serialVersionUID = 2064378429236105592L;
 

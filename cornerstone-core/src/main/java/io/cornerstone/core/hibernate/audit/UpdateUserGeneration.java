@@ -4,6 +4,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.tuple.AnnotationValueGeneration;
 import org.hibernate.tuple.GenerationTiming;
 import org.hibernate.tuple.ValueGenerator;
+
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,12 +22,14 @@ public class UpdateUserGeneration implements AnnotationValueGeneration<UpdateUse
 				Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 				return (auth != null) && propertyType.isInstance(auth.getPrincipal()) ? auth.getPrincipal() : null;
 			};
-		} else if (String.class == propertyType) {
+		}
+		else if (String.class == propertyType) {
 			this.generator = (session, obj) -> {
 				Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 				return auth != null ? auth.getName() : null;
 			};
-		} else {
+		}
+		else {
 			throw new HibernateException("Unsupported property type for generator annotation @UpdateUser");
 		}
 	}

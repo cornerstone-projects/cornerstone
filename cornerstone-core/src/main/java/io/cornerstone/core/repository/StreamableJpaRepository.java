@@ -49,4 +49,5 @@ public interface StreamableJpaRepository<T, ID> extends JpaRepository<T, ID> {
 			all.forEach(consumer);
 		}
 	}
+
 }

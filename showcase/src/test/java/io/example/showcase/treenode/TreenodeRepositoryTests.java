@@ -1,13 +1,13 @@
 package io.example.showcase.treenode;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
+import io.cornerstone.test.DataJpaTestBase;
 import org.junit.jupiter.api.Test;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
-import io.cornerstone.test.DataJpaTestBase;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @EnableJpaRepositories(basePackageClasses = TreenodeRepository.class)
 @EntityScan(basePackageClasses = Treenode.class)

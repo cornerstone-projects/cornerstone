@@ -8,17 +8,20 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.TimeZone;
 
-import org.springframework.dao.DataAccessException;
-import org.springframework.dao.DataAccessResourceFailureException;
-
 import io.cornerstone.core.sequence.simple.MySQLSimpleSequence;
 import io.cornerstone.core.util.MaxAttemptsExceededException;
+
+import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DataAccessResourceFailureException;
 
 public class MySQLCyclicSequence extends AbstractDatabaseCyclicSequence {
 
 	private String setVariableSql;
+
 	private String incrementSql;
+
 	private String restartSql;
+
 	private String selectLastInsertIdSql = "SELECT LAST_INSERT_ID(),@TIMESTAMP";
 
 	@Override
@@ -35,7 +38,8 @@ public class MySQLCyclicSequence extends AbstractDatabaseCyclicSequence {
 				+ "')!=DATE_FORMAT(FROM_UNIXTIME(@TIMESTAMP),'" + getDateFormat() + "')";
 		try {
 			MySQLSimpleSequence.createTable(getDataSource(), getTableName(), getSequenceName());
-		} catch (SQLException ex) {
+		}
+		catch (SQLException ex) {
 			this.logger.error(ex.getMessage(), ex);
 		}
 	}
@@ -59,12 +63,15 @@ public class MySQLCyclicSequence extends AbstractDatabaseCyclicSequence {
 				}
 				try {
 					Thread.sleep(((1 + maxAttempts) - remainingAttempts) * 50);
-				} catch (InterruptedException ex) {
+				}
+				catch (InterruptedException ex) {
 					this.logger.warn(ex.getMessage(), ex);
 				}
-			} while (--remainingAttempts > 0);
+			}
+			while (--remainingAttempts > 0);
 			throw new MaxAttemptsExceededException(maxAttempts);
-		} catch (SQLException ex) {
+		}
+		catch (SQLException ex) {
 			throw new DataAccessResourceFailureException("Could not obtain last_insert_id()", ex);
 		}
 

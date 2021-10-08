@@ -1,9 +1,9 @@
 package io.cornerstone.core.validation.validators;
 
+import org.junit.jupiter.api.Test;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-
-import org.junit.jupiter.api.Test;
 
 class SocialCreditIdentifierValidatorTest {
 
@@ -26,9 +26,10 @@ class SocialCreditIdentifierValidatorTest {
 
 	@Test
 	void testRandomValue() {
-		for (int i = 0; i < 100; i++)
+		for (int i = 0; i < 100; i++) {
 			assertThat(SocialCreditIdentifierValidator.isValid(SocialCreditIdentifierValidator.randomValue()),
 					is(true));
+		}
 	}
 
 }

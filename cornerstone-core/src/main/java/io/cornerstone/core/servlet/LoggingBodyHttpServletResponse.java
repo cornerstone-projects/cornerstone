@@ -10,11 +10,11 @@ import javax.servlet.WriteListener;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
+import io.cornerstone.core.json.JsonDesensitizer;
 import org.slf4j.Logger;
 import org.slf4j.MDC;
-import org.springframework.util.FastByteArrayOutputStream;
 
-import io.cornerstone.core.json.JsonDesensitizer;
+import org.springframework.util.FastByteArrayOutputStream;
 
 /**
  * @See org.springframework.web.util.ContentCachingResponseWrapper
@@ -31,7 +31,7 @@ public class LoggingBodyHttpServletResponse extends HttpServletResponseWrapper {
 
 	private final FastByteArrayOutputStream cachedContent = new FastByteArrayOutputStream();
 
-	public LoggingBodyHttpServletResponse(HttpServletResponse response, Logger logger, String characterEncoding) {
+	LoggingBodyHttpServletResponse(HttpServletResponse response, Logger logger, String characterEncoding) {
 		super(response);
 		this.logger = logger;
 		this.characterEncoding = characterEncoding != null ? characterEncoding : "UTF-8";
@@ -83,9 +83,10 @@ public class LoggingBodyHttpServletResponse extends HttpServletResponseWrapper {
 		ServletOutputStream temp = this.streamOutputStream;
 		if (temp == null) {
 			synchronized (this) {
-				if ((temp = this.streamOutputStream) == null)
+				if ((temp = this.streamOutputStream) == null) {
 					this.streamOutputStream = temp = new ResponseServletOutputStream(getResponse(), this.logger,
 							this.characterEncoding, this.cachedContent);
+				}
 			}
 		}
 		return temp;
@@ -109,7 +110,7 @@ public class LoggingBodyHttpServletResponse extends HttpServletResponseWrapper {
 
 		private FastByteArrayOutputStream cachedContent;
 
-		public ResponseServletOutputStream(ServletResponse response, Logger logger, String characterEncoding,
+		ResponseServletOutputStream(ServletResponse response, Logger logger, String characterEncoding,
 				FastByteArrayOutputStream cachedContent) throws IOException {
 			this.logger = logger;
 			this.os = response.getOutputStream();
@@ -143,7 +144,8 @@ public class LoggingBodyHttpServletResponse extends HttpServletResponseWrapper {
 		public void close() throws IOException {
 			try {
 				this.os.close();
-			} finally {
+			}
+			finally {
 				if (this.cachedContent != null) {
 					byte[] bytes = this.cachedContent.toByteArray();
 					this.cachedContent = null;
@@ -161,11 +163,12 @@ public class LoggingBodyHttpServletResponse extends HttpServletResponseWrapper {
 				}
 			}
 		}
+
 	}
 
 	private static class ResponsePrintWriter extends PrintWriter {
 
-		public ResponsePrintWriter(ServletOutputStream os, String characterEncoding) throws IOException {
+		ResponsePrintWriter(ServletOutputStream os, String characterEncoding) throws IOException {
 			super(new OutputStreamWriter(os, characterEncoding));
 		}
 
@@ -198,6 +201,7 @@ public class LoggingBodyHttpServletResponse extends HttpServletResponseWrapper {
 			super.write(c);
 			super.flush();
 		}
+
 	}
 
 }

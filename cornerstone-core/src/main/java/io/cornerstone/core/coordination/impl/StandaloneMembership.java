@@ -21,8 +21,9 @@ public class StandaloneMembership implements Membership {
 			members = new ArrayList<>();
 			this.groups.put(group, members);
 		}
-		if (!members.contains(this.self))
+		if (!members.contains(this.self)) {
 			members.add(this.self);
+		}
 	}
 
 	@Override
@@ -41,10 +42,12 @@ public class StandaloneMembership implements Membership {
 	@Override
 	public String getLeader(String group) {
 		List<String> members = getMembers(group);
-		if ((members == null) || members.isEmpty())
+		if ((members == null) || members.isEmpty()) {
 			return null;
-		else
+		}
+		else {
 			return members.get(0);
+		}
 	}
 
 	@Override

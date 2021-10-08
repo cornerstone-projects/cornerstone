@@ -1,7 +1,5 @@
 package io.cornerstone.core.security;
 
-import static javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
-
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -13,6 +11,10 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.cornerstone.core.Application;
+import io.cornerstone.core.util.RequestUtils;
 
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,10 +45,7 @@ import org.springframework.security.web.authentication.SavedRequestAwareAuthenti
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.savedrequest.RequestCache;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import io.cornerstone.core.Application;
-import io.cornerstone.core.util.RequestUtils;
+import static javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
 
 @Configuration(proxyBeanMethods = false)
 @EnableWebSecurity
@@ -76,7 +75,8 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 					this.properties.getLogoutUrl()));
 			patterns.addAll(this.properties.getPermitAllPathPatterns());
 			permitAllPathPatterns = patterns.toArray(new String[0]);
-		} else {
+		}
+		else {
 			permitAllPathPatterns = new String[] { "/**" };
 		}
 		ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry registry = http
@@ -126,7 +126,8 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 					map.put("targetUrl", url);
 					WebSecurityConfiguration.this.objectMapper.writeValue(response.getWriter(), map);
 					// see DefaultErrorAttributes::getErrorAttributes
-				} else {
+				}
+				else {
 					super.sendRedirect(request, response, url);
 				}
 			}
@@ -138,7 +139,8 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 		return (request, response, ex) -> {
 			if (RequestUtils.isRequestedFromApi(request)) {
 				response.sendError(SC_UNAUTHORIZED, ex.getLocalizedMessage());
-			} else {
+			}
+			else {
 				response.sendRedirect(this.properties.getLoginPage() + "?error");
 				// request.getRequestDispatcher(LOGIN_PAGE).forward(request, response);
 				// Method Not Allowed for LOGIN_PAGE
@@ -149,7 +151,8 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 	private void setAuthenticationFilter(FormLoginConfigurer<HttpSecurity> formLogin,
 			UsernamePasswordAuthenticationFilter authFilter) throws Exception {
 		Field f = AbstractAuthenticationFilterConfigurer.class.getDeclaredField("authFilter");
-		f.setAccessible(true); // AbstractAuthenticationFilterConfigurer::setAuthenticationFilter not visible
+		f.setAccessible(true); // AbstractAuthenticationFilterConfigurer::setAuthenticationFilter
+								// not visible
 		f.set(formLogin, authFilter);
 	}
 

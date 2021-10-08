@@ -27,37 +27,52 @@ public class DatabaseSimpleSequenceDelegate extends AbstractDatabaseSimpleSequen
 			DatabaseMetaData dbmd = con.getMetaData();
 			databaseProduct = DatabaseProduct.parse(dbmd.getDatabaseProductName().toLowerCase(Locale.ROOT));
 		}
-		if (databaseProduct == DatabaseProduct.MYSQL)
+		if (databaseProduct == DatabaseProduct.MYSQL) {
 			this.seq = new MySQLSimpleSequence();
-		else if (databaseProduct == DatabaseProduct.MARIADB)
+		}
+		else if (databaseProduct == DatabaseProduct.MARIADB) {
 			this.seq = new MariaDBSimpleSequence();
-		else if (databaseProduct == DatabaseProduct.POSTGRESQL)
+		}
+		else if (databaseProduct == DatabaseProduct.POSTGRESQL) {
 			this.seq = new PostgreSQLSimpleSequence();
-		else if (databaseProduct == DatabaseProduct.ORACLE)
+		}
+		else if (databaseProduct == DatabaseProduct.ORACLE) {
 			this.seq = new OracleSimpleSequence();
-		else if (databaseProduct == DatabaseProduct.DB2)
+		}
+		else if (databaseProduct == DatabaseProduct.DB2) {
 			this.seq = new DB2SimpleSequence();
-		else if (databaseProduct == DatabaseProduct.INFORMIX)
+		}
+		else if (databaseProduct == DatabaseProduct.INFORMIX) {
 			this.seq = new InformixSimpleSequence();
-		else if (databaseProduct == DatabaseProduct.SQLSERVER)
+		}
+		else if (databaseProduct == DatabaseProduct.SQLSERVER) {
 			this.seq = new SqlServerSimpleSequence();
-		else if (databaseProduct == DatabaseProduct.SYBASE)
+		}
+		else if (databaseProduct == DatabaseProduct.SYBASE) {
 			this.seq = new SybaseSimpleSequence();
-		else if (databaseProduct == DatabaseProduct.H2)
+		}
+		else if (databaseProduct == DatabaseProduct.H2) {
 			this.seq = new H2SimpleSequence();
-		else if (databaseProduct == DatabaseProduct.HSQL)
+		}
+		else if (databaseProduct == DatabaseProduct.HSQL) {
 			this.seq = new HSQLSimpleSequence();
-		else if (databaseProduct == DatabaseProduct.DERBY)
+		}
+		else if (databaseProduct == DatabaseProduct.DERBY) {
 			this.seq = new DerbySimpleSequence();
-		else if (databaseProduct == DatabaseProduct.CUBRID)
+		}
+		else if (databaseProduct == DatabaseProduct.CUBRID) {
 			this.seq = new CubridSimpleSequence();
-		else if (databaseProduct == DatabaseProduct.FIREBIRD)
+		}
+		else if (databaseProduct == DatabaseProduct.FIREBIRD) {
 			this.seq = new FirebirdSimpleSequence();
-		else
+		}
+		else {
 			throw new RuntimeException("not implemented for database " + databaseProduct);
+		}
 		this.seq.setDataSource(getDataSource());
-		if (getCacheSize() > 1)
+		if (getCacheSize() > 1) {
 			this.seq.setCacheSize(getCacheSize());
+		}
 		this.seq.setPaddingLength(getPaddingLength());
 		this.seq.setTableName(getTableName());
 		this.seq.setSequenceName(getSequenceName());

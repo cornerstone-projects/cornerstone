@@ -1,5 +1,10 @@
 package io.cornerstone.core.task;
 
+import io.cornerstone.core.util.RunnableWithRequestId;
+import io.github.resilience4j.bulkhead.BulkheadFullException;
+import io.github.resilience4j.ratelimiter.RequestNotPermitted;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.task.TaskExecutionAutoConfiguration;
 import org.springframework.boot.task.TaskExecutorBuilder;
@@ -15,11 +20,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.scheduling.config.TaskManagementConfigUtils;
-
-import io.cornerstone.core.util.RunnableWithRequestId;
-import io.github.resilience4j.bulkhead.BulkheadFullException;
-import io.github.resilience4j.ratelimiter.RequestNotPermitted;
-import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Order(0)
@@ -53,10 +53,12 @@ public class TaskConfiguration {
 	@Bean
 	TaskSchedulerCustomizer taskSchedulerCustomizer() {
 		return taskScheduler -> taskScheduler.setErrorHandler(ex -> {
-			if ((ex instanceof BulkheadFullException) || (ex instanceof RequestNotPermitted))
+			if ((ex instanceof BulkheadFullException) || (ex instanceof RequestNotPermitted)) {
 				log.warn("Error occurred in scheduled task: {}", ex.getLocalizedMessage());
-			else
+			}
+			else {
 				log.error("Unexpected error occurred in scheduled task", ex);
+			}
 		});
 	}
 

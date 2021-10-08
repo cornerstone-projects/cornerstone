@@ -17,7 +17,8 @@ public class NumberUtils {
 		try {
 			Double.parseDouble(value);
 			return true;
-		} catch (Exception ex) {
+		}
+		catch (Exception ex) {
 			return false;
 		}
 	}
@@ -50,12 +51,14 @@ public class NumberUtils {
 	}
 
 	public static BigDecimal round(BigDecimal bd, int decimalDigits) {
-		if (bd == null)
+		if (bd == null) {
 			return null;
+		}
 		int precision = decimalDigits;
 		String s = String.valueOf(bd.intValue());
-		if (!s.equals("0"))
+		if (!s.equals("0")) {
 			precision += s.length();
+		}
 		return BigDecimal.valueOf(bd.round(new MathContext(precision, RoundingMode.HALF_UP)).doubleValue());
 	}
 
@@ -67,11 +70,13 @@ public class NumberUtils {
 	public static final String NUMBERS = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_-";
 
 	public static String decimalToX(int scale, long decimalValue) {
-		if (scale > NUMBERS.length())
+		if (scale > NUMBERS.length()) {
 			throw new IllegalArgumentException("n must less or equal to " + NUMBERS.length());
+		}
 		boolean negative = decimalValue < 0;
-		if (negative)
+		if (negative) {
 			decimalValue = -decimalValue;
+		}
 		StringBuilder sb = new StringBuilder();
 
 		String sub = NUMBERS.substring(0, scale);
@@ -80,18 +85,21 @@ public class NumberUtils {
 			sb.insert(0, sub.charAt(b));
 			decimalValue = (decimalValue - b) / scale;
 		}
-		if (negative)
+		if (negative) {
 			sb.insert(0, '-');
+		}
 		return sb.toString();
 	}
 
 	public static String decimalToX(int scale, BigInteger decimalValue) {
-		if (scale > NUMBERS.length())
+		if (scale > NUMBERS.length()) {
 			throw new IllegalArgumentException("n must less or equal to " + NUMBERS.length());
+		}
 		BigInteger bscale = BigInteger.valueOf(scale);
 		boolean negative = decimalValue.compareTo(BigInteger.valueOf(0)) < 0;
-		if (negative)
+		if (negative) {
 			decimalValue = decimalValue.abs();
+		}
 		StringBuilder sb = new StringBuilder();
 
 		String sub = NUMBERS.substring(0, scale);
@@ -100,14 +108,16 @@ public class NumberUtils {
 			sb.insert(0, sub.charAt(b.intValue()));
 			decimalValue = decimalValue.add(b.negate()).divide(bscale);
 		}
-		if (negative)
+		if (negative) {
 			sb.insert(0, '-');
+		}
 		return sb.toString();
 	}
 
 	public static BigInteger xToDecimal(int scale, String xScaleValue) {
-		if (scale > NUMBERS.length())
+		if (scale > NUMBERS.length()) {
 			throw new IllegalArgumentException("n must less or equal to " + NUMBERS.length());
+		}
 		BigInteger bscale = BigInteger.valueOf(scale);
 		String a = NUMBERS.substring(0, scale);
 		BigInteger c = BigInteger.valueOf(1);
@@ -124,8 +134,10 @@ public class NumberUtils {
 	}
 
 	private static final String[] CNUMBERS = { "零", "壹", "贰", "叁", "肆", "伍", "陆", "柒", "捌", "玖" };
+
 	private static final String[] IUNIT = { "元", "拾", "佰", "仟", "万", "拾", "佰", "仟", "亿", "拾", "佰", "仟", "万", "拾", "佰",
 			"仟" };
+
 	private static final String[] DUNIT = { "角", "分", "厘" };
 
 	public static String toChineseUpperCase(double input) {
@@ -142,10 +154,12 @@ public class NumberUtils {
 		if (input.indexOf(".") > 0) {
 			integer = input.substring(0, input.indexOf("."));
 			decimal = input.substring(input.indexOf(".") + 1);
-		} else if (input.indexOf(".") == 0) {
+		}
+		else if (input.indexOf(".") == 0) {
 			integer = "";
 			decimal = input.substring(1);
-		} else {
+		}
+		else {
 			integer = input;
 			decimal = "";
 		}
@@ -165,11 +179,13 @@ public class NumberUtils {
 			String subInteger = "";
 			if (length > 8) {
 				subInteger = integer.substring(length - 8, length - 4);
-			} else {
+			}
+			else {
 				subInteger = integer.substring(0, length - 4);
 			}
 			isMust5 = Integer.parseInt(subInteger) > 0;
-		} else {
+		}
+		else {
 			isMust5 = false;
 		}
 		int[] decimals = _toArray(decimal);
@@ -190,16 +206,21 @@ public class NumberUtils {
 		for (int i = 0; i < length; i++) {
 			String key = "";
 			if (integers[i] == 0) {
-				if ((length - i) == 13)
+				if ((length - i) == 13) {
 					key = IUNIT[4];
-				else if ((length - i) == 9)
+				}
+				else if ((length - i) == 9) {
 					key = IUNIT[8];
-				else if (((length - i) == 5) && isMust5)
+				}
+				else if (((length - i) == 5) && isMust5) {
 					key = IUNIT[4];
-				else if ((length - i) == 1)
+				}
+				else if ((length - i) == 1) {
 					key = IUNIT[0];
-				if (((length - i) > 1) && (integers[i + 1] != 0))
+				}
+				if (((length - i) > 1) && (integers[i + 1] != 0)) {
 					key += CNUMBERS[0];
+				}
 			}
 			chineseInteger.append(integers[i] == 0 ? key : (CNUMBERS[integers[i]] + IUNIT[length - i - 1]));
 		}
@@ -209,8 +230,9 @@ public class NumberUtils {
 	private static String _getChineseUpperCaseDecimal(int[] decimals) {
 		StringBuilder chineseDecimal = new StringBuilder();
 		for (int i = 0; i < decimals.length; i++) {
-			if (i == 3)
+			if (i == 3) {
 				break;
+			}
 			chineseDecimal.append(decimals[i] == 0 ? "" : (CNUMBERS[decimals[i]] + DUNIT[i]));
 		}
 		return chineseDecimal.toString();

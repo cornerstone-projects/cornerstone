@@ -2,10 +2,16 @@ package io.cornerstone.core.throttle;
 
 import java.lang.reflect.Method;
 
+import io.cornerstone.core.Application;
+import io.cornerstone.core.aop.BaseAspect;
+import io.cornerstone.core.coordination.LockFailedException;
+import io.cornerstone.core.coordination.LockService;
+import io.cornerstone.core.util.ReflectionUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.ParserContext;
@@ -13,12 +19,6 @@ import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
-
-import io.cornerstone.core.Application;
-import io.cornerstone.core.aop.BaseAspect;
-import io.cornerstone.core.coordination.LockFailedException;
-import io.cornerstone.core.coordination.LockService;
-import io.cornerstone.core.util.ReflectionUtils;
 
 @Aspect
 @Component
@@ -68,10 +68,12 @@ public class MutexAspect extends BaseAspect {
 		if (this.lockService.tryLock(key)) {
 			try {
 				return pjp.proceed();
-			} finally {
+			}
+			finally {
 				this.lockService.unlock(key);
 			}
-		} else {
+		}
+		else {
 			throw new LockFailedException(key);
 		}
 	}

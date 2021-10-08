@@ -4,11 +4,11 @@ import java.util.Collections;
 
 import javax.annotation.PostConstruct;
 
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-
-import lombok.RequiredArgsConstructor;
 
 @Component
 @Profile("test||dev")
@@ -16,11 +16,15 @@ import lombok.RequiredArgsConstructor;
 public class UserSetup {
 
 	public static final String DEFAULT_PASSWORD = "password";
+
 	public static final String USER_USERNAME = "user";
+
 	public static final String ADMIN_USERNAME = "admin";
+
 	public static final String ADMIN_ROLE = "ADMIN";
 
 	private final UserRepository userRepository;
+
 	private final PasswordEncoder passwordEncoder;
 
 	@PostConstruct
@@ -39,4 +43,5 @@ public class UserSetup {
 			this.userRepository.save(admin);
 		}
 	}
+
 }

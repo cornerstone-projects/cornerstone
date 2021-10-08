@@ -1,10 +1,10 @@
 package io.cornerstone.core.repository;
 
-import static org.springframework.transaction.annotation.Propagation.SUPPORTS;
-
 import java.util.stream.Stream;
 
 import javax.persistence.EntityManager;
+
+import lombok.Setter;
 
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.domain.Example;
@@ -18,7 +18,7 @@ import org.springframework.data.repository.core.support.SurroundingTransactionDe
 import org.springframework.lang.Nullable;
 import org.springframework.transaction.annotation.Transactional;
 
-import lombok.Setter;
+import static org.springframework.transaction.annotation.Propagation.SUPPORTS;
 
 @Transactional(readOnly = true)
 public class SimpleStreamableJpaRepository<T, ID> extends SimpleJpaRepository<T, ID>

@@ -11,4 +11,5 @@ public interface TreeableRepository<T> {
 	<S extends T> List<S> saveAll(Iterable<S> entities);
 
 	<S extends T> List<S> saveAllAndFlush(Iterable<S> entities);
+
 }

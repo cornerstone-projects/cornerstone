@@ -1,21 +1,21 @@
 package io.cornerstone.core.event;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.verify;
-
+import io.cornerstone.core.domain.Scope;
+import io.cornerstone.test.containers.Redis;
+import io.cornerstone.test.mock.ResultCaptor;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.test.context.ContextConfiguration;
 
-import io.cornerstone.core.domain.Scope;
-import io.cornerstone.test.containers.Redis;
-import io.cornerstone.test.mock.ResultCaptor;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
 
 @ContextConfiguration(classes = { RedisApplicationEventTopicTests.Config.class, Redis.class })
 class RedisApplicationEventTopicTests extends ApplicationEventTopicTestBase {

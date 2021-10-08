@@ -5,16 +5,14 @@ import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-
 import com.fasterxml.jackson.annotation.JsonView;
-
 import io.cornerstone.core.domain.Auditable;
 import io.cornerstone.core.hibernate.audit.CreationUser;
 import io.cornerstone.core.hibernate.audit.UpdateUser;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 @MappedSuperclass
 @Getter

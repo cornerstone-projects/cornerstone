@@ -37,23 +37,26 @@ public class AopContext {
 
 	public static void setBypass(Class<?> clazz) {
 		List<Class<?>> list = bypass.get();
-		if (list == null)
+		if (list == null) {
 			list = new ArrayList<>(5);
+		}
 		list.add(clazz);
 		bypass.set(list);
 	}
 
 	public static boolean isBypass(Class<?> clazz) {
 		Set<Class<?>> set = disabled.get();
-		if ((set != null) && set.contains(clazz))
+		if ((set != null) && set.contains(clazz)) {
 			return true;
+		}
 		List<Class<?>> list = bypass.get();
 		if (list == null) {
 			return false;
 		}
 		boolean bl = list.contains(clazz);
-		if (bl)
+		if (bl) {
 			list.remove(clazz);
+		}
 		return bl;
 	}
 

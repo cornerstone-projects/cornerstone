@@ -1,13 +1,20 @@
 package io.cornerstone.core.web;
 
-import static springfox.documentation.schema.AlternateTypeRules.newRule;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+
+import io.swagger.annotations.ApiParam;
+import springfox.documentation.builders.AlternateTypeBuilder;
+import springfox.documentation.builders.AlternateTypePropertyBuilder;
+import springfox.documentation.builders.RequestHandlerSelectors;
+import springfox.documentation.schema.AlternateTypeRule;
+import springfox.documentation.schema.AlternateTypeRuleConvention;
+import springfox.documentation.spi.DocumentationType;
+import springfox.documentation.spring.web.plugins.Docket;
 
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -21,14 +28,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.annotations.ApiParam;
-import springfox.documentation.builders.AlternateTypeBuilder;
-import springfox.documentation.builders.AlternateTypePropertyBuilder;
-import springfox.documentation.builders.RequestHandlerSelectors;
-import springfox.documentation.schema.AlternateTypeRule;
-import springfox.documentation.schema.AlternateTypeRuleConvention;
-import springfox.documentation.spi.DocumentationType;
-import springfox.documentation.spring.web.plugins.Docket;
+import static springfox.documentation.schema.AlternateTypeRules.newRule;
 
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnProperty(name = "springfox.documentation.enabled", havingValue = "true", matchIfMissing = true)
@@ -94,9 +94,13 @@ public class SwaggerConfiguration {
 	}
 
 	private static class ApiParamBuilder {
+
 		private String value = "";
+
 		private String defaultValue = "";
+
 		private String example = "";
+
 		private boolean allowMultiple = false;
 
 		ApiParamBuilder value(String value) {
@@ -127,6 +131,7 @@ public class SwaggerConfiguration {
 			attributes.put("allowMultiple", this.allowMultiple);
 			return AnnotationUtils.synthesizeAnnotation(attributes, ApiParam.class, null);
 		}
+
 	}
 
 }

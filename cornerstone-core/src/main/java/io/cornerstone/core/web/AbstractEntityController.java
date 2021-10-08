@@ -1,9 +1,14 @@
 package io.cornerstone.core.web;
 
-import static org.springframework.data.domain.Sort.Direction.DESC;
-
 import javax.annotation.PostConstruct;
 import javax.validation.Valid;
+
+import com.fasterxml.jackson.annotation.JsonView;
+import io.cornerstone.core.domain.ResultPage;
+import io.cornerstone.core.domain.Versioned;
+import io.cornerstone.core.domain.View;
+import io.cornerstone.core.util.BeanUtils;
+import springfox.documentation.annotations.ApiIgnore;
 
 import org.springframework.core.ResolvableType;
 import org.springframework.data.domain.Example;
@@ -25,13 +30,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.fasterxml.jackson.annotation.JsonView;
-
-import io.cornerstone.core.domain.ResultPage;
-import io.cornerstone.core.domain.Versioned;
-import io.cornerstone.core.domain.View;
-import io.cornerstone.core.util.BeanUtils;
-import springfox.documentation.annotations.ApiIgnore;
+import static org.springframework.data.domain.Sort.Direction.DESC;
 
 public abstract class AbstractEntityController<T, ID> extends BaseRestController {
 
@@ -78,7 +77,8 @@ public abstract class AbstractEntityController<T, ID> extends BaseRestController
 		Page<T> page;
 		if ((this.specificationExecutor != null) && StringUtils.hasText(query)) {
 			page = this.specificationExecutor.findAll(getQuerySpecification(query), pageable);
-		} else {
+		}
+		else {
 			page = this.repository.findAll(Example.of(example, getExampleMatcher()), pageable);
 		}
 		return ResultPage.of(page);
@@ -146,10 +146,8 @@ public abstract class AbstractEntityController<T, ID> extends BaseRestController
 	}
 
 	protected Class<?> determineViewForUpdate(T entity) {
-		return findViewForEntity(
-				((entity instanceof Versioned) && (((Versioned) entity).getVersion() == null)) ? View.Edit.class
-						: View.Update.class,
-				this.entityClass);
+		return findViewForEntity(((entity instanceof Versioned) && (((Versioned) entity).getVersion() == null))
+				? View.Edit.class : View.Update.class, this.entityClass);
 	}
 
 	private static Class<?> findViewForEntity(Class<?> defaultView, Class<?> entityClass) {
@@ -157,7 +155,8 @@ public abstract class AbstractEntityController<T, ID> extends BaseRestController
 		if (ClassUtils.isPresent(entityViewName, entityClass.getClassLoader())) {
 			try {
 				return ClassUtils.forName(entityViewName, entityClass.getClassLoader());
-			} catch (Exception ex) {
+			}
+			catch (Exception ex) {
 				throw new RuntimeException(ex);
 			}
 		}

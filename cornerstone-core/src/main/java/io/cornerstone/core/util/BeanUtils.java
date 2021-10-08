@@ -10,14 +10,13 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.springframework.beans.BeanWrapper;
-import org.springframework.beans.BeanWrapperImpl;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
 import com.fasterxml.jackson.annotation.JsonView;
-
 import lombok.experimental.UtilityClass;
+
+import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.BeanWrapperImpl;
 
 @UtilityClass
 public class BeanUtils {
@@ -26,8 +25,9 @@ public class BeanUtils {
 		BeanWrapper bw = new BeanWrapperImpl(source);
 		Set<String> ignores = new HashSet<>(Stream.of(bw.getPropertyDescriptors()).map(FeatureDescriptor::getName)
 				.filter(name -> bw.getPropertyValue(name) == null).collect(Collectors.toSet()));
-		if (ignoreProperties.length > 0)
+		if (ignoreProperties.length > 0) {
 			ignores.addAll(Arrays.asList(ignoreProperties));
+		}
 		org.springframework.beans.BeanUtils.copyProperties(source, target, ignores.toArray(new String[0]));
 	}
 
@@ -37,14 +37,17 @@ public class BeanUtils {
 		for (PropertyDescriptor pd : sourceBW.getPropertyDescriptors()) {
 			String name = pd.getName();
 			Method m = pd.getReadMethod();
-			if (m == null)
+			if (m == null) {
 				continue;
+			}
 			JsonView jsonView = findAnnotation(m, name, JsonView.class);
-			if (jsonView == null)
+			if (jsonView == null) {
 				continue;
+			}
 			JsonProperty jsonProperty = findAnnotation(m, name, JsonProperty.class);
-			if ((jsonProperty != null) && (jsonProperty.access() == Access.READ_ONLY))
+			if ((jsonProperty != null) && (jsonProperty.access() == Access.READ_ONLY)) {
 				continue;
+			}
 			for (Class<?> clazz : jsonView.value()) {
 				if (clazz.isAssignableFrom(view)) {
 					targetBW.setPropertyValue(name, sourceBW.getPropertyValue(name));
@@ -61,9 +64,11 @@ public class BeanUtils {
 		if (anno == null) {
 			try {
 				anno = getter.getDeclaringClass().getDeclaredField(propertyName).getAnnotation(clazz);
-			} catch (Exception ex) {
+			}
+			catch (Exception ex) {
 			}
 		}
 		return anno;
 	}
+
 }

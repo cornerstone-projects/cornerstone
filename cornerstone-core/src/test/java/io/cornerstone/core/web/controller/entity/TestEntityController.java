@@ -1,13 +1,13 @@
 package io.cornerstone.core.web.controller.entity;
 
+import io.cornerstone.core.web.AbstractEntityController;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestComponent;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RestController;
-
-import io.cornerstone.core.web.AbstractEntityController;
 
 @TestComponent
 @RestController
@@ -19,14 +19,16 @@ class TestEntityController extends AbstractEntityController<TestEntity, Long> {
 
 	@Override
 	protected void beforeSave(TestEntity testEntity) {
-		if (this.testEntityRepository.existsByIdNo(testEntity.getIdNo()))
+		if (this.testEntityRepository.existsByIdNo(testEntity.getIdNo())) {
 			throw badRequest("idNo.already.exists");
+		}
 	}
 
 	@Override
 	protected void beforeDelete(TestEntity testEntity) {
-		if (testEntity.getDisabled() != Boolean.TRUE)
+		if (testEntity.getDisabled() != Boolean.TRUE) {
 			throw badRequest("disable.before.delete");
+		}
 	}
 
 	@Override
@@ -42,4 +44,5 @@ class TestEntityController extends AbstractEntityController<TestEntity, Long> {
 				.withMatcher("idNo", match -> match.contains().ignoreCase())
 				.withMatcher("name", match -> match.contains());
 	}
+
 }

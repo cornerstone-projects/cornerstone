@@ -6,8 +6,14 @@ import java.util.concurrent.Executor;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
+import io.cornerstone.core.Application;
+import io.cornerstone.core.domain.Scope;
+import io.cornerstone.core.message.Topic;
+import lombok.Getter;
+import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.springframework.amqp.core.AmqpAdmin;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.Binding.DestinationType;
@@ -17,12 +23,6 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ResolvableType;
-
-import io.cornerstone.core.Application;
-import io.cornerstone.core.domain.Scope;
-import io.cornerstone.core.message.Topic;
-import lombok.Getter;
-import lombok.Setter;
 
 public abstract class RabbitTopic<T extends Serializable> implements Topic<T> {
 
@@ -48,8 +48,9 @@ public abstract class RabbitTopic<T extends Serializable> implements Topic<T> {
 
 	public RabbitTopic() {
 		Class<?> clazz = ResolvableType.forClass(getClass()).as(RabbitTopic.class).resolveGeneric(0);
-		if (clazz == null)
+		if (clazz == null) {
 			throw new IllegalArgumentException(getClass().getName() + " should be generic");
+		}
 		this.routingKey = clazz.getName();
 	}
 
@@ -72,11 +73,13 @@ public abstract class RabbitTopic<T extends Serializable> implements Topic<T> {
 	}
 
 	protected String getRoutingKey(Scope scope) {
-		if ((scope == null) || (scope == Scope.LOCAL))
+		if ((scope == null) || (scope == Scope.LOCAL)) {
 			return null;
+		}
 		StringBuilder sb = new StringBuilder(this.routingKey).append(".");
-		if (scope == Scope.APPLICATION)
+		if (scope == Scope.APPLICATION) {
 			Application.current().ifPresent(a -> sb.append(a.getName()));
+		}
 		return sb.toString();
 	}
 
@@ -85,12 +88,16 @@ public abstract class RabbitTopic<T extends Serializable> implements Topic<T> {
 		log.info("Publishing {} message: {}", scope.name(), message);
 		if (scope == Scope.LOCAL) {
 			Runnable task = () -> subscribe(message);
-			if (this.taskExecutor != null)
+			if (this.taskExecutor != null) {
 				this.taskExecutor.execute(task);
-			else
+			}
+			else {
 				task.run();
-		} else {
+			}
+		}
+		else {
 			this.rabbitTemplate.convertAndSend(this.exchange, getRoutingKey(scope), message);
 		}
 	}
+
 }

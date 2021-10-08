@@ -18,25 +18,31 @@ public abstract class EnumArrayConverter<T extends Enum<T>> {
 	}
 
 	public String convertToDatabaseColumn(T[] array) {
-		if (array == null)
+		if (array == null) {
 			return null;
-		if (array.length == 0)
+		}
+		if (array.length == 0) {
 			return "";
+		}
 		List<String> names = new ArrayList<>();
-		for (T en : array)
+		for (T en : array) {
 			names.add(en.name());
+		}
 		return String.join(SEPARATOR, names);
 	}
 
 	public T[] convertToEntityAttribute(String string) {
-		if (string == null)
+		if (string == null) {
 			return null;
-		if (string.isEmpty())
+		}
+		if (string.isEmpty()) {
 			return (T[]) Array.newInstance(this.enumType, 0);
+		}
 		String[] arr = string.split(SEPARATOR + "\\s*");
 		T[] array = (T[]) Array.newInstance(this.enumType, arr.length);
-		for (int i = 0; i < arr.length; i++)
+		for (int i = 0; i < arr.length; i++) {
 			array[i] = Enum.valueOf(this.enumType, arr[i]);
+		}
 		return array;
 	}
 

@@ -6,6 +6,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.TimeZone;
 
+import io.cornerstone.core.util.MaxAttemptsExceededException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.core.BoundValueOperations;
@@ -14,8 +16,6 @@ import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.data.redis.core.script.RedisScript;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.util.Assert;
-
-import io.cornerstone.core.util.MaxAttemptsExceededException;
 
 public class RedisCyclicSequence extends AbstractCyclicSequence {
 
@@ -82,7 +82,8 @@ public class RedisCyclicSequence extends AbstractCyclicSequence {
 				}
 				if (getCycleType().isSameCycle(datetime, now)) {
 					return stringValue;
-				} else if (datetime.isAfter(now)) {
+				}
+				else if (datetime.isAfter(now)) {
 					// treat it as overflow not clock jumps backward
 					long next = value
 							- (Long.valueOf(CycleType.DAY.format(now)) * ((long) Math.pow(10, getPaddingLength())));
@@ -100,10 +101,12 @@ public class RedisCyclicSequence extends AbstractCyclicSequence {
 			}
 			try {
 				Thread.sleep(((1 + maxAttempts) - remainingAttempts) * 50);
-			} catch (InterruptedException ex) {
+			}
+			catch (InterruptedException ex) {
 				this.logger.warn(ex.getMessage(), ex);
 			}
-		} while (--remainingAttempts > 0);
+		}
+		while (--remainingAttempts > 0);
 		throw new MaxAttemptsExceededException(maxAttempts);
 	}
 

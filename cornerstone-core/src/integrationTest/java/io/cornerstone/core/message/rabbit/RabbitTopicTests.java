@@ -1,20 +1,5 @@
 package io.cornerstone.core.message.rabbit;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-
-import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.boot.test.mock.mockito.SpyBean;
-import org.springframework.context.annotation.Bean;
-import org.springframework.test.context.ContextConfiguration;
-
 import io.cornerstone.core.Application;
 import io.cornerstone.core.DefaultApplication;
 import io.cornerstone.core.domain.Scope;
@@ -22,6 +7,21 @@ import io.cornerstone.core.message.MessageProcessor;
 import io.cornerstone.core.message.TopicTestBase;
 import io.cornerstone.test.containers.RabbitMQ;
 import lombok.RequiredArgsConstructor;
+import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.test.context.ContextConfiguration;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @ContextConfiguration(classes = { RabbitTopicTests.Config.class, RabbitMQ.class })
 public class RabbitTopicTests extends TopicTestBase {

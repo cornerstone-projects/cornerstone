@@ -1,11 +1,15 @@
 package io.cornerstone.core.redis;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import javax.annotation.Resource;
 
+import io.cornerstone.core.redis.DefaultRedisConfiguration.DefaultRedisProperties;
+import io.cornerstone.core.redis.GlobalRedisConfiguration.GlobalRedisProperties;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -15,17 +19,13 @@ import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
-import io.cornerstone.core.redis.DefaultRedisConfiguration.DefaultRedisProperties;
-import io.cornerstone.core.redis.GlobalRedisConfiguration.GlobalRedisProperties;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @ContextConfiguration(classes = { DefaultRedisConfiguration.class, GlobalRedisConfiguration.class })
-@TestPropertySource(properties = { "spring.redis.enabled=true", "spring.redis.database=1",
-		"spring.redis.client-name=default", "global.redis.enabled=true", "global.redis.database=2",
-		"global.redis.client-name=global" })
+@TestPropertySource(
+		properties = { "spring.redis.enabled=true", "spring.redis.database=1", "spring.redis.client-name=default",
+				"global.redis.enabled=true", "global.redis.database=2", "global.redis.client-name=global" })
 @Testcontainers
 @ExtendWith(SpringExtension.class)
 class RedisConfigurationTests {

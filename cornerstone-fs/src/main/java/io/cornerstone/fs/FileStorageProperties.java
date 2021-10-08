@@ -2,9 +2,9 @@ package io.cornerstone.fs;
 
 import java.net.URI;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
-
 import lombok.Data;
+
+import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties("file-storage")
 @Data
@@ -36,6 +36,7 @@ public class FileStorageProperties {
 		private boolean useLocaltime;
 
 		private Pool pool = new Pool();
+
 	}
 
 	@Data
@@ -75,5 +76,7 @@ public class FileStorageProperties {
 		private int maxWaitMillis = 60000;
 
 		private int minEvictableIdleTimeMillis = 300000;
+
 	}
+
 }

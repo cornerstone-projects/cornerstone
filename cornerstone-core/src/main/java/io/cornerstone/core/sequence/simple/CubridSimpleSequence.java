@@ -12,8 +12,9 @@ public class CubridSimpleSequence extends AbstractSequenceSimpleSequence {
 		String sql = "SELECT NAME FROM DB_SERIAL";
 		try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
 			while (rs.next()) {
-				if (sequenceName.equalsIgnoreCase(rs.getString("NAME")))
+				if (sequenceName.equalsIgnoreCase(rs.getString("NAME"))) {
 					return true;
+				}
 			}
 		}
 		return false;
@@ -22,8 +23,9 @@ public class CubridSimpleSequence extends AbstractSequenceSimpleSequence {
 	@Override
 	protected String getCreateSequenceStatement() {
 		StringBuilder sb = new StringBuilder("CREATE SERIAL ").append(getActualSequenceName());
-		if (getCacheSize() > 1)
+		if (getCacheSize() > 1) {
 			sb.append(" CACHE ").append(getCacheSize());
+		}
 		return sb.toString();
 	}
 

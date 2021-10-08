@@ -4,10 +4,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
-
 import lombok.Getter;
 import lombok.Setter;
+
+import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties(prefix = "security")
 @Getter
@@ -15,8 +15,11 @@ import lombok.Setter;
 public class SecurityProperties {
 
 	public static final String DEFAULT_LOGIN_PAGE = "/login.html";
+
 	public static final String DEFAULT_LOGIN_PROCESSING_URL = "/login";
+
 	public static final String DEFAULT_SUCCESS_URL = "/";
+
 	public static final String DEFAULT_LOGOUT_URL = "/logout";
 
 	private String loginPage = DEFAULT_LOGIN_PAGE;

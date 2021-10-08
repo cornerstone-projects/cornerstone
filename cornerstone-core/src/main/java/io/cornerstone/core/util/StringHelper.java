@@ -9,14 +9,16 @@ public class StringHelper {
 
 	public static String pluralOf(String string) {
 
-		if (!StringUtils.hasLength(string) || string.endsWith("ses") || string.endsWith("ies"))
+		if (!StringUtils.hasLength(string) || string.endsWith("ses") || string.endsWith("ies")) {
 			return string;
+		}
 
 		int index = -1;
 		boolean underscore = string.indexOf('_') > 0;
 		if (underscore) {
 			index = string.lastIndexOf('_') + 1;
-		} else {
+		}
+		else {
 			// camel case
 			for (int i = 0; i < string.length(); i++) {
 				if (Character.isUpperCase(string.charAt(i))) {
@@ -29,12 +31,14 @@ public class StringHelper {
 		if (index > 0) {
 			prefix = string.substring(0, index);
 			word = string.substring(index).toLowerCase();
-		} else {
+		}
+		else {
 			prefix = "";
 			word = string;
 		}
-		if (specialCases.containsValue(word))
+		if (specialCases.containsValue(word)) {
 			return string;
+		}
 		String plural = specialCases.get(word);
 		if (plural == null) {
 			int length = word.length();
@@ -43,13 +47,16 @@ public class StringHelper {
 			if (("sxzo".indexOf(lastLetter) >= 0)
 					|| ((lastLetter == 'h') && ((secondLast == 's') || (secondLast == 'c')))) {
 				plural = word + "es";
-			} else if (lastLetter == 'y') {
+			}
+			else if (lastLetter == 'y') {
 				if ("aeiou".indexOf(secondLast) >= 0) {
 					plural = word + "s";
-				} else {
+				}
+				else {
 					plural = word.substring(0, length - 1) + "ies";
 				}
-			} else {
+			}
+			else {
 				plural = word + "s";
 			}
 		}

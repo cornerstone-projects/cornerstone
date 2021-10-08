@@ -30,10 +30,12 @@ public interface FileStorage {
 	}
 
 	default void migrateTo(FileStorage target, String directory, boolean removeSourceFiles) throws IOException {
-		if (directory == null)
+		if (directory == null) {
 			directory = "/";
-		if (!directory.endsWith("/"))
+		}
+		if (!directory.endsWith("/")) {
 			directory = directory + "/";
+		}
 		boolean paging = this.isBucketBased();
 		if (paging) {
 			String marker = null;
@@ -44,29 +46,36 @@ public interface FileStorage {
 					String path = directory + entry.getName();
 					if (entry.isFile()) {
 						target.write(this.open(path), path);
-						if (removeSourceFiles)
+						if (removeSourceFiles) {
 							this.delete(path);
-					} else {
+						}
+					}
+					else {
 						migrateTo(target, path, removeSourceFiles);
 					}
 				}
 				marker = files.getNextMarker();
-			} while (marker != null);
-		} else {
+			}
+			while (marker != null);
+		}
+		else {
 			List<FileInfo> files = this.listFilesAndDirectory(directory);
 			for (FileInfo entry : files) {
 				String path = directory + entry.getName();
 				if (entry.isFile()) {
 					target.write(this.open(path), path);
-					if (removeSourceFiles)
+					if (removeSourceFiles) {
 						this.delete(path);
-				} else {
+					}
+				}
+				else {
 					migrateTo(target, path, removeSourceFiles);
 				}
 			}
 		}
-		if (removeSourceFiles && !directory.equals("/"))
+		if (removeSourceFiles && !directory.equals("/")) {
 			this.delete(directory);
+		}
 	}
 
 	default void write(File file, String path) throws IOException {
@@ -105,20 +114,24 @@ public interface FileStorage {
 	List<FileInfo> listFiles(String path);
 
 	default Paged<FileInfo> listFiles(String path, int limit, String marker) {
-		if ((limit < 1) || (limit > MAX_PAGE_SIZE))
+		if ((limit < 1) || (limit > MAX_PAGE_SIZE)) {
 			limit = DEFAULT_PAGE_SIZE;
-		if ((marker != null) && marker.isEmpty())
+		}
+		if ((marker != null) && marker.isEmpty()) {
 			marker = null;
+		}
 		return Paged.from(listFiles(path), limit, marker, FileInfo::getName);
 	}
 
 	List<FileInfo> listFilesAndDirectory(String path);
 
 	default Paged<FileInfo> listFilesAndDirectory(String path, int limit, String marker) {
-		if ((limit < 1) || (limit > MAX_PAGE_SIZE))
+		if ((limit < 1) || (limit > MAX_PAGE_SIZE)) {
 			limit = DEFAULT_PAGE_SIZE;
-		if ((marker != null) && marker.isEmpty())
+		}
+		if ((marker != null) && marker.isEmpty()) {
 			marker = null;
+		}
 		return Paged.from(listFilesAndDirectory(path), limit, marker, FileInfo::getName);
 	}
 

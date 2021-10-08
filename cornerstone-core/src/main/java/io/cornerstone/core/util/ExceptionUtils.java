@@ -22,7 +22,8 @@ public class ExceptionUtils {
 			os.flush();
 			os.close();
 			return s;
-		} catch (IOException ex) {
+		}
+		catch (IOException ex) {
 			return t.getCause().toString();
 		}
 	}

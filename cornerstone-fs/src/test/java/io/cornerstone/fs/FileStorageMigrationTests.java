@@ -1,17 +1,16 @@
 package io.cornerstone.fs;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 
+import io.cornerstone.fs.impl.LocalFileStorage;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import io.cornerstone.fs.impl.LocalFileStorage;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class FileStorageMigrationTests {
 
@@ -38,16 +37,19 @@ class FileStorageMigrationTests {
 		try {
 			cleanup(source, "/");
 			cleanup(target, "/");
-		} catch (IOException ex) {
+		}
+		catch (IOException ex) {
 			ex.printStackTrace();
 		}
 	}
 
 	@Test
 	void testMigration() throws IOException {
-		for (int i = 0; i < 10; i++)
-			for (int j = 0; j < 10; j++)
+		for (int i = 0; i < 10; i++) {
+			for (int j = 0; j < 10; j++) {
 				writeToFile(source, "text", "/test" + i + "/test" + j + ".txt");
+			}
+		}
 		verify(source);
 		source.migrateTo(target, "/", false);
 		verify(source);
@@ -73,16 +75,19 @@ class FileStorageMigrationTests {
 	}
 
 	protected static void cleanup(FileStorage fs, String directory) throws IOException {
-		if (directory == null)
+		if (directory == null) {
 			directory = "/";
-		if (!directory.endsWith("/"))
+		}
+		if (!directory.endsWith("/")) {
 			directory = directory + "/";
+		}
 		List<FileInfo> files = fs.listFilesAndDirectory(directory);
 		for (FileInfo entry : files) {
 			String path = directory + entry.getName();
 			if (entry.isFile()) {
 				fs.delete(path);
-			} else {
+			}
+			else {
 				cleanup(target, path);
 			}
 		}

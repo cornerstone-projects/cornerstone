@@ -5,8 +5,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
+import io.cornerstone.core.json.JsonDesensitizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
@@ -15,8 +17,6 @@ import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.util.FastByteArrayOutputStream;
-
-import io.cornerstone.core.json.JsonDesensitizer;
 
 public class LoggingClientHttpRequestInterceptor implements ClientHttpRequestInterceptor {
 
@@ -30,7 +30,8 @@ public class LoggingClientHttpRequestInterceptor implements ClientHttpRequestInt
 			String str = new String(body, StandardCharsets.UTF_8);
 			str = JsonDesensitizer.DEFAULT_INSTANCE.desensitize(str);
 			this.logger.info("{} {} \n{}", request.getMethod(), request.getURI(), str);
-		} else {
+		}
+		else {
 			this.logger.info("{} {}", request.getMethod(), request.getURI());
 		}
 		ClientHttpResponse response = execution.execute(request, body);
@@ -42,9 +43,10 @@ public class LoggingClientHttpRequestInterceptor implements ClientHttpRequestInt
 
 				@Override
 				public InputStream getBody() throws IOException {
-					if (this.is == null)
+					if (this.is == null) {
 						this.is = new ContentCachingInputStream(response,
 								LoggingClientHttpRequestInterceptor.this.logger);
+					}
 					return this.is;
 				}
 
@@ -70,18 +72,21 @@ public class LoggingClientHttpRequestInterceptor implements ClientHttpRequestInt
 
 				@Override
 				public void close() {
-					if (this.is != null)
+					if (this.is != null) {
 						try {
 							this.is.close();
 							this.is = null;
-						} catch (IOException ex) {
+						}
+						catch (IOException ex) {
 							LoggingClientHttpRequestInterceptor.this.logger.error(ex.getMessage(), ex);
 						}
+					}
 					response.close();
 				}
 
 			};
-		} else {
+		}
+		else {
 			this.logger.info("Received status {} and content type \"{}\" with length {}", response.getRawStatusCode(),
 					contentType, response.getHeaders().getContentLength());
 		}
@@ -89,8 +94,9 @@ public class LoggingClientHttpRequestInterceptor implements ClientHttpRequestInt
 	}
 
 	protected boolean supports(MediaType contentType) {
-		if (contentType == null)
+		if (contentType == null) {
 			return false;
+		}
 		return contentType.isCompatibleWith(MediaType.APPLICATION_FORM_URLENCODED)
 				|| contentType.isCompatibleWith(MediaType.APPLICATION_JSON)
 				|| contentType.isCompatibleWith(MediaType.APPLICATION_XML) || contentType.getType().equals("text");
@@ -115,16 +121,18 @@ public class LoggingClientHttpRequestInterceptor implements ClientHttpRequestInt
 		@Override
 		public int read() throws IOException {
 			int ch = super.read();
-			if (ch != -1)
+			if (ch != -1) {
 				this.cachedContent.write(ch);
+			}
 			return ch;
 		}
 
 		@Override
 		public int read(byte[] b, final int off, final int len) throws IOException {
 			int count = super.read(b, off, len);
-			if (count != -1)
+			if (count != -1) {
 				this.cachedContent.write(b, off, count);
+			}
 			return count;
 		}
 
@@ -138,16 +146,20 @@ public class LoggingClientHttpRequestInterceptor implements ClientHttpRequestInt
 		public void close() throws IOException {
 			try {
 				super.close();
-			} finally {
+			}
+			finally {
 				if (this.cachedContent != null) {
 					byte[] bytes = this.cachedContent.toByteArray();
 					this.cachedContent = null;
 					String str = new String(bytes, StandardCharsets.UTF_8);
-					if (this.contentType.isCompatibleWith(MediaType.APPLICATION_JSON))
+					if (this.contentType.isCompatibleWith(MediaType.APPLICATION_JSON)) {
 						str = JsonDesensitizer.DEFAULT_INSTANCE.desensitize(str);
+					}
 					this.logger.info("Received:\n{}", str);
 				}
 			}
 		}
+
 	}
+
 }

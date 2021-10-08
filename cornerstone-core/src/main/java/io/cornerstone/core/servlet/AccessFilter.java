@@ -14,13 +14,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.MDC;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.util.StringUtils;
-
 import io.cornerstone.core.Application;
 import io.cornerstone.core.util.CodecUtils;
 import io.micrometer.core.instrument.Metrics;
@@ -28,13 +21,23 @@ import io.micrometer.core.instrument.Tag;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.util.StringUtils;
 
 @Slf4j
 public class AccessFilter implements Filter {
 
 	public static final String HTTP_HEADER_INSTANCE_ID = "X-Instance-Id";
+
 	public static final String HTTP_HEADER_REQUEST_ID = "X-Request-Id";
+
 	public static final String MDC_KEY_REQUEST_ID = CodecUtils.MDC_KEY_REQUEST_ID;
+
 	public static final String MDC_KEY_REQUEST = CodecUtils.MDC_KEY_REQUEST;
 
 	private final Logger accessLog = LoggerFactory.getLogger("access");
@@ -76,12 +79,14 @@ public class AccessFilter implements Filter {
 		MDC.put("method", request.getMethod());
 		MDC.put("url", " " + request.getRequestURL());
 		String s = request.getHeader("User-Agent");
-		if (s == null)
+		if (s == null) {
 			s = "";
+		}
 		MDC.put("userAgent", " UserAgent:" + s);
 		s = request.getHeader("Referer");
-		if ((s == null) || !s.startsWith("http"))
+		if ((s == null) || !s.startsWith("http")) {
 			s = "";
+		}
 		MDC.put("referer", " Referer:" + s);
 
 		HttpSession session = request.getSession(false);
@@ -89,8 +94,9 @@ public class AccessFilter implements Filter {
 		if (session != null) {
 			sessionId = session.getId();
 			int index = sessionId.indexOf('-'); // uuid
-			if (index > 0)
+			if (index > 0) {
 				sessionId = sessionId.replace("-", "");
+			}
 		}
 		String requestId = (String) request.getAttribute(HTTP_HEADER_REQUEST_ID);
 		if (requestId == null) {
@@ -99,8 +105,9 @@ public class AccessFilter implements Filter {
 				requestId = CodecUtils.generateRequestId();
 				response.setHeader(HTTP_HEADER_REQUEST_ID, requestId);
 			}
-			if ((requestId.indexOf('.') < 0) && (sessionId != null))
+			if ((requestId.indexOf('.') < 0) && (sessionId != null)) {
 				requestId = new StringBuilder(sessionId).append('.').append(requestId).toString();
+			}
 			request.setAttribute(HTTP_HEADER_REQUEST_ID, requestId);
 		}
 		MDC.put(MDC_KEY_REQUEST_ID, requestId);
@@ -121,10 +128,12 @@ public class AccessFilter implements Filter {
 				Metrics.timer("http.access.slow", Arrays.asList(Tag.of("uri", uri))).record(responseTime,
 						TimeUnit.MILLISECONDS);
 			}
-		} catch (ServletException ex) {
+		}
+		catch (ServletException ex) {
 			log.error(ex.getMessage(), ex);
 			throw ex;
-		} finally {
+		}
+		finally {
 			if (this.print && !uri.startsWith("/assets/") && (request.getHeader("Last-Event-ID") == null)) {
 				long responseTime = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start);
 				MDC.put("responseTime", " responseTime:" + responseTime);

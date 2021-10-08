@@ -10,13 +10,16 @@ public interface LockService {
 		long millisTimeout = unit.toMillis(timeout);
 		long start = System.nanoTime();
 		while (true) {
-			if (tryLock(name))
+			if (tryLock(name)) {
 				return true;
-			if (TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start) >= millisTimeout)
+			}
+			if (TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start) >= millisTimeout) {
 				return false;
+			}
 			try {
 				Thread.sleep(100);
-			} catch (InterruptedException ex) {
+			}
+			catch (InterruptedException ex) {
 				return false;
 			}
 		}

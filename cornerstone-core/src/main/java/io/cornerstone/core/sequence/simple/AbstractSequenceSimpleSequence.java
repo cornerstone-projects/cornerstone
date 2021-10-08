@@ -18,8 +18,9 @@ public abstract class AbstractSequenceSimpleSequence extends AbstractDatabaseSim
 
 	protected String getCreateSequenceStatement() {
 		StringBuilder sb = new StringBuilder("CREATE SEQUENCE ").append(getActualSequenceName());
-		if (getCacheSize() > 1)
+		if (getCacheSize() > 1) {
 			sb.append(" CACHE ").append(getCacheSize());
+		}
 		return sb.toString();
 	}
 
@@ -31,9 +32,11 @@ public abstract class AbstractSequenceSimpleSequence extends AbstractDatabaseSim
 	public void afterPropertiesSet() {
 		try (Connection conn = getDataSource().getConnection(); Statement stmt = conn.createStatement()) {
 			conn.setAutoCommit(true);
-			if (!isSequenceExists(conn, getActualSequenceName()))
+			if (!isSequenceExists(conn, getActualSequenceName())) {
 				stmt.execute(getCreateSequenceStatement());
-		} catch (SQLException ex) {
+			}
+		}
+		catch (SQLException ex) {
 			this.logger.warn(ex.getMessage());
 		}
 	}
@@ -44,7 +47,8 @@ public abstract class AbstractSequenceSimpleSequence extends AbstractDatabaseSim
 		String schema = null;
 		try {
 			schema = conn.getSchema();
-		} catch (Throwable t) {
+		}
+		catch (Throwable th) {
 		}
 		for (String sequence : new LinkedHashSet<>(Arrays.asList(sequenceName.toUpperCase(Locale.ROOT), sequenceName,
 				sequenceName.toLowerCase(Locale.ROOT)))) {
@@ -64,7 +68,8 @@ public abstract class AbstractSequenceSimpleSequence extends AbstractDatabaseSim
 				ResultSet rs = stmt.executeQuery(getQuerySequenceStatement())) {
 			rs.next();
 			return rs.getLong(1);
-		} catch (SQLException ex) {
+		}
+		catch (SQLException ex) {
 			throw new DataAccessResourceFailureException("Could not obtain next value of sequence", ex);
 		}
 	}
@@ -74,7 +79,8 @@ public abstract class AbstractSequenceSimpleSequence extends AbstractDatabaseSim
 		try (Connection con = getDataSource().getConnection(); Statement stmt = con.createStatement()) {
 			con.setAutoCommit(true);
 			restartSequence(con, stmt);
-		} catch (SQLException ex) {
+		}
+		catch (SQLException ex) {
 			throw new DataAccessResourceFailureException(ex.getMessage(), ex);
 		}
 	}

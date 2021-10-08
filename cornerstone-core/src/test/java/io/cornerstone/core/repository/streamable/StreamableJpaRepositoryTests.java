@@ -1,15 +1,15 @@
 package io.cornerstone.core.repository.streamable;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import io.cornerstone.core.repository.SimpleStreamableJpaRepository;
+import io.cornerstone.test.DataJpaTestBase;
 import org.junit.jupiter.api.Test;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
@@ -19,10 +19,11 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import io.cornerstone.core.repository.SimpleStreamableJpaRepository;
-import io.cornerstone.test.DataJpaTestBase;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-@EnableJpaRepositories(basePackageClasses = TestEntityRepository.class, repositoryBaseClass = SimpleStreamableJpaRepository.class)
+@EnableJpaRepositories(basePackageClasses = TestEntityRepository.class,
+		repositoryBaseClass = SimpleStreamableJpaRepository.class)
 @EntityScan(basePackageClasses = TestEntity.class)
 class StreamableJpaRepositoryTests extends DataJpaTestBase {
 
@@ -32,7 +33,7 @@ class StreamableJpaRepositoryTests extends DataJpaTestBase {
 	@Test
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	void streamWithoutExistingTransaction() {
-		assertThatThrownBy(this::doStream).isInstanceOf(InvalidDataAccessApiUsageException.class);
+		assertThatExceptionOfType(InvalidDataAccessApiUsageException.class).isThrownBy(this::doStream);
 		this.repository.deleteAll();
 	}
 
@@ -134,4 +135,5 @@ class StreamableJpaRepositoryTests extends DataJpaTestBase {
 			}
 		});
 	}
+
 }
