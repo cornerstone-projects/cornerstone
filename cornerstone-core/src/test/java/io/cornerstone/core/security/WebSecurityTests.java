@@ -64,6 +64,8 @@ class WebSecurityTests extends ControllerTestBase {
 
 	static final String TEST_ADMIN_HOME = "/admin/home.html";
 
+	static final String TEST_IGNORING_PATH = "/ignoring";
+
 	@Test
 	void testAuthenticationFailure() {
 		TestRestTemplate restTemplate = this.testRestTemplate;
@@ -154,6 +156,12 @@ class WebSecurityTests extends ControllerTestBase {
 		assertThat(response.getStatusCode()).isSameAs(FORBIDDEN);
 	}
 
+	@Test
+	void testIgnoredRequestContributor() {
+		ResponseEntity<String> response = this.testRestTemplate.getForEntity(TEST_IGNORING_PATH, String.class);
+		assertThat(response.getStatusCode()).isSameAs(OK);
+	}
+
 	private ResponseEntity<Map<String, Object>> restfulFormLogin(String username, String password) {
 		Map<String, String> data = new LinkedHashMap<>();
 		data.put("username", username);
@@ -206,6 +214,21 @@ class WebSecurityTests extends ControllerTestBase {
 		@GetMapping(TEST_ADMIN_HOME)
 		String admin() {
 			return "admin";
+		}
+
+	}
+
+	@RestController
+	static class TestIgnoredRequestController implements IgnoredRequestContributor {
+
+		@GetMapping(TEST_IGNORING_PATH)
+		String ignoring() {
+			return "ignoring";
+		}
+
+		@Override
+		public String getIgnoringPathPattern() {
+			return TEST_IGNORING_PATH;
 		}
 
 	}

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -55,6 +56,9 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 	@Autowired
 	private SecurityProperties properties;
 
+	@Autowired(required = false)
+	private List<IgnoredRequestContributor> ignoredRequestContributors = Collections.emptyList();
+
 	@Autowired
 	private ObjectMapper objectMapper;
 
@@ -63,6 +67,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 		List<String> ignoringPathPatterns = new ArrayList<>();
 		ignoringPathPatterns.addAll(Arrays.asList("/error", "/actuator/**", "/assets/**"));
 		ignoringPathPatterns.addAll(this.properties.getIgnoringPathPatterns());
+		this.ignoredRequestContributors.forEach(c -> ignoringPathPatterns.add(c.getIgnoringPathPattern()));
 		web.ignoring().antMatchers(ignoringPathPatterns.toArray(new String[0]));
 	}
 
