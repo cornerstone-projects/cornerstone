@@ -12,6 +12,7 @@ import org.hibernate.annotations.TypeDefs;
 import org.springframework.data.domain.Persistable;
 import org.springframework.data.util.ProxyUtils;
 
+@SuppressWarnings("deprecation")
 @TypeDefs({ @TypeDef(name = "json", typeClass = JsonType.class) })
 @MappedSuperclass
 public abstract class AbstractPersistable<ID extends Serializable> implements Persistable<ID>, Serializable {

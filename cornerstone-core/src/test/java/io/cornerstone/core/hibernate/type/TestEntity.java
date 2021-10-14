@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Type;
 
+@SuppressWarnings("deprecation")
 @Entity
 @Getter
 @Setter

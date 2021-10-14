@@ -30,6 +30,7 @@ import org.hibernate.annotations.TypeDefs;
 import org.springframework.data.domain.Persistable;
 import org.springframework.lang.Nullable;
 
+@SuppressWarnings("deprecation")
 @TypeDefs({ @TypeDef(name = "json", typeClass = JsonType.class) })
 @Entity
 @Getter
