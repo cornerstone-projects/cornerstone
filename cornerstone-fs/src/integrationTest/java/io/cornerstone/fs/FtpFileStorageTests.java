@@ -30,17 +30,9 @@ class FtpFileStorageTests extends FileStorageTestBase {
 
 	private static final String FTP_PASSWORD = "ftp";
 
-	@SuppressWarnings("rawtypes")
 	@Container
-	static GenericContainer<?> container = (new GenericContainer("panubo/vsftpd") {
-		GenericContainer<?> withFixedExposedPort() {
-			for (int port = 4559; port <= 4564; port++) {
-				addFixedExposedPort(port, port);
-			}
-			return this;
-		}
-	}).withFixedExposedPort().withExposedPorts(21).withEnv("FTP_USER", FTP_USER).withEnv("FTP_PASSWORD", FTP_PASSWORD)
-			.withEnv("FTP_CHOWN_ROOT", "true");
+	static GenericContainer<?> container = new VsftpdContainer().withExposedPorts(21).withEnv("FTP_USER", FTP_USER)
+			.withEnv("FTP_PASSWORD", FTP_PASSWORD).withEnv("FTP_CHOWN_ROOT", "true");
 
 	@DynamicPropertySource
 	static void registerDynamicProperties(DynamicPropertyRegistry registry) {
@@ -89,6 +81,21 @@ class FtpFileStorageTests extends FileStorageTestBase {
 		es.shutdown();
 
 		assertThat(errors.intValue(), is(0));
+	}
+
+	static class VsftpdContainer extends GenericContainer<VsftpdContainer> {
+
+		private static final int PASV_MIN_PORT = 4559;
+
+		private static final int PASV_MAX_PORT = 4564;
+
+		VsftpdContainer() {
+			super("panubo/vsftpd");
+			for (int port = PASV_MIN_PORT; port <= PASV_MAX_PORT; port++) {
+				addFixedExposedPort(port, port);
+			}
+		}
+
 	}
 
 }
