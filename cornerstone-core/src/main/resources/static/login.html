@@ -23,6 +23,19 @@
 		.form-signin .form-control {
 			padding: 10px;
 		}
+
+		.hidden {
+			display: none;
+		}
+
+		[name="verificationCode"] {
+			border-radius: 0.25rem !important;
+			margin-right: 0.5rem;
+		}
+
+		button.sending {
+			width: 60px;
+		}
 	</style>
 	<script>
 		$(function () {
@@ -45,7 +58,12 @@
 						var data = jqXHR.responseJSON;
 						if (jqXHR.status == 401) {
 							var message = data.message;
-							$('#' + (message.indexOf($('#password').attr('placeholder')) != -1 ? 'password' : 'username')).addClass('is-invalid').after('<span class="invalid-feedback"></span>').next().text(message);
+							var input = 'username';
+							$('input[placeholder]').each(function (){
+								if(message.indexOf(this.placeholder) != -1)
+									input = this.name;
+							});
+							$('<span class="invalid-feedback"></span>').appendTo($('#' + input).addClass('is-invalid').parent()).text(message);
 						} else {
 							console.log(data);
 							alert(data.message);
@@ -57,25 +75,75 @@
 				});
 				return false;
 			});
+			$('#username').on('change', function (){
+				var username = $(this).val();
+				if (!username)
+					return;
+				$.get('verificationCode/' + username, function(data) {
+					if (data.required) {
+						$('.verificationCode.hidden').removeClass('hidden').find('input').prop('disabled', false).val('');
+						$('[name="verificationCode"]').attr('maxlength', data.length);
+						$('.sending').data('resend-interval', data.resendInterval);
+						if (data.passwordHidden) {
+							$('.password').addClass('hidden').find('input').prop('disabled', true);
+						} else {
+							$('.password.hidden').removeClass('hidden').find('input').prop('disabled', false).val('');
+						}
+						if (data.sendingRequired) {
+							$('button.sending').removeClass('hidden');
+						} else {
+							$('button.sending').addClass('hidden');
+						}
+					} else {
+						$('.verificationCode').addClass('hidden').find('input').prop('disabled', true);
+						$('.password.hidden').removeClass('hidden').find('input').prop('disabled', false).val('');
+					}
+				});
+			});
+			$('.sending').on('click', function (){
+				var username = $('#username').val();
+				if (!username)
+					return;
+				var button = $(this);
+				$.post('verificationCode/' + username, function(data) {
+					$('[name="verificationCode"]').focus();
+					button.prop('disabled', true).data('text', button.text());
+					button.data('countdown', button.data('resend-interval'));
+					var handler = setInterval(function (){
+						var countdown = button.data('countdown') - 1;
+						button.data('countdown', countdown).text(countdown + 's');
+						if (countdown == 0) {
+							clearInterval(handler);
+							button.prop('disabled', false).text(button.data('text'));
+						}
+					}, 1000);
+				});
+			});
 		});
 	</script>
 </head>
 
 <body>
 	<div class="container">
-		<form class="form-signin" method="post" action="login">
+		<form class="form-signin form-inline" method="post" action="login">
 			<h3 class="form-signin-heading text-center">请登录</h3>
-			<p>
+			<div class="mb-2 username">
 				<label for="username" class="visually-hidden">用户</label>
 				<input type="text" id="username" name="username" class="form-control" placeholder="用户" required
 					autofocus>
-			</p>
-			<p>
+			</div>
+			<div class="mb-2 password">
 				<label for="password" class="visually-hidden">密码</label>
 				<input type="password" id="password" name="password" class="form-control" placeholder="密码" required>
-			</p>
+			</div>
+			<div class="mb-2 input-group verificationCode hidden">
+				<input type="text" id="verificationCode" name="verificationCode" class="form-control" placeholder="验证码" required disabled>
+				<div class="input-group-append">
+				<button type="button" class="btn btn-outline-info form-control sending">发送</button>
+				</div>
+			</div>
 			<p class="d-grid gap-2">
-				<button class="btn btn-lg btn-primary btn-block" type="submit">登录</button>
+				<button type="submit" class="btn btn-lg btn-primary btn-block">登录</button>
 			</p>
 		</form>
 	</div>
