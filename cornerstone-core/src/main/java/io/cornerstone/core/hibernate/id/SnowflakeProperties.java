@@ -36,31 +36,44 @@ public class SnowflakeProperties {
 
 	@PostConstruct
 	private void init() throws Exception {
-		if (!this.env.containsProperty(PREFIX + ".worker-id")) {
-			Application.current().ifPresentOrElse(app -> {
-				String ip = app.getHostAddress();
-				int index = ip.lastIndexOf('.');
-				String id;
-				if (index > 0) {
-					id = ip.substring(index + 1);
-					this.workerId = Integer.parseInt(id);
-				}
-				else {
-					// IPv6
-					index = ip.lastIndexOf(':');
-					id = ip.substring(index + 1);
-					id = String.valueOf(NumberUtils.xToDecimal(16, id.toUpperCase()));
-					this.workerId = Integer.parseInt(id);
-					this.workerIdBits = 16;
-					if (this.workerId < 0) {
-						this.workerId += 2 << this.workerIdBits;
-					}
-				}
-				log.info(
-						"Extract snowflake workerId {} from host address {}, please configure {}.worker-id if multiple instances running in the same host",
-						this.workerId, app.getHostAddress(), PREFIX);
-			}, () -> log.warn("Please configure {}.worker-id if multiple instances running", PREFIX));
+		if (this.env.containsProperty(PREFIX + ".worker-id")) {
+			// workerId configured
+			return;
 		}
+		Application.current().ifPresentOrElse(app -> {
+			String ip = app.getHostAddress();
+			int index = ip.lastIndexOf('.');
+			String id;
+			if (index > 0) {
+				id = ip.substring(index + 1);
+				this.workerId = Integer.parseInt(id);
+				if (this.workerIdBits < 8) {
+					if (this.env.containsProperty(PREFIX + ".worker-id-bits")) {
+						log.warn("Increase snowflake workerIdBits from {} to {}", this.workerIdBits, 8);
+					}
+					this.workerIdBits = 8;
+				}
+			}
+			else {
+				// IPv6
+				index = ip.lastIndexOf(':');
+				id = ip.substring(index + 1);
+				id = String.valueOf(NumberUtils.xToDecimal(16, id.toUpperCase()));
+				this.workerId = Integer.parseInt(id);
+				if (this.workerId < 0) {
+					this.workerId += 2 << 16;
+				}
+				if (this.workerIdBits < 16) {
+					if (this.env.containsProperty(PREFIX + ".worker-id-bits")) {
+						log.warn("Increase snowflake workerIdBits from {} to {}", this.workerIdBits, 16);
+					}
+					this.workerIdBits = 16;
+				}
+			}
+			log.info(
+					"Extract snowflake workerId {} from host address {}, please configure {}.worker-id if multiple instances running in the same host",
+					this.workerId, app.getHostAddress(), PREFIX);
+		}, () -> log.warn("Please configure {}.worker-id if multiple instances running", PREFIX));
 	}
 
 	public Snowflake build() {
