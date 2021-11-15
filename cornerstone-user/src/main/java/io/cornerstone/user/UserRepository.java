@@ -35,10 +35,6 @@ public interface UserRepository extends StreamableJpaRepository<User, Long>, Jpa
 
 	@Override
 	@Cacheable(CACHE_NAME)
-	User getById(Long id);
-
-	@Override
-	@Cacheable(CACHE_NAME)
 	Optional<User> findById(Long id);
 
 	@Cacheable(CACHE_NAME)
