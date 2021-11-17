@@ -2,6 +2,7 @@ package io.cornerstone.core.web;
 
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.persistence.criteria.Predicate;
 
 import com.fasterxml.jackson.annotation.JsonView;
@@ -12,7 +13,9 @@ import springfox.documentation.annotations.ApiIgnore;
 
 import org.springframework.data.domain.Example;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.lang.Nullable;
+import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,6 +23,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 public abstract class AbstractTreeableEntityController<T extends AbstractTreeableEntity<T>>
 		extends AbstractEntityController<T, Long> {
+
+	@PostConstruct
+	private void init() {
+		if (this.specificationExecutor == null) {
+			Class<?> repositoryClass = ClassUtils.getAllInterfaces(this.repository)[0];
+			throw new RuntimeException(repositoryClass + " should extends " + JpaSpecificationExecutor.class.getName()
+					+ "<" + this.entityClass.getName() + ">");
+		}
+	}
 
 	@GetMapping(PATH_DETAIL + "/children")
 	@JsonView(View.List.class)
