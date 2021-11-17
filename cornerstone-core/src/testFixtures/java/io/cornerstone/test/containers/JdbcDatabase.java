@@ -48,7 +48,7 @@ abstract class JdbcDatabase<T extends JdbcDatabaseContainer<?>> extends Abstract
 	}
 
 	@Bean
-	DataSource dataSource(GenericContainer<?> container) throws Exception {
+	DataSource dataSource(GenericContainer<?> container) {
 		@SuppressWarnings("unchecked")
 		T c = (T) container;
 		HikariDataSource ds = new HikariDataSource();

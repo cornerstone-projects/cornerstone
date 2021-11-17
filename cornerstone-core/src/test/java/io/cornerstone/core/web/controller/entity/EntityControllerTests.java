@@ -30,43 +30,44 @@ class EntityControllerTests extends WebMvcWithDataJpaTestBase {
 	private static final String PATH_DETAIL = "/testEntity/{id}";
 
 	@Test
-	void crud() throws Exception {
-		TestEntity c = new TestEntity();
-		c.setIdNo(CitizenIdentificationNumberValidator.randomValue());
-		c.setName("test");
-		c.setDisabled(Boolean.TRUE);
+	void crud() {
+		TestEntity entity = new TestEntity();
+		entity.setIdNo(CitizenIdentificationNumberValidator.randomValue());
+		entity.setName("test");
+		entity.setDisabled(Boolean.TRUE);
 
 		// create
-		TestEntity testEntity = this.restTemplate.postForObject(PATH_LIST, c, TestEntity.class);
+		TestEntity testEntity = this.restTemplate.postForObject(PATH_LIST, entity, TestEntity.class);
 		assertThat(testEntity).isNotNull();
 		assertThat(testEntity.getId()).isNotNull();
-		assertThat(testEntity.getIdNo()).isEqualTo(c.getIdNo());
-		assertThat(testEntity.getName()).isEqualTo(c.getName());
-		assertThat(testEntity.getDisabled()).isEqualTo(c.getDisabled());
+		assertThat(testEntity.getIdNo()).isEqualTo(entity.getIdNo());
+		assertThat(testEntity.getName()).isEqualTo(entity.getName());
+		assertThat(testEntity.getDisabled()).isEqualTo(entity.getDisabled());
 		Long id = testEntity.getId();
 
 		// read
 		assertThat(this.restTemplate.getForObject(PATH_DETAIL, TestEntity.class, id)).isEqualTo(testEntity);
 
 		// update partial
-		TestEntity c2 = new TestEntity();
-		c2.setIdNo(CitizenIdentificationNumberValidator.randomValue());
-		c2.setName("new name");
-		c2.setDisabled(Boolean.TRUE);
-		TestEntity c3 = this.restTemplate.patchForObject(PATH_DETAIL, c2, TestEntity.class, id);
-		assertThat(c3).isNotNull();
-		assertThat(c3.getName()).isEqualTo(c2.getName());
-		assertThat(c3.getDisabled()).isEqualTo(c2.getDisabled());
-		assertThat(c3.getIdNo()).isEqualTo(testEntity.getIdNo()); // idNo not updatable
+		TestEntity entity2 = new TestEntity();
+		entity2.setIdNo(CitizenIdentificationNumberValidator.randomValue());
+		entity2.setName("new name");
+		entity2.setDisabled(Boolean.TRUE);
+		TestEntity entity3 = this.restTemplate.patchForObject(PATH_DETAIL, entity2, TestEntity.class, id);
+		assertThat(entity3).isNotNull();
+		assertThat(entity3.getName()).isEqualTo(entity2.getName());
+		assertThat(entity3.getDisabled()).isEqualTo(entity2.getDisabled());
+		assertThat(entity3.getIdNo()).isEqualTo(testEntity.getIdNo()); // idNo not
+																		// updatable
 		// update full
-		c3.setIdNo(CitizenIdentificationNumberValidator.randomValue());
-		c3.setName("name");
-		c3.setDisabled(Boolean.FALSE);
-		this.restTemplate.put(PATH_DETAIL, c3, id);
+		entity3.setIdNo(CitizenIdentificationNumberValidator.randomValue());
+		entity3.setName("name");
+		entity3.setDisabled(Boolean.FALSE);
+		this.restTemplate.put(PATH_DETAIL, entity3, id);
 		TestEntity c4 = this.restTemplate.getForObject(PATH_DETAIL, TestEntity.class, id);
 		assertThat(c4).isNotNull();
-		assertThat(c4.getDisabled()).isEqualTo(c3.getDisabled());
-		assertThat(c4.getName()).isEqualTo(c3.getName());
+		assertThat(c4.getDisabled()).isEqualTo(entity3.getDisabled());
+		assertThat(c4.getName()).isEqualTo(entity3.getName());
 		assertThat(c4.getIdNo()).isEqualTo(testEntity.getIdNo()); // idNo not updatable
 
 		// delete
@@ -80,15 +81,15 @@ class EntityControllerTests extends WebMvcWithDataJpaTestBase {
 	}
 
 	@Test
-	void list() throws Exception {
+	void list() {
 		int size = 5;
 		List<TestEntity> list = new ArrayList<>();
 		for (int i = 0; i < size; i++) {
-			TestEntity c = new TestEntity();
-			c.setIdNo(CitizenIdentificationNumberValidator.randomValue());
-			c.setName("test" + i);
-			c.setDisabled(Boolean.TRUE);
-			list.add(this.restTemplate.postForObject(PATH_LIST, c, TestEntity.class));
+			TestEntity entity = new TestEntity();
+			entity.setIdNo(CitizenIdentificationNumberValidator.randomValue());
+			entity.setName("test" + i);
+			entity.setDisabled(Boolean.TRUE);
+			list.add(this.restTemplate.postForObject(PATH_LIST, entity, TestEntity.class));
 		}
 
 		ResultPage<TestEntity> page = this.restTemplate.exchange(RequestEntity.method(GET, PATH_LIST).build(),
@@ -127,8 +128,8 @@ class EntityControllerTests extends WebMvcWithDataJpaTestBase {
 				.getBody();
 		assertThat(page2).isEqualTo(page);
 
-		for (TestEntity c : list) {
-			this.restTemplate.delete(PATH_DETAIL, c.getId());
+		for (TestEntity entity : list) {
+			this.restTemplate.delete(PATH_DETAIL, entity.getId());
 		}
 	}
 

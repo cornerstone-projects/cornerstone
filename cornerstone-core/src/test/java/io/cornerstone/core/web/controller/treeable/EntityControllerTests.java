@@ -30,7 +30,7 @@ class EntityControllerTests extends WebMvcWithDataJpaTestBase {
 	private static final String PATH_CHILDREN = PATH_DETAIL + "/children";
 
 	@Test
-	void crud() throws Exception {
+	void crud() {
 
 		// create
 		TestEntity parent = new TestEntity("parent");
@@ -101,7 +101,7 @@ class EntityControllerTests extends WebMvcWithDataJpaTestBase {
 	}
 
 	@Test
-	void list() throws Exception {
+	void list() {
 		TestEntity parent1 = this.restTemplate.postForObject(PATH_LIST, new TestEntity("parent1", 1), TestEntity.class);
 		TestEntity parent2 = this.restTemplate.postForObject(PATH_LIST, new TestEntity("parent2", 2), TestEntity.class);
 		TestEntity child1 = this.restTemplate.postForObject(PATH_LIST, new TestEntity(parent1, "child1", 1),
@@ -141,7 +141,7 @@ class EntityControllerTests extends WebMvcWithDataJpaTestBase {
 	}
 
 	@Test
-	void children() throws Exception {
+	void children() {
 		TestEntity parent1 = this.restTemplate.postForObject(PATH_LIST, new TestEntity("parent1", 1), TestEntity.class);
 		TestEntity parent2 = this.restTemplate.postForObject(PATH_LIST, new TestEntity("parent2", 2), TestEntity.class);
 		TestEntity child1 = this.restTemplate.postForObject(PATH_LIST, new TestEntity(parent1, "child1", 1),

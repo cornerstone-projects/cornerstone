@@ -26,7 +26,7 @@ public class MySQL57 extends AbstractContainer {
 	}
 
 	@Bean
-	public DataSource dataSource(GenericContainer<?> container) throws Exception {
+	public DataSource dataSource(GenericContainer<?> container) {
 		HikariDataSource ds = new HikariDataSource();
 		ds.setJdbcUrl(String.format("jdbc:mysql://%s:%d/%s", container.getHost(), container.getFirstMappedPort(),
 				MYSQL_DATABASE));

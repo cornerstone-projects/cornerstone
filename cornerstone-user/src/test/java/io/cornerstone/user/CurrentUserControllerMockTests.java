@@ -18,7 +18,7 @@ import static org.springframework.http.HttpStatus.OK;
 class CurrentUserControllerMockTests extends ControllerMockTestBase {
 
 	@Test
-	void testGet() throws Exception {
+	void testGet() {
 		RestTemplate restTemplate = userRestTemplate();
 		User u = restTemplate.getForObject(PATH_PROFILE, User.class);
 		assertThat(u).isNotNull();
@@ -28,7 +28,7 @@ class CurrentUserControllerMockTests extends ControllerMockTestBase {
 	}
 
 	@Test
-	void update() throws Exception {
+	void update() {
 		RestTemplate restTemplate = userRestTemplate();
 		User user = new User();
 		user.setUsername("other"); // not editable
@@ -54,7 +54,7 @@ class CurrentUserControllerMockTests extends ControllerMockTestBase {
 	}
 
 	@Test
-	void changePassword() throws Exception {
+	void changePassword() {
 		RestTemplate restTemplate = userRestTemplate();
 		ChangePasswordRequest changePasswordRequest = new ChangePasswordRequest();
 		changePasswordRequest.setPassword("iamtest");
@@ -82,12 +82,12 @@ class CurrentUserControllerMockTests extends ControllerMockTestBase {
 		assertThat(u).isNotNull();
 		assertThat(u.getUsername()).isEqualTo(USER_USERNAME); // verify password changed
 
+		// change password back
 		changePasswordRequest.setCurrentPassword(changePasswordRequest.getPassword());
 		changePasswordRequest.setPassword(DEFAULT_PASSWORD);
 		changePasswordRequest.setConfirmedPassword(changePasswordRequest.getPassword());
-		newPasswordRestTemplate.put(PATH_PASSWORD, changePasswordRequest); // change
-																			// password
-																			// back
+		newPasswordRestTemplate.put(PATH_PASSWORD, changePasswordRequest);
+
 	}
 
 }
