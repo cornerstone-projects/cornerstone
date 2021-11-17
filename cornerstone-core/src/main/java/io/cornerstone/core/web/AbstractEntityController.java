@@ -19,6 +19,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.lang.Nullable;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -44,6 +45,7 @@ public abstract class AbstractEntityController<T, ID> extends BaseRestController
 
 	protected JpaRepository<T, ID> repository;
 
+	@Nullable
 	protected JpaSpecificationExecutor<T> specificationExecutor;
 
 	@SuppressWarnings("unchecked")
@@ -63,7 +65,7 @@ public abstract class AbstractEntityController<T, ID> extends BaseRestController
 		this.specificationExecutor = (JpaSpecificationExecutor<T>) this.applicationContext
 				.getBeanProvider(ResolvableType.forClassWithGenerics(JpaSpecificationExecutor.class, this.entityClass),
 						false)
-				.getObject();
+				.getIfAvailable();
 	}
 
 	public String getEntityName() {
