@@ -1,0 +1,8 @@
+plugins {
+	id 'io.cornerstone.java-library-conventions'
+}
+
+dependencies {
+	api project(":cornerstone-core") 
+	testImplementation testFixtures(project(":cornerstone-core"))
+}
