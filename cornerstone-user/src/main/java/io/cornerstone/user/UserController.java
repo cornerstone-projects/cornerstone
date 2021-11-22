@@ -18,9 +18,11 @@ import com.fasterxml.jackson.annotation.JsonView;
 import io.cornerstone.core.domain.ResultPage;
 import io.cornerstone.core.domain.View;
 import io.cornerstone.core.web.AbstractEntityController;
+import io.cornerstone.core.web.PageableAsQueryParam;
+import io.cornerstone.core.web.SortAsQueryParam;
+import io.swagger.v3.oas.annotations.Parameter;
 import org.hibernate.cfg.AvailableSettings;
 import org.hibernate.dialect.Dialect;
-import springfox.documentation.annotations.ApiIgnore;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
@@ -63,8 +65,9 @@ public class UserController extends AbstractEntityController<User, Long> {
 	@Override
 	@GetMapping(PATH_LIST)
 	@JsonView({ View.List.class })
+	@PageableAsQueryParam
 	public ResultPage<User> list(@PageableDefault(sort = "username", direction = ASC) Pageable pageable,
-			@RequestParam(required = false) String query, @ApiIgnore User example) {
+			@RequestParam(required = false) String query, @Parameter(hidden = true) User example) {
 		// use "username asc" override default sort "id desc"
 		return super.list(pageable, query, example);
 	}
@@ -82,6 +85,7 @@ public class UserController extends AbstractEntityController<User, Long> {
 	}
 
 	@GetMapping(value = PATH_LIST + ".csv", produces = "text/csv")
+	@SortAsQueryParam
 	public ResponseEntity<StreamingResponseBody> download(@SortDefault(sort = "id") Sort sort,
 			@RequestParam(required = false) Charset charset) {
 		Charset cs = (charset != null ? charset : StandardCharsets.UTF_8);

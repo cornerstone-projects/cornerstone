@@ -5,7 +5,7 @@ import javax.annotation.PostConstruct;
 import com.fasterxml.jackson.annotation.JsonView;
 import io.cornerstone.core.domain.ResultPage;
 import io.cornerstone.core.domain.View;
-import springfox.documentation.annotations.ApiIgnore;
+import io.swagger.v3.oas.annotations.Parameter;
 
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.core.ResolvableType;
@@ -62,8 +62,9 @@ public abstract class AbstractReadableEntityController<T, ID> extends BaseRestCo
 
 	@JsonView(View.List.class)
 	@GetMapping(PATH_LIST)
+	@PageableAsQueryParam
 	public ResultPage<T> list(@PageableDefault(sort = "id", direction = DESC) Pageable pageable,
-			@RequestParam(required = false) String query, @ApiIgnore T example) {
+			@RequestParam(required = false) String query, @Parameter(hidden = true) T example) {
 		Page<T> page;
 		if ((this.specificationExecutor != null) && StringUtils.hasText(query)) {
 			page = this.specificationExecutor.findAll(getQuerySpecification(query), pageable);

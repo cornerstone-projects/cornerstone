@@ -18,7 +18,7 @@ dependencies {
 	api "io.opentracing.contrib:opentracing-spring-jaeger-web-starter:${project.properties['java-spring-jaeger.version']?:'latest.release'}"
 	api "io.opentracing.contrib:opentracing-jdbc:${project.properties['opentracing-jdbc.version']?:'latest.release'}"
 	api "io.opentracing.contrib:opentracing-redis-spring-data2:${project.properties['opentracing-spring-data-redis.version']?:'latest.release'}"
-	api "io.springfox:springfox-boot-starter:${project.properties['springfox.version']?:'latest.release'}"
+	api "org.springdoc:springdoc-openapi-ui:${project.properties['springdoc.version']?:'latest.release'}"
 	api "org.apache.commons:commons-pool2"
 	implementation "org.springframework.boot:spring-boot-starter-amqp"
 	testFixturesApi "org.springframework.boot:spring-boot-starter-test"

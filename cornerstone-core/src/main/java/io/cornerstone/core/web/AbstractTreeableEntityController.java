@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 import io.cornerstone.core.domain.View;
 import io.cornerstone.core.hibernate.criteria.PredicateBuilder;
 import io.cornerstone.core.hibernate.domain.AbstractTreeableEntity;
-import springfox.documentation.annotations.ApiIgnore;
+import io.swagger.v3.oas.annotations.Parameter;
 
 import org.springframework.data.domain.Example;
 import org.springframework.data.jpa.domain.Specification;
@@ -35,7 +35,8 @@ public abstract class AbstractTreeableEntityController<T extends AbstractTreeabl
 
 	@GetMapping(PATH_DETAIL + "/children")
 	@JsonView(View.List.class)
-	public List<T> children(@PathVariable Long id, @RequestParam(required = false) String query, @ApiIgnore T example) {
+	public List<T> children(@PathVariable Long id, @RequestParam(required = false) String query,
+			@Parameter(hidden = true) T example) {
 		Specification<T> spec = (root, cq, cb) -> {
 			Predicate predicate = ((id == null) || (id < 1)) ? cb.isNull(root.get("parent"))
 					: cb.equal(root.get("parent").get("id"), id);

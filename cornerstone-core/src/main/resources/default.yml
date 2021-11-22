@@ -81,7 +81,9 @@ management.metrics.export.influx:
   enabled: false
   db: metrics
   step: 10s
-springfox.documentation.enabled: false
+
+springdoc.swagger-ui.enabled: false
+springdoc.api-docs.enabled: ${springdoc.swagger-ui.enabled}
 
 opentracing.jaeger:
   enabled: false
@@ -110,7 +112,7 @@ spring:
     hibernate.ddl-auto: update
     properties.hibernate:
       hbm2ddl.default_constraint_mode: NO_CONSTRAINT
-springfox.documentation.enabled: true
+springdoc.swagger-ui.enabled: true
 management.endpoints.web.exposure.include: "*"
 logging:
   level:

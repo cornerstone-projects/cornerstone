@@ -25,7 +25,7 @@ import io.cornerstone.core.domain.Treeable;
 import io.cornerstone.core.domain.View;
 import io.cornerstone.core.json.FromIdDeserializer;
 import io.cornerstone.core.json.ToIdSerializer;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -66,7 +66,7 @@ public abstract class AbstractTreeableEntity<T extends AbstractTreeableEntity<T>
 	@JsonView(View.Edit.class)
 	@JsonSerialize(using = ToIdSerializer.class)
 	@JsonDeserialize(using = FromIdDeserializer.class)
-	@ApiModelProperty(dataType = "java.lang.Long", example = "1")
+	@Schema(type = "integer", format = "int64", example = "1")
 	protected T parent;
 
 	@JsonIgnore
