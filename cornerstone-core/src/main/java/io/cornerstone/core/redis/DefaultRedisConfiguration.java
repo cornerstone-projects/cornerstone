@@ -9,6 +9,7 @@ import io.lettuce.core.resource.DefaultClientResources;
 
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.data.redis.ClientResourcesBuilderCustomizer;
 import org.springframework.boot.autoconfigure.data.redis.LettuceClientConfigurationBuilderCustomizer;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -19,6 +20,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.data.redis.connection.RedisClusterConfiguration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisSentinelConfiguration;
+import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -30,16 +32,17 @@ import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 public class DefaultRedisConfiguration extends RedisConfigurationSupport {
 
 	DefaultRedisConfiguration(DefaultRedisProperties properties,
+			ObjectProvider<RedisStandaloneConfiguration> standaloneConfigurationProvider,
 			ObjectProvider<RedisSentinelConfiguration> sentinelConfigurationProvider,
 			ObjectProvider<RedisClusterConfiguration> clusterConfigurationProvider) {
-		super(properties, sentinelConfigurationProvider, clusterConfigurationProvider);
+		super(properties, standaloneConfigurationProvider, sentinelConfigurationProvider, clusterConfigurationProvider);
 	}
 
 	@Primary
 	@Bean(destroyMethod = "shutdown")
 	@Override
-	public DefaultClientResources lettuceClientResources() {
-		return super.lettuceClientResources();
+	public DefaultClientResources lettuceClientResources(ObjectProvider<ClientResourcesBuilderCustomizer> customizers) {
+		return super.lettuceClientResources(customizers);
 	}
 
 	@Bean

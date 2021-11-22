@@ -14,12 +14,14 @@ import io.opentracing.util.GlobalTracer;
 import lombok.Getter;
 
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.boot.autoconfigure.data.redis.ClientResourcesBuilderCustomizer;
 import org.springframework.boot.autoconfigure.data.redis.LettuceClientConfigurationBuilderCustomizer;
 import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.data.redis.connection.RedisClusterConfiguration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisSentinelConfiguration;
+import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -35,6 +37,7 @@ public class RedisConfigurationSupport {
 	private final Object configuration;
 
 	RedisConfigurationSupport(RedisProperties properties,
+			ObjectProvider<RedisStandaloneConfiguration> standaloneConfigurationProvider,
 			ObjectProvider<RedisSentinelConfiguration> sentinelConfigurationProvider,
 			ObjectProvider<RedisClusterConfiguration> clusterConfigurationProvider) {
 		this.properties = properties;
@@ -43,21 +46,22 @@ public class RedisConfigurationSupport {
 			Class<?> configurationClass = ClassUtils.forName(clazz.getPackageName() + ".LettuceConnectionConfiguration",
 					clazz.getClassLoader());
 			Constructor<?> ctor = configurationClass.getDeclaredConstructor(RedisProperties.class, ObjectProvider.class,
-					ObjectProvider.class);
+					ObjectProvider.class, ObjectProvider.class);
 			ctor.setAccessible(true);
-			this.configuration = ctor.newInstance(properties, sentinelConfigurationProvider,
-					clusterConfigurationProvider);
+			this.configuration = ctor.newInstance(properties, standaloneConfigurationProvider,
+					sentinelConfigurationProvider, clusterConfigurationProvider);
 		}
 		catch (Exception ex) {
 			throw new RuntimeException(ex.getMessage(), ex);
 		}
 	}
 
-	protected DefaultClientResources lettuceClientResources() {
+	protected DefaultClientResources lettuceClientResources(
+			ObjectProvider<ClientResourcesBuilderCustomizer> customizers) {
 		try {
-			Method m = this.configuration.getClass().getDeclaredMethod("lettuceClientResources");
+			Method m = this.configuration.getClass().getDeclaredMethod("lettuceClientResources", ObjectProvider.class);
 			m.setAccessible(true);
-			return (DefaultClientResources) m.invoke(this.configuration);
+			return (DefaultClientResources) m.invoke(this.configuration, customizers);
 		}
 		catch (Exception ex) {
 			throw new RuntimeException(ex.getMessage(), ex);
