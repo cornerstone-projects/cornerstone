@@ -138,11 +138,9 @@ logging:
 ---
 spring:
   config.activate.on-profile: prod
-logging:
-  config: classpath:log4j2-with-kafka.xml
 
-spring.session:
-  store-type: redis
+logging.log4j2.config.override: classpath:log4j2-with-kafka.xml
+
 management.metrics.export.influx.enabled: true
 opentracing.jaeger:
   enabled: true
