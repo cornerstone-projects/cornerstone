@@ -32,6 +32,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.test.context.ContextConfiguration;
@@ -235,6 +236,11 @@ class LoginWithVerificationCodeTests extends ControllerTestBase {
 
 	@ComponentScan
 	static class Config {
+
+		@Bean
+		PasswordEncoder passwordEncoder() {
+			return new BCryptPasswordEncoder();
+		}
 
 		@Bean
 		UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
