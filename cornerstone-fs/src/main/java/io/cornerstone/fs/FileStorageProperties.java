@@ -1,6 +1,7 @@
 package io.cornerstone.fs;
 
 import java.net.URI;
+import java.time.Duration;
 
 import lombok.Data;
 
@@ -73,9 +74,9 @@ public class FileStorageProperties {
 
 		private int minIdle = 1;
 
-		private int maxWaitMillis = 60000;
+		private Duration maxWait = Duration.ofSeconds(60);
 
-		private int minEvictableIdleTimeMillis = 300000;
+		private Duration minEvictableIdleTime = Duration.ofMinutes(5);
 
 	}
 
