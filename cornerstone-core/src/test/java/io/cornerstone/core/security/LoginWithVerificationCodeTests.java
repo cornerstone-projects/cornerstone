@@ -6,13 +6,13 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
 import io.cornerstone.core.security.verification.VerificationAware;
 import io.cornerstone.core.security.verification.VerificationCodeNotifier;
 import io.cornerstone.core.security.verification.VerificationCodeRequirement;
 import io.cornerstone.core.security.verification.impl.DefaultVerificationService;
 import io.cornerstone.test.ControllerTestBase;
-import io.vavr.collection.Stream;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;

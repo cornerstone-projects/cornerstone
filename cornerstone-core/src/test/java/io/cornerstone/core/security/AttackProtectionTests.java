@@ -3,9 +3,9 @@ package io.cornerstone.core.security;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import io.cornerstone.test.ControllerTestBase;
-import io.vavr.collection.Stream;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
