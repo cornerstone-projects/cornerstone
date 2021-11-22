@@ -11,7 +11,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.context.annotation.FilterType;
-import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.client.MockMvcClientHttpRequestFactory;
@@ -21,7 +20,6 @@ import org.springframework.web.client.RestTemplate;
 @WebMvcTest
 @ContextConfiguration(classes = WebMvcTestBase.Config.class)
 @ImportAutoConfiguration(exclude = SecurityAutoConfiguration.class)
-@Import(DefaultWebMvcRegistrations.class)
 @ActiveProfiles("test")
 public abstract class WebMvcTestBase {
 
