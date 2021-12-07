@@ -20,6 +20,7 @@ dependencies {
 	api "io.opentracing.contrib:opentracing-redis-spring-data2:${project.properties['opentracing-spring-data-redis.version']?:'latest.release'}"
 	api "org.springdoc:springdoc-openapi-ui:${project.properties['springdoc.version']?:'latest.release'}"
 	api "org.apache.commons:commons-pool2"
+	api "org.apache.logging.log4j:log4j-spring-boot"
 	implementation "org.springframework.boot:spring-boot-starter-amqp"
 	testFixturesApi "org.springframework.boot:spring-boot-starter-test"
 	testFixturesApi "org.springframework.security:spring-security-test"

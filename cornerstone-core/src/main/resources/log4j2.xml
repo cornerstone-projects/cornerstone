@@ -1,51 +1,55 @@
 <?xml version="1.0"?>
 <!DOCTYPE Configuration>
 <Configuration>
+	<Properties>
+		<Property name="log.dir">${sys:user.home}/${spring:spring.application.name}/logs/$${spring:server.port:-}</Property>
+	</Properties>
 	<Appenders>
 		<Console name="CONSOLE" target="SYSTEM_OUT" follow="true">
 			<PatternLayout
 				pattern="%style{%d %25.25t %60.60c{1.}}{cyan} %highlight{%p %m}%n%throwable" />
 		</Console>
 		<RollingFile name="APPLICATION"
-			fileName="./logs/application.log"
-			filePattern="./logs/application.log.%d{yyyy-MM-dd}">
+			fileName="${sys:log.dir}/application.log"
+			filePattern="${sys:log.dir}/application.log.%d{yyyy-MM-dd}">
 			<PatternLayout
 				pattern="%d %c %t%X{request}%X{url} %p %m%n%throwable{10}"
 				charset="UTF-8" />
 			<TimeBasedTriggeringPolicy />
 		</RollingFile>
 		<RollingFile name="ERROR"
-			fileName="./logs/application-error.log"
-			filePattern="./logs/application-error.log.%d{yyyy-MM-dd}">
+			fileName="${sys:log.dir}/application-error.log"
+			filePattern="${sys:log.dir}/application-error.log.%d{yyyy-MM-dd}">
 			<ThresholdFilter level="ERROR" />
 			<PatternLayout
 				pattern="%d %c %t%X{request}%X{url} %p %m%n" charset="UTF-8" />
 			<TimeBasedTriggeringPolicy />
 		</RollingFile>
-		<RollingFile name="SQL" fileName="./logs/sql.log"
-			filePattern="./logs/sql.log.%d{yyyy-MM-dd}">
+		<RollingFile name="SQL" fileName="${sys:log.dir}/sql.log"
+			filePattern="${sys:log.dir}/sql.log.%d{yyyy-MM-dd}">
 			<ThresholdFilter level="ALL" />
 			<PatternLayout
 				pattern="%d %c %t%X{request}%X{url} %p %m%n" charset="UTF-8" />
 			<TimeBasedTriggeringPolicy />
 		</RollingFile>
-		<RollingFile name="REST" fileName="./logs/rest.log"
-			filePattern="./logs/rest.log.%d{yyyy-MM-dd}">
+		<RollingFile name="REST" fileName="${sys:log.dir}/rest.log"
+			filePattern="${sys:log.dir}/rest.log.%d{yyyy-MM-dd}">
 			<ThresholdFilter level="ALL" />
 			<PatternLayout
 				pattern="%d %t%X{request} %X{method}%X{url} %m%n" charset="UTF-8" />
 			<TimeBasedTriggeringPolicy />
 		</RollingFile>
-		<RollingFile name="ACCESS" fileName="./logs/access.log"
-			filePattern="./logs/access.log.%d{yyyy-MM-dd}">
+		<RollingFile name="ACCESS"
+			fileName="${sys:log.dir}/access.log"
+			filePattern="${sys:log.dir}/access.log.%d{yyyy-MM-dd}">
 			<PatternLayout
 				pattern="%d %X{username}@%X{remoteAddr} %X{method}%X{url}%X{userAgent}%X{referer}%X{request}%X{responseTime}%n"
 				charset="UTF-8" />
 			<TimeBasedTriggeringPolicy />
 		</RollingFile>
 		<RollingFile name="ACCESS-WARN"
-			fileName="./logs/access-warn.log"
-			filePattern="./logs/access-warn.log.%d{yyyy-MM-dd}">
+			fileName="${sys:log.dir}/access-warn.log"
+			filePattern="${sys:log.dir}/access-warn.log.%d{yyyy-MM-dd}">
 			<ThresholdFilter level="WARN" />
 			<PatternLayout
 				pattern="%d %X{username}@%X{remoteAddr} %X{method}%X{url}%X{userAgent}%X{referer}%X{request} %m%n"
@@ -66,7 +70,7 @@
 			<AppenderRef ref="SQL" />
 		</Logger>
 		<Logger name="rest" additivity="false">
-			<AppenderRef ref="REST"/>
+			<AppenderRef ref="REST" />
 		</Logger>
 		<Logger name="access" level="INFO" additivity="false">
 			<AppenderRef ref="ACCESS" />
