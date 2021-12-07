@@ -18,7 +18,11 @@ dependencies {
 	api "io.opentracing.contrib:opentracing-spring-jaeger-web-starter:${project.properties['java-spring-jaeger.version']?:'latest.release'}"
 	api "io.opentracing.contrib:opentracing-jdbc:${project.properties['opentracing-jdbc.version']?:'latest.release'}"
 	api "io.opentracing.contrib:opentracing-redis-spring-data2:${project.properties['opentracing-spring-data-redis.version']?:'latest.release'}"
-	api "org.springdoc:springdoc-openapi-ui:${project.properties['springdoc.version']?:'latest.release'}"
+	ext {
+		springdocVersion = project.properties['springdoc.version']?:'latest.release'
+	}
+	api "org.springdoc:springdoc-openapi-ui:${springdocVersion}"
+	api "org.springdoc:springdoc-openapi-security:${springdocVersion}"
 	api "org.apache.commons:commons-pool2"
 	api "org.apache.logging.log4j:log4j-spring-boot"
 	implementation "org.springframework.boot:spring-boot-starter-amqp"

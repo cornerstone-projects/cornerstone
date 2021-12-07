@@ -102,6 +102,8 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 				new RestfulUsernamePasswordAuthenticationFilter(authenticationManager(), this.objectMapper));
 		http.formLogin().loginPage(this.properties.getLoginPage())
 				.loginProcessingUrl(this.properties.getLoginProcessingUrl())
+				.usernameParameter(this.properties.getUsernameParameter())
+				.passwordParameter(this.properties.getPasswordParameter())
 				.successHandler(authenticationSuccessHandler(http.getSharedObject(RequestCache.class)))
 				.failureHandler(authenticationFailureHandler()).and().logout().logoutUrl(this.properties.getLogoutUrl())
 				.logoutSuccessUrl(this.properties.getLoginPage());

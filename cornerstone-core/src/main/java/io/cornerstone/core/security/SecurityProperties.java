@@ -9,6 +9,9 @@ import lombok.Setter;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+import static org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.SPRING_SECURITY_FORM_PASSWORD_KEY;
+import static org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.SPRING_SECURITY_FORM_USERNAME_KEY;
+
 @ConfigurationProperties(prefix = "security")
 @Getter
 @Setter
@@ -29,6 +32,10 @@ public class SecurityProperties {
 	private String defaultSuccessUrl = DEFAULT_SUCCESS_URL;
 
 	private String logoutUrl = DEFAULT_LOGOUT_URL;
+
+	private String usernameParameter = SPRING_SECURITY_FORM_USERNAME_KEY;
+
+	private String passwordParameter = SPRING_SECURITY_FORM_PASSWORD_KEY;
 
 	private boolean protecting = true;
 
