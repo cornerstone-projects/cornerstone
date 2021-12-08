@@ -3,6 +3,7 @@ package io.cornerstone.core;
 import java.io.File;
 import java.io.IOException;
 import java.lang.StackWalker.StackFrame;
+import java.lang.invoke.MethodType;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.Inet4Address;
@@ -10,6 +11,7 @@ import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.util.Enumeration;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 import javax.servlet.ServletContext;
 
@@ -95,11 +97,21 @@ public class DefaultApplication extends SpringBootServletInitializer implements 
 	}
 
 	protected static void start(String[] args) throws Exception {
+		start(args, null);
+	}
+
+	protected static void start(String[] args, Consumer<ApplicationContext> postStartAction) throws Exception {
 		init(args);
 		Class<?> caller = StackWalker.getInstance(RETAIN_CLASS_REFERENCE)
-				.walk(stream1 -> stream1.skip(1).findFirst().map(StackFrame::getDeclaringClass)
+				.walk(s -> s
+						.filter(f -> f.getMethodName().equals("main")
+								&& f.getMethodType().equals(MethodType.methodType(void.class, String[].class)))
+						.reduce((first, second) -> second).map(StackFrame::getDeclaringClass)
 						.orElseThrow(() -> new RuntimeException("start() method should be called in main method")));
 		ApplicationContext ctx = SpringApplication.run(caller, args);
+		if (postStartAction != null) {
+			postStartAction.accept(ctx);
+		}
 		if (ctx.getEnvironment().acceptsProfiles(Profiles.of("dev"))) {
 			File source = new ApplicationHome(caller).getSource();
 			if (source != null && source.getAbsolutePath().endsWith("/bin/main")) {
