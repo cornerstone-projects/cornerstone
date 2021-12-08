@@ -23,6 +23,7 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.system.ApplicationHome;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.env.Profiles;
 import org.springframework.util.ClassUtils;
 
 import static java.lang.StackWalker.Option.RETAIN_CLASS_REFERENCE;
@@ -99,12 +100,14 @@ public class DefaultApplication extends SpringBootServletInitializer implements 
 				.walk(stream1 -> stream1.skip(1).findFirst().map(StackFrame::getDeclaringClass)
 						.orElseThrow(() -> new RuntimeException("start() method should be called in main method")));
 		ApplicationContext ctx = SpringApplication.run(caller, args);
-		File source = new ApplicationHome(caller).getSource();
-		if (source != null && source.getAbsolutePath().endsWith("/bin/main")) {
-			// run in eclipse
-			System.out.println("Press 'Enter' key to shutdown");
-			System.in.read();
-			System.exit(SpringApplication.exit(ctx));
+		if (ctx.getEnvironment().acceptsProfiles(Profiles.of("dev"))) {
+			File source = new ApplicationHome(caller).getSource();
+			if (source != null && source.getAbsolutePath().endsWith("/bin/main")) {
+				// run in eclipse
+				System.out.println("Press 'Enter' key to shutdown");
+				System.in.read();
+				System.exit(SpringApplication.exit(ctx));
+			}
 		}
 	}
 
