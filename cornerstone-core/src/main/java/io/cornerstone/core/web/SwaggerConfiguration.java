@@ -5,6 +5,7 @@ import java.util.Date;
 import javax.annotation.PostConstruct;
 
 import io.cornerstone.core.security.SecurityProperties;
+import io.cornerstone.core.security.verification.VerificationManager;
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.PathItem;
 import io.swagger.v3.oas.models.media.Content;
@@ -27,6 +28,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.SortDefault;
 
+import static io.cornerstone.core.security.DefaultWebAuthenticationDetails.PARAMETER_NAME_VERIFICATION_CODE;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -41,13 +43,16 @@ public class SwaggerConfiguration {
 	}
 
 	@Bean
-	OpenApiCustomiser springSecurityLoginEndpointCustomiser(ObjectProvider<SecurityProperties> propertiesProvider) {
+	OpenApiCustomiser springSecurityLoginEndpointCustomiser(ObjectProvider<SecurityProperties> propertiesProvider,
+			ObjectProvider<VerificationManager> verificationManagerProvider) {
 		return openAPI -> {
 			propertiesProvider.ifAvailable(properties -> {
 				Operation operation = new Operation();
 				Schema<?> requestSchema = new ObjectSchema()
-						.addProperties(properties.getUsernameParameter(), new StringSchema())
-						.addProperties(properties.getPasswordParameter(), new StringSchema());
+						.addProperties(properties.getUsernameParameter(), new StringSchema()._default("user"))
+						.addProperties(properties.getPasswordParameter(), new StringSchema()._default("password"));
+				verificationManagerProvider.ifAvailable(vm -> requestSchema
+						.addProperties(PARAMETER_NAME_VERIFICATION_CODE, new StringSchema()._default("000000")));
 				RequestBody requestBody = new RequestBody().content(
 						new Content().addMediaType(APPLICATION_JSON_VALUE, new MediaType().schema(requestSchema)));
 				operation.requestBody(requestBody);

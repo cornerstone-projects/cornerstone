@@ -1,6 +1,5 @@
 package io.cornerstone.core.security.verification;
 
-import io.cornerstone.core.security.VerificationCodeChecker;
 import io.cornerstone.core.security.verification.impl.DefaultVerificationCodeChecker;
 import io.cornerstone.core.security.verification.impl.DefaultVerificationManager;
 import io.cornerstone.core.security.verification.impl.DefaultVerificationService;
@@ -38,7 +37,7 @@ public class VerificationConfigration {
 
 	@ConditionalOnMissingBean
 	@Bean
-	VerificationCodeChecker defaultVerificationCodeChecker(VerificationManager verificationManager,
+	DefaultVerificationCodeChecker defaultVerificationCodeChecker(VerificationManager verificationManager,
 			VerificationProperties properties) {
 		return new DefaultVerificationCodeChecker(verificationManager, properties.isQualified());
 	}
