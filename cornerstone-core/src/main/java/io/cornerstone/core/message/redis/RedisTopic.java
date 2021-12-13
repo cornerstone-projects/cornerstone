@@ -1,7 +1,7 @@
 package io.cornerstone.core.message.redis;
 
 import java.io.Serializable;
-import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.Executor;
 
 import javax.annotation.PostConstruct;
@@ -84,7 +84,7 @@ public abstract class RedisTopic<T extends Serializable> implements io.cornersto
 					throw ex;
 				}
 			}
-		}, Arrays.asList(topics));
+		}, List.of(topics));
 	}
 
 	private String getChannelName(Scope scope) {

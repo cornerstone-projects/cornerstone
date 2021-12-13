@@ -4,8 +4,8 @@ import java.beans.FeatureDescriptor;
 import java.beans.PropertyDescriptor;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -26,7 +26,7 @@ public class BeanUtils {
 		Set<String> ignores = new HashSet<>(Stream.of(bw.getPropertyDescriptors()).map(FeatureDescriptor::getName)
 				.filter(name -> bw.getPropertyValue(name) == null).collect(Collectors.toSet()));
 		if (ignoreProperties.length > 0) {
-			ignores.addAll(Arrays.asList(ignoreProperties));
+			ignores.addAll(List.of(ignoreProperties));
 		}
 		org.springframework.beans.BeanUtils.copyProperties(source, target, ignores.toArray(new String[0]));
 	}

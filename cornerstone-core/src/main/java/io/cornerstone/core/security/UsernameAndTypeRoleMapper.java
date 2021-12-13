@@ -1,7 +1,7 @@
 package io.cornerstone.core.security;
 
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 import io.cornerstone.core.util.ReflectionUtils;
 
@@ -17,7 +17,7 @@ public class UsernameAndTypeRoleMapper implements UserRoleMapper {
 
 	@Override
 	public Collection<String> mapRoles(UserDetails user) {
-		return Arrays.asList(mapUsername(user), mapUserType(user));
+		return List.of(mapUsername(user), mapUserType(user));
 	}
 
 	public static String mapUsername(UserDetails user) {

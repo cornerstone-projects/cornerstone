@@ -1,7 +1,7 @@
 package io.cornerstone.core.servlet;
 
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import javax.servlet.Filter;
@@ -125,7 +125,7 @@ public class AccessFilter implements Filter {
 				StringBuilder msg = new StringBuilder();
 				msg.append(request.getQueryString()).append(" response time:").append(responseTime).append("ms");
 				this.accesWarnLog.warn(msg.toString());
-				Metrics.timer("http.access.slow", Arrays.asList(Tag.of("uri", uri))).record(responseTime,
+				Metrics.timer("http.access.slow", List.of(Tag.of("uri", uri))).record(responseTime,
 						TimeUnit.MILLISECONDS);
 			}
 		}

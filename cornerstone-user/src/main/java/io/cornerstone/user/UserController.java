@@ -8,7 +8,6 @@ import java.io.PrintWriter;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
 
@@ -122,7 +121,7 @@ public class UserController extends AbstractEntityController<User, Long> {
 					roles = roles.substring(1, roles.length() - 1);
 				}
 				if (!roles.isEmpty()) {
-					user.setRoles(new LinkedHashSet<>(Arrays.asList(roles.split(" "))));
+					user.setRoles(new LinkedHashSet<>(List.of(roles.split(" "))));
 				}
 				user.setDisabled(Boolean.valueOf(arr[4]));
 				batch.add(user);

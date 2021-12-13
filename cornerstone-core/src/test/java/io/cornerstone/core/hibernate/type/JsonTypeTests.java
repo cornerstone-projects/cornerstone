@@ -1,7 +1,7 @@
 package io.cornerstone.core.hibernate.type;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
+import java.util.List;
 
 import io.cornerstone.test.DataJpaTestBase;
 import org.junit.jupiter.api.Test;
@@ -22,7 +22,7 @@ class JsonTypeTests extends DataJpaTestBase {
 	@Test
 	void test() {
 		TestEntity entity = new TestEntity();
-		entity.setTestComponentList(Arrays.asList(new TestComponent("a", 1, new BigDecimal("10.1")),
+		entity.setTestComponentList(List.of(new TestComponent("a", 1, new BigDecimal("10.1")),
 				new TestComponent("b", 2, new BigDecimal("10.2")), new TestComponent("c", 3, new BigDecimal("10.3"))));
 		this.repository.save(entity);
 		flushAndClear();

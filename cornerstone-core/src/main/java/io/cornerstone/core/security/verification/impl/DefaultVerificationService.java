@@ -1,6 +1,6 @@
 package io.cornerstone.core.security.verification.impl;
 
-import java.util.Arrays;
+import java.util.List;
 
 import io.cornerstone.core.security.verification.VerificationCodeGenerator;
 import io.cornerstone.core.security.verification.VerificationCodeNotifier;
@@ -63,13 +63,13 @@ public class DefaultVerificationService implements VerificationService {
 			Long times = opsForValue.increment(key);
 			this.stringRedisTemplate.expire(key, this.properties.getExpiry());
 			if (times != null && times >= this.properties.getVerify().getMaxAttempts()) {
-				this.stringRedisTemplate.delete(
-						Arrays.asList(CACHE_NAMESPACE + receiver, CACHE_NAMESPACE + receiver + SUFFIX_THRESHOLD));
+				this.stringRedisTemplate
+						.delete(List.of(CACHE_NAMESPACE + receiver, CACHE_NAMESPACE + receiver + SUFFIX_THRESHOLD));
 			}
 		}
 		else {
 			this.stringRedisTemplate
-					.delete(Arrays.asList(CACHE_NAMESPACE + receiver, CACHE_NAMESPACE + receiver + SUFFIX_THRESHOLD));
+					.delete(List.of(CACHE_NAMESPACE + receiver, CACHE_NAMESPACE + receiver + SUFFIX_THRESHOLD));
 		}
 		return verified;
 	}

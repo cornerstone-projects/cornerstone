@@ -5,8 +5,8 @@ import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Arrays;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Locale;
 
 import javax.sql.DataSource;
@@ -97,7 +97,7 @@ public class MySQLSimpleSequence extends AbstractDatabaseSimpleSequence {
 			catch (Throwable th) {
 			}
 			for (String table : new LinkedHashSet<>(
-					Arrays.asList(tableName.toUpperCase(Locale.ROOT), tableName, tableName.toLowerCase(Locale.ROOT)))) {
+					List.of(tableName.toUpperCase(Locale.ROOT), tableName, tableName.toLowerCase(Locale.ROOT)))) {
 				try (ResultSet rs = dbmd.getTables(catalog, schema, table, new String[] { "TABLE" })) {
 					if (rs.next()) {
 						tableExists = true;

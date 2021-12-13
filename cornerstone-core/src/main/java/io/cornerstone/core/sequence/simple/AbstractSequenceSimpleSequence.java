@@ -5,8 +5,8 @@ import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Arrays;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Locale;
 
 import org.springframework.dao.DataAccessException;
@@ -50,8 +50,8 @@ public abstract class AbstractSequenceSimpleSequence extends AbstractDatabaseSim
 		}
 		catch (Throwable th) {
 		}
-		for (String sequence : new LinkedHashSet<>(Arrays.asList(sequenceName.toUpperCase(Locale.ROOT), sequenceName,
-				sequenceName.toLowerCase(Locale.ROOT)))) {
+		for (String sequence : new LinkedHashSet<>(
+				List.of(sequenceName.toUpperCase(Locale.ROOT), sequenceName, sequenceName.toLowerCase(Locale.ROOT)))) {
 			try (ResultSet rs = dbmd.getTables(catalog, schema, sequence, new String[] { "SEQUENCE" })) {
 				if (rs.next()) {
 					return true;

@@ -1,9 +1,9 @@
 package io.cornerstone.core.hibernate.integrated;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashSet;
+import java.util.List;
 
 import io.cornerstone.test.DataJpaTestBase;
 import org.junit.jupiter.api.Test;
@@ -28,22 +28,22 @@ class IntegratedEntityTests extends DataJpaTestBase {
 	void test() {
 		TestEntity entity = new TestEntity();
 		entity.setStringArray(new String[] { "a", "b", "c" });
-		entity.setStringList(Arrays.asList(entity.getStringArray()));
+		entity.setStringList(List.of(entity.getStringArray()));
 		entity.setStringSet(new LinkedHashSet<>(entity.getStringList()));
 		entity.setStringMap(Collections.singletonMap("key", "value"));
 		entity.setIntegerArray(new Integer[] { 1, 2, 3 });
-		entity.setIntegerList(Arrays.asList(entity.getIntegerArray()));
+		entity.setIntegerList(List.of(entity.getIntegerArray()));
 		entity.setIntegerSet(new LinkedHashSet<>(entity.getIntegerList()));
 		entity.setLongArray(new Long[] { 1L, 2L, 3L });
-		entity.setLongList(Arrays.asList(entity.getLongArray()));
+		entity.setLongList(List.of(entity.getLongArray()));
 		entity.setLongSet(new LinkedHashSet<>(entity.getLongList()));
 		entity.setEnumArray(new TestEntity.TestEnum[] { A, B, C });
-		entity.setEnumList(Arrays.asList(entity.getEnumArray()));
+		entity.setEnumList(List.of(entity.getEnumArray()));
 		entity.setEnumSet(new LinkedHashSet<>(entity.getEnumList()));
-		entity.setTestComponentList(Arrays.asList(new TestEntity.TestComponent("a", 1, new BigDecimal("10.1")),
+		entity.setTestComponentList(List.of(new TestEntity.TestComponent("a", 1, new BigDecimal("10.1")),
 				new TestEntity.TestComponent("b", 2, new BigDecimal("10.2")),
 				new TestEntity.TestComponent("c", 3, new BigDecimal("10.3"))));
-		entity.setAnotherComponentList(Arrays.asList(new TestEntity.AnotherComponent("a", 1, new BigDecimal("10.1")),
+		entity.setAnotherComponentList(List.of(new TestEntity.AnotherComponent("a", 1, new BigDecimal("10.1")),
 				new TestEntity.AnotherComponent("b", 2, new BigDecimal("10.2")),
 				new TestEntity.AnotherComponent("c", 3, new BigDecimal("10.3"))));
 		this.repository.save(entity);

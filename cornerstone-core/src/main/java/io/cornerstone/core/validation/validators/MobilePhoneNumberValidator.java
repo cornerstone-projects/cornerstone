@@ -1,6 +1,5 @@
 package io.cornerstone.core.validation.validators;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -65,7 +64,7 @@ public class MobilePhoneNumberValidator implements ConstraintValidator<MobilePho
 		private List<String> numberPrefixes;
 
 		Carrier(String... strings) {
-			this.numberPrefixes = Collections.unmodifiableList(Arrays.asList(strings));
+			this.numberPrefixes = Collections.unmodifiableList(List.of(strings));
 		}
 
 		public List<String> getNumberPrefixes() {

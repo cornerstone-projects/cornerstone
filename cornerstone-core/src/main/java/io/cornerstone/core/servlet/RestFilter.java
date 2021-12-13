@@ -1,7 +1,6 @@
 package io.cornerstone.core.servlet;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
@@ -116,7 +115,7 @@ public class RestFilter implements Filter {
 		@Override
 		public Enumeration<String> getHeaders(String name) {
 			if (CONTENT_TYPE.equalsIgnoreCase(name)) {
-				return Collections.enumeration(Arrays.asList(getContentType()));
+				return Collections.enumeration(List.of(getContentType()));
 			}
 			return super.getHeaders(name);
 		}
