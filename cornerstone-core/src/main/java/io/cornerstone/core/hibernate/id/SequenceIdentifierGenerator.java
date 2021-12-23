@@ -7,7 +7,6 @@ import io.cornerstone.core.sequence.Sequence;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.MappingException;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
-import org.hibernate.id.Configurable;
 import org.hibernate.id.IdentifierGenerator;
 import org.hibernate.service.ServiceRegistry;
 import org.hibernate.type.IntegerType;
@@ -17,7 +16,7 @@ import org.hibernate.type.Type;
 import org.springframework.beans.factory.BeanFactory;
 
 @RequiredArgsConstructor
-public class SequenceIdentifierGenerator implements IdentifierGenerator, Configurable {
+public class SequenceIdentifierGenerator implements IdentifierGenerator {
 
 	private final BeanFactory beanFactory;
 
