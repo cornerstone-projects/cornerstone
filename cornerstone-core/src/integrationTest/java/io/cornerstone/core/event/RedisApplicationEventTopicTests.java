@@ -15,7 +15,7 @@ import org.springframework.test.context.ContextConfiguration;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.verify;
+import static org.mockito.BDDMockito.then;
 
 @ContextConfiguration(classes = { RedisApplicationEventTopicTests.Config.class, Redis.class })
 class RedisApplicationEventTopicTests extends ApplicationEventTopicTestBase {
@@ -27,7 +27,7 @@ class RedisApplicationEventTopicTests extends ApplicationEventTopicTestBase {
 	void publishLocalScopeEvent() {
 		TestEvent event = new TestEvent("");
 		this.eventPublisher.publish(event, Scope.LOCAL);
-		verify(this.testListener).listen(eq(event));
+		then(this.testListener).should().listen(eq(event));
 	}
 
 	@Test
@@ -36,9 +36,9 @@ class RedisApplicationEventTopicTests extends ApplicationEventTopicTestBase {
 		given(this.connectionFactory.getConnection()).willAnswer(resultCaptor);
 		TestEvent event = new TestEvent("");
 		this.eventPublisher.publish(event, Scope.APPLICATION);
-		verify(resultCaptor.getResult()).publish(any(), any());
+		then(resultCaptor.getResult()).should().publish(any(), any());
 		Thread.sleep(100); // wait network response
-		verify(this.testListener).listen(eq(event));
+		then(this.testListener).should().listen(eq(event));
 	}
 
 	@Test
@@ -47,9 +47,9 @@ class RedisApplicationEventTopicTests extends ApplicationEventTopicTestBase {
 		given(this.connectionFactory.getConnection()).willAnswer(resultCaptor);
 		TestEvent event = new TestEvent("");
 		this.eventPublisher.publish(event, Scope.GLOBAL);
-		verify(resultCaptor.getResult()).publish(any(), any());
+		then(resultCaptor.getResult()).should().publish(any(), any());
 		Thread.sleep(100); // wait network response
-		verify(this.testListener).listen(eq(event));
+		then(this.testListener).should().listen(eq(event));
 	}
 
 	static class Config {

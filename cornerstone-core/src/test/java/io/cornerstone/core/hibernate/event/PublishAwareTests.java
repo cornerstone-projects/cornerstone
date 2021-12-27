@@ -22,8 +22,8 @@ import static io.cornerstone.core.hibernate.event.EntityOperationType.CREATE;
 import static io.cornerstone.core.hibernate.event.EntityOperationType.DELETE;
 import static io.cornerstone.core.hibernate.event.EntityOperationType.UPDATE;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.verify;
 
 @ContextConfiguration(classes = { PublishAwareTests.Config.class })
 @EnableJpaRepositories(basePackageClasses = TestEntityRepository.class)
@@ -51,7 +51,7 @@ class PublishAwareTests extends DataJpaTestBase {
 	@Test
 	void cud() {
 		TestEntity entity = this.repository.save(new TestEntity());
-		verify(this.testListener).on(this.eventCaptor.capture());
+		then(this.testListener).should().on(this.eventCaptor.capture());
 		EntityOperationEvent<TestEntity> event = this.eventCaptor.getValue();
 		assertThat(event).isNotNull();
 		assertThat(event.getType()).isSameAs(CREATE);
@@ -59,14 +59,14 @@ class PublishAwareTests extends DataJpaTestBase {
 
 		entity.setName("test");
 		entity = this.repository.save(entity);
-		verify(this.testListener).on(this.eventCaptor.capture());
+		then(this.testListener).should().on(this.eventCaptor.capture());
 		event = this.eventCaptor.getValue();
 		assertThat(event).isNotNull();
 		assertThat(event.getType()).isSameAs(UPDATE);
 		reset(this.testListener);
 
 		this.repository.delete(entity);
-		verify(this.testListener).on(this.eventCaptor.capture());
+		then(this.testListener).should().on(this.eventCaptor.capture());
 		event = this.eventCaptor.getValue();
 		assertThat(event).isNotNull();
 		assertThat(event.getType()).isSameAs(DELETE);
@@ -76,7 +76,7 @@ class PublishAwareTests extends DataJpaTestBase {
 	@Test
 	void saveAndUpdate() {
 		this.testService.saveAndUpdate();
-		verify(this.testListener).on(this.eventCaptor.capture());
+		then(this.testListener).should().on(this.eventCaptor.capture());
 		EntityOperationEvent<TestEntity> event = this.eventCaptor.getValue();
 		assertThat(event).isNotNull();
 		assertThat(event.getType()).isSameAs(CREATE);
@@ -85,7 +85,7 @@ class PublishAwareTests extends DataJpaTestBase {
 	@Test
 	void saveAndUpdateAndDelete() {
 		this.testService.saveAndUpdateAndDelete();
-		verify(this.testListener).on(this.eventCaptor.capture());
+		then(this.testListener).should().on(this.eventCaptor.capture());
 		EntityOperationEvent<TestEntity> event = this.eventCaptor.getValue();
 		assertThat(event).isNotNull();
 		assertThat(event.getType()).isSameAs(DELETE);

@@ -11,8 +11,8 @@ import org.springframework.test.context.TestPropertySource;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.never;
 
 @ContextConfiguration(classes = { RabbitApplicationEventTopic.class, RabbitMQ.class })
 @TestPropertySource(properties = "application-event.topic.type=rabbit")
@@ -25,27 +25,27 @@ class RabbitApplicationEventTopicTests extends ApplicationEventTopicTestBase {
 	void publishLocalScopeEvent() {
 		TestEvent event = new TestEvent("");
 		this.eventPublisher.publish(event, Scope.LOCAL);
-		verify(this.rabbitTemplate, times(0)).convertAndSend(any(String.class), any(String.class),
+		then(this.rabbitTemplate).should(never()).convertAndSend(any(String.class), any(String.class),
 				any(TestEvent.class));
-		verify(this.testListener).listen(eq(event));
+		then(this.testListener).should().listen(eq(event));
 	}
 
 	@Test
 	void publishApplicationScopeEvent() throws Exception {
 		TestEvent event = new TestEvent("");
 		this.eventPublisher.publish(event, Scope.APPLICATION);
-		verify(this.rabbitTemplate).convertAndSend(any(String.class), any(String.class), eq(event));
+		then(this.rabbitTemplate).should().convertAndSend(any(String.class), any(String.class), eq(event));
 		Thread.sleep(100); // wait network response
-		verify(this.testListener).listen(eq(event));
+		then(this.testListener).should().listen(eq(event));
 	}
 
 	@Test
 	void publishGlobalScopeEvent() throws Exception {
 		TestEvent event = new TestEvent("");
 		this.eventPublisher.publish(event, Scope.GLOBAL);
-		verify(this.rabbitTemplate).convertAndSend(any(String.class), any(String.class), eq(event));
+		then(this.rabbitTemplate).should().convertAndSend(any(String.class), any(String.class), eq(event));
 		Thread.sleep(100); // wait network response
-		verify(this.testListener).listen(eq(event));
+		then(this.testListener).should().listen(eq(event));
 	}
 
 }

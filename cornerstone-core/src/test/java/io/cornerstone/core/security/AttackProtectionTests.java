@@ -31,9 +31,8 @@ import static io.cornerstone.core.security.SecurityProperties.DEFAULT_LOGIN_PROC
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
@@ -65,7 +64,7 @@ class AttackProtectionTests extends ControllerTestBase {
 		assertThat(response.getBody().get("message")).isEqualTo(this.messageSource.getMessage("JdbcDaoImpl.notFound",
 				new Object[] { username }, "Username {0} not found", Locale.getDefault()));
 		assertThat(response.getBody().get("path")).isEqualTo(DEFAULT_LOGIN_PROCESSING_URL);
-		verifyNoInteractions(this.userDetailsService);
+		then(this.userDetailsService).shouldHaveNoInteractions();
 
 		username = "abcdedfhijkl";
 		response = login(username, DEFAULT_PASSWORD);
@@ -74,7 +73,7 @@ class AttackProtectionTests extends ControllerTestBase {
 		assertThat(response.getBody().get("message")).isNotEqualTo(this.messageSource.getMessage("JdbcDaoImpl.notFound",
 				new Object[] { username }, "Username {0} not found", Locale.getDefault()));
 		assertThat(response.getBody().get("path")).isEqualTo(DEFAULT_LOGIN_PROCESSING_URL);
-		verify(this.userDetailsService).loadUserByUsername(username);
+		then(this.userDetailsService).should().loadUserByUsername(username);
 	}
 
 	@Test
@@ -93,7 +92,7 @@ class AttackProtectionTests extends ControllerTestBase {
 		ResponseEntity<Map<String, Object>> response = login(username, "********");
 		assertThat(response.getStatusCode()).isSameAs(UNAUTHORIZED);
 		assertThat(response.getBody().get("message")).isNotEqualTo(message);
-		verify(opsForValue).increment(key);
+		then(opsForValue).should().increment(key);
 
 		given(opsForValue.increment(key, 0)).willReturn(maxAttempts);
 		response = login(username, "********");

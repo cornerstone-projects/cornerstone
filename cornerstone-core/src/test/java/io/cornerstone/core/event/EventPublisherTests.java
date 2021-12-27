@@ -17,9 +17,8 @@ import org.springframework.test.context.ContextConfiguration;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.BDDMockito.then;
 import static org.mockito.BDDMockito.willAnswer;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 
 @TestMethodOrder(OrderAnnotation.class)
 @ContextConfiguration(classes = EventPublisherTests.Config.class)
@@ -40,7 +39,7 @@ class EventPublisherTests extends SpringApplicationTestBase {
 	@Test
 	@Order(1)
 	void publishApplicationContextEventAsGlobal() {
-		verify(this.applicationEventTopic).publish(any(InstanceStartupEvent.class), eq(Scope.GLOBAL));
+		then(this.applicationEventTopic).should().publish(any(InstanceStartupEvent.class), eq(Scope.GLOBAL));
 	}
 
 	@Test
@@ -48,8 +47,8 @@ class EventPublisherTests extends SpringApplicationTestBase {
 	void publishLocalScopeEvent() {
 		TestEvent event = new TestEvent("");
 		this.eventPublisher.publish(event, Scope.LOCAL);
-		verifyNoInteractions(this.applicationEventTopic);
-		verify(this.testListener).listen(eq(event));
+		then(this.applicationEventTopic).shouldHaveNoInteractions();
+		then(this.testListener).should().listen(eq(event));
 	}
 
 	@Test
@@ -61,8 +60,8 @@ class EventPublisherTests extends SpringApplicationTestBase {
 		}).given(this.applicationEventTopic).publish(any(TestEvent.class), eq(Scope.APPLICATION));
 		TestEvent event = new TestEvent("");
 		this.eventPublisher.publish(event, Scope.APPLICATION);
-		verify(this.applicationEventTopic).publish(eq(event), eq(Scope.APPLICATION));
-		verify(this.testListener).listen(eq(event));
+		then(this.applicationEventTopic).should().publish(eq(event), eq(Scope.APPLICATION));
+		then(this.testListener).should().listen(eq(event));
 	}
 
 	@Test
@@ -74,8 +73,8 @@ class EventPublisherTests extends SpringApplicationTestBase {
 		}).given(this.applicationEventTopic).publish(any(TestEvent.class), eq(Scope.GLOBAL));
 		TestEvent event = new TestEvent("");
 		this.eventPublisher.publish(event, Scope.GLOBAL);
-		verify(this.applicationEventTopic).publish(eq(event), eq(Scope.GLOBAL));
-		verify(this.testListener).listen(eq(event));
+		then(this.applicationEventTopic).should().publish(eq(event), eq(Scope.GLOBAL));
+		then(this.testListener).should().listen(eq(event));
 	}
 
 	static class Config {

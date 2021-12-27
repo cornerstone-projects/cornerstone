@@ -16,7 +16,7 @@ import org.springframework.test.context.ContextConfiguration;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.verify;
+import static org.mockito.BDDMockito.then;
 
 @ContextConfiguration(classes = { RedisQueueTests.Config.class, Redis.class })
 class RedisQueueTests extends QueueTestBase {
@@ -29,7 +29,7 @@ class RedisQueueTests extends QueueTestBase {
 		ResultCaptor<RedisConnection> resultCaptor = new ResultCaptor<>(Mockito::spy);
 		given(this.connectionFactory.getConnection()).willAnswer(resultCaptor);
 		this.testQueue.produce("test");
-		verify(resultCaptor.getResult()).rPush(any(), any());
+		then(resultCaptor.getResult()).should().rPush(any(), any());
 	}
 
 	static class Config {

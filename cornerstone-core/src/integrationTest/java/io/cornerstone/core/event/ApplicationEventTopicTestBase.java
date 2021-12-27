@@ -13,7 +13,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
+import static org.mockito.BDDMockito.then;
 
 @ContextConfiguration(classes = ApplicationEventTopicTestBase.Config.class)
 @ExtendWith(SpringExtension.class)
@@ -31,7 +31,7 @@ abstract class ApplicationEventTopicTestBase {
 		TestEvent event = new TestEvent(scope.name());
 		this.eventPublisher.publish(event, scope);
 		Thread.sleep(100);
-		verify(this.testListener).listen(eq(event));
+		then(this.testListener).should().listen(eq(event));
 	}
 
 	static class Config {

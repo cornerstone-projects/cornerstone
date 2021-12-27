@@ -49,8 +49,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 import static org.springframework.http.HttpHeaders.ACCEPT;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.HttpMethod.POST;
@@ -100,7 +100,7 @@ class LoginWithVerificationCodeTests extends ControllerTestBase {
 		ResponseEntity<String> response = this.testRestTemplate.postForEntity("/verificationCode/" + username, null,
 				String.class);
 		assertThat(response.getStatusCode()).isSameAs(OK);
-		verify(opsForValue).set(eq(key), this.verificationCodeCaptor.capture(), any(Duration.class));
+		then(opsForValue).should().set(eq(key), this.verificationCodeCaptor.capture(), any(Duration.class));
 
 		String verificationCode = this.verificationCodeCaptor.getValue();
 
@@ -127,7 +127,7 @@ class LoginWithVerificationCodeTests extends ControllerTestBase {
 		ResponseEntity<String> response = this.testRestTemplate.postForEntity("/verificationCode/" + username, null,
 				String.class);
 		assertThat(response.getStatusCode()).isSameAs(OK);
-		verify(opsForValue).set(eq(key), this.verificationCodeCaptor.capture(), any(Duration.class));
+		then(opsForValue).should().set(eq(key), this.verificationCodeCaptor.capture(), any(Duration.class));
 		String verificationCode = this.verificationCodeCaptor.getValue();
 		given(opsForValue.get(key)).willReturn(verificationCode);
 		response = formLogin(username, null, verificationCode);
@@ -137,7 +137,7 @@ class LoginWithVerificationCodeTests extends ControllerTestBase {
 		// verificationCode instead of password
 		response = this.testRestTemplate.postForEntity("/verificationCode/" + username, null, String.class);
 		assertThat(response.getStatusCode()).isSameAs(OK);
-		verify(opsForValue).set(eq(key), this.verificationCodeCaptor.capture(), any(Duration.class));
+		then(opsForValue).should().set(eq(key), this.verificationCodeCaptor.capture(), any(Duration.class));
 		verificationCode = this.verificationCodeCaptor.getValue();
 		given(opsForValue.get(key)).willReturn(verificationCode);
 		response = formLogin(username, verificationCode, null);
@@ -175,7 +175,7 @@ class LoginWithVerificationCodeTests extends ControllerTestBase {
 		assertThat(requirement.getSendingRequired()).isEqualTo(Boolean.TRUE);
 
 		this.testRestTemplate.postForEntity("/verificationCode/" + username, null, String.class);
-		verify(opsForValue).set(eq(key), this.verificationCodeCaptor.capture(), any(Duration.class));
+		then(opsForValue).should().set(eq(key), this.verificationCodeCaptor.capture(), any(Duration.class));
 
 		String verificationCode = this.verificationCodeCaptor.getValue();
 

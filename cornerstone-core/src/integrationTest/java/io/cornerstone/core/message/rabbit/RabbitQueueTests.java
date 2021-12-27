@@ -14,7 +14,7 @@ import org.springframework.test.context.ContextConfiguration;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
+import static org.mockito.BDDMockito.then;
 
 @ContextConfiguration(classes = { RabbitQueueTests.Config.class, RabbitMQ.class })
 class RabbitQueueTests extends QueueTestBase {
@@ -26,7 +26,7 @@ class RabbitQueueTests extends QueueTestBase {
 	void produce() {
 		String message = "test";
 		this.testQueue.produce(message);
-		verify(this.rabbitTemplate).convertAndSend(any(String.class), eq(message));
+		then(this.rabbitTemplate).should().convertAndSend(any(String.class), eq(message));
 	}
 
 	static class Config {

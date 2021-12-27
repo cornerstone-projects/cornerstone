@@ -23,7 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.verify;
+import static org.mockito.BDDMockito.then;
 
 @ContextConfiguration(classes = { RedisTopicTests.Config.class, Redis.class })
 class RedisTopicTests extends TopicTestBase {
@@ -40,7 +40,7 @@ class RedisTopicTests extends TopicTestBase {
 		given(this.connectionFactory.getConnection()).willAnswer(resultCaptor);
 		this.testTopic.publish("test", Scope.LOCAL);
 		assertThat(resultCaptor.getResult()).isNull();
-		verify(this.messageProcessor).process(eq("test"));
+		then(this.messageProcessor).should().process(eq("test"));
 	}
 
 	@Test
@@ -48,10 +48,10 @@ class RedisTopicTests extends TopicTestBase {
 		ResultCaptor<RedisConnection> resultCaptor = new ResultCaptor<>(Mockito::spy);
 		given(this.connectionFactory.getConnection()).willAnswer(resultCaptor);
 		this.testTopic.publish("test", Scope.APPLICATION);
-		verify(resultCaptor.getResult()).publish(this.channelCaptor.capture(), any());
+		then(resultCaptor.getResult()).should().publish(this.channelCaptor.capture(), any());
 		assertThat(new String(this.channelCaptor.getValue())).endsWith('.' + this.application.getName());
 		Thread.sleep(100); // wait network response
-		verify(this.messageProcessor).process(eq("test"));
+		then(this.messageProcessor).should().process(eq("test"));
 	}
 
 	@Test
@@ -59,10 +59,10 @@ class RedisTopicTests extends TopicTestBase {
 		ResultCaptor<RedisConnection> resultCaptor = new ResultCaptor<>(Mockito::spy);
 		given(this.connectionFactory.getConnection()).willAnswer(resultCaptor);
 		this.testTopic.publish("test", Scope.GLOBAL);
-		verify(resultCaptor.getResult()).publish(this.channelCaptor.capture(), any());
+		then(resultCaptor.getResult()).should().publish(this.channelCaptor.capture(), any());
 		assertThat(new String(this.channelCaptor.getValue())).doesNotEndWith('.' + this.application.getName());
 		Thread.sleep(100); // wait network response
-		verify(this.messageProcessor).process(eq("test"));
+		then(this.messageProcessor).should().process(eq("test"));
 	}
 
 	static class Config {
