@@ -44,7 +44,7 @@ class PublishAwareTests extends DataJpaTestBase {
 	ArgumentCaptor<EntityOperationEvent<TestEntity>> eventCaptor;
 
 	@AfterEach
-	private void cleanup() {
+	void cleanup() {
 		this.repository.deleteAll();
 	}
 
