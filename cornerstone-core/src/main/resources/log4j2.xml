@@ -2,7 +2,7 @@
 <!DOCTYPE Configuration>
 <Configuration>
 	<Properties>
-		<Property name="log.dir">${sys:user.home}/${spring:spring.application.name}/logs/$${spring:server.port:-}</Property>
+		<Property name="log.dir">${sys:user.home}/${spring:spring.application.name}/logs/${spring:server.port:-}</Property>
 	</Properties>
 	<Appenders>
 		<Console name="CONSOLE" target="SYSTEM_OUT" follow="true">
