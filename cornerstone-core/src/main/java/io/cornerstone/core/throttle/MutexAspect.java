@@ -38,6 +38,9 @@ public class MutexAspect extends BaseAspect {
 		Method method = ((MethodSignature) pjp.getSignature()).getMethod();
 		String key = mutex.key();
 		if (!StringUtils.hasLength(key)) {
+			key = buildKey(pjp);
+		}
+		else {
 			String[] paramNames = ReflectionUtils.getParameterNames(method);
 			Object[] paramValues = pjp.getArgs();
 			StandardEvaluationContext context = new StandardEvaluationContext();
