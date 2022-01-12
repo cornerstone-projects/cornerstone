@@ -1,5 +1,6 @@
 package io.cornerstone.core.cache;
 
+import com.fasterxml.jackson.core.JsonParseException;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.cache.Cache;
@@ -15,6 +16,9 @@ public class DefaultCacheErrorHandler implements CacheErrorHandler {
 	public void handleCacheGetError(RuntimeException exception, Cache cache, Object key) {
 		if (exception instanceof SerializationFailedException
 				|| exception.getCause() instanceof SerializationFailedException) {
+			return;
+		}
+		if (exception.getCause() instanceof JsonParseException) {
 			return;
 		}
 		if (exception instanceof QueryTimeoutException) {
