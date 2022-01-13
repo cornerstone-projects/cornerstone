@@ -1,6 +1,7 @@
 package io.cornerstone.core.redis.serializer;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -44,9 +45,14 @@ public abstract class RedisSerializerTestBase {
 	void testSimpleObject() {
 		test(Scope.GLOBAL);
 		test(new Date());
-		test(LocalDateTime.now());
 		test(new BigDecimal("100.00"));
 		test(new AtomicInteger(100));
+	}
+
+	@Test
+	void testDateAndTime() {
+		test(LocalDate.now());
+		test(LocalDateTime.now());
 	}
 
 	@Test
@@ -73,8 +79,7 @@ public abstract class RedisSerializerTestBase {
 
 	private void test(Object obj) {
 		RedisSerializer<Object> serializer = getRedisSerializer();
-		byte[] bytes = serializer.serialize(obj);
-		Object obj2 = serializer.deserialize(bytes);
+		Object obj2 = serializer.deserialize(serializer.serialize(obj));
 		if (obj instanceof NullValue || obj instanceof Enum) {
 			assertThat(obj2).isSameAs(obj);
 		}
@@ -93,7 +98,7 @@ public abstract class RedisSerializerTestBase {
 	}
 
 	@Data
-	static class User implements UserDetails {
+	public static class User implements UserDetails {
 
 		private static final long serialVersionUID = 1L;
 
@@ -135,7 +140,7 @@ public abstract class RedisSerializerTestBase {
 			return this.status == Status.ACTIVE;
 		}
 
-		User getSelf() {
+		public User getSelf() {
 			return this;
 		}
 
