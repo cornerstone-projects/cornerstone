@@ -10,7 +10,7 @@ public class Oracle extends JdbcDatabase<OracleContainer> {
 	@SuppressWarnings("resource")
 	@Override
 	public OracleContainer createContainer() {
-		return new OracleContainer("quillbuilduser/oracle-18-xe:latest").withPassword("Oracle18");
+		return new OracleContainer("gvenzl/oracle-xe").withPassword("Oracle18");
 	}
 
 }
