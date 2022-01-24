@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.cornerstone.core.Application;
+import io.cornerstone.core.security.password.MixedPasswordEncoder;
 import io.cornerstone.core.util.RequestUtils;
 
 import org.springframework.beans.factory.ObjectProvider;
@@ -37,7 +38,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsPasswordService;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.DefaultRedirectStrategy;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
@@ -183,7 +183,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 	@Bean
 	@ConditionalOnMissingBean
 	PasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder();
+		return new MixedPasswordEncoder();
 	}
 
 	@Bean
