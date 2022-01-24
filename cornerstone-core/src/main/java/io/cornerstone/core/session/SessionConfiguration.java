@@ -16,7 +16,7 @@ public class SessionConfiguration {
 
 	@Bean
 	public RedisSerializer<?> springSessionDefaultRedisSerializer() {
-		return new CompactJdkSerializationRedisSerializer() {
+		return new CompactJdkSerializationRedisSerializer(getClass().getClassLoader()) {
 			@Override
 			public Object deserialize(byte[] bytes) throws SerializationException {
 				try {

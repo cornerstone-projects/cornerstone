@@ -8,8 +8,17 @@ import java.nio.charset.StandardCharsets;
 import org.springframework.core.serializer.support.SerializationFailedException;
 import org.springframework.data.redis.serializer.JdkSerializationRedisSerializer;
 import org.springframework.data.redis.serializer.SerializationException;
+import org.springframework.lang.Nullable;
 
 public class CompactJdkSerializationRedisSerializer extends JdkSerializationRedisSerializer {
+
+	public CompactJdkSerializationRedisSerializer() {
+		super();
+	}
+
+	public CompactJdkSerializationRedisSerializer(@Nullable ClassLoader classLoader) {
+		super(classLoader);
+	}
 
 	@Override
 	public byte[] serialize(Object object) {
