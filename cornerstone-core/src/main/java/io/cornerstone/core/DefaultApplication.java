@@ -30,8 +30,10 @@ import org.springframework.util.ClassUtils;
 
 import static java.lang.StackWalker.Option.RETAIN_CLASS_REFERENCE;
 import static org.springframework.core.env.AbstractEnvironment.ACTIVE_PROFILES_PROPERTY_NAME;
+import static org.springframework.jndi.JndiLocatorDelegate.IGNORE_JNDI_PROPERTY_NAME;
 
-public class DefaultApplication extends SpringBootServletInitializer implements Application {
+public class DefaultApplication extends SpringBootServletInitializer
+		implements Application {
 
 	private static String hostName = "localhost";
 
@@ -44,8 +46,9 @@ public class DefaultApplication extends SpringBootServletInitializer implements 
 	private ApplicationContext context;
 
 	public DefaultApplication() {
-		boolean createdBySpring = StackWalker.getInstance(RETAIN_CLASS_REFERENCE).walk(
-				s -> s.map(StackFrame::getDeclaringClass).anyMatch(c -> c == AbstractAutowireCapableBeanFactory.class));
+		boolean createdBySpring = StackWalker.getInstance(RETAIN_CLASS_REFERENCE)
+				.walk(s -> s.map(StackFrame::getDeclaringClass)
+						.anyMatch(c -> c == AbstractAutowireCapableBeanFactory.class));
 		if (createdBySpring) {
 			currentApplication = this;
 		}
@@ -80,14 +83,19 @@ public class DefaultApplication extends SpringBootServletInitializer implements 
 	}
 
 	protected static void init(String[] args) throws IOException {
+
+		System.setProperty(IGNORE_JNDI_PROPERTY_NAME, String.valueOf(true));
+
 		hostName = InetAddress.getLocalHost().getHostName();
 		findHostAddress().ifPresent(addr -> hostAddress = addr);
 
-		if (ClassUtils.isPresent("org.springframework.boot.devtools.RemoteSpringApplication",
+		if (ClassUtils.isPresent(
+				"org.springframework.boot.devtools.RemoteSpringApplication",
 				DefaultApplication.class.getClassLoader())) {
 			String profiles = System.getProperty(ACTIVE_PROFILES_PROPERTY_NAME);
 			if (profiles == null) {
-				profiles = System.getenv(ACTIVE_PROFILES_PROPERTY_NAME.replaceAll("\\.", "_").toUpperCase());
+				profiles = System.getenv(ACTIVE_PROFILES_PROPERTY_NAME
+						.replaceAll("\\.", "_").toUpperCase());
 				if (profiles == null) {
 					System.setProperty(ACTIVE_PROFILES_PROPERTY_NAME, "dev");
 				}
@@ -100,14 +108,18 @@ public class DefaultApplication extends SpringBootServletInitializer implements 
 		start(args, null);
 	}
 
-	protected static void start(String[] args, Consumer<ApplicationContext> postStartAction) throws Exception {
+	protected static void start(String[] args,
+			Consumer<ApplicationContext> postStartAction) throws Exception {
 		init(args);
 		Class<?> caller = StackWalker.getInstance(RETAIN_CLASS_REFERENCE)
 				.walk(s -> s
-						.filter(f -> f.getMethodName().equals("main")
-								&& f.getMethodType().equals(MethodType.methodType(void.class, String[].class)))
-						.reduce((first, second) -> second).map(StackFrame::getDeclaringClass)
-						.orElseThrow(() -> new RuntimeException("start() method should be called in main method")));
+						.filter(f -> f.getMethodName().equals("main") && f.getMethodType()
+								.equals(MethodType.methodType(void.class,
+										String[].class)))
+						.reduce((first, second) -> second)
+						.map(StackFrame::getDeclaringClass)
+						.orElseThrow(() -> new RuntimeException(
+								"start() method should be called in main method")));
 		ApplicationContext ctx = SpringApplication.run(caller, args);
 		if (postStartAction != null) {
 			postStartAction.accept(ctx);
