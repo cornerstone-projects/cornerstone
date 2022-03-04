@@ -110,7 +110,7 @@ public class DefaultApplication extends SpringBootServletInitializer implements 
 				.walk(s -> s
 						.filter(f -> f.getMethodName().equals("main")
 								&& f.getMethodType().equals(MethodType.methodType(void.class, String[].class)))
-						.reduce((first, second) -> second).map(StackFrame::getDeclaringClass)
+						.findFirst().map(StackFrame::getDeclaringClass)
 						.orElseThrow(() -> new RuntimeException("start() method should be called in main method")));
 		ApplicationContext ctx = SpringApplication.run(caller, args);
 		if (postStartAction != null) {
