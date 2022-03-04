@@ -30,7 +30,7 @@ dependencies {
 	api "org.springdoc:springdoc-openapi-security:${springdocVersion}"
 	api "org.apache.commons:commons-pool2"
 	api "org.apache.logging.log4j:log4j-spring-boot"
-	implementation "org.springframework.boot:spring-boot-starter-amqp"
+	compileOnly "org.springframework.boot:spring-boot-starter-amqp"
 	testFixturesApi "org.springframework.boot:spring-boot-starter-test"
 	testFixturesApi "org.springframework.security:spring-security-test"
 	ext {
@@ -44,6 +44,7 @@ dependencies {
 	testFixturesImplementation "org.testcontainers:oracle-xe:${testcontainersVersion}"
 	testFixturesImplementation "org.testcontainers:db2:${testcontainersVersion}"
 	testFixturesImplementation "org.testcontainers:rabbitmq:${testcontainersVersion}"
+	integrationTestImplementation "org.springframework.boot:spring-boot-starter-amqp"
 	integrationTestRuntimeOnly "mysql:mysql-connector-java"
 	integrationTestRuntimeOnly "org.postgresql:postgresql"
 	integrationTestRuntimeOnly "com.microsoft.sqlserver:mssql-jdbc"
