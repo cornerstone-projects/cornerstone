@@ -57,7 +57,10 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 	private SecurityProperties properties;
 
 	@Autowired(required = false)
-	private List<IgnoredRequestContributor> ignoredRequestContributors = Collections.emptyList();
+	private List<IgnoringRequestContributor> ignoringRequestContributors = Collections.emptyList();
+
+	@Autowired(required = false)
+	private List<PermitAllRequestContributor> permitAllRequestContributors = Collections.emptyList();
 
 	@Autowired
 	private ObjectMapper objectMapper;
@@ -65,9 +68,8 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 	@Override
 	public void configure(WebSecurity web) {
 		List<String> ignoringPathPatterns = new ArrayList<>();
-		ignoringPathPatterns.addAll(List.of("/actuator/**", "/assets/**"));
 		ignoringPathPatterns.addAll(this.properties.getIgnoringPathPatterns());
-		this.ignoredRequestContributors.forEach(c -> ignoringPathPatterns.add(c.getIgnoringPathPattern()));
+		this.ignoringRequestContributors.forEach(c -> ignoringPathPatterns.add(c.getIgnoringPathPattern()));
 		web.ignoring().antMatchers(ignoringPathPatterns.toArray(new String[0]));
 	}
 
@@ -79,6 +81,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 			patterns.addAll(List.of("/error", this.properties.getLoginPage(), this.properties.getLoginProcessingUrl(),
 					this.properties.getLogoutUrl()));
 			patterns.addAll(this.properties.getPermitAllPathPatterns());
+			this.permitAllRequestContributors.forEach(c -> patterns.add(c.getPermitAllPathPattern()));
 			permitAllPathPatterns = patterns.toArray(new String[0]);
 		}
 		else {

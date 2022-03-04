@@ -66,6 +66,8 @@ class WebSecurityTests extends ControllerTestBase {
 
 	static final String TEST_IGNORING_PATH = "/ignoring";
 
+	static final String TEST_PERMIT_ALL_PATH = "/permitAll";
+
 	@Test
 	void testAuthenticationFailure() {
 		TestRestTemplate restTemplate = this.testRestTemplate;
@@ -162,6 +164,12 @@ class WebSecurityTests extends ControllerTestBase {
 		assertThat(response.getStatusCode()).isSameAs(OK);
 	}
 
+	@Test
+	void testPermitAllRequestContributor() {
+		ResponseEntity<String> response = this.testRestTemplate.getForEntity(TEST_PERMIT_ALL_PATH, String.class);
+		assertThat(response.getStatusCode()).isSameAs(OK);
+	}
+
 	private ResponseEntity<Map<String, Object>> restfulFormLogin(String username, String password) {
 		Map<String, String> data = new LinkedHashMap<>();
 		data.put("username", username);
@@ -219,7 +227,7 @@ class WebSecurityTests extends ControllerTestBase {
 	}
 
 	@RestController
-	static class TestIgnoredRequestController implements IgnoredRequestContributor {
+	static class TestIgnoredRequestController implements IgnoringRequestContributor {
 
 		@GetMapping(TEST_IGNORING_PATH)
 		String ignoring() {
@@ -229,6 +237,21 @@ class WebSecurityTests extends ControllerTestBase {
 		@Override
 		public String getIgnoringPathPattern() {
 			return TEST_IGNORING_PATH;
+		}
+
+	}
+
+	@RestController
+	static class TestPermitAllRequestController implements PermitAllRequestContributor {
+
+		@GetMapping(TEST_PERMIT_ALL_PATH)
+		String permitAll() {
+			return "permitAll";
+		}
+
+		@Override
+		public String getPermitAllPathPattern() {
+			return TEST_PERMIT_ALL_PATH;
 		}
 
 	}

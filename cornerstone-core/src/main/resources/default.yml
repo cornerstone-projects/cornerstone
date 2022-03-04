@@ -71,6 +71,10 @@ spring.jackson:
 
 spring.messages:
   basename: messages,i18n/messages,org.springframework.security.messages
+  
+security.permit-all-path-patterns:
+  - /actuator/**
+  - /assets/**
 
 logging:
   config: classpath:log4j2.xml

@@ -1,6 +1,6 @@
 package io.cornerstone.core.security;
 
-public interface IgnoredRequestContributor {
+public interface IgnoringRequestContributor {
 
 	String getIgnoringPathPattern();
 

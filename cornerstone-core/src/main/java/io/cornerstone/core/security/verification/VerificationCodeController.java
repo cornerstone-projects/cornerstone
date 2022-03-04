@@ -5,7 +5,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import io.cornerstone.core.security.IgnoredRequestContributor;
+import io.cornerstone.core.security.PermitAllRequestContributor;
 import io.cornerstone.core.security.VerificationCodeChecker;
 import lombok.RequiredArgsConstructor;
 
@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 @ConditionalOnProperty(prefix = VerificationProperties.PREFIX, name = "enabled", havingValue = "true")
 @RequestMapping(VerificationCodeController.PATH_PREFIX)
 @RequiredArgsConstructor
-public class VerificationCodeController implements IgnoredRequestContributor {
+public class VerificationCodeController implements PermitAllRequestContributor {
 
 	public static final String PATH_PREFIX = "/verificationCode";
 
@@ -53,7 +53,7 @@ public class VerificationCodeController implements IgnoredRequestContributor {
 	}
 
 	@Override
-	public String getIgnoringPathPattern() {
+	public String getPermitAllPathPattern() {
 		return PATH_PREFIX + "/*";
 	}
 
