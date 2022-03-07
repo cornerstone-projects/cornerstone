@@ -10,7 +10,7 @@ import javax.servlet.WriteListener;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
-import io.cornerstone.core.json.JsonDesensitizer;
+import io.cornerstone.core.json.JsonSanitizer;
 import org.slf4j.Logger;
 import org.slf4j.MDC;
 
@@ -151,7 +151,7 @@ public class LoggingBodyHttpServletResponse extends HttpServletResponseWrapper {
 					this.cachedContent = null;
 					if (bytes.length > 0) {
 						String str = new String(bytes, 0, bytes.length, this.characterEncoding);
-						str = JsonDesensitizer.DEFAULT_INSTANCE.desensitize(str);
+						str = JsonSanitizer.DEFAULT_INSTANCE.sanitize(str);
 						String method = MDC.get("method");
 						String url = MDC.get("url");
 						MDC.remove("method");

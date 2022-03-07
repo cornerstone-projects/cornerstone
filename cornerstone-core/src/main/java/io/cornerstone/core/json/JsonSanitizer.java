@@ -34,9 +34,9 @@ import lombok.Getter;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.core.annotation.AnnotationUtils;
 
-public class JsonDesensitizer {
+public class JsonSanitizer {
 
-	public static JsonDesensitizer DEFAULT_INSTANCE;
+	public static JsonSanitizer DEFAULT_INSTANCE;
 
 	private static ObjectMapper objectMapper;
 	static {
@@ -46,7 +46,7 @@ public class JsonDesensitizer {
 		objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
 		objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 		objectMapper.setTimeZone(TimeZone.getDefault());
-		DEFAULT_INSTANCE = new JsonDesensitizer();
+		DEFAULT_INSTANCE = new JsonSanitizer();
 	}
 
 	@Getter
@@ -57,22 +57,22 @@ public class JsonDesensitizer {
 
 	private final ObjectWriter objectWriter;
 
-	@JsonFilter("desensitizer")
-	static class DesensitizerMixIn {
+	@JsonFilter("sanitizer")
+	static class SanitizerMixIn {
 
 	}
 
-	public JsonDesensitizer() {
+	public JsonSanitizer() {
 		this(new ConcurrentHashMap<>());
 		getMapping().put((s, obj) -> s.equals("password") || s.endsWith("Password") || s.endsWith("Passwords"),
 				s -> "******");
 	}
 
-	public JsonDesensitizer(Map<BiPredicate<String, Object>, Function<String, String>> mapping) {
+	public JsonSanitizer(Map<BiPredicate<String, Object>, Function<String, String>> mapping) {
 		this(mapping, new CopyOnWriteArrayList<>());
 	}
 
-	public JsonDesensitizer(Map<BiPredicate<String, Object>, Function<String, String>> mapping,
+	public JsonSanitizer(Map<BiPredicate<String, Object>, Function<String, String>> mapping,
 			List<BiPredicate<String, Object>> dropping) {
 		this.mapping = mapping;
 		this.dropping = dropping;
@@ -107,13 +107,13 @@ public class JsonDesensitizer {
 						}
 					}
 					else {
-						JsonDesensitize annotation = null;
+						JsonSanitize annotation = null;
 						try {
 							annotation = AnnotationUtils.findAnnotation(bw.getPropertyDescriptor(name).getReadMethod(),
-									JsonDesensitize.class);
+									JsonSanitize.class);
 							if (annotation == null) {
 								annotation = AnnotationUtils.findAnnotation(
-										ReflectionUtils.getField(obj.getClass(), name), JsonDesensitize.class);
+										ReflectionUtils.getField(obj.getClass(), name), JsonSanitize.class);
 							}
 						}
 						catch (Exception ex) {
@@ -125,7 +125,7 @@ public class JsonDesensitizer {
 						}
 
 						String newValue = annotation.value();
-						if (newValue.equals(JsonDesensitize.DEFAULT_NONE)) {
+						if (newValue.equals(JsonSanitize.DEFAULT_NONE)) {
 							writer.serializeAsOmittedField(obj, jgen, provider);
 						}
 						else {
@@ -150,7 +150,7 @@ public class JsonDesensitizer {
 			}
 		}).setFailOnUnknownId(false);
 		this.objectWriter = objectMapper.enable(SerializationFeature.INDENT_OUTPUT)
-				.addMixIn(Object.class, DesensitizerMixIn.class).writer(filters);
+				.addMixIn(Object.class, SanitizerMixIn.class).writer(filters);
 	}
 
 	public String toJson(Object value) {
@@ -162,10 +162,10 @@ public class JsonDesensitizer {
 		}
 	}
 
-	public String desensitize(String json) {
+	public String sanitize(String json) {
 		try {
 			JsonNode node = objectMapper.readTree(json);
-			desensitize(null, node, null);
+			sanitize(null, node, null);
 			return objectMapper.writeValueAsString(node);
 		}
 		catch (IOException ex) {
@@ -173,7 +173,7 @@ public class JsonDesensitizer {
 		}
 	}
 
-	private void desensitize(String nodeName, JsonNode node, JsonNode parent) {
+	private void sanitize(String nodeName, JsonNode node, JsonNode parent) {
 		if (node.isObject()) {
 			List<String> toBeDropped = new ArrayList<>();
 			node.fieldNames().forEachRemaining(name -> {
@@ -185,14 +185,14 @@ public class JsonDesensitizer {
 			Iterator<Map.Entry<String, JsonNode>> iterator = node.fields();
 			while (iterator.hasNext()) {
 				Map.Entry<String, JsonNode> entry = iterator.next();
-				desensitize(entry.getKey(), entry.getValue(), node);
+				sanitize(entry.getKey(), entry.getValue(), node);
 			}
 		}
 		else if (node.isArray()) {
 			Iterator<JsonNode> iterator = node.elements();
 			while (iterator.hasNext()) {
 				JsonNode element = iterator.next();
-				desensitize(null, element, node);
+				sanitize(null, element, node);
 			}
 		}
 		else if (parent instanceof ObjectNode) {

@@ -10,7 +10,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
-import io.cornerstone.core.json.JsonDesensitizer;
+import io.cornerstone.core.json.JsonSanitizer;
 import org.slf4j.Logger;
 
 import org.springframework.util.FastByteArrayOutputStream;
@@ -132,7 +132,7 @@ public class LoggingBodyHttpServletRequest extends HttpServletRequestWrapper {
 					byte[] bytes = this.cachedContent.toByteArray();
 					this.cachedContent = null;
 					String str = new String(bytes, 0, bytes.length, this.characterEncoding);
-					str = JsonDesensitizer.DEFAULT_INSTANCE.desensitize(str);
+					str = JsonSanitizer.DEFAULT_INSTANCE.sanitize(str);
 					this.logger.info("\n{}", str);
 				}
 			}

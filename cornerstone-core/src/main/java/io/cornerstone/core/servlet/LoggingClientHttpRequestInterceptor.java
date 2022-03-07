@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
-import io.cornerstone.core.json.JsonDesensitizer;
+import io.cornerstone.core.json.JsonSanitizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,7 +28,7 @@ public class LoggingClientHttpRequestInterceptor implements ClientHttpRequestInt
 		MediaType contentType = request.getHeaders().getContentType();
 		if ((body.length > 0) && (contentType != null) && supports(contentType)) {
 			String str = new String(body, StandardCharsets.UTF_8);
-			str = JsonDesensitizer.DEFAULT_INSTANCE.desensitize(str);
+			str = JsonSanitizer.DEFAULT_INSTANCE.sanitize(str);
 			this.logger.info("{} {} \n{}", request.getMethod(), request.getURI(), str);
 		}
 		else {
@@ -153,7 +153,7 @@ public class LoggingClientHttpRequestInterceptor implements ClientHttpRequestInt
 					this.cachedContent = null;
 					String str = new String(bytes, StandardCharsets.UTF_8);
 					if (this.contentType.isCompatibleWith(MediaType.APPLICATION_JSON)) {
-						str = JsonDesensitizer.DEFAULT_INSTANCE.desensitize(str);
+						str = JsonSanitizer.DEFAULT_INSTANCE.sanitize(str);
 					}
 					this.logger.info("Received:\n{}", str);
 				}
