@@ -2,11 +2,16 @@ pluginManagement {
 	repositories {
 		if (rootProject.hasProperty('repoUrlPrefix')) {
 			maven {
+				url "${repoUrlPrefix}/maven-public/"
+				allowInsecureProtocol true
+			}
+			maven {
 				url "${repoUrlPrefix}/gradle-plugins/"
 				allowInsecureProtocol true
 			}
 		} else {
 			gradlePluginPortal()
+			mavenCentral()
 		}
 	}
 }

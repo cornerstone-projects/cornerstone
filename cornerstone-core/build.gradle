@@ -19,12 +19,12 @@ dependencies {
 	api "com.fasterxml.jackson.dataformat:jackson-dataformat-smile"
 	api "com.fasterxml.jackson.module:jackson-module-mrbean"
 	api "com.fasterxml.jackson.module:jackson-module-parameter-names"
-	api "io.github.resilience4j:resilience4j-spring-boot2:${project.properties['resilience4j.version']?:'latest.release'}"
-	api "io.opentracing.contrib:opentracing-spring-jaeger-web-starter:${project.properties['java-spring-jaeger.version']?:'latest.release'}"
-	api "io.opentracing.contrib:opentracing-jdbc:${project.properties['opentracing-jdbc.version']?:'latest.release'}"
-	api "io.opentracing.contrib:opentracing-redis-spring-data2:${project.properties['opentracing-spring-data-redis.version']?:'latest.release'}"
+	api "io.github.resilience4j:resilience4j-spring-boot2:${property('resilience4j.version')}"
+	api "io.opentracing.contrib:opentracing-spring-jaeger-web-starter:${property('java-spring-jaeger.version')}"
+	api "io.opentracing.contrib:opentracing-jdbc:${property('opentracing-jdbc.version')}"
+	api "io.opentracing.contrib:opentracing-redis-spring-data2:${property('opentracing-spring-data-redis.version')}"
 	ext {
-		springdocVersion = project.properties['springdoc.version']?:'latest.release'
+		springdocVersion = property('springdoc.version')
 	}
 	api "org.springdoc:springdoc-openapi-ui:${springdocVersion}"
 	api "org.springdoc:springdoc-openapi-security:${springdocVersion}"
@@ -34,7 +34,7 @@ dependencies {
 	testFixturesApi "org.springframework.boot:spring-boot-starter-test"
 	testFixturesApi "org.springframework.security:spring-security-test"
 	ext {
-		testcontainersVersion = project.properties['testcontainers.version']?:'latest.release'
+		testcontainersVersion = property('testcontainers.version')
 	}
 	testFixturesApi "org.testcontainers:testcontainers:${testcontainersVersion}"
 	testFixturesApi "org.testcontainers:junit-jupiter:${testcontainersVersion}"

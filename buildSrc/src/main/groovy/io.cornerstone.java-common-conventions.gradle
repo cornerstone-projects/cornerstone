@@ -50,7 +50,7 @@ dependencies {
 	testRuntimeOnly "com.h2database:h2"
 	testImplementation(testFixtures(project(":cornerstone-core")))
 	integrationTestImplementation(testFixtures(project(":cornerstone-core")))
-	checkstyle("io.spring.javaformat:spring-javaformat-checkstyle:${project.properties['javaformat-plugin.version']?:'latest.release'}")
+	checkstyle("io.spring.javaformat:spring-javaformat-checkstyle:${property('javaformat-plugin.version')}")
 }
 
 configurations.all {

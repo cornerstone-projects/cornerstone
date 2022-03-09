@@ -15,17 +15,22 @@ for (Map.Entry<String,String> entry : projectProperties.entrySet()) {
 repositories {
 	if (rootProject.hasProperty('repoUrlPrefix')) {
 		maven {
+			url "${repoUrlPrefix}/maven-public/"
+			allowInsecureProtocol true
+		}
+		maven {
 			url "${repoUrlPrefix}/gradle-plugins/"
 			allowInsecureProtocol true
 		}
 	} else {
 		gradlePluginPortal()
+		mavenCentral()
 	}
 }
 
 dependencies {
-	implementation "io.freefair.lombok:io.freefair.lombok.gradle.plugin:${project.properties['lombok-plugin.version']?:'latest.release'}"
-	implementation "io.spring.dependency-management:io.spring.dependency-management.gradle.plugin:${project.properties['dependency-management-plugin.version']?:'latest.release'}"
-	implementation "io.spring.javaformat:io.spring.javaformat.gradle.plugin:${project.properties['javaformat-plugin.version']?:'latest.release'}"
-	implementation "org.springframework.boot:org.springframework.boot.gradle.plugin:${project.properties['spring-boot.version']?:'latest.release'}"
+	implementation "io.freefair.lombok:io.freefair.lombok.gradle.plugin:${property('lombok-plugin.version')}"
+	implementation "io.spring.gradle:dependency-management-plugin:${property('dependency-management-plugin.version')}"
+	implementation "io.spring.javaformat:spring-javaformat-gradle-plugin:${property('javaformat-plugin.version')}"
+	implementation "org.springframework.boot:org.springframework.boot.gradle.plugin:${property('spring-boot.version')}"
 }
