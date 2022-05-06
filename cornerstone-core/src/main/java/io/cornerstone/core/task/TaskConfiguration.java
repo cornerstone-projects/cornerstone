@@ -1,5 +1,6 @@
 package io.cornerstone.core.task;
 
+import io.cornerstone.core.coordination.LockFailedException;
 import io.cornerstone.core.util.RunnableWithRequestId;
 import io.github.resilience4j.bulkhead.BulkheadFullException;
 import io.github.resilience4j.ratelimiter.RequestNotPermitted;
@@ -53,7 +54,8 @@ public class TaskConfiguration {
 	@Bean
 	TaskSchedulerCustomizer taskSchedulerCustomizer() {
 		return taskScheduler -> taskScheduler.setErrorHandler(ex -> {
-			if ((ex instanceof BulkheadFullException) || (ex instanceof RequestNotPermitted)) {
+			if ((ex instanceof LockFailedException) || (ex instanceof BulkheadFullException)
+					|| (ex instanceof RequestNotPermitted)) {
 				log.warn("Error occurred in scheduled task: {}", ex.getLocalizedMessage());
 			}
 			else {
