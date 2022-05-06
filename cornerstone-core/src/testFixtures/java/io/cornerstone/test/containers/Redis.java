@@ -25,8 +25,8 @@ public class Redis extends AbstractContainer {
 
 	@Bean
 	public RedisConnectionFactory redisConnectionFactory(GenericContainer<?> redisContainer) {
-		RedisStandaloneConfiguration configuration = new RedisStandaloneConfiguration(
-				redisContainer.getContainerIpAddress(), redisContainer.getFirstMappedPort());
+		RedisStandaloneConfiguration configuration = new RedisStandaloneConfiguration(redisContainer.getHost(),
+				redisContainer.getFirstMappedPort());
 		return new LettuceConnectionFactory(configuration);
 	}
 

@@ -7,6 +7,7 @@ import javax.persistence.criteria.Root;
 
 import io.cornerstone.core.util.ReflectionUtils;
 import org.hibernate.dialect.Dialect;
+import org.hibernate.dialect.H2Dialect;
 import org.hibernate.dialect.MySQLDialect;
 import org.hibernate.dialect.Oracle8iDialect;
 import org.hibernate.dialect.PostgreSQL81Dialect;
@@ -115,6 +116,10 @@ public class PredicateBuilder {
 		// for postgresql:
 		// create or replace function regexp_like(character varying,character varying)
 		// returns integer as $$ select ($1 ~ $2)::int; $$ language sql immutable;
+		if (dialect instanceof H2Dialect && ((H2Dialect) dialect).isVersion2()) {
+			return cb.equal(cb.function("regexp_like", Boolean.class, root.get(propertyName), cb.literal(pattern)),
+					Boolean.TRUE);
+		}
 		return cb.equal(cb.function("regexp_like", Integer.class, root.get(propertyName), cb.literal(pattern)), 1);
 	}
 

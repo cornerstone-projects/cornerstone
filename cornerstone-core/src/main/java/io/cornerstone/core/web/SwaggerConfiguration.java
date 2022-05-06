@@ -49,29 +49,29 @@ public class SwaggerConfiguration {
 			propertiesProvider.ifAvailable(properties -> {
 				Operation operation = new Operation();
 				Schema<?> requestSchema = new ObjectSchema()
-						.addProperties(properties.getUsernameParameter(), new StringSchema()._default("user"))
-						.addProperties(properties.getPasswordParameter(), new StringSchema()._default("password"));
+						.addProperty(properties.getUsernameParameter(), new StringSchema()._default("user"))
+						.addProperty(properties.getPasswordParameter(), new StringSchema()._default("password"));
 				verificationManagerProvider.ifAvailable(vm -> requestSchema
-						.addProperties(PARAMETER_NAME_VERIFICATION_CODE, new StringSchema()._default("000000")));
+						.addProperty(PARAMETER_NAME_VERIFICATION_CODE, new StringSchema()._default("000000")));
 				RequestBody requestBody = new RequestBody().content(
 						new Content().addMediaType(APPLICATION_JSON_VALUE, new MediaType().schema(requestSchema)));
 				operation.requestBody(requestBody);
 				ApiResponses apiResponses = new ApiResponses();
 				Schema<?> okResponseSchema = new ObjectSchema()
-						.addProperties("timestamp", new DateTimeSchema()._default(new Date()))
-						.addProperties("status", new IntegerSchema()._default(OK.value()))
-						.addProperties("message", new StringSchema()._default(OK.getReasonPhrase()))
-						.addProperties("path", new StringSchema()._default(properties.getLoginProcessingUrl()))
-						.addProperties("targetUrl", new StringSchema()._default("/"));
+						.addProperty("timestamp", new DateTimeSchema()._default(new Date()))
+						.addProperty("status", new IntegerSchema()._default(OK.value()))
+						.addProperty("message", new StringSchema()._default(OK.getReasonPhrase()))
+						.addProperty("path", new StringSchema()._default(properties.getLoginProcessingUrl()))
+						.addProperty("targetUrl", new StringSchema()._default("/"));
 				apiResponses.addApiResponse(String.valueOf(OK.value()),
 						new ApiResponse().description(OK.getReasonPhrase()).content(new Content()
 								.addMediaType(APPLICATION_JSON_VALUE, new MediaType().schema(okResponseSchema))));
 				Schema<?> unauthorizedResponseSchema = new ObjectSchema()
-						.addProperties("timestamp", new DateTimeSchema()._default(new Date()))
-						.addProperties("status", new IntegerSchema()._default(UNAUTHORIZED.value()))
-						.addProperties("error", new StringSchema()._default(UNAUTHORIZED.getReasonPhrase()))
-						.addProperties("message", new StringSchema()._default("Bad Credentials"))
-						.addProperties("path", new StringSchema()._default(properties.getLoginProcessingUrl()));
+						.addProperty("timestamp", new DateTimeSchema()._default(new Date()))
+						.addProperty("status", new IntegerSchema()._default(UNAUTHORIZED.value()))
+						.addProperty("error", new StringSchema()._default(UNAUTHORIZED.getReasonPhrase()))
+						.addProperty("message", new StringSchema()._default("Bad Credentials"))
+						.addProperty("path", new StringSchema()._default(properties.getLoginProcessingUrl()));
 				apiResponses.addApiResponse(String.valueOf(UNAUTHORIZED.value()),
 						new ApiResponse().description(UNAUTHORIZED.getReasonPhrase())
 								.content(new Content().addMediaType(APPLICATION_JSON_VALUE,
