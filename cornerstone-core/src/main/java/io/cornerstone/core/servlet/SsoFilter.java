@@ -37,6 +37,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.AccountExpiredException;
+import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authentication.LockedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -180,6 +183,21 @@ public class SsoFilter implements Filter {
 			try {
 				ResponseEntity<SimpleUser> responseEntity = this.restTemplate.exchange(requestEntity, SimpleUser.class);
 				UserDetails ud = map(responseEntity.getBody());
+				if (!ud.isAccountNonLocked()) {
+					throw new LockedException(
+							this.messageSource.getMessage("AbstractUserDetailsAuthenticationProvider.locked", null,
+									"User account is locked", request.getLocale()));
+				}
+				if (!ud.isEnabled()) {
+					throw new DisabledException(
+							this.messageSource.getMessage("AbstractUserDetailsAuthenticationProvider.disabled", null,
+									"User is disabled", request.getLocale()));
+				}
+				if (!ud.isAccountNonExpired()) {
+					throw new AccountExpiredException(
+							this.messageSource.getMessage("AbstractUserDetailsAuthenticationProvider.expired", null,
+									"User account has expired", request.getLocale()));
+				}
 				auth = new UsernamePasswordAuthenticationToken(ud, ud.getPassword(), ud.getAuthorities());
 				sc.setAuthentication(auth);
 				request.getSession().setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, sc);
