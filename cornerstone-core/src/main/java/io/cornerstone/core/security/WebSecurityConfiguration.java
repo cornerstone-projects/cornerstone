@@ -29,7 +29,7 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractAuthenticationFilterConfigurer;
 import org.springframework.security.config.annotation.web.configurers.ExpressionUrlAuthorizationConfigurer;
 import org.springframework.security.config.annotation.web.configurers.FormLoginConfigurer;
@@ -40,6 +40,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.DefaultRedirectStrategy;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
@@ -51,7 +52,7 @@ import static javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
 @Configuration(proxyBeanMethods = false)
 @EnableWebSecurity
 @EnableConfigurationProperties(SecurityProperties.class)
-public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
+public class WebSecurityConfiguration {
 
 	@Autowired
 	private SecurityProperties properties;
@@ -65,7 +66,6 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 	@Autowired
 	private ObjectMapper objectMapper;
 
-	@Override
 	public void configure(WebSecurity web) {
 		List<String> ignoringPathPatterns = new ArrayList<>();
 		ignoringPathPatterns.addAll(this.properties.getIgnoringPathPatterns());
@@ -73,7 +73,6 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 		web.ignoring().antMatchers(ignoringPathPatterns.toArray(new String[0]));
 	}
 
-	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		String[] permitAllPathPatterns;
 		if (this.properties.isProtecting()) {
@@ -100,8 +99,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 						.sendError(HttpServletResponse.SC_UNAUTHORIZED, ex.getLocalizedMessage()),
 						RequestUtils::isRequestedFromApi);
 
-		setAuthenticationFilter(http.formLogin(),
-				new RestfulUsernamePasswordAuthenticationFilter(authenticationManager(), this.objectMapper));
+		setAuthenticationFilter(http.formLogin(), new RestfulUsernamePasswordAuthenticationFilter(this.objectMapper));
 		http.formLogin().loginPage(this.properties.getLoginPage())
 				.loginProcessingUrl(this.properties.getLoginProcessingUrl())
 				.usernameParameter(this.properties.getUsernameParameter())
@@ -192,6 +190,17 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 	@Bean
 	GrantedAuthorityDefaults grantedAuthorityDefaults() {
 		return new GrantedAuthorityDefaults(""); // Remove the ROLE_ prefix
+	}
+
+	@Bean
+	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+		configure(http);
+		return http.build();
+	}
+
+	@Bean
+	WebSecurityCustomizer webSecurityCustomizer() {
+		return this::configure;
 	}
 
 }

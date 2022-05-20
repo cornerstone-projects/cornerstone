@@ -10,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.http.MediaType;
 import org.springframework.lang.Nullable;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -24,9 +23,7 @@ public class RestfulUsernamePasswordAuthenticationFilter extends UsernamePasswor
 
 	private final ObjectMapper objectMapper;
 
-	public RestfulUsernamePasswordAuthenticationFilter(AuthenticationManager authenticationManager,
-			ObjectMapper objectMapper) {
-		super(authenticationManager);
+	public RestfulUsernamePasswordAuthenticationFilter(ObjectMapper objectMapper) {
 		this.objectMapper = objectMapper;
 		setAuthenticationDetailsSource(new WebAuthenticationDetailsSource() {
 
