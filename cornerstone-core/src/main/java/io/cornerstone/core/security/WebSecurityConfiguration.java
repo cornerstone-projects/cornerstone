@@ -48,6 +48,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.security.web.savedrequest.RequestCache;
 
 import static javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
+import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration(proxyBeanMethods = false)
 @EnableWebSecurity
@@ -100,15 +101,16 @@ public class WebSecurityConfiguration {
 						RequestUtils::isRequestedFromApi);
 
 		setAuthenticationFilter(http.formLogin(), new RestfulUsernamePasswordAuthenticationFilter(this.objectMapper));
-		http.formLogin().loginPage(this.properties.getLoginPage())
-				.loginProcessingUrl(this.properties.getLoginProcessingUrl())
-				.usernameParameter(this.properties.getUsernameParameter())
-				.passwordParameter(this.properties.getPasswordParameter())
-				.successHandler(authenticationSuccessHandler(http.getSharedObject(RequestCache.class)))
-				.failureHandler(authenticationFailureHandler()).and().logout().logoutUrl(this.properties.getLogoutUrl())
-				.logoutSuccessUrl(this.properties.getLoginPage());
+		http.formLogin(login -> {
+			login.loginPage(this.properties.getLoginPage()).loginProcessingUrl(this.properties.getLoginProcessingUrl())
+					.usernameParameter(this.properties.getUsernameParameter())
+					.passwordParameter(this.properties.getPasswordParameter())
+					.successHandler(authenticationSuccessHandler(http.getSharedObject(RequestCache.class)))
+					.failureHandler(authenticationFailureHandler()).and();
+		}).logout(logout -> logout.logoutUrl(this.properties.getLogoutUrl())
+				.logoutSuccessUrl(this.properties.getLoginPage()));
 		if (Application.current().map(Application::isUnitTest).orElse(true)) {
-			http.httpBasic();
+			http.httpBasic(withDefaults());
 		}
 
 		http.csrf().disable().headers().frameOptions().sameOrigin();
