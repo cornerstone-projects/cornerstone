@@ -7,6 +7,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import lombok.RequiredArgsConstructor;
+import org.apache.commons.logging.Log;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.cloud.CloudPlatform;
 import org.springframework.boot.env.EnvironmentPostProcessor;
@@ -18,12 +21,15 @@ import org.springframework.core.env.Profiles;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.io.ClassPathResource;
 
+@RequiredArgsConstructor
 public class DefaultPropertiesPostProcessor implements EnvironmentPostProcessor, Ordered {
 
 	private static final String FILE_NAME = "default.yml";
 
 	public static final int ORDER = Ordered.HIGHEST_PRECEDENCE + 11; // after
 																		// ConfigDataEnvironmentPostProcessor
+
+	private final Log log;
 
 	@Override
 	public int getOrder() {
@@ -48,6 +54,7 @@ public class DefaultPropertiesPostProcessor implements EnvironmentPostProcessor,
 					}).collect(Collectors.toList());
 			Collections.reverse(list);
 			list.forEach(environment.getPropertySources()::addLast);
+			this.log.info("Add default properties from classpath:" + FILE_NAME);
 		}
 		catch (IOException ex) {
 			throw new RuntimeException(ex.getMessage(), ex);
