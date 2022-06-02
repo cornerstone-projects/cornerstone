@@ -9,7 +9,9 @@ public class DefaultWebMvcRegistrations implements WebMvcRegistrations {
 
 	@Override
 	public RequestMappingHandlerMapping getRequestMappingHandlerMapping() {
-		return new DefaultRequestMappingHandlerMapping();
+		RequestMappingHandlerMapping mapping = new DefaultRequestMappingHandlerMapping();
+		mapping.setUseTrailingSlashMatch(false);
+		return mapping;
 	}
 
 }
