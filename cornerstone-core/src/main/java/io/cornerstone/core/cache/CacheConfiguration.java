@@ -1,7 +1,5 @@
 package io.cornerstone.core.cache;
 
-import java.lang.reflect.Field;
-
 import io.cornerstone.core.redis.serializer.CompactJdkSerializationRedisSerializer;
 
 import org.springframework.boot.autoconfigure.cache.RedisCacheManagerBuilderCustomizer;
@@ -29,18 +27,8 @@ public class CacheConfiguration extends CachingConfigurerSupport {
 	@Bean
 	@ConditionalOnClass(name = "org.springframework.data.redis.cache.RedisCacheConfiguration")
 	RedisCacheManagerBuilderCustomizer redisCacheManagerBuilderCustomizer() {
-		return builder -> {
-			try {
-				Field field = builder.getClass().getDeclaredField("defaultCacheConfiguration");
-				field.setAccessible(true);
-				RedisCacheConfiguration defaultCacheConfiguration = (RedisCacheConfiguration) field.get(builder);
-				builder.cacheDefaults(defaultCacheConfiguration.serializeValuesWith(
-						SerializationPair.fromSerializer(new CompactJdkSerializationRedisSerializer())));
-			}
-			catch (Exception ex) {
-				throw new RuntimeException(ex);
-			}
-		};
+		return builder -> builder.cacheDefaults(RedisCacheConfiguration.defaultCacheConfig()
+				.serializeValuesWith(SerializationPair.fromSerializer(new CompactJdkSerializationRedisSerializer())));
 	}
 
 }
