@@ -1,6 +1,6 @@
 package io.cornerstone.test;
 
-import io.cornerstone.core.web.DefaultWebMvcRegistrations;
+import io.cornerstone.core.web.DefaultWebMvcConfigurer;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigurationExcludeFilter;
@@ -33,7 +33,7 @@ public abstract class WebMvcTestBase {
 		this.restTemplate = new RestTemplate(new MockMvcClientHttpRequestFactory(this.mockMvc));
 	}
 
-	@ComponentScan(basePackageClasses = DefaultWebMvcRegistrations.class,
+	@ComponentScan(basePackageClasses = DefaultWebMvcConfigurer.class,
 			excludeFilters = { @Filter(type = FilterType.CUSTOM, classes = TypeExcludeFilter.class),
 					@Filter(type = FilterType.CUSTOM, classes = AutoConfigurationExcludeFilter.class) })
 	static class Config {
