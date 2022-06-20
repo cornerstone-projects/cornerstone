@@ -77,7 +77,7 @@ public class TracingConfiguration {
 		};
 	}
 
-	@ConditionalOnProperty(value = "opentracing.jaeger.enabled", havingValue = "false", matchIfMissing = false)
+	@ConditionalOnProperty(value = TracingEnabled.KEY, havingValue = "false", matchIfMissing = false)
 	@Bean
 	public Tracer tracer() {
 		Tracing.disable();

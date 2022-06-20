@@ -89,12 +89,13 @@ management.metrics.export.influx:
 springdoc.swagger-ui.enabled: false
 springdoc.api-docs.enabled: ${springdoc.swagger-ui.enabled}
 
-opentracing.jaeger:
+opentracing:
   enabled: false
-  enable-w3c-propagation: true
-  http-sender.url: http://${jaeger.host}:${jaeger.port}/api/traces
-  const-sampler.decision: true
-  log-spans: false
+  jaeger:
+    enable-w3c-propagation: true
+    http-sender.url: http://${jaeger.host}:${jaeger.port}/api/traces
+    const-sampler.decision: true
+    log-spans: false
 
 # user defined variables to expand
 mysql:
@@ -148,9 +149,10 @@ spring:
 logging.log4j2.config.override: classpath:log4j2-with-kafka.xml
 
 management.metrics.export.influx.enabled: true
-opentracing.jaeger:
+opentracing:
   enabled: true
-  const-sampler.decision: false
-  probabilistic-sampler.sampling-rate: 0.01
+  jaeger:
+    const-sampler.decision: false
+    probabilistic-sampler.sampling-rate: 0.01
 
 

@@ -10,7 +10,9 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 @Retention(RUNTIME)
 @Target(METHOD)
-@ConditionalOnProperty(name = "opentracing.jaeger.enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(name = TracingEnabled.KEY, havingValue = "true", matchIfMissing = true)
 public @interface TracingEnabled {
+
+	String KEY = "opentracing.enabled";
 
 }
