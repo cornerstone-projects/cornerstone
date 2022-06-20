@@ -1,12 +1,14 @@
 package io.cornerstone.core.cache;
 
 import io.cornerstone.core.redis.serializer.CompactJdkSerializationRedisSerializer;
+import org.apache.commons.logging.LogFactory;
 
 import org.springframework.boot.autoconfigure.cache.RedisCacheManagerBuilderCustomizer;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.cache.annotation.CachingConfigurerSupport;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.interceptor.CacheErrorHandler;
+import org.springframework.cache.interceptor.LoggingCacheErrorHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -21,7 +23,7 @@ public class CacheConfiguration extends CachingConfigurerSupport {
 
 	@Override
 	public CacheErrorHandler errorHandler() {
-		return new DefaultCacheErrorHandler();
+		return new LoggingCacheErrorHandler(LogFactory.getLog(LoggingCacheErrorHandler.class), true);
 	}
 
 	@Bean
