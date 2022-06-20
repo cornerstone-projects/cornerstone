@@ -35,7 +35,7 @@ class RedisTopicTests extends TopicTestBase {
 	private RedisConnectionFactory connectionFactory;
 
 	@Test
-	void publishLocalScopeMessage() throws Exception {
+	void publishLocalScopeMessage() {
 		ResultCaptor<RedisConnection> resultCaptor = new ResultCaptor<>(Mockito::spy);
 		given(this.connectionFactory.getConnection()).willAnswer(resultCaptor);
 		this.testTopic.publish("test", Scope.LOCAL);

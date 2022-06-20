@@ -238,7 +238,7 @@ class UserControllerTests extends ControllerTestBase {
 	}
 
 	@Test
-	void upload() throws IOException {
+	void upload() {
 		TestRestTemplate restTemplate = adminRestTemplate();
 		String body = "test1,xxx,13111111111,A B C,true\ntest2,xxx,13222222222,,true";
 		HttpHeaders headers = new HttpHeaders();

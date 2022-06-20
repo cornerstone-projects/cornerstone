@@ -61,7 +61,7 @@ class FileStorageMigrationTests {
 		verify(target);
 	}
 
-	protected static void verify(FileStorage fs) throws IOException {
+	protected static void verify(FileStorage fs) {
 		List<FileInfo> list = fs.listFilesAndDirectory("/");
 		assertThat(list).hasSize(10);
 		for (FileInfo file : list) {

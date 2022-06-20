@@ -35,7 +35,7 @@ public class SnowflakeProperties {
 	private int sequenceBits = 10;
 
 	@PostConstruct
-	private void init() throws Exception {
+	private void init() {
 		if (this.env.containsProperty(PREFIX + ".worker-id")) {
 			// workerId configured
 			return;

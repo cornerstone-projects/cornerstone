@@ -29,7 +29,7 @@ abstract class FileStorageTestBase {
 	}
 
 	@Test
-	void testDirectory() throws IOException {
+	void testDirectory() {
 		assertThat(this.fs.isDirectory("/test")).isFalse();
 		assertThat(this.fs.mkdir("/test")).isTrue();
 		assertThat(this.fs.isDirectory("/test")).isTrue();
