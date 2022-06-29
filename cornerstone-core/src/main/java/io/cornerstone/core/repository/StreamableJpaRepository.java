@@ -20,7 +20,9 @@ public interface StreamableJpaRepository<T, ID> extends JpaRepository<T, ID> {
 
 	Stream<T> stream(@Nullable Specification<T> spec, Sort sort);
 
-	<S extends T> Stream<S> stream(Example<S> spec, Sort sort);
+	default <S extends T> Stream<S> stream(Example<S> example, Sort sort) {
+		return findBy(example, q -> q.sortBy(sort).stream());
+	}
 
 	@Transactional(readOnly = true)
 	default void forEach(Consumer<T> consumer) {
