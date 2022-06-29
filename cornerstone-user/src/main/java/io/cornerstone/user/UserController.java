@@ -25,6 +25,7 @@ import org.hibernate.dialect.Dialect;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -86,12 +87,12 @@ public class UserController extends AbstractEntityController<User, Long> {
 	@GetMapping(value = PATH_LIST + ".csv", produces = "text/csv")
 	@SortAsQueryParam
 	public ResponseEntity<StreamingResponseBody> download(@SortDefault(sort = "id") Sort sort,
-			@RequestParam(required = false) Charset charset) {
+			@RequestParam(required = false) Charset charset, @Parameter(hidden = true) User example) {
 		Charset cs = (charset != null ? charset : StandardCharsets.UTF_8);
 		return ResponseEntity.status(OK).contentType(new MediaType("text", "csv", cs)).body(os -> {
 			try (PrintWriter writer = new PrintWriter(new OutputStreamWriter(os, cs), true)) {
 				writer.write("id,username,name,phone,roles,disabled");
-				this.userRepository.forEach(sort, u -> {
+				this.userRepository.forEach(Example.of(example, getExampleMatcher()), sort, u -> {
 					writer.write('\n');
 					writer.write(String.format("%s,%s,%s,%s,%s,%b", String.valueOf(u.getId()), u.getUsername(),
 							u.getName(), u.getPhone(), u.getRoles() != null ? String.join(" ", u.getRoles()) : "",

@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -186,9 +187,7 @@ class UserControllerTests extends ControllerTestBase {
 
 		updatePasswordRequest.setPassword(DEFAULT_PASSWORD);
 		updatePasswordRequest.setConfirmedPassword(updatePasswordRequest.getPassword());
-		restTemplate.put(PATH_PASSWORD, updatePasswordRequest, admin.getId()); // change
-																				// password
-																				// back
+		restTemplate.put(PATH_PASSWORD, updatePasswordRequest, admin.getId());
 	}
 
 	@Test
@@ -216,7 +215,7 @@ class UserControllerTests extends ControllerTestBase {
 			User u = new User();
 			u.setUsername("test" + i);
 			u.setName("test");
-			u.setDisabled(true);
+			u.setDisabled(i % 2 == 0);
 			restTemplate.postForObject(PATH_LIST, u, void.class);
 		}
 		ResponseEntity<Resource> response = restTemplate.getForEntity(PATH_LIST + ".csv?sort=createdDate",
@@ -225,16 +224,25 @@ class UserControllerTests extends ControllerTestBase {
 		assertThat(response.getStatusCode()).isSameAs(OK);
 		Resource resource = response.getBody();
 		assertThat(resource).isNotNull();
+		List<String> ids = new ArrayList<>();
 		try (InputStream is = resource.getInputStream();
 				BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
 			List<String> lines = reader.lines().collect(Collectors.toList());
 			assertThat(lines).hasSize(size + 3);
 			assertThat(lines).element(4).asString().contains(",test,");
 			for (int i = 3; i < (size + 3); i++) {
-				String[] arr = lines.get(i).split(",");
-				restTemplate.delete(PATH_DETAIL, arr[0]);
+				ids.add(lines.get(i).split(",")[0]);
 			}
 		}
+
+		response = restTemplate.getForEntity(PATH_LIST + ".csv?sort=createdDate&disabled=true", Resource.class);
+		try (InputStream is = response.getBody().getInputStream();
+				BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
+			List<String> lines = reader.lines().collect(Collectors.toList());
+			assertThat(lines).hasSize(size / 2 + 1);
+		}
+
+		ids.forEach(id -> restTemplate.delete(PATH_DETAIL, id));
 	}
 
 	@Test
