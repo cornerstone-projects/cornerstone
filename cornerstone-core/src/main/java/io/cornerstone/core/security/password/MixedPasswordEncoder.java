@@ -32,18 +32,18 @@ public class MixedPasswordEncoder implements PasswordEncoder {
 			return false;
 		}
 		switch (encodedPassword.length()) {
-		case 48:
-			byte[] digested = Hex.decode(encodedPassword);
-			byte[] salt = EncodingUtils.subArray(digested, 0, saltGenerator.getKeyLength());
-			return MessageDigest.isEqual(digested, digest(rawPassword, salt, true));
-		case 60:
-			return BCRYPT.matches(rawPassword, encodedPassword);
-		case 80:
-			digested = Hex.decode(encodedPassword);
-			salt = EncodingUtils.subArray(digested, 0, saltGenerator.getKeyLength());
-			return MessageDigest.isEqual(digested, digest(rawPassword, salt, false));
-		default:
-			return false;
+			case 48:
+				byte[] digested = Hex.decode(encodedPassword);
+				byte[] salt = EncodingUtils.subArray(digested, 0, saltGenerator.getKeyLength());
+				return MessageDigest.isEqual(digested, digest(rawPassword, salt, true));
+			case 60:
+				return BCRYPT.matches(rawPassword, encodedPassword);
+			case 80:
+				digested = Hex.decode(encodedPassword);
+				salt = EncodingUtils.subArray(digested, 0, saltGenerator.getKeyLength());
+				return MessageDigest.isEqual(digested, digest(rawPassword, salt, false));
+			default:
+				return false;
 		}
 	}
 

@@ -37,12 +37,12 @@ public class AppMembership {
 	@EventListener
 	void onEvent(AvailabilityChangeEvent<ReadinessState> event) {
 		switch (event.getState()) {
-		case ACCEPTING_TRAFFIC:
-			this.membership.join(this.group);
-			break;
-		case REFUSING_TRAFFIC:
-			this.membership.leave(this.group);
-			break;
+			case ACCEPTING_TRAFFIC:
+				this.membership.join(this.group);
+				break;
+			case REFUSING_TRAFFIC:
+				this.membership.leave(this.group);
+				break;
 		}
 	}
 
