@@ -10,6 +10,7 @@ import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.util.Enumeration;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 
@@ -108,8 +109,8 @@ public class DefaultApplication extends SpringBootServletInitializer implements 
 		init(args);
 		Class<?> caller = StackWalker.getInstance(RETAIN_CLASS_REFERENCE)
 				.walk(s -> s
-						.filter(f -> f.getMethodName().equals("main")
-								&& f.getMethodType().equals(MethodType.methodType(void.class, String[].class)))
+						.filter(f -> Objects.equals(f.getMethodName(), "main")
+								&& Objects.equals(f.getMethodType(), MethodType.methodType(void.class, String[].class)))
 						.findFirst().map(StackFrame::getDeclaringClass)
 						.orElseThrow(() -> new RuntimeException("start() method should be called in main method")));
 		ApplicationContext ctx = SpringApplication.run(caller, args);
