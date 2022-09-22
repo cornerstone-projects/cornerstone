@@ -28,28 +28,11 @@ dependencyManagement {
 	}
 }
 
-sourceSets {
-	integrationTest {
-		compileClasspath += sourceSets.main.output
-		compileClasspath += sourceSets.test.output
-		runtimeClasspath += sourceSets.main.output
-		runtimeClasspath += sourceSets.test.output
-	}
-}
-
-configurations {
-	integrationTestImplementation.extendsFrom implementation
-	integrationTestImplementation.extendsFrom testImplementation
-	integrationTestRuntimeOnly.extendsFrom runtimeOnly
-	integrationTestRuntimeOnly.extendsFrom testRuntimeOnly
-}
-
 dependencies {
 	testImplementation "org.springframework.boot:spring-boot-starter-test"
 	testImplementation "org.springframework.security:spring-security-test"
 	testRuntimeOnly "com.h2database:h2"
 	testImplementation(testFixtures(project(":cornerstone-core")))
-	integrationTestImplementation(testFixtures(project(":cornerstone-core")))
 	checkstyle("io.spring.javaformat:spring-javaformat-checkstyle:${property('javaformat-plugin.version')}")
 }
 
@@ -60,8 +43,34 @@ configurations.all {
 	}
 }
 
-tasks.withType(Test) {
-	useJUnitPlatform()
+testing {
+	suites {
+		test {
+			useJUnitJupiter()
+		}
+		integrationTest(JvmTestSuite) {
+			sources {
+				compileClasspath += sourceSets.test.output
+				runtimeClasspath += sourceSets.test.output
+			}
+			dependencies {
+				implementation project()
+				configurations.testImplementation {
+					dependencies.forEach {implementation it}
+				}
+				configurations.testRuntimeOnly {
+					dependencies.forEach {runtimeOnly it}
+				}
+			}
+			targets {
+				all {
+					testTask.configure {
+						shouldRunAfter(test)
+					}
+				}
+			}
+		}
+	}
 }
 
 java {
@@ -93,15 +102,6 @@ clean {
 	doLast {
 		project.delete 'bin', 'logs'
 	}
-}
-
-tasks.register('integrationTest', Test) {
-	description = 'Runs integration tests.'
-	group = 'verification'
-
-	testClassesDirs = sourceSets.integrationTest.output.classesDirs
-	classpath = sourceSets.integrationTest.runtimeClasspath
-	shouldRunAfter test
 }
 
 if (rootProject.hasProperty('integration')) {
