@@ -73,7 +73,7 @@ public class GlobalRedisConfiguration extends RedisConfigurationSupport {
 
 	@Bean
 	public RedisMessageListenerContainer globalRedisMessageListenerContainer(
-			@Qualifier("globalRedisConnectionFactory") RedisConnectionFactory redisConnectionFactory,
+			@Qualifier("rawGlobalRedisConnectionFactory") RedisConnectionFactory redisConnectionFactory,
 			Optional<Executor> taskExecutor) {
 		return super.redisMessageListenerContainer(redisConnectionFactory, taskExecutor);
 	}

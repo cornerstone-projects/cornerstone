@@ -75,7 +75,8 @@ public class DefaultRedisConfiguration extends RedisConfigurationSupport {
 	@Bean
 	@Primary
 	@Override
-	public RedisMessageListenerContainer redisMessageListenerContainer(RedisConnectionFactory redisConnectionFactory,
+	public RedisMessageListenerContainer redisMessageListenerContainer(
+			@Qualifier("rawRedisConnectionFactory") RedisConnectionFactory redisConnectionFactory,
 			Optional<Executor> taskExecutor) {
 		return super.redisMessageListenerContainer(redisConnectionFactory, taskExecutor);
 	}
