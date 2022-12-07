@@ -123,7 +123,7 @@ public class DefaultApplication extends SpringBootServletInitializer implements 
 				// run in eclipse
 				System.out.println("Press 'Enter' key to shutdown");
 				System.in.read();
-				System.exit(SpringApplication.exit(ctx));
+				System.exit(0);
 			}
 		}
 	}
