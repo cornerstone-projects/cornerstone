@@ -7,18 +7,24 @@ import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.NoRepositoryBean;
 import org.springframework.lang.Nullable;
 import org.springframework.transaction.annotation.Transactional;
 
 @NoRepositoryBean
-public interface StreamableJpaRepository<T, ID> extends JpaRepository<T, ID> {
+public interface StreamableJpaRepository<T, ID> extends JpaRepository<T, ID>, JpaSpecificationExecutor<T> {
 
 	default Stream<T> stream(Sort sort) {
 		return stream((Specification<T>) null, sort);
 	}
 
-	Stream<T> stream(@Nullable Specification<T> spec, Sort sort);
+	default Stream<T> stream(@Nullable Specification<T> spec, Sort sort) {
+		if (spec == null) {
+			spec = (root, query, cb) -> null;
+		}
+		return findBy(spec, q -> q.sortBy(sort).stream());
+	}
 
 	default <S extends T> Stream<S> stream(Example<S> example, Sort sort) {
 		return findBy(example, q -> q.sortBy(sort).stream());

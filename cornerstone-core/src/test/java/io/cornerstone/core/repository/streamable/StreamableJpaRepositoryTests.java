@@ -6,22 +6,21 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import io.cornerstone.core.repository.EnableStreamableJpaRepositories;
 import io.cornerstone.test.DataJpaTestBase;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
-import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-@EnableStreamableJpaRepositories(basePackageClasses = TestEntityRepository.class)
+@EnableJpaRepositories(basePackageClasses = TestEntityRepository.class)
 @EntityScan(basePackageClasses = TestEntity.class)
 class StreamableJpaRepositoryTests extends DataJpaTestBase {
 
@@ -31,7 +30,7 @@ class StreamableJpaRepositoryTests extends DataJpaTestBase {
 	@Test
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	void streamWithoutExistingTransaction() {
-		assertThatExceptionOfType(InvalidDataAccessApiUsageException.class).isThrownBy(this::doStream);
+		assertThatExceptionOfType(IllegalStateException.class).isThrownBy(this::doStream);
 		this.repository.deleteAll();
 	}
 
