@@ -22,8 +22,8 @@ public class CompactJdkSerializationRedisSerializer extends JdkSerializationRedi
 
 	@Override
 	public byte[] serialize(Object object) {
-		if (object instanceof String) {
-			return ((String) object).getBytes(StandardCharsets.UTF_8);
+		if (object instanceof String str) {
+			return str.getBytes(StandardCharsets.UTF_8);
 		}
 		return super.serialize(object);
 	}

@@ -174,7 +174,7 @@ public class TracingAspect extends BaseAspect {
 		}
 		Span activeSpan = GlobalTracer.get().activeSpan();
 		SpanContext ctx = activeSpan != null ? activeSpan.context() : null;
-		return (ctx instanceof JaegerSpanContext) && ((JaegerSpanContext) ctx).isDebug();
+		return (ctx instanceof JaegerSpanContext jsc) && jsc.isDebug();
 	}
 
 	private static String getCallSite(Method method, Object target) {

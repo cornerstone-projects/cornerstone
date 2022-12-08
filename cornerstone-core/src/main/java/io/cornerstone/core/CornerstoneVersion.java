@@ -26,8 +26,8 @@ public final class CornerstoneVersion {
 		URL codeSourceLocation = codeSource.getLocation();
 		try {
 			URLConnection connection = codeSourceLocation.openConnection();
-			if (connection instanceof JarURLConnection) {
-				return getImplementationVersion(((JarURLConnection) connection).getJarFile());
+			if (connection instanceof JarURLConnection conn) {
+				return getImplementationVersion(conn.getJarFile());
 			}
 			try (JarFile jarFile = new JarFile(new File(codeSourceLocation.toURI()))) {
 				return getImplementationVersion(jarFile);

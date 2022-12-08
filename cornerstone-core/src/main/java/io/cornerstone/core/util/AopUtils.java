@@ -14,8 +14,9 @@ public class AopUtils {
 	public static <T> T getTargetObject(Object candidate) {
 		Assert.notNull(candidate, "Candidate must not be null");
 		try {
-			if (org.springframework.aop.support.AopUtils.isAopProxy(candidate) && (candidate instanceof Advised)) {
-				Object target = ((Advised) candidate).getTargetSource().getTarget();
+			if (org.springframework.aop.support.AopUtils.isAopProxy(candidate)
+					&& candidate instanceof Advised advised) {
+				Object target = advised.getTargetSource().getTarget();
 				if (target != null) {
 					return (T) target;
 				}
@@ -31,8 +32,9 @@ public class AopUtils {
 	public static <T> T getUltimateTargetObject(Object candidate) {
 		Assert.notNull(candidate, "Candidate must not be null");
 		try {
-			if (org.springframework.aop.support.AopUtils.isAopProxy(candidate) && (candidate instanceof Advised)) {
-				Object target = ((Advised) candidate).getTargetSource().getTarget();
+			if (org.springframework.aop.support.AopUtils.isAopProxy(candidate)
+					&& candidate instanceof Advised advised) {
+				Object target = advised.getTargetSource().getTarget();
 				if (target != null) {
 					return (T) getUltimateTargetObject(target);
 				}

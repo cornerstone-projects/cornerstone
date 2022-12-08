@@ -195,10 +195,9 @@ public class JsonSanitizer {
 				sanitize(null, element, node);
 			}
 		}
-		else if (parent instanceof ObjectNode) {
+		else if (parent instanceof ObjectNode on) {
 			this.mapping.forEach((k, v) -> {
 				if (k.test(nodeName, parent)) {
-					ObjectNode on = ((ObjectNode) parent);
 					String value = v.apply(node.isNull() ? null : node.asText());
 					try {
 						if (node.isNumber()) {

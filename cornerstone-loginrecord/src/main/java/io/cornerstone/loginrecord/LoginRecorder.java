@@ -37,14 +37,13 @@ public class LoginRecorder {
 		entity.setDate(
 				LocalDateTime.ofInstant(Instant.ofEpochMilli(event.getTimestamp()), TimeZone.getDefault().toZoneId()));
 		Object details = auth.getDetails();
-		if (details instanceof WebAuthenticationDetails) {
-			WebAuthenticationDetails wad = (WebAuthenticationDetails) details;
+		if (details instanceof WebAuthenticationDetails wad) {
 			entity.setAddress(wad.getRemoteAddress());
 			entity.setSessionId(wad.getSessionId());
 		}
-		if (event instanceof AbstractAuthenticationFailureEvent) {
+		if (event instanceof AbstractAuthenticationFailureEvent aafe) {
 			entity.setFailed(Boolean.TRUE);
-			entity.setCause(((AbstractAuthenticationFailureEvent) event).getException().getLocalizedMessage());
+			entity.setCause(aafe.getException().getLocalizedMessage());
 		}
 		else {
 			entity.setFailed(Boolean.FALSE);

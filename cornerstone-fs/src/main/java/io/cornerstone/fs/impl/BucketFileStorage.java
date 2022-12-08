@@ -88,8 +88,8 @@ public abstract class BucketFileStorage extends AbstractFileStorage {
 			}
 		}
 		if (contentLength < 0) {
-			if (is instanceof ByteArrayInputStream) {
-				contentLength = ((ByteArrayInputStream) is).available();
+			if (is instanceof ByteArrayInputStream bis) {
+				contentLength = bis.available();
 			}
 		}
 		doWrite(is, path, contentLength, contentType);

@@ -9,7 +9,7 @@ public interface VerificationManager {
 	boolean isVerificationRequired(String username);
 
 	default boolean isVerificationRequired(UserDetails user) {
-		return (user instanceof VerificationAware) && ((VerificationAware) user).isVerificationRequired();
+		return (user instanceof VerificationAware va) && va.isVerificationRequired();
 	}
 
 	boolean isPasswordRequired(String username);
@@ -23,8 +23,8 @@ public interface VerificationManager {
 	@Nullable
 	default String getReceiver(UserDetails user) {
 		String receiver = null;
-		if (user instanceof VerificationAware) {
-			receiver = ((VerificationAware) user).getReceiver();
+		if (user instanceof VerificationAware va) {
+			receiver = va.getReceiver();
 		}
 		return receiver;
 	}

@@ -78,8 +78,8 @@ public class ReflectionUtils {
 	}
 
 	private static String[] doGetParameterNames(Executable executable) {
-		if ((executable instanceof Method)) {
-			return parameterNameDiscoverer.getParameterNames((Method) executable);
+		if (executable instanceof Method method) {
+			return parameterNameDiscoverer.getParameterNames(method);
 		}
 		else {
 			return parameterNameDiscoverer.getParameterNames((Constructor<?>) executable);

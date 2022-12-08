@@ -27,8 +27,8 @@ public class FileStorageInstrumentation {
 		try {
 			Object result = Tracing.executeCheckedCallable(ReflectionUtils.stringify(method), pjp::proceed, "name",
 					fileStorage.getName());
-			if (methodName.equals("write") && (args.length > 2) && (args[2] instanceof Long)) {
-				Metrics.summary("fs.write.size", "name", fileStorage.getName()).record((Long) args[2]);
+			if (methodName.equals("write") && (args.length > 2) && (args[2] instanceof Long lo)) {
+				Metrics.summary("fs.write.size", "name", fileStorage.getName()).record(lo);
 			}
 			return result;
 		}

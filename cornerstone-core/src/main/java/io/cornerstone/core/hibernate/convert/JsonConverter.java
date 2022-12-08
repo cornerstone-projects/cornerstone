@@ -34,8 +34,8 @@ public abstract class JsonConverter<T> implements AttributeConverter<T, String> 
 		if (obj == null) {
 			return null;
 		}
-		if (((obj instanceof Collection) && ((Collection<?>) obj).isEmpty())
-				|| ((obj instanceof Map) && ((Map<?, ?>) obj).isEmpty())) {
+		if (((obj instanceof Collection<?> coll) && coll.isEmpty())
+				|| ((obj instanceof Map<?, ?> map) && map.isEmpty())) {
 			return "";
 		}
 		try {
@@ -53,8 +53,7 @@ public abstract class JsonConverter<T> implements AttributeConverter<T, String> 
 			return null;
 		}
 		if (string.isEmpty()) {
-			if (this.type instanceof ParameterizedType) {
-				ParameterizedType pt = (ParameterizedType) this.type;
+			if (this.type instanceof ParameterizedType pt) {
 				if (List.class.isAssignableFrom((Class<?>) pt.getRawType())) {
 					return (T) new ArrayList<>();
 				}

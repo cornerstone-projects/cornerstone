@@ -28,14 +28,14 @@ public class ToIdSerializer extends StdSerializer<Object> {
 
 	@Override
 	public void serialize(Object obj, JsonGenerator generator, SerializerProvider sp) throws IOException {
-		if (obj instanceof Collection) {
-			List<Object> ids = ((Collection<?>) obj).stream().map(Optional::ofNullable)
+		if (obj instanceof Collection<?> coll) {
+			List<Object> ids = coll.stream().map(Optional::ofNullable)
 					.map(o -> o.map(o2 -> new BeanWrapperImpl(o2).getPropertyValue("id")).orElse(null))
 					.collect(Collectors.toList());
 			generator.writeObject(ids);
 		}
-		else if (obj instanceof Object[]) {
-			List<Object> ids = Stream.of((Object[]) obj).map(Optional::ofNullable)
+		else if (obj instanceof Object[] array) {
+			List<Object> ids = Stream.of(array).map(Optional::ofNullable)
 					.map(o -> o.map(o2 -> new BeanWrapperImpl(o2).getPropertyValue("id")).orElse(null))
 					.collect(Collectors.toList());
 			generator.writeObject(ids);

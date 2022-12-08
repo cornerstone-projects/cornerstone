@@ -52,8 +52,8 @@ public class TracingConfiguration {
 
 			@Override
 			public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
-				if (bean instanceof DataSource) {
-					bean = new TracingDataSource(GlobalTracer.get(), (DataSource) bean, null, true, null);
+				if (bean instanceof DataSource ds) {
+					bean = new TracingDataSource(GlobalTracer.get(), ds, null, true, null);
 					log.info("Wrapped DataSource [{}] with {}", beanName, bean.getClass().getName());
 				}
 				else if (bean instanceof PlatformTransactionManager) {

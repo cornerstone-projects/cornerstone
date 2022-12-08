@@ -65,7 +65,7 @@ public abstract class AbstractEntityController<T, ID> extends AbstractReadableEn
 	}
 
 	protected Class<?> determineViewForUpdate(T entity) {
-		return findViewForEntity(((entity instanceof Versioned) && (((Versioned) entity).getVersion() == null))
+		return findViewForEntity(((entity instanceof Versioned versioned) && versioned.getVersion() == null)
 				? View.Edit.class : View.Update.class, this.entityClass);
 	}
 

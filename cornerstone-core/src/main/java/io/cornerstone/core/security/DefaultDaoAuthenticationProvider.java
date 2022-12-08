@@ -57,9 +57,8 @@ public class DefaultDaoAuthenticationProvider extends DaoAuthenticationProvider 
 	@Override
 	protected void additionalAuthenticationChecks(UserDetails userDetails,
 			UsernamePasswordAuthenticationToken authentication) throws AuthenticationException {
-		if (authentication.getDetails() instanceof DefaultWebAuthenticationDetails) {
-			String verificationCode = ((DefaultWebAuthenticationDetails) authentication.getDetails())
-					.getVerificationCode();
+		if (authentication.getDetails() instanceof DefaultWebAuthenticationDetails dwad) {
+			String verificationCode = dwad.getVerificationCode();
 			boolean skipPasswordCheck = false;
 			AuthenticationException ex = null;
 			for (VerificationCodeChecker checker : this.verificationCodeCheckers) {
