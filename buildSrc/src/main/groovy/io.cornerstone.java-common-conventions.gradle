@@ -6,7 +6,7 @@ plugins {
 	id 'io.spring.javaformat'
 }
 
-sourceCompatibility = '11'
+sourceCompatibility = '17'
 
 repositories {
 	if (rootProject.hasProperty('repoUrlPrefix')) {
