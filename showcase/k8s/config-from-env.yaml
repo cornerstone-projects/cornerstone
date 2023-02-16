@@ -1,0 +1,17 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ${application.name}
+spec:
+  template:
+    spec:
+      containers:
+      - name: ${application.name}
+        env:
+#        - name: LOGGING_LEVEL_ORG_SPRINGFRAMEWORK
+#          value: DEBUG
+        - name: mysql.password
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secrets
+              key: password

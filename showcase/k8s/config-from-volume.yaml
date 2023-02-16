@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ${application.name}
+spec:
+  template:
+    spec:
+      containers:
+      - name: ${application.name}
+        volumeMounts:
+        - name: mysql-secrets-volume
+          readOnly: true
+          mountPath: /etc/config/mysql
+        - name: config-properties-volume
+          readOnly: true
+          mountPath: /etc/config
+      volumes:
+      - name: config-properties-volume
+        configMap:
+          name: ${application.name}-config-properties
+      - name: mysql-secrets-volume
+        secret:
+          secretName: mysql-secrets

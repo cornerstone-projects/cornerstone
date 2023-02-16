@@ -1,20 +1,23 @@
 package io.cornerstone.core;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import lombok.RequiredArgsConstructor;
 import org.apache.commons.logging.Log;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.cloud.CloudPlatform;
 import org.springframework.boot.context.config.ConfigDataEnvironmentPostProcessor;
+import org.springframework.boot.env.ConfigTreePropertySource;
 import org.springframework.boot.env.EnvironmentPostProcessor;
 import org.springframework.boot.env.YamlPropertySourceLoader;
+import org.springframework.boot.logging.DeferredLogFactory;
 import org.springframework.core.Ordered;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.MapPropertySource;
@@ -22,15 +25,23 @@ import org.springframework.core.env.Profiles;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.io.ClassPathResource;
 
-@RequiredArgsConstructor
+import static org.springframework.boot.cloud.CloudPlatform.KUBERNETES;
+import static org.springframework.core.env.StandardEnvironment.SYSTEM_ENVIRONMENT_PROPERTY_SOURCE_NAME;
+
 public class DefaultPropertiesPostProcessor implements EnvironmentPostProcessor, Ordered {
 
 	private static final String FILE_NAME = "default.yml";
+
+	private static final String CONFIG_DIR_ON_K8S = "/etc/config/";
 
 	// After ConfigDataEnvironmentPostProcessor
 	public static final int ORDER = ConfigDataEnvironmentPostProcessor.ORDER + 1;
 
 	private final Log log;
+
+	public DefaultPropertiesPostProcessor(DeferredLogFactory factory) {
+		this.log = factory.getLog(getClass());
+	}
 
 	@Override
 	public int getOrder() {
@@ -49,11 +60,16 @@ public class DefaultPropertiesPostProcessor implements EnvironmentPostProcessor,
 						return false;
 					}
 					String onCloudPlatform = (String) ps.getProperty("spring.config.activate.on-cloud-platform");
-					if (onCloudPlatform == null) {
-						return true;
+					if (onCloudPlatform != null) {
+						CloudPlatform cloudPlatform = CloudPlatform.getActive(environment);
+						if ((cloudPlatform != null) && cloudPlatform.name().equalsIgnoreCase(onCloudPlatform)) {
+							// env MYSQL_PORT -> tcp://10.108.159.183:3306 on k8s
+							// use env MYSQL_SERVICE_PORT -> 3306 instead
+							environment.getPropertySources().addBefore(SYSTEM_ENVIRONMENT_PROPERTY_SOURCE_NAME, ps);
+						}
+						return false;
 					}
-					CloudPlatform cloudPlatform = CloudPlatform.getActive(environment);
-					return (cloudPlatform != null) && cloudPlatform.name().equalsIgnoreCase(onCloudPlatform);
+					return true;
 				})
 				.collect(Collectors.toList());
 			Collections.reverse(list);
@@ -62,6 +78,15 @@ public class DefaultPropertiesPostProcessor implements EnvironmentPostProcessor,
 		}
 		catch (IOException ex) {
 			throw new RuntimeException(ex.getMessage(), ex);
+		}
+
+		if (CloudPlatform.getActive(environment) == KUBERNETES) {
+			Path path = Path.of(CONFIG_DIR_ON_K8S);
+			if (Files.exists(path)) {
+				ConfigTreePropertySource ps = new ConfigTreePropertySource("Config tree '" + path + "'", path);
+				environment.getPropertySources().addAfter(SYSTEM_ENVIRONMENT_PROPERTY_SOURCE_NAME, ps);
+				this.log.info("Add ConfigTreePropertySource from config directory:" + CONFIG_DIR_ON_K8S);
+			}
 		}
 
 		String version = CornerstoneVersion.getVersion();

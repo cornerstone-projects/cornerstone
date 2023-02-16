@@ -155,4 +155,17 @@ opentracing:
     const-sampler.decision: false
     probabilistic-sampler.sampling-rate: 0.01
 
+---
+spring.config.activate.on-cloud-platform: kubernetes
+# env MYSQL_PORT -> tcp://10.108.159.183:3306 cause Malformed database URL, use MYSQL_SERVICE_PORT instead
+mysql:
+  host: ${mysql.service.host:mysql.default.svc.cluster.local}
+  port: ${mysql.service.port:3306}
 
+jaeger:
+  host: ${jaeger.service.host:jaeger.default.svc.cluster.local}
+  port: ${jaeger.service.port:14268}
+
+spring.redis:
+  host: ${redis.service.host:redis.default.svc.cluster.local}
+  port: ${redis.service.port:6379}

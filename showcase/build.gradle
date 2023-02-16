@@ -1,3 +1,9 @@
+buildscript{
+	dependencies{
+		classpath('org.yaml:snakeyaml:2.0')
+	}
+}
+
 plugins {
 	id 'io.cornerstone.java-common-conventions'
 	id 'org.springframework.boot'
@@ -15,4 +21,21 @@ dependencies {
 
 springBoot {
 	buildInfo()
+}
+
+tasks.register('kustomize', Copy) {
+	def cfg = new org.yaml.snakeyaml.Yaml().load(new File(project.projectDir, 'src/main/resources/application.yml').newInputStream())
+	def application = [name: cfg['spring.application.name']?:project.name, version: project.version]
+	def server = [port: cfg['server.port']?:8080]
+	def management = [server: [port: cfg['management.server.port']?:server.port], endpoints: [web: ['basePath': cfg['management.endpoints.web.base-path']?:'/actuator']]]
+	from(layout.projectDirectory.dir('k8s')) {
+		expand (application: application, server: server, management: management)
+	}
+	into layout.buildDirectory.dir('k8s')
+	outputs.upToDateWhen { false } // disable UP-TO-DATE to force run every time
+}
+tasks.register('applyKustomization', Exec) {
+	dependsOn kustomize
+	workingDir layout.buildDirectory.dir('k8s')
+	commandLine 'kubectl', 'apply', '-k', '.'
 }
