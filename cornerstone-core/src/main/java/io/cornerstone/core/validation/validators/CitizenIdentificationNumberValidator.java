@@ -5,11 +5,10 @@ import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
-
 import io.cornerstone.core.util.NumberUtils;
 import io.cornerstone.core.validation.constraints.CitizenIdentificationNumber;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 
 import org.springframework.util.StringUtils;
 

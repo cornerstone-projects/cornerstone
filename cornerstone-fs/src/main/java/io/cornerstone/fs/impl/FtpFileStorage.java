@@ -13,13 +13,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-
 import io.cornerstone.core.util.FileUtils;
 import io.cornerstone.fs.FileInfo;
 import io.cornerstone.fs.FileStorageProperties;
 import io.cornerstone.fs.FileStorageProperties.Ftp;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;

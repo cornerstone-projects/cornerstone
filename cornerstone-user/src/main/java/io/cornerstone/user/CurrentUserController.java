@@ -1,11 +1,10 @@
 package io.cornerstone.user;
 
-import javax.transaction.Transactional;
-import javax.validation.Valid;
-
 import com.fasterxml.jackson.annotation.JsonView;
 import io.cornerstone.core.util.BeanUtils;
 import io.cornerstone.core.web.BaseRestController;
+import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

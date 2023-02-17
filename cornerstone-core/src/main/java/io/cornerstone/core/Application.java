@@ -2,7 +2,7 @@ package io.cornerstone.core;
 
 import java.util.Optional;
 
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletContext;
 
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
@@ -30,7 +30,7 @@ public interface Application {
 	}
 
 	default String getServerInfo() {
-		if (ClassUtils.isPresent("javax.servlet.ServletContext", Application.class.getClassLoader())) {
+		if (ClassUtils.isPresent("jakarta.servlet.ServletContext", Application.class.getClassLoader())) {
 			try {
 				return getContext().getBean(ServletContext.class).getServerInfo();
 			}

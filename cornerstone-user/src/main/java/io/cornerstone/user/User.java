@@ -4,10 +4,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Version;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -18,6 +14,9 @@ import io.cornerstone.core.domain.View.Update;
 import io.cornerstone.core.hibernate.domain.AbstractAuditableEntity;
 import io.cornerstone.core.security.verification.VerificationAware;
 import io.cornerstone.core.validation.constraints.MobilePhoneNumber;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Version;
 import lombok.Getter;
 import lombok.Setter;
 

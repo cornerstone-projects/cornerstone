@@ -1,22 +1,18 @@
 package io.cornerstone.core.hibernate.criteria;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.Expression;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
-
-import io.cornerstone.core.util.ReflectionUtils;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.dialect.H2Dialect;
 import org.hibernate.dialect.MySQLDialect;
-import org.hibernate.dialect.Oracle8iDialect;
-import org.hibernate.dialect.PostgreSQL81Dialect;
+import org.hibernate.dialect.OracleDialect;
 import org.hibernate.engine.jdbc.spi.JdbcServices;
-import org.hibernate.query.criteria.internal.CriteriaBuilderImpl;
-import org.hibernate.query.criteria.internal.expression.LiteralExpression;
-import org.hibernate.query.criteria.internal.predicate.BooleanAssertionPredicate;
-import org.hibernate.query.criteria.internal.predicate.NegatedPredicateWrapper;
-import org.hibernate.query.criteria.internal.predicate.NullnessPredicate;
+import org.hibernate.query.sqm.internal.SqmCriteriaNodeBuilder;
+import org.hibernate.query.sqm.tree.expression.SqmLiteral;
+import org.hibernate.query.sqm.tree.predicate.SqmBooleanExpressionPredicate;
+import org.hibernate.query.sqm.tree.predicate.SqmNegatedPredicate;
+import org.hibernate.query.sqm.tree.predicate.SqmNullnessPredicate;
 
 import org.springframework.data.domain.Example;
 import org.springframework.data.jpa.convert.QueryByExamplePredicateBuilder;
@@ -26,35 +22,44 @@ import org.springframework.util.Assert;
 public class PredicateBuilder {
 
 	public static boolean isConstantTrue(Predicate predicate) {
-		if (predicate instanceof NegatedPredicateWrapper) {
-			return isConstantFalse(unwrap((NegatedPredicateWrapper) predicate));
+		if (predicate == null) {
+			return true;
 		}
-		else if (predicate instanceof NullnessPredicate) {
-			// literal cannot be null
-			return false;
+		if (predicate instanceof SqmNegatedPredicate np) {
+			return isConstantFalse(np.getWrappedPredicate());
 		}
-		else if (predicate instanceof BooleanAssertionPredicate) {
-			BooleanAssertionPredicate bap = (BooleanAssertionPredicate) predicate;
-			Expression<Boolean> exp = bap.getExpression();
-			if (exp instanceof LiteralExpression) {
-				return bap.getAssertedValue().equals(((LiteralExpression<Boolean>) exp).getLiteral());
+		else if (predicate instanceof SqmNullnessPredicate np) {
+			if (np.getExpression() instanceof SqmLiteral<?> literal) {
+				return np.isNegated() && literal.getLiteralValue() != null
+						|| !np.isNegated() && literal.getLiteralValue() == null;
+			}
+		}
+		else if (predicate instanceof SqmBooleanExpressionPredicate bep) {
+			if (bep.getBooleanExpression() instanceof SqmLiteral<Boolean> literal) {
+				return !bep.isNegated() && literal.getLiteralValue() || bep.isNegated() && !literal.getLiteralValue();
+
 			}
 		}
 		return false;
 	}
 
 	public static boolean isConstantFalse(Predicate predicate) {
-		if (predicate instanceof NegatedPredicateWrapper) {
-			return isConstantTrue(unwrap((NegatedPredicateWrapper) predicate));
+		if (predicate == null) {
+			return false;
 		}
-		else if (predicate instanceof NullnessPredicate) {
-			return ((NullnessPredicate) predicate).getOperand() instanceof LiteralExpression;
+		if (predicate instanceof SqmNegatedPredicate np) {
+			return isConstantTrue(np.getWrappedPredicate());
 		}
-		else if (predicate instanceof BooleanAssertionPredicate) {
-			BooleanAssertionPredicate bap = (BooleanAssertionPredicate) predicate;
-			Expression<Boolean> exp = bap.getExpression();
-			if (exp instanceof LiteralExpression) {
-				return !bap.getAssertedValue().equals(((LiteralExpression<Boolean>) exp).getLiteral());
+		else if (predicate instanceof SqmNullnessPredicate np) {
+			if (np.getExpression() instanceof SqmLiteral<?> literal) {
+				return np.isNegated() && literal.getLiteralValue() == null
+						|| !np.isNegated() && literal.getLiteralValue() != null;
+			}
+		}
+		else if (predicate instanceof SqmBooleanExpressionPredicate bep) {
+			if (bep.getBooleanExpression() instanceof SqmLiteral<Boolean> literal) {
+				return !bep.isNegated() && !literal.getLiteralValue() || bep.isNegated() && literal.getLiteralValue();
+
 			}
 		}
 		return false;
@@ -83,10 +88,14 @@ public class PredicateBuilder {
 			return cb.greaterThan(cb.function("find_in_set", Integer.class, cb.literal(item), root.get(propertyName)),
 					0);
 		}
-		if (dialect instanceof PostgreSQL81Dialect) {
+		// @formatter:off
+		/** https://hibernate.atlassian.net/browse/HHH-16419
+		if (dialect instanceof PostgreSQLDialect) {
 			return cb.equal(cb.literal(item), cb.function("any", String.class,
 					cb.function("string_to_array", String[].class, root.get(propertyName), cb.literal(","))));
 		}
+		*/
+		// @formatter:on
 		return cb.like(cb.concat(cb.concat(",", root.get(propertyName)), ","), '%' + item + '%');
 	}
 
@@ -107,7 +116,7 @@ public class PredicateBuilder {
 
 	public static <T> Predicate regexpLike(Root<T> root, CriteriaBuilder cb, String propertyName, String pattern) {
 		Dialect dialect = getDialect(cb);
-		if (dialect instanceof Oracle8iDialect) {
+		if (dialect instanceof OracleDialect) {
 			return cb.gt(cb.function("regexp_instr", Integer.class, root.get(propertyName), cb.literal(pattern)), 0);
 		}
 		// for mysql 5.7:
@@ -116,7 +125,7 @@ public class PredicateBuilder {
 		// for postgresql:
 		// create or replace function regexp_like(character varying,character varying)
 		// returns integer as $$ select ($1 ~ $2)::int; $$ language sql immutable;
-		if (dialect instanceof H2Dialect && ((H2Dialect) dialect).isVersion2()) {
+		if (dialect instanceof H2Dialect && dialect.getVersion().isSameOrAfter(2)) {
 			return cb.equal(cb.function("regexp_like", Boolean.class, root.get(propertyName), cb.literal(pattern)),
 					Boolean.TRUE);
 		}
@@ -125,17 +134,10 @@ public class PredicateBuilder {
 
 	@Nullable
 	private static Dialect getDialect(CriteriaBuilder cb) {
-		if (cb instanceof CriteriaBuilderImpl) {
-			return ((CriteriaBuilderImpl) cb).getEntityManagerFactory()
-				.getServiceRegistry()
-				.getService(JdbcServices.class)
-				.getDialect();
+		if (cb instanceof SqmCriteriaNodeBuilder scnb) {
+			return scnb.getServiceRegistry().getService(JdbcServices.class).getDialect();
 		}
 		return null;
-	}
-
-	private static Predicate unwrap(NegatedPredicateWrapper wrapper) {
-		return ReflectionUtils.getFieldValue(wrapper, "predicate");
 	}
 
 }

@@ -3,7 +3,7 @@ package io.cornerstone.core.hibernate.convert;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.AttributeConverter;
+import jakarta.persistence.AttributeConverter;
 
 import org.springframework.core.ResolvableType;
 

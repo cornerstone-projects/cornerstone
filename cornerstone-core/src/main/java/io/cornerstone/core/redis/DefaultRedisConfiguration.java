@@ -81,11 +81,10 @@ public class DefaultRedisConfiguration extends RedisConfigurationSupport {
 		return super.redisMessageListenerContainer(redisConnectionFactory, taskExecutor);
 	}
 
-	@Primary
 	@ConfigurationProperties(prefix = DefaultRedisProperties.PREFIX)
 	public static class DefaultRedisProperties extends RedisProperties {
 
-		public static final String PREFIX = "spring.redis";
+		public static final String PREFIX = "spring.data.redis";
 
 	}
 

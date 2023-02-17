@@ -40,15 +40,15 @@ public class PublishAspect extends BaseAspect implements TransactionSynchronizat
 		this.order = 1;
 	}
 
-	@Pointcut("execution(public void javax.persistence.EntityManager.persist(..))")
+	@Pointcut("execution(public void jakarta.persistence.EntityManager.persist(..))")
 	private void persist() {
 	}
 
-	@Pointcut("execution(public * javax.persistence.EntityManager..merge(..))")
+	@Pointcut("execution(public * jakarta.persistence.EntityManager..merge(..))")
 	private void merge() {
 	}
 
-	@Pointcut("execution(public void javax.persistence.EntityManager..remove(..))")
+	@Pointcut("execution(public void jakarta.persistence.EntityManager..remove(..))")
 	private void remove() {
 	}
 

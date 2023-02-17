@@ -3,12 +3,11 @@ package io.cornerstone.core.message.rabbit;
 import java.io.Serializable;
 import java.util.concurrent.Executor;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-
 import io.cornerstone.core.Application;
 import io.cornerstone.core.domain.Scope;
 import io.cornerstone.core.message.Topic;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 import lombok.Getter;
 import lombok.Setter;
 import org.slf4j.Logger;

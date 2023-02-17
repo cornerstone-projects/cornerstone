@@ -4,11 +4,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
-
 import io.cornerstone.core.util.NumberUtils;
 import io.cornerstone.core.validation.constraints.MobilePhoneNumber;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 
 import org.springframework.util.StringUtils;
 

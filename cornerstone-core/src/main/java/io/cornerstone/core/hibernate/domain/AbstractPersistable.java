@@ -2,17 +2,12 @@ package io.cornerstone.core.hibernate.domain;
 
 import java.io.Serializable;
 
-import javax.persistence.MappedSuperclass;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import io.cornerstone.core.hibernate.type.JsonType;
-import org.hibernate.annotations.TypeDef;
-import org.hibernate.annotations.TypeDefs;
+import jakarta.persistence.MappedSuperclass;
 
 import org.springframework.data.domain.Persistable;
 import org.springframework.data.util.ProxyUtils;
 
-@TypeDefs({ @TypeDef(name = "json", typeClass = JsonType.class) })
 @MappedSuperclass
 public abstract class AbstractPersistable<ID extends Serializable> implements Persistable<ID>, Serializable {
 

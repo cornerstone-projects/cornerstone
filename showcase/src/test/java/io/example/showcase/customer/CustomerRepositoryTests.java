@@ -1,10 +1,9 @@
 package io.example.showcase.customer;
 
-import javax.validation.ConstraintViolationException;
-
 import io.cornerstone.core.validation.validators.CitizenIdentificationNumberValidator;
 import io.cornerstone.core.validation.validators.MobilePhoneNumberValidator;
 import io.cornerstone.test.DataJpaTestBase;
+import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;

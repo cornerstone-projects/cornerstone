@@ -14,9 +14,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-import javax.servlet.ServletContext;
-
 import io.cornerstone.core.util.ReflectionUtils;
+import jakarta.servlet.ServletContext;
 import lombok.Getter;
 
 import org.springframework.beans.factory.annotation.Autowired;

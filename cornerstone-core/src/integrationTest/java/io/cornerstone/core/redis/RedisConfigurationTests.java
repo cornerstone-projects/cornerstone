@@ -1,7 +1,5 @@
 package io.cornerstone.core.redis;
 
-import javax.annotation.Resource;
-
 import io.cornerstone.core.redis.DefaultRedisConfiguration.DefaultRedisProperties;
 import io.cornerstone.core.redis.GlobalRedisConfiguration.GlobalRedisProperties;
 import org.junit.jupiter.api.Test;
@@ -11,6 +9,7 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
@@ -23,9 +22,9 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ContextConfiguration(classes = { DefaultRedisConfiguration.class, GlobalRedisConfiguration.class })
-@TestPropertySource(
-		properties = { "spring.redis.enabled=true", "spring.redis.database=1", "spring.redis.client-name=default",
-				"global.redis.enabled=true", "global.redis.database=2", "global.redis.client-name=global" })
+@TestPropertySource(properties = { "spring.data.redis.enabled=true", "spring.data.redis.database=1",
+		"spring.data.redis.client-name=default", "global.data.redis.enabled=true", "global.data.redis.database=2",
+		"global.data.redis.client-name=global" })
 @Testcontainers
 @ExtendWith(SpringExtension.class)
 class RedisConfigurationTests {
@@ -35,8 +34,8 @@ class RedisConfigurationTests {
 
 	@DynamicPropertySource
 	static void registerDynamicProperties(DynamicPropertyRegistry registry) {
-		registry.add("spring.redis.host", container::getHost);
-		registry.add("spring.redis.port", container::getFirstMappedPort);
+		registry.add("spring.data.redis.host", container::getHost);
+		registry.add("spring.data.redis.port", container::getFirstMappedPort);
 	}
 
 	@Autowired
@@ -48,13 +47,15 @@ class RedisConfigurationTests {
 	@Autowired
 	private RedisTemplate<String, Object> redisTemplate;
 
-	@Resource
+	@Autowired
+	@Qualifier("globalRedisTemplate")
 	private RedisTemplate<String, Object> globalRedisTemplate;
 
 	@Autowired
 	private StringRedisTemplate stringRedisTemplate;
 
-	@Resource
+	@Autowired
+	@Qualifier("globalStringRedisTemplate")
 	private StringRedisTemplate globalStringRedisTemplate;
 
 	@Test

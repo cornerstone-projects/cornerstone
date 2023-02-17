@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpRequest;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
@@ -56,10 +56,11 @@ public class LoggingClientHttpRequestInterceptor implements ClientHttpRequestInt
 				}
 
 				@Override
-				public HttpStatus getStatusCode() throws IOException {
-					return response.getStatusCode();
+				public HttpStatusCode getStatusCode() throws IOException {
+					return HttpStatusCode.valueOf(getRawStatusCode());
 				}
 
+				@SuppressWarnings("deprecation")
 				@Override
 				public int getRawStatusCode() throws IOException {
 					return response.getRawStatusCode();
@@ -87,8 +88,8 @@ public class LoggingClientHttpRequestInterceptor implements ClientHttpRequestInt
 			};
 		}
 		else {
-			this.logger.info("Received status {} and content type \"{}\" with length {}", response.getRawStatusCode(),
-					contentType, response.getHeaders().getContentLength());
+			this.logger.info("Received status {} and content type \"{}\" with length {}",
+					response.getStatusCode().value(), contentType, response.getHeaders().getContentLength());
 		}
 		return response;
 	}

@@ -9,11 +9,10 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
-
 import io.cornerstone.core.util.FileUtils;
 import io.cornerstone.fs.FileInfo;
 import io.cornerstone.fs.FileStorageProperties;
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.util.Assert;

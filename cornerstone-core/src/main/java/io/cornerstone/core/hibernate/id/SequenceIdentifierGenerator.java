@@ -9,8 +9,6 @@ import org.hibernate.MappingException;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.id.IdentifierGenerator;
 import org.hibernate.service.ServiceRegistry;
-import org.hibernate.type.IntegerType;
-import org.hibernate.type.StringType;
 import org.hibernate.type.Type;
 
 import org.springframework.beans.factory.BeanFactory;
@@ -22,17 +20,17 @@ public class SequenceIdentifierGenerator implements IdentifierGenerator {
 
 	private Sequence sequence;
 
-	private Type type;
+	private Class<?> type;
 
 	@Override
 	public Serializable generate(SharedSessionContractImplementor session, Object obj) {
-		return this.type instanceof IntegerType ? this.sequence.nextIntValue()
-				: this.type instanceof StringType ? this.sequence.nextStringValue() : this.sequence.nextLongValue();
+		return (this.type == Integer.class || this.type == Integer.TYPE) ? this.sequence.nextIntValue()
+				: this.type == String.class ? this.sequence.nextStringValue() : this.sequence.nextLongValue();
 	}
 
 	@Override
 	public void configure(Type type, Properties params, ServiceRegistry serviceRegistry) throws MappingException {
-		this.type = type;
+		this.type = type.getReturnedClass();
 		String sequenceName = (String) params.get("sequenceName");
 		if (sequenceName == null) {
 			throw new IllegalArgumentException("@GenericGenerator miss parameter \"sequenceName\"");

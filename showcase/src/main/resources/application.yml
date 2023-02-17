@@ -7,14 +7,14 @@ mysql:
   username: root #alias to spring.datasource.username
   password:
 
-spring.redis:
+spring.data.redis:
   host: localhost
   port: 6379
 
 spring.kafka.bootstrap-servers:
   - localhost:9092
 
-management.metrics.export.influx:
+management.influx.metrics.export:
   uri: http://localhost:8086
   db: metrics # org,bucket for V2
 

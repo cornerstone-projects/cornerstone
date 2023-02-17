@@ -6,16 +6,16 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-import javax.annotation.PreDestroy;
-
 import io.cornerstone.core.Application;
 import io.cornerstone.core.coordination.Membership;
+import jakarta.annotation.PreDestroy;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.SessionCallback;
@@ -86,7 +86,7 @@ public class RedisMembership implements Membership, SchedulingConfigurer {
 
 	@Override
 	public void configureTasks(ScheduledTaskRegistrar taskRegistrar) {
-		taskRegistrar.addFixedDelayTask(this::doHeartbeat, this.heartbeat);
+		taskRegistrar.addFixedDelayTask(this::doHeartbeat, Duration.ofMillis(this.heartbeat));
 	}
 
 	private void doHeartbeat() {

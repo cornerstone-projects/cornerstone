@@ -2,8 +2,7 @@ package io.cornerstone.core.servlet;
 
 import java.util.List;
 
-import javax.servlet.DispatcherType;
-
+import jakarta.servlet.DispatcherType;
 import org.slf4j.MDC;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;

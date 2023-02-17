@@ -11,8 +11,6 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 
-import javax.validation.Valid;
-
 import com.fasterxml.jackson.annotation.JsonView;
 import io.cornerstone.core.domain.ResultPage;
 import io.cornerstone.core.domain.View;
@@ -20,8 +18,8 @@ import io.cornerstone.core.web.AbstractEntityController;
 import io.cornerstone.core.web.PageableAsQueryParam;
 import io.cornerstone.core.web.SortAsQueryParam;
 import io.swagger.v3.oas.annotations.Parameter;
+import jakarta.validation.Valid;
 import org.hibernate.cfg.AvailableSettings;
-import org.hibernate.dialect.Dialect;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
@@ -107,8 +105,7 @@ public class UserController extends AbstractEntityController<User, Long> {
 		try (BufferedReader reader = new BufferedReader(
 				new InputStreamReader(input.getInputStream(), StandardCharsets.UTF_8))) {
 			int batchSize = this.applicationContext.getEnvironment()
-				.getProperty("spring.jpa.properties." + AvailableSettings.STATEMENT_BATCH_SIZE, Integer.class,
-						Integer.valueOf(Dialect.DEFAULT_BATCH_SIZE));
+				.getProperty("spring.jpa.properties." + AvailableSettings.STATEMENT_BATCH_SIZE, Integer.class, 50);
 			String line;
 			List<User> batch = new ArrayList<>();
 			while ((line = reader.readLine()) != null) {

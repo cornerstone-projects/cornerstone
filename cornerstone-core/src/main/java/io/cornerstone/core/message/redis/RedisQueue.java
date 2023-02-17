@@ -4,10 +4,9 @@ import java.io.Serializable;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-
 import io.cornerstone.core.message.Queue;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 

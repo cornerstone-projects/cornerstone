@@ -2,9 +2,8 @@ package io.cornerstone.core.hibernate.criteria;
 
 import java.util.Set;
 
-import javax.persistence.Entity;
-
 import io.cornerstone.core.hibernate.domain.AbstractEntity;
+import jakarta.persistence.Entity;
 import lombok.Getter;
 import lombok.Setter;
 

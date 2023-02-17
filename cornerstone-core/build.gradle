@@ -23,13 +23,8 @@ dependencies {
 	api "io.opentracing.contrib:opentracing-spring-jaeger-web-starter:${property('java-spring-jaeger.version')}"
 	api "io.opentracing.contrib:opentracing-jdbc:${property('opentracing-jdbc.version')}"
 	api "io.opentracing.contrib:opentracing-redis-spring-data2:${property('opentracing-spring-data-redis.version')}"
-	ext {
-		springdocVersion = property('springdoc.version')
-	}
-	api "org.springdoc:springdoc-openapi-ui:${springdocVersion}"
-	api "org.springdoc:springdoc-openapi-security:${springdocVersion}"
+	api "org.springdoc:springdoc-openapi-starter-webmvc-ui:${property('springdoc.version')}"
 	api "org.apache.commons:commons-pool2"
-	api "org.apache.logging.log4j:log4j-spring-boot"
 	compileOnly "org.springframework.boot:spring-boot-starter-amqp"
 	testFixturesApi "org.springframework.boot:spring-boot-starter-test"
 	testFixturesApi "org.springframework.security:spring-security-test"

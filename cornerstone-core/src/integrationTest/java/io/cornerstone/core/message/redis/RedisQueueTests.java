@@ -10,8 +10,8 @@ import org.mockito.Mockito;
 
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.annotation.Bean;
-import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.connection.RedisListCommands;
 import org.springframework.test.context.ContextConfiguration;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -26,8 +26,8 @@ class RedisQueueTests extends QueueTestBase {
 
 	@Test
 	void produce() {
-		ResultCaptor<RedisConnection> resultCaptor = new ResultCaptor<>(Mockito::spy);
-		given(this.connectionFactory.getConnection()).willAnswer(resultCaptor);
+		ResultCaptor<RedisListCommands> resultCaptor = new ResultCaptor<>(Mockito::spy);
+		given(this.connectionFactory.getConnection().listCommands()).willAnswer(resultCaptor);
 		this.testQueue.produce("test");
 		then(resultCaptor.getResult()).should().rPush(any(), any());
 	}

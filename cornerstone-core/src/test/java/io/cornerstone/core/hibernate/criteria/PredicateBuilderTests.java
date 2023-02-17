@@ -5,12 +5,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
-
 import io.cornerstone.test.DataJpaTestBase;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,12 +44,14 @@ class PredicateBuilderTests extends DataJpaTestBase {
 		assertThat(isConstantTrue(cb.isTrue(cb.literal(true)))).isTrue();
 		assertThat(isConstantTrue(cb.isFalse(cb.literal(false)))).isTrue();
 		assertThat(isConstantTrue(cb.isNotNull(cb.literal("")))).isTrue();
+		assertThat(isConstantTrue(cb.isNull(cb.literal(null)))).isTrue();
 		assertThat(isConstantTrue(cb.isTrue(root.get("enabled")))).isFalse();
 		assertThat(isConstantTrue(cb.isFalse(root.get("enabled")))).isFalse();
 		assertThat(isConstantTrue(cb.isNotNull(root.get("name")))).isFalse();
 
 		assertThat(isConstantFalse(cb.isTrue(cb.literal(false)))).isTrue();
 		assertThat(isConstantFalse(cb.isFalse(cb.literal(true)))).isTrue();
+		assertThat(isConstantFalse(cb.isNotNull(cb.literal(null)))).isTrue();
 		assertThat(isConstantFalse(cb.isNull(cb.literal("")))).isTrue();
 		assertThat(isConstantFalse(cb.isTrue(root.get("enabled")))).isFalse();
 		assertThat(isConstantFalse(cb.isFalse(root.get("enabled")))).isFalse();

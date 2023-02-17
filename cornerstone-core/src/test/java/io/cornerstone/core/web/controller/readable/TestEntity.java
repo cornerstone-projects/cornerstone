@@ -1,8 +1,7 @@
 package io.cornerstone.core.web.controller.readable;
 
-import javax.persistence.Entity;
-
 import io.cornerstone.core.hibernate.domain.AbstractEntity;
+import jakarta.persistence.Entity;
 import lombok.Getter;
 import lombok.Setter;
 

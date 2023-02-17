@@ -5,7 +5,7 @@ import org.apache.commons.logging.LogFactory;
 
 import org.springframework.boot.autoconfigure.cache.RedisCacheManagerBuilderCustomizer;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.cache.annotation.CachingConfigurerSupport;
+import org.springframework.cache.annotation.CachingConfigurer;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.interceptor.CacheErrorHandler;
 import org.springframework.cache.interceptor.LoggingCacheErrorHandler;
@@ -19,7 +19,7 @@ import org.springframework.data.redis.serializer.RedisSerializationContext.Seria
 @Profile("!test")
 @EnableCaching(order = Ordered.HIGHEST_PRECEDENCE + 3)
 @Configuration(proxyBeanMethods = false)
-public class CacheConfiguration extends CachingConfigurerSupport {
+public class CacheConfiguration implements CachingConfigurer {
 
 	@Override
 	public CacheErrorHandler errorHandler() {

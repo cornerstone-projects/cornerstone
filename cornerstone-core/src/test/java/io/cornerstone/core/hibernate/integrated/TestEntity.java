@@ -5,17 +5,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.persistence.AttributeConverter;
-import javax.persistence.Converter;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-
 import io.cornerstone.core.hibernate.convert.EnumArrayConverter;
 import io.cornerstone.core.hibernate.convert.EnumListConverter;
 import io.cornerstone.core.hibernate.convert.EnumSetConverter;
 import io.cornerstone.core.hibernate.convert.JsonConverter;
 import io.cornerstone.core.hibernate.type.JsonType;
+import jakarta.persistence.AttributeConverter;
+import jakarta.persistence.Converter;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -24,13 +23,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
-import org.hibernate.annotations.TypeDefs;
 
 import org.springframework.data.domain.Persistable;
 import org.springframework.lang.Nullable;
 
-@TypeDefs({ @TypeDef(name = "json", typeClass = JsonType.class) })
 @Entity
 @Getter
 @Setter
@@ -70,7 +66,7 @@ class TestEntity implements Persistable<Long> {
 
 	private List<TestComponent> testComponentList;
 
-	@Type(type = "json")
+	@Type(JsonType.class)
 	private List<AnotherComponent> anotherComponentList;
 
 	@Override

@@ -2,9 +2,8 @@ package io.cornerstone.core.message.rabbit;
 
 import java.io.Serializable;
 
-import javax.annotation.PostConstruct;
-
 import io.cornerstone.core.message.Queue;
+import jakarta.annotation.PostConstruct;
 import lombok.Getter;
 import lombok.Setter;
 

@@ -4,14 +4,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.persistence.AttributeConverter;
-import javax.persistence.Converter;
-import javax.persistence.Entity;
-
 import io.cornerstone.core.hibernate.convert.EnumArrayConverter;
 import io.cornerstone.core.hibernate.convert.EnumListConverter;
 import io.cornerstone.core.hibernate.convert.EnumSetConverter;
 import io.cornerstone.core.hibernate.convert.JsonConverter;
+import jakarta.persistence.AttributeConverter;
+import jakarta.persistence.Converter;
+import jakarta.persistence.Entity;
 import lombok.Getter;
 import lombok.Setter;
 

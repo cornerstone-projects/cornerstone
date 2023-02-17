@@ -1,11 +1,10 @@
 package io.cornerstone.core.web;
 
-import javax.validation.Valid;
-
 import com.fasterxml.jackson.annotation.JsonView;
 import io.cornerstone.core.domain.Versioned;
 import io.cornerstone.core.domain.View;
 import io.cornerstone.core.util.BeanUtils;
+import jakarta.validation.Valid;
 
 import org.springframework.util.ClassUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;

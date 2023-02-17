@@ -2,8 +2,6 @@ package io.cornerstone.core.web;
 
 import java.util.Date;
 
-import javax.annotation.PostConstruct;
-
 import io.cornerstone.core.security.SecurityProperties;
 import io.cornerstone.core.security.verification.VerificationManager;
 import io.swagger.v3.oas.models.Operation;
@@ -18,8 +16,9 @@ import io.swagger.v3.oas.models.media.StringSchema;
 import io.swagger.v3.oas.models.parameters.RequestBody;
 import io.swagger.v3.oas.models.responses.ApiResponse;
 import io.swagger.v3.oas.models.responses.ApiResponses;
-import org.springdoc.core.SpringDocUtils;
-import org.springdoc.core.customizers.OpenApiCustomiser;
+import jakarta.annotation.PostConstruct;
+import org.springdoc.core.customizers.OpenApiCustomizer;
+import org.springdoc.core.utils.SpringDocUtils;
 
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -43,7 +42,7 @@ public class SwaggerConfiguration {
 	}
 
 	@Bean
-	OpenApiCustomiser springSecurityLoginEndpointCustomiser(ObjectProvider<SecurityProperties> propertiesProvider,
+	OpenApiCustomizer springSecurityLoginEndpointCustomizer(ObjectProvider<SecurityProperties> propertiesProvider,
 			ObjectProvider<VerificationManager> verificationManagerProvider) {
 		return openAPI -> {
 			propertiesProvider.ifAvailable(properties -> {

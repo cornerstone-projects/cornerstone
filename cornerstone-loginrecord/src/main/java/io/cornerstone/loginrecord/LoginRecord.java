@@ -2,14 +2,13 @@ package io.cornerstone.loginrecord;
 
 import java.time.LocalDateTime;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Index;
-import javax.persistence.Table;
-
 import com.fasterxml.jackson.annotation.JsonView;
 import io.cornerstone.core.domain.View;
 import io.cornerstone.core.hibernate.domain.AbstractEntity;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Index;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 

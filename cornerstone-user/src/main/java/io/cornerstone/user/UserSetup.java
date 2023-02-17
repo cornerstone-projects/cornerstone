@@ -2,8 +2,7 @@ package io.cornerstone.user;
 
 import java.util.Collections;
 
-import javax.annotation.PostConstruct;
-
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.context.annotation.Profile;

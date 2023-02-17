@@ -1,7 +1,7 @@
 package io.cornerstone.core.hibernate.convert;
 
-import javax.persistence.AttributeConverter;
-import javax.persistence.Converter;
+import jakarta.persistence.AttributeConverter;
+import jakarta.persistence.Converter;
 
 @Converter(autoApply = true)
 public class LongArrayConverter extends AbstractArrayConverter<Long> implements AttributeConverter<Long[], String> {

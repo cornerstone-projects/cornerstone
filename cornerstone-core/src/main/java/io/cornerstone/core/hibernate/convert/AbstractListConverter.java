@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import javax.persistence.AttributeConverter;
+import jakarta.persistence.AttributeConverter;
 
 public abstract class AbstractListConverter<T> extends AbstractCollectionConverter<T>
 		implements AttributeConverter<List<T>, String> {

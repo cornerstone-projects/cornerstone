@@ -8,14 +8,14 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import java.util.stream.Stream;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.cornerstone.core.Application;
 import io.cornerstone.core.security.password.MixedPasswordEncoder;
 import io.cornerstone.core.util.RequestUtils;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +31,7 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractAuthenticationFilterConfigurer;
-import org.springframework.security.config.annotation.web.configurers.ExpressionUrlAuthorizationConfigurer;
+import org.springframework.security.config.annotation.web.configurers.AuthorizeHttpRequestsConfigurer;
 import org.springframework.security.config.annotation.web.configurers.FormLoginConfigurer;
 import org.springframework.security.config.core.GrantedAuthorityDefaults;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -46,8 +46,9 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.savedrequest.RequestCache;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
-import static javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
+import static jakarta.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
 import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration(proxyBeanMethods = false)
@@ -71,7 +72,10 @@ public class WebSecurityConfiguration {
 		List<String> ignoringPathPatterns = new ArrayList<>();
 		ignoringPathPatterns.addAll(this.properties.getIgnoringPathPatterns());
 		this.ignoringRequestContributors.forEach(c -> ignoringPathPatterns.add(c.getIgnoringPathPattern()));
-		web.ignoring().antMatchers(ignoringPathPatterns.toArray(new String[0]));
+		web.ignoring()
+			.requestMatchers(ignoringPathPatterns.stream()
+				.map(AntPathRequestMatcher::antMatcher)
+				.toArray(AntPathRequestMatcher[]::new));
 	}
 
 	protected void configure(HttpSecurity http) throws Exception {
@@ -87,11 +91,15 @@ public class WebSecurityConfiguration {
 		else {
 			permitAllPathPatterns = new String[] { "/**" };
 		}
-		ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry registry = http
-			.authorizeRequests();
-		registry.antMatchers(permitAllPathPatterns).permitAll();
+		AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry registry = http
+			.authorizeHttpRequests();
+		registry
+			.requestMatchers(Stream.of(permitAllPathPatterns)
+				.map(AntPathRequestMatcher::antMatcher)
+				.toArray(AntPathRequestMatcher[]::new))
+			.permitAll();
 		this.properties.getAuthorizeRequestsMapping().forEach((k, v) -> {
-			registry.antMatchers(k).hasAnyAuthority(v.split("\\s*,\\s*"));
+			registry.requestMatchers(k).hasAnyAuthority(v.split("\\s*,\\s*"));
 		});
 		registry.anyRequest().authenticated();
 

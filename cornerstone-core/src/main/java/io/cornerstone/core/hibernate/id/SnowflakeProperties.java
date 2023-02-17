@@ -1,9 +1,8 @@
 package io.cornerstone.core.hibernate.id;
 
-import javax.annotation.PostConstruct;
-
 import io.cornerstone.core.Application;
 import io.cornerstone.core.util.NumberUtils;
+import jakarta.annotation.PostConstruct;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Getter;

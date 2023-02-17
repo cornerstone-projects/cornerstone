@@ -1,6 +1,6 @@
 package io.cornerstone.core.hibernate.convert;
 
-import javax.persistence.Converter;
+import jakarta.persistence.Converter;
 
 @Converter(autoApply = true)
 public class LongSetConverter extends AbstractSetConverter<Long> {

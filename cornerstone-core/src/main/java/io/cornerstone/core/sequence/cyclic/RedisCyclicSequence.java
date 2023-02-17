@@ -37,7 +37,8 @@ public class RedisCyclicSequence extends AbstractCyclicSequence {
 		int maxlength = String.valueOf(Long.MAX_VALUE).length() - getCycleType().getPattern().length();
 		Assert.isTrue(getPaddingLength() <= maxlength, "paddingLength should not large than " + maxlength);
 		this.boundValueOperations = this.stringRedisTemplate.boundValueOps(KEY_SEQUENCE + getSequenceName());
-		Long time = this.stringRedisTemplate.execute((RedisConnection connection) -> connection.time());
+		Long time = this.stringRedisTemplate
+			.execute((RedisConnection connection) -> connection.serverCommands().time());
 		if (time == null) {
 			throw new RuntimeException("Unexpected null");
 		}
@@ -54,8 +55,8 @@ public class RedisCyclicSequence extends AbstractCyclicSequence {
 			byte[] key = ((RedisSerializer<String>) this.stringRedisTemplate.getKeySerializer())
 				.serialize(this.boundValueOperations.getKey());
 			List<Object> results = this.stringRedisTemplate.executePipelined((RedisConnection connection) -> {
-				connection.incr(key);
-				connection.time();
+				connection.stringCommands().incr(key);
+				connection.serverCommands().time();
 				return null;
 			});
 			long value = (Long) results.get(0);

@@ -10,6 +10,7 @@ import io.lettuce.core.resource.DefaultClientResources;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.data.redis.ClientResourcesBuilderCustomizer;
@@ -81,8 +82,9 @@ public class GlobalRedisConfiguration extends RedisConfigurationSupport {
 	@ConfigurationProperties(prefix = GlobalRedisProperties.PREFIX)
 	public static class GlobalRedisProperties extends RedisProperties {
 
-		public static final String PREFIX = "global.redis";
+		public static final String PREFIX = "global.data.redis";
 
+		@Autowired
 		public GlobalRedisProperties(DefaultRedisProperties defaultRedisProperties) {
 			BeanUtils.copyProperties(defaultRedisProperties, this);
 		}

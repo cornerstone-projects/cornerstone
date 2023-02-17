@@ -24,7 +24,7 @@ import org.springframework.session.data.redis.RedisSessionRepository;
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnClass(RedisSessionRepository.class)
 @ConditionalOnBean(RedisConnectionFactory.class)
-@EnableConfigurationProperties(RedisSessionProperties.class)
+@EnableConfigurationProperties({ SessionProperties.class, RedisSessionProperties.class })
 @EnableSpringHttpSession
 public class SessionConfiguration {
 

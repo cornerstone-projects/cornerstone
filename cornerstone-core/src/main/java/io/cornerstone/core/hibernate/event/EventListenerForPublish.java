@@ -1,9 +1,8 @@
 package io.cornerstone.core.hibernate.event;
 
-import javax.annotation.PostConstruct;
-import javax.persistence.EntityManagerFactory;
-
 import io.cornerstone.core.util.ReflectionUtils;
+import jakarta.annotation.PostConstruct;
+import jakarta.persistence.EntityManagerFactory;
 import org.hibernate.event.service.spi.EventListenerRegistry;
 import org.hibernate.event.spi.EventType;
 import org.hibernate.event.spi.PostCommitDeleteEventListener;
@@ -21,8 +20,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class EventListenerForPublish
 		implements PostCommitInsertEventListener, PostCommitUpdateEventListener, PostCommitDeleteEventListener {
-
-	private static final long serialVersionUID = 9062685218966998574L;
 
 	@Autowired
 	private EntityManagerFactory entityManagerFactory;
@@ -73,8 +70,7 @@ public class EventListenerForPublish
 	}
 
 	@Override
-	@Deprecated
-	public boolean requiresPostCommitHanding(EntityPersister persister) {
+	public boolean requiresPostCommitHandling(EntityPersister persister) {
 		return false;
 	}
 

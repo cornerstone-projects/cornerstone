@@ -8,11 +8,10 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-import javax.annotation.PreDestroy;
-
 import io.cornerstone.core.Application;
 import io.cornerstone.core.coordination.LockService;
 import io.cornerstone.core.util.NameableThreadFactory;
+import jakarta.annotation.PreDestroy;
 import lombok.Getter;
 
 import org.springframework.beans.factory.annotation.Value;

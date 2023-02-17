@@ -12,6 +12,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.method.configuration.GlobalMethodSecurityConfiguration;
 import org.springframework.util.CollectionUtils;
 
+@SuppressWarnings("deprecation")
 @Configuration(proxyBeanMethods = false)
 @EnableGlobalMethodSecurity(prePostEnabled = true, proxyTargetClass = true)
 @ConditionalOnProperty(name = "security.protecting", havingValue = "true", matchIfMissing = true)

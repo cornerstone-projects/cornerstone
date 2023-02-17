@@ -3,11 +3,10 @@ package io.cornerstone.core.validation.validators;
 import java.util.Arrays;
 import java.util.concurrent.ThreadLocalRandom;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
-
 import io.cornerstone.core.util.NumberUtils;
 import io.cornerstone.core.validation.constraints.OrganizationCode;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 
 /**
  * GB11714-1997

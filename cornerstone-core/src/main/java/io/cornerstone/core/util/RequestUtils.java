@@ -2,8 +2,7 @@ package io.cornerstone.core.util;
 
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.experimental.UtilityClass;
 
 import org.springframework.http.MediaType;

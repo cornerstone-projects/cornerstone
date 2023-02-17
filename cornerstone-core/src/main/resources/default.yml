@@ -24,7 +24,6 @@ spring.datasource:
 
 spring.jpa:
   open-in-view: false
-  hibernate.use-new-id-generator-mappings: false
   properties.hibernate:
     jdbc.fetch_size: 100
     jdbc.batch_size: 50
@@ -33,6 +32,7 @@ spring.jpa:
     order_updates: true
     auto_quote_keyword: true
     xml_mapping_enabled: false
+    cdi.extensions: true
 
 spring.data.web:
   pageable:
@@ -40,7 +40,7 @@ spring.data.web:
     max-page-size: 100
     one-indexed-parameters: true
 
-spring.redis:
+spring.data.redis:
   timeout: 5s
   connect-timeout: 5s
   lettuce.pool:
@@ -48,8 +48,7 @@ spring.redis:
     max-idle: 10
     min-idle: 1
     max-wait: 10s
-
-spring.data.redis.repositories.enabled: false
+    repositories.enabled: false
 
 spring.cache.redis.time-to-live: 300s
 
@@ -81,7 +80,7 @@ logging:
   level.org.springframework.context.support.ResourceBundleMessageSource: ERROR
 
 management.endpoints.web.exposure.include: health
-management.metrics.export.influx:
+management.influx.metrics.export:
   enabled: false
   db: metrics
   step: 10s
@@ -130,7 +129,7 @@ logging:
 ---
 spring:
   config.activate.on-profile: test
-  redis.enabled: false
+  data.redis.enabled: false
   datasource:
     name: null
     url: jdbc:h2:mem:${spring.application.name};DB_CLOSE_ON_EXIT=FALSE
@@ -148,7 +147,7 @@ spring:
 
 logging.log4j2.config.override: classpath:log4j2-with-kafka.xml
 
-management.metrics.export.influx.enabled: true
+management.influx.metrics.export.enabled: true
 opentracing:
   enabled: true
   jaeger:
@@ -166,6 +165,6 @@ jaeger:
   host: ${jaeger.service.host:jaeger.default.svc.cluster.local}
   port: ${jaeger.service.port:14268}
 
-spring.redis:
+spring.data.redis:
   host: ${redis.service.host:redis.default.svc.cluster.local}
   port: ${redis.service.port:6379}

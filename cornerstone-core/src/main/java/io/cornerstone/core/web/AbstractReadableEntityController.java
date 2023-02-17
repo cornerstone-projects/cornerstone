@@ -1,11 +1,10 @@
 package io.cornerstone.core.web;
 
-import javax.annotation.PostConstruct;
-
 import com.fasterxml.jackson.annotation.JsonView;
 import io.cornerstone.core.domain.ResultPage;
 import io.cornerstone.core.domain.View;
 import io.swagger.v3.oas.annotations.Parameter;
+import jakarta.annotation.PostConstruct;
 
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.core.ResolvableType;

@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import javax.persistence.AttributeConverter;
+import jakarta.persistence.AttributeConverter;
 
 public abstract class AbstractSetConverter<T> extends AbstractCollectionConverter<T>
 		implements AttributeConverter<Set<T>, String> {

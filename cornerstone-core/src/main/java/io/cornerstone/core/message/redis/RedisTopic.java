@@ -4,11 +4,10 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.concurrent.Executor;
 
-import javax.annotation.PostConstruct;
-
 import io.cornerstone.core.Application;
 import io.cornerstone.core.domain.Scope;
 import io.cornerstone.core.util.ExceptionUtils;
+import jakarta.annotation.PostConstruct;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 

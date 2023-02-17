@@ -7,9 +7,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-
 import com.amazonaws.ClientConfiguration;
 import com.amazonaws.Protocol;
 import com.amazonaws.auth.AWSCredentials;
@@ -29,6 +26,8 @@ import io.cornerstone.fs.FileInfo;
 import io.cornerstone.fs.FileStorageProperties;
 import io.cornerstone.fs.FileStorageProperties.S3;
 import io.cornerstone.fs.Paged;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 
 import org.springframework.util.StringUtils;
 
