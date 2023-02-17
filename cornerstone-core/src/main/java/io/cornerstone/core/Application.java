@@ -19,9 +19,12 @@ public interface Application {
 	String getHostAddress();
 
 	default String getName() {
-		String name = getContext().getId();
-		if ((name == null) || (name.indexOf('@') > 0)) {
-			name = StringUtils.uncapitalize(getClass().getSimpleName());
+		String name = getContext().getEnvironment().getProperty("spring.application.name");
+		if (name == null) {
+			name = getContext().getId();
+			if ((name == null) || (name.indexOf('@') > 0)) {
+				name = StringUtils.uncapitalize(getClass().getSimpleName());
+			}
 		}
 		return name;
 	}
