@@ -4,6 +4,7 @@ import java.time.Duration;
 
 import io.cornerstone.core.redis.serializer.CompactJdkSerializationRedisSerializer;
 
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.session.RedisSessionProperties;
@@ -16,6 +17,7 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.SerializationException;
+import org.springframework.session.config.SessionRepositoryCustomizer;
 import org.springframework.session.config.annotation.web.http.EnableSpringHttpSession;
 import org.springframework.session.data.redis.RedisSessionRepository;
 
@@ -29,7 +31,8 @@ public class SessionConfiguration {
 	@Bean
 	public RedisSessionRepository sessionRepository(SessionProperties sessionProperties,
 			RedisSessionProperties redisSessionProperties, RedisConnectionFactory redisConnectionFactory,
-			RedisSerializer<?> springSessionDefaultRedisSerializer) {
+			RedisSerializer<?> springSessionDefaultRedisSerializer,
+			ObjectProvider<SessionRepositoryCustomizer<RedisSessionRepository>> sessionRepositoryCustomizers) {
 
 		RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
 		redisTemplate.setConnectionFactory(redisConnectionFactory);
@@ -47,6 +50,7 @@ public class SessionConfiguration {
 		sessionRepository.setRedisKeyNamespace(redisSessionProperties.getNamespace());
 		sessionRepository.setFlushMode(redisSessionProperties.getFlushMode());
 		sessionRepository.setSaveMode(redisSessionProperties.getSaveMode());
+		sessionRepositoryCustomizers.forEach(customizer -> customizer.customize(sessionRepository));
 		return sessionRepository;
 	}
 
