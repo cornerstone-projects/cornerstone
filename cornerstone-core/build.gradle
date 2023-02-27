@@ -45,7 +45,7 @@ dependencies {
 	testFixturesImplementation "org.testcontainers:db2:${testcontainersVersion}"
 	testFixturesImplementation "org.testcontainers:rabbitmq:${testcontainersVersion}"
 	integrationTestImplementation "org.springframework.boot:spring-boot-starter-amqp"
-	integrationTestRuntimeOnly "mysql:mysql-connector-java"
+	integrationTestRuntimeOnly "com.mysql:mysql-connector-j"
 	integrationTestRuntimeOnly "org.postgresql:postgresql"
 	integrationTestRuntimeOnly "com.microsoft.sqlserver:mssql-jdbc"
 	integrationTestRuntimeOnly "com.ibm.db2:jcc"

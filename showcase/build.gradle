@@ -9,7 +9,7 @@ dependencies {
 	implementation(project(":cornerstone-loginrecord"))
 	developmentOnly "org.springframework.boot:spring-boot-devtools"
 	providedRuntime "org.springframework.boot:spring-boot-starter-tomcat" // if war not jar
-	runtimeOnly "mysql:mysql-connector-java"
+	runtimeOnly "com.mysql:mysql-connector-j"
 	testImplementation testFixtures(project(":cornerstone-core"))
 }
 
