@@ -105,7 +105,7 @@ public class JsonSerializationUtilsTests {
 	void testTemporal() throws IOException {
 		TemporalObject object = new TemporalObject();
 		TemporalObject to2 = (TemporalObject) JsonSerializationUtils
-				.deserialize(JsonSerializationUtils.serialize(object));
+			.deserialize(JsonSerializationUtils.serialize(object));
 		assertThat(to2).isEqualTo(object);
 	}
 

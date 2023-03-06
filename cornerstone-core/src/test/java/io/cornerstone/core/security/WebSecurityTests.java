@@ -72,7 +72,7 @@ class WebSecurityTests extends ControllerTestBase {
 	void testAuthenticationFailure() {
 		TestRestTemplate restTemplate = this.testRestTemplate;
 		ResponseEntity<String> response = restTemplate.withBasicAuth("invalid_user", "*******")
-				.getForEntity(TEST_DEFAULT_SUCCESS_URL, String.class);
+			.getForEntity(TEST_DEFAULT_SUCCESS_URL, String.class);
 		assertThat(response.getStatusCode()).isSameAs(UNAUTHORIZED);
 	}
 
@@ -119,8 +119,9 @@ class WebSecurityTests extends ControllerTestBase {
 	@Test
 	void testAccessWithUnauthenticated() {
 		ResponseEntity<String> response = executeWithNoRedirects(template -> template
-				.exchange(RequestEntity.method(POST, this.testRestTemplate.getRootUri() + TEST_DEFAULT_SUCCESS_URL)
-						.header(ACCEPT, TEXT_HTML_VALUE).build(), String.class));
+			.exchange(RequestEntity.method(POST, this.testRestTemplate.getRootUri() + TEST_DEFAULT_SUCCESS_URL)
+				.header(ACCEPT, TEXT_HTML_VALUE)
+				.build(), String.class));
 		// GET always follow redirects
 		assertThat(response.getStatusCode()).isSameAs(FOUND);
 		assertThat(response.getHeaders().getLocation()).hasPath(TEST_LOGIN_PAGE);
@@ -128,10 +129,10 @@ class WebSecurityTests extends ControllerTestBase {
 
 	@Test
 	void testRestfulAccessWithUnauthenticated() {
-		ResponseEntity<Map<String, Object>> response = executeWithNoRedirects(template -> template.exchange(
-				RequestEntity.method(POST, this.testRestTemplate.getRootUri() + TEST_DEFAULT_SUCCESS_URL)
-						.header(ACCEPT, APPLICATION_JSON_VALUE).build(),
-				new ParameterizedTypeReference<Map<String, Object>>() {
+		ResponseEntity<Map<String, Object>> response = executeWithNoRedirects(template -> template
+			.exchange(RequestEntity.method(POST, this.testRestTemplate.getRootUri() + TEST_DEFAULT_SUCCESS_URL)
+				.header(ACCEPT, APPLICATION_JSON_VALUE)
+				.build(), new ParameterizedTypeReference<Map<String, Object>>() {
 				}));
 		assertThat(response.getStatusCode()).isSameAs(UNAUTHORIZED);
 		assertThat(response.getBody().get("status")).isEqualTo(UNAUTHORIZED.value());
@@ -183,10 +184,11 @@ class WebSecurityTests extends ControllerTestBase {
 		MultiValueMap<String, String> data = new LinkedMultiValueMap<>();
 		data.add("username", username);
 		data.add("password", password);
-		return executeWithNoRedirects(template -> template.exchange(RequestEntity
-				.method(POST, this.testRestTemplate.getRootUri() + TEST_LOGIN_PROCESSING_URL)
-				.header(ACCEPT, TEXT_HTML_VALUE).header(CONTENT_TYPE, APPLICATION_FORM_URLENCODED_VALUE).body(data),
-				String.class));
+		return executeWithNoRedirects(template -> template
+			.exchange(RequestEntity.method(POST, this.testRestTemplate.getRootUri() + TEST_LOGIN_PROCESSING_URL)
+				.header(ACCEPT, TEXT_HTML_VALUE)
+				.header(CONTENT_TYPE, APPLICATION_FORM_URLENCODED_VALUE)
+				.body(data), String.class));
 	}
 
 	private <T> T executeWithNoRedirects(Function<RestTemplate, T> function) {

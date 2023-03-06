@@ -52,10 +52,12 @@ public class S3FileStorage extends BucketFileStorage {
 		ClientConfiguration clientConfig = new ClientConfiguration();
 		clientConfig.setProtocol(this.config.isUseHttps() ? Protocol.HTTP : Protocol.HTTPS);
 		AmazonS3ClientBuilder builder = AmazonS3ClientBuilder.standard()
-				.withCredentials(new AWSStaticCredentialsProvider(credentials)).withClientConfiguration(clientConfig);
+			.withCredentials(new AWSStaticCredentialsProvider(credentials))
+			.withClientConfiguration(clientConfig);
 		if (StringUtils.hasText(this.config.getEndpoint())) {
-			builder.withPathStyleAccessEnabled(this.config.isPathStyleAccess()).withEndpointConfiguration(
-					new EndpointConfiguration(this.config.getEndpoint(), this.config.getRegion()));
+			builder.withPathStyleAccessEnabled(this.config.isPathStyleAccess())
+				.withEndpointConfiguration(
+						new EndpointConfiguration(this.config.getEndpoint(), this.config.getRegion()));
 		}
 		else {
 			builder.withRegion(this.config.getRegion());

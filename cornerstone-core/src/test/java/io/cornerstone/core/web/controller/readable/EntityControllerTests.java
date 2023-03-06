@@ -57,7 +57,8 @@ class EntityControllerTests extends WebMvcWithDataJpaTestBase {
 
 		ResultPage<TestEntity> page = this.restTemplate.exchange(RequestEntity.method(GET, PATH_LIST).build(),
 				new ParameterizedTypeReference<ResultPage<TestEntity>>() {
-				}).getBody();
+				})
+			.getBody();
 		assertThat(page).isNotNull();
 		assertThat(page.getResult()).hasSize(size);
 		assertThat(page.getPage()).isEqualTo(1);
@@ -67,7 +68,8 @@ class EntityControllerTests extends WebMvcWithDataJpaTestBase {
 
 		page = this.restTemplate.exchange(RequestEntity.method(GET, PATH_LIST + "?page=2&size=1&sort=id,desc").build(),
 				new ParameterizedTypeReference<ResultPage<TestEntity>>() {
-				}).getBody();
+				})
+			.getBody();
 		assertThat(page).isNotNull();
 		assertThat(page.getResult()).hasSize(1);
 		assertThat(page.getPage()).isEqualTo(2);
@@ -75,7 +77,8 @@ class EntityControllerTests extends WebMvcWithDataJpaTestBase {
 
 		page = this.restTemplate.exchange(RequestEntity.method(GET, PATH_LIST + "?query=test0").build(),
 				new ParameterizedTypeReference<ResultPage<TestEntity>>() {
-				}).getBody();
+				})
+			.getBody();
 		assertThat(page).isNotNull();
 		assertThat(page.getResult()).hasSize(1);
 		assertThat(page.getPage()).isEqualTo(1);
@@ -84,10 +87,10 @@ class EntityControllerTests extends WebMvcWithDataJpaTestBase {
 		assertThat(page.getTotalElements()).isEqualTo(1);
 
 		ResultPage<TestEntity> page2 = this.restTemplate
-				.exchange(RequestEntity.method(GET, PATH_LIST + "?name=test0").build(),
-						new ParameterizedTypeReference<ResultPage<TestEntity>>() {
-						})
-				.getBody();
+			.exchange(RequestEntity.method(GET, PATH_LIST + "?name=test0").build(),
+					new ParameterizedTypeReference<ResultPage<TestEntity>>() {
+					})
+			.getBody();
 		assertThat(page2).isEqualTo(page);
 	}
 
@@ -97,18 +100,18 @@ class EntityControllerTests extends WebMvcWithDataJpaTestBase {
 		entity.setName("test");
 
 		assertThatExceptionOfType(MethodNotAllowed.class)
-				.isThrownBy(() -> this.restTemplate.postForEntity(PATH_LIST, entity, TestEntity.class));
+			.isThrownBy(() -> this.restTemplate.postForEntity(PATH_LIST, entity, TestEntity.class));
 
 		this.repository.save(entity);
 
 		assertThatExceptionOfType(MethodNotAllowed.class)
-				.isThrownBy(() -> this.restTemplate.put(PATH_DETAIL, entity, entity.getId()));
-
-		assertThatExceptionOfType(MethodNotAllowed.class).isThrownBy(
-				() -> this.restTemplate.patchForObject(PATH_DETAIL, entity, TestEntity.class, entity.getId()));
+			.isThrownBy(() -> this.restTemplate.put(PATH_DETAIL, entity, entity.getId()));
 
 		assertThatExceptionOfType(MethodNotAllowed.class)
-				.isThrownBy(() -> this.restTemplate.delete(PATH_DETAIL, entity.getId()));
+			.isThrownBy(() -> this.restTemplate.patchForObject(PATH_DETAIL, entity, TestEntity.class, entity.getId()));
+
+		assertThatExceptionOfType(MethodNotAllowed.class)
+			.isThrownBy(() -> this.restTemplate.delete(PATH_DETAIL, entity.getId()));
 	}
 
 }

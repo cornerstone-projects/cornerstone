@@ -125,8 +125,8 @@ public class AccessFilter implements Filter {
 				StringBuilder msg = new StringBuilder();
 				msg.append(request.getQueryString()).append(" response time:").append(responseTime).append("ms");
 				this.accesWarnLog.warn(msg.toString());
-				Metrics.timer("http.access.slow", List.of(Tag.of("uri", uri))).record(responseTime,
-						TimeUnit.MILLISECONDS);
+				Metrics.timer("http.access.slow", List.of(Tag.of("uri", uri)))
+					.record(responseTime, TimeUnit.MILLISECONDS);
 			}
 		}
 		catch (ServletException ex) {

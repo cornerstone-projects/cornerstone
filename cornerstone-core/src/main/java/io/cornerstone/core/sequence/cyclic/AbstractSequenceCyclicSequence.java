@@ -150,7 +150,7 @@ public abstract class AbstractSequenceCyclicSequence extends AbstractDatabaseCyc
 			if (tableExists) {
 				boolean rowExists = false;
 				try (ResultSet rs = stmt
-						.executeQuery("SELECT NAME FROM " + tableName + " WHERE NAME='" + sequenceName + "'")) {
+					.executeQuery("SELECT NAME FROM " + tableName + " WHERE NAME='" + sequenceName + "'")) {
 					rowExists = rs.next();
 				}
 				if (!rowExists) {

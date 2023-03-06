@@ -72,11 +72,11 @@ class CustomerControllerTests extends BaseControllerTests {
 
 		// delete
 		assertThat(restTemplate.exchange(RequestEntity.method(DELETE, PATH_DETAIL, id).build(), void.class)
-				.getStatusCode()).isSameAs(BAD_REQUEST);
+			.getStatusCode()).isSameAs(BAD_REQUEST);
 		c4.setDisabled(Boolean.TRUE);
 		restTemplate.put(PATH_DETAIL, c4, id);
 		assertThat(restTemplate.exchange(RequestEntity.method(DELETE, PATH_DETAIL, id).build(), void.class)
-				.getStatusCode()).isSameAs(OK);
+			.getStatusCode()).isSameAs(OK);
 		assertThat(restTemplate.getForEntity(PATH_DETAIL, Customer.class, id).getStatusCode()).isSameAs(NOT_FOUND);
 	}
 

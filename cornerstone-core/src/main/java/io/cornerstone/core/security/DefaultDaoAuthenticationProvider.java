@@ -46,7 +46,8 @@ public class DefaultDaoAuthenticationProvider extends DaoAuthenticationProvider 
 			UserDetails user) {
 		Authentication auth = super.createSuccessAuthentication(principal, authentication, user);
 		List<GrantedAuthority> list = this.userAuthorityMappers.stream()
-				.flatMap(mapper -> mapper.mapAuthorities(user).stream()).collect(toList());
+			.flatMap(mapper -> mapper.mapAuthorities(user).stream())
+			.collect(toList());
 		list.addAll(auth.getAuthorities());
 		UsernamePasswordAuthenticationToken result = new UsernamePasswordAuthenticationToken(principal,
 				auth.getCredentials(), list);

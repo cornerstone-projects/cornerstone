@@ -48,7 +48,7 @@ class CurrentUserControllerTests extends ControllerTestBase {
 		user.setPhone("123456");
 		assertThat(
 				restTemplate.exchange(RequestEntity.method(PATCH, PATH_PROFILE).body(user), User.class).getStatusCode())
-						.isSameAs(BAD_REQUEST);
+			.isSameAs(BAD_REQUEST);
 	}
 
 	@Test
@@ -59,7 +59,7 @@ class CurrentUserControllerTests extends ControllerTestBase {
 		changePasswordRequest.setConfirmedPassword("iamtest2");
 
 		ResponseEntity<?> response = restTemplate
-				.exchange(RequestEntity.method(PUT, PATH_PASSWORD).body(changePasswordRequest), void.class);
+			.exchange(RequestEntity.method(PUT, PATH_PASSWORD).body(changePasswordRequest), void.class);
 		assertThat(response.getStatusCode()).isSameAs(BAD_REQUEST); // caused by wrong
 																	// confirmed password
 

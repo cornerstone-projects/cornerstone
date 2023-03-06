@@ -106,9 +106,9 @@ public class UserController extends AbstractEntityController<User, Long> {
 	public void upload(@RequestBody InputStreamResource input) {
 		try (BufferedReader reader = new BufferedReader(
 				new InputStreamReader(input.getInputStream(), StandardCharsets.UTF_8))) {
-			int batchSize = this.applicationContext.getEnvironment().getProperty(
-					"spring.jpa.properties." + AvailableSettings.STATEMENT_BATCH_SIZE, Integer.class,
-					Integer.valueOf(Dialect.DEFAULT_BATCH_SIZE));
+			int batchSize = this.applicationContext.getEnvironment()
+				.getProperty("spring.jpa.properties." + AvailableSettings.STATEMENT_BATCH_SIZE, Integer.class,
+						Integer.valueOf(Dialect.DEFAULT_BATCH_SIZE));
 			String line;
 			List<User> batch = new ArrayList<>();
 			while ((line = reader.readLine()) != null) {
@@ -175,9 +175,10 @@ public class UserController extends AbstractEntityController<User, Long> {
 
 	@Override
 	protected ExampleMatcher getExampleMatcher() {
-		return ExampleMatcher.matching().withIgnorePaths("password", "roles")
-				.withMatcher("username", match -> match.contains().ignoreCase())
-				.withMatcher("name", match -> match.contains());
+		return ExampleMatcher.matching()
+			.withIgnorePaths("password", "roles")
+			.withMatcher("username", match -> match.contains().ignoreCase())
+			.withMatcher("name", match -> match.contains());
 	}
 
 }

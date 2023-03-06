@@ -52,7 +52,7 @@ public class RedisCyclicSequence extends AbstractCyclicSequence {
 		do {
 			@SuppressWarnings("unchecked")
 			byte[] key = ((RedisSerializer<String>) this.stringRedisTemplate.getKeySerializer())
-					.serialize(this.boundValueOperations.getKey());
+				.serialize(this.boundValueOperations.getKey());
 			List<Object> results = this.stringRedisTemplate.executePipelined((RedisConnection connection) -> {
 				connection.incr(key);
 				connection.time();

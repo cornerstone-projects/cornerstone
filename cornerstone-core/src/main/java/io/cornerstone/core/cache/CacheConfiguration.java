@@ -30,7 +30,7 @@ public class CacheConfiguration extends CachingConfigurerSupport {
 	@ConditionalOnClass(name = "org.springframework.data.redis.cache.RedisCacheConfiguration")
 	RedisCacheManagerBuilderCustomizer redisCacheManagerBuilderCustomizer() {
 		return builder -> builder.cacheDefaults(RedisCacheConfiguration.defaultCacheConfig()
-				.serializeValuesWith(SerializationPair.fromSerializer(new CompactJdkSerializationRedisSerializer())));
+			.serializeValuesWith(SerializationPair.fromSerializer(new CompactJdkSerializationRedisSerializer())));
 	}
 
 }

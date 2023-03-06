@@ -23,8 +23,10 @@ public class BeanUtils {
 
 	public static void copyNonNullProperties(Object source, Object target, String... ignoreProperties) {
 		BeanWrapper bw = new BeanWrapperImpl(source);
-		Set<String> ignores = new HashSet<>(Stream.of(bw.getPropertyDescriptors()).map(FeatureDescriptor::getName)
-				.filter(name -> bw.getPropertyValue(name) == null).collect(Collectors.toSet()));
+		Set<String> ignores = new HashSet<>(Stream.of(bw.getPropertyDescriptors())
+			.map(FeatureDescriptor::getName)
+			.filter(name -> bw.getPropertyValue(name) == null)
+			.collect(Collectors.toSet()));
 		if (ignoreProperties.length > 0) {
 			ignores.addAll(List.of(ignoreProperties));
 		}

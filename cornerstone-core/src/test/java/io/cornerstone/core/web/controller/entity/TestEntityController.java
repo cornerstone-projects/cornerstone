@@ -40,9 +40,10 @@ class TestEntityController extends AbstractEntityController<TestEntity, Long> {
 
 	@Override
 	protected ExampleMatcher getExampleMatcher() {
-		return ExampleMatcher.matching().withIgnorePaths("address")
-				.withMatcher("idNo", match -> match.contains().ignoreCase())
-				.withMatcher("name", match -> match.contains());
+		return ExampleMatcher.matching()
+			.withIgnorePaths("address")
+			.withMatcher("idNo", match -> match.contains().ignoreCase())
+			.withMatcher("name", match -> match.contains());
 	}
 
 }

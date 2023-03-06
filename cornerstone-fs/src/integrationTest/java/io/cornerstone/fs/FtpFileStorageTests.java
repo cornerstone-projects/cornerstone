@@ -31,8 +31,10 @@ class FtpFileStorageTests extends FileStorageTestBase {
 	private static final String FTP_PASSWORD = "ftp";
 
 	@Container
-	static GenericContainer<?> container = new VsftpdContainer().withExposedPorts(21).withEnv("FTP_USER", FTP_USER)
-			.withEnv("FTP_PASSWORD", FTP_PASSWORD).withEnv("FTP_CHOWN_ROOT", "true");
+	static GenericContainer<?> container = new VsftpdContainer().withExposedPorts(21)
+		.withEnv("FTP_USER", FTP_USER)
+		.withEnv("FTP_PASSWORD", FTP_PASSWORD)
+		.withEnv("FTP_CHOWN_ROOT", "true");
 
 	@DynamicPropertySource
 	static void registerDynamicProperties(DynamicPropertyRegistry registry) {

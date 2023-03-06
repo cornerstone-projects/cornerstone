@@ -51,8 +51,8 @@ public abstract class AbstractReadableEntityController<T, ID> extends BaseRestCo
 				ResolvableType.forClassWithGenerics(JpaRepository.class, this.entityClass, this.idClass), false);
 		this.repository = repositoryProvider.getObject();
 		ObjectProvider<JpaSpecificationExecutor<T>> specificationExecutorProvider = this.applicationContext
-				.getBeanProvider(ResolvableType.forClassWithGenerics(JpaSpecificationExecutor.class, this.entityClass),
-						false);
+			.getBeanProvider(ResolvableType.forClassWithGenerics(JpaSpecificationExecutor.class, this.entityClass),
+					false);
 		this.specificationExecutor = specificationExecutorProvider.getIfAvailable(); // optional
 	}
 

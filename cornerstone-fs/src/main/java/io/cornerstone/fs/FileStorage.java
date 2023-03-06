@@ -87,7 +87,8 @@ public interface FileStorage {
 	default void write(InputStream is, String path, long contentLength) throws IOException {
 		int index = path.lastIndexOf('/');
 		String contentType = MediaTypeFactory.getMediaType(index >= 0 ? path.substring(index + 1) : path)
-				.map(Object::toString).orElse(null);
+			.map(Object::toString)
+			.orElse(null);
 		write(is, path, contentLength, contentType);
 	}
 

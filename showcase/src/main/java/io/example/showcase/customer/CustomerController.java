@@ -38,9 +38,10 @@ public class CustomerController extends AbstractEntityController<Customer, Long>
 
 	@Override
 	protected ExampleMatcher getExampleMatcher() {
-		return ExampleMatcher.matching().withIgnorePaths("address")
-				.withMatcher("idNo", match -> match.contains().ignoreCase())
-				.withMatcher("name", match -> match.contains());
+		return ExampleMatcher.matching()
+			.withIgnorePaths("address")
+			.withMatcher("idNo", match -> match.contains().ignoreCase())
+			.withMatcher("name", match -> match.contains());
 	}
 
 }

@@ -88,7 +88,7 @@ public class WebSecurityConfiguration {
 			permitAllPathPatterns = new String[] { "/**" };
 		}
 		ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry registry = http
-				.authorizeRequests();
+			.authorizeRequests();
 		registry.antMatchers(permitAllPathPatterns).permitAll();
 		this.properties.getAuthorizeRequestsMapping().forEach((k, v) -> {
 			registry.antMatchers(k).hasAnyAuthority(v.split("\\s*,\\s*"));
@@ -96,18 +96,21 @@ public class WebSecurityConfiguration {
 		registry.anyRequest().authenticated();
 
 		http.exceptionHandling()
-				.defaultAuthenticationEntryPointFor((request, response, ex) -> response
-						.sendError(HttpServletResponse.SC_UNAUTHORIZED, ex.getLocalizedMessage()),
-						RequestUtils::isRequestedFromApi);
+			.defaultAuthenticationEntryPointFor((request, response,
+					ex) -> response.sendError(HttpServletResponse.SC_UNAUTHORIZED, ex.getLocalizedMessage()),
+					RequestUtils::isRequestedFromApi);
 
 		setAuthenticationFilter(http.formLogin(), new RestfulUsernamePasswordAuthenticationFilter(this.objectMapper));
 		http.formLogin(login -> {
-			login.loginPage(this.properties.getLoginPage()).loginProcessingUrl(this.properties.getLoginProcessingUrl())
-					.usernameParameter(this.properties.getUsernameParameter())
-					.passwordParameter(this.properties.getPasswordParameter())
-					.successHandler(authenticationSuccessHandler(http.getSharedObject(RequestCache.class)))
-					.failureHandler(authenticationFailureHandler()).and();
-		}).logout(logout -> logout.logoutUrl(this.properties.getLogoutUrl())
+			login.loginPage(this.properties.getLoginPage())
+				.loginProcessingUrl(this.properties.getLoginProcessingUrl())
+				.usernameParameter(this.properties.getUsernameParameter())
+				.passwordParameter(this.properties.getPasswordParameter())
+				.successHandler(authenticationSuccessHandler(http.getSharedObject(RequestCache.class)))
+				.failureHandler(authenticationFailureHandler())
+				.and();
+		})
+			.logout(logout -> logout.logoutUrl(this.properties.getLogoutUrl())
 				.logoutSuccessUrl(this.properties.getLoginPage()));
 		if (Application.current().map(Application::isUnitTest).orElse(true)) {
 			http.httpBasic(withDefaults());

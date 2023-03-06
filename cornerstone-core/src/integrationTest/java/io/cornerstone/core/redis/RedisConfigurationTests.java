@@ -63,7 +63,7 @@ class RedisConfigurationTests {
 		assertThat(this.globalRedisProperties.getPort()).isEqualTo(this.defaultRedisProperties.getPort());
 		assertThat(this.globalRedisProperties.getDatabase()).isNotEqualTo(this.defaultRedisProperties.getDatabase());
 		assertThat(this.globalRedisProperties.getClientName())
-				.isNotEqualTo(this.defaultRedisProperties.getClientName());
+			.isNotEqualTo(this.defaultRedisProperties.getClientName());
 	}
 
 	@Test

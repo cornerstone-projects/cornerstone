@@ -161,9 +161,9 @@ public class ReflectionUtils {
 				Method m = key.method();
 				if (JDK9PLUS) {
 					return MethodHandles.lookup()
-							.findSpecial(objectType, m.getName(),
-									MethodType.methodType(m.getReturnType(), m.getParameterTypes()), objectType)
-							.bindTo(o);
+						.findSpecial(objectType, m.getName(),
+								MethodType.methodType(m.getReturnType(), m.getParameterTypes()), objectType)
+						.bindTo(o);
 				}
 				else {
 					Constructor<Lookup> constructor = Lookup.class.getDeclaredConstructor(Class.class);

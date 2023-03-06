@@ -49,8 +49,8 @@ class CurrentUserControllerMockTests extends ControllerMockTestBase {
 		assertThat(restTemplate.getForEntity(PATH_PROFILE, User.class).getStatusCode()).isSameAs(OK);
 
 		user.setPhone("123456");
-		assertThatExceptionOfType(BadRequest.class).isThrownBy(
-				() -> restTemplate.exchange(RequestEntity.method(PATCH, PATH_PROFILE).body(user), User.class));
+		assertThatExceptionOfType(BadRequest.class)
+			.isThrownBy(() -> restTemplate.exchange(RequestEntity.method(PATCH, PATH_PROFILE).body(user), User.class));
 	}
 
 	@Test
@@ -61,17 +61,17 @@ class CurrentUserControllerMockTests extends ControllerMockTestBase {
 		changePasswordRequest.setConfirmedPassword("iamtest2");
 
 		assertThatExceptionOfType(BadRequest.class).isThrownBy(() -> restTemplate
-				.exchange(RequestEntity.method(PUT, PATH_PASSWORD).body(changePasswordRequest), void.class));
+			.exchange(RequestEntity.method(PUT, PATH_PASSWORD).body(changePasswordRequest), void.class));
 		// caused by wrong confirmed password
 
 		changePasswordRequest.setConfirmedPassword(changePasswordRequest.getPassword());
 		assertThatExceptionOfType(BadRequest.class).isThrownBy(() -> restTemplate
-				.exchange(RequestEntity.method(PUT, PATH_PASSWORD).body(changePasswordRequest), void.class));
+			.exchange(RequestEntity.method(PUT, PATH_PASSWORD).body(changePasswordRequest), void.class));
 		// caused by missing current password
 
 		changePasswordRequest.setCurrentPassword("******");
 		assertThatExceptionOfType(BadRequest.class).isThrownBy(() -> restTemplate
-				.exchange(RequestEntity.method(PUT, PATH_PASSWORD).body(changePasswordRequest), void.class));
+			.exchange(RequestEntity.method(PUT, PATH_PASSWORD).body(changePasswordRequest), void.class));
 		// caused by wrong current password
 
 		changePasswordRequest.setCurrentPassword(DEFAULT_PASSWORD);

@@ -27,7 +27,8 @@ public class JsonTypeDescriptor extends AbstractTypeDescriptor<Object> implement
 	private static final long serialVersionUID = -3758905487686034882L;
 
 	private static final ObjectMapper objectMapper = new ObjectMapper()
-			.setSerializationInclusion(JsonInclude.Include.NON_NULL).disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
+		.setSerializationInclusion(JsonInclude.Include.NON_NULL)
+		.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
 
 	private Type type;
 

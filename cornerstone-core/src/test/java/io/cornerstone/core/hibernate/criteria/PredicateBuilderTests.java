@@ -67,7 +67,7 @@ class PredicateBuilderTests extends DataJpaTestBase {
 		TestEntity example = new TestEntity();
 		assertThat(PredicateBuilder.andExample(root, cb, predicate, Example.of(example, matcher))).isSameAs(predicate);
 		assertThat(isConstantTrue(PredicateBuilder.orExample(root, cb, predicate, Example.of(example, matcher))))
-				.isTrue();
+			.isTrue();
 		example.setEnabled(true);
 		Predicate predicate2 = PredicateBuilder.andExample(root, cb, predicate, Example.of(example, matcher));
 		assertThat(predicate2).isNotSameAs(predicate);
@@ -114,7 +114,7 @@ class PredicateBuilderTests extends DataJpaTestBase {
 			String name = "name" + i;
 			long expected = size - i;
 			assertThat(this.repository.count((root, cq, cb) -> itemContains(root, cb, "names", name)))
-					.isEqualTo(expected);
+				.isEqualTo(expected);
 		}
 	}
 
@@ -134,7 +134,7 @@ class PredicateBuilderTests extends DataJpaTestBase {
 			String name = "name" + i;
 			long expected = size - i;
 			assertThat(this.repository.count((root, cq, cb) -> itemStartsWith(root, cb, "names", name)))
-					.isEqualTo(expected);
+				.isEqualTo(expected);
 		}
 	}
 
@@ -154,7 +154,7 @@ class PredicateBuilderTests extends DataJpaTestBase {
 			String name = "name" + i;
 			long expected = size - i;
 			assertThat(this.repository.count((root, cq, cb) -> itemEndsWith(root, cb, "names", name)))
-					.isEqualTo(expected);
+				.isEqualTo(expected);
 		}
 	}
 

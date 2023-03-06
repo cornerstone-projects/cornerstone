@@ -43,7 +43,7 @@ class TreenodeControllerTests extends BaseControllerTests {
 
 		assertThat(
 				restTemplate.postForEntity(PATH_LIST, new Treenode(treenode.getName()), Treenode.class).getStatusCode())
-						.isSameAs(BAD_REQUEST); // name already exists
+			.isSameAs(BAD_REQUEST); // name already exists
 
 		Treenode child = new Treenode("child");
 		child.setParent(treenode);
@@ -57,8 +57,8 @@ class TreenodeControllerTests extends BaseControllerTests {
 		assertThat(child.getParent()).isNotNull();
 		assertThat(child.getParent().getId()).isEqualTo(treenode.getId());
 		assertThat(restTemplate
-				.postForEntity(PATH_LIST, new Treenode(child.getParent(), child.getName(), 0), Treenode.class)
-				.getStatusCode()).isSameAs(BAD_REQUEST);
+			.postForEntity(PATH_LIST, new Treenode(child.getParent(), child.getName(), 0), Treenode.class)
+			.getStatusCode()).isSameAs(BAD_REQUEST);
 
 		Treenode child2 = new Treenode("child2");
 		child2.setParent(child.getParent());
@@ -76,11 +76,10 @@ class TreenodeControllerTests extends BaseControllerTests {
 		assertThat(child.getName()).isEqualTo(temp.getName());
 		assertThat(child.getParent()).isNotNull(); // parent not updated
 		assertThat(child.getLevel()).isEqualTo(2);
-		assertThat(
-				restTemplate
-						.exchange(RequestEntity.method(PATCH, PATH_DETAIL, child2.getId())
-								.body(new Treenode(child.getParent(), child.getName(), 0)), Treenode.class)
-						.getStatusCode()).isSameAs(BAD_REQUEST); // name already exists
+		assertThat(restTemplate
+			.exchange(RequestEntity.method(PATCH, PATH_DETAIL, child2.getId())
+				.body(new Treenode(child.getParent(), child.getName(), 0)), Treenode.class)
+			.getStatusCode()).isSameAs(BAD_REQUEST); // name already exists
 
 		// update full
 		temp.setName("name");
@@ -94,14 +93,15 @@ class TreenodeControllerTests extends BaseControllerTests {
 
 		// delete
 		assertThat(restTemplate.exchange(RequestEntity.method(DELETE, PATH_DETAIL, child2.getId()).build(), void.class)
-				.getStatusCode()).isSameAs(OK);
+			.getStatusCode()).isSameAs(OK);
 		assertThat(restTemplate.exchange(RequestEntity.method(DELETE, PATH_DETAIL, child.getId()).build(), void.class)
-				.getStatusCode()).isSameAs(OK);
+			.getStatusCode()).isSameAs(OK);
 		assertThat(
 				restTemplate.exchange(RequestEntity.method(DELETE, PATH_DETAIL, treenode.getId()).build(), void.class)
-						.getStatusCode()).isSameAs(OK);
+					.getStatusCode())
+			.isSameAs(OK);
 		assertThat(restTemplate.getForEntity(PATH_DETAIL, Treenode.class, treenode.getId()).getStatusCode())
-				.isSameAs(NOT_FOUND);
+			.isSameAs(NOT_FOUND);
 	}
 
 	@Test

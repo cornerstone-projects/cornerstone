@@ -77,7 +77,7 @@ class EntityControllerTests extends WebMvcWithDataJpaTestBase {
 		this.restTemplate.put(PATH_DETAIL, c4, id);
 		this.restTemplate.delete(PATH_DETAIL, id);
 		assertThatExceptionOfType(NotFound.class)
-				.isThrownBy(() -> this.restTemplate.getForObject(PATH_DETAIL, TestEntity.class, id));
+			.isThrownBy(() -> this.restTemplate.getForObject(PATH_DETAIL, TestEntity.class, id));
 	}
 
 	@Test
@@ -94,7 +94,8 @@ class EntityControllerTests extends WebMvcWithDataJpaTestBase {
 
 		ResultPage<TestEntity> page = this.restTemplate.exchange(RequestEntity.method(GET, PATH_LIST).build(),
 				new ParameterizedTypeReference<ResultPage<TestEntity>>() {
-				}).getBody();
+				})
+			.getBody();
 		assertThat(page).isNotNull();
 		assertThat(page.getResult()).hasSize(size);
 		assertThat(page.getPage()).isEqualTo(1);
@@ -105,7 +106,8 @@ class EntityControllerTests extends WebMvcWithDataJpaTestBase {
 
 		page = this.restTemplate.exchange(RequestEntity.method(GET, PATH_LIST + "?page=2&size=1&sort=id,desc").build(),
 				new ParameterizedTypeReference<ResultPage<TestEntity>>() {
-				}).getBody();
+				})
+			.getBody();
 		assertThat(page).isNotNull();
 		assertThat(page.getResult()).hasSize(1);
 		assertThat(page.getPage()).isEqualTo(2);
@@ -113,7 +115,8 @@ class EntityControllerTests extends WebMvcWithDataJpaTestBase {
 
 		page = this.restTemplate.exchange(RequestEntity.method(GET, PATH_LIST + "?query=test0").build(),
 				new ParameterizedTypeReference<ResultPage<TestEntity>>() {
-				}).getBody();
+				})
+			.getBody();
 		assertThat(page).isNotNull();
 		assertThat(page.getResult()).hasSize(1);
 		assertThat(page.getPage()).isEqualTo(1);
@@ -122,10 +125,10 @@ class EntityControllerTests extends WebMvcWithDataJpaTestBase {
 		assertThat(page.getTotalElements()).isEqualTo(1);
 
 		ResultPage<TestEntity> page2 = this.restTemplate
-				.exchange(RequestEntity.method(GET, PATH_LIST + "?name=test0").build(),
-						new ParameterizedTypeReference<ResultPage<TestEntity>>() {
-						})
-				.getBody();
+			.exchange(RequestEntity.method(GET, PATH_LIST + "?name=test0").build(),
+					new ParameterizedTypeReference<ResultPage<TestEntity>>() {
+					})
+			.getBody();
 		assertThat(page2).isEqualTo(page);
 
 		for (TestEntity entity : list) {

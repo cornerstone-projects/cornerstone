@@ -35,16 +35,16 @@ public class RabbitTopicTests extends TopicTestBase {
 	@Test
 	void publishLocalScopeMessage() {
 		this.testTopic.publish("test", Scope.LOCAL);
-		then(this.rabbitTemplate).should(never()).convertAndSend(any(String.class), this.routingKeyCaptor.capture(),
-				any(Object.class));
+		then(this.rabbitTemplate).should(never())
+			.convertAndSend(any(String.class), this.routingKeyCaptor.capture(), any(Object.class));
 		then(this.messageProcessor).should().process(eq("test"));
 	}
 
 	@Test
 	void publishApplicationScopeMessage() throws Exception {
 		this.testTopic.publish("test", Scope.APPLICATION);
-		then(this.rabbitTemplate).should().convertAndSend(any(String.class), this.routingKeyCaptor.capture(),
-				any(Object.class));
+		then(this.rabbitTemplate).should()
+			.convertAndSend(any(String.class), this.routingKeyCaptor.capture(), any(Object.class));
 		assertThat(this.routingKeyCaptor.getValue()).endsWith('.' + this.application.getName());
 		Thread.sleep(100); // wait network response
 		then(this.messageProcessor).should().process(eq("test"));
@@ -53,8 +53,8 @@ public class RabbitTopicTests extends TopicTestBase {
 	@Test
 	void publishGlobalScopeMessage() throws Exception {
 		this.testTopic.publish("test", Scope.GLOBAL);
-		then(this.rabbitTemplate).should().convertAndSend(any(String.class), this.routingKeyCaptor.capture(),
-				any(Object.class));
+		then(this.rabbitTemplate).should()
+			.convertAndSend(any(String.class), this.routingKeyCaptor.capture(), any(Object.class));
 		assertThat(this.routingKeyCaptor.getValue()).doesNotEndWith('.' + this.application.getName());
 		Thread.sleep(100); // wait network response
 		then(this.messageProcessor).should().process(eq("test"));

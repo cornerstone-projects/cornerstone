@@ -54,8 +54,8 @@ public class RedisLockService implements LockService {
 	public boolean tryLock(String name) {
 		String key = NAMESPACE + name;
 		String holder = holder();
-		Boolean success = this.stringRedisTemplate.opsForValue().setIfAbsent(key, holder, this.watchdogTimeout,
-				TimeUnit.MILLISECONDS);
+		Boolean success = this.stringRedisTemplate.opsForValue()
+			.setIfAbsent(key, holder, this.watchdogTimeout, TimeUnit.MILLISECONDS);
 		if (success == null) {
 			throw new RuntimeException("Unexpected null");
 		}

@@ -175,11 +175,15 @@ public class SsoFilter implements Filter {
 			cookie.append(COOKIE_NAME_TOKEN).append("=").append(URLEncoder.encode(token, DEFAULT_ENCODING));
 			String session = getCookieValue(request, COOKIE_NAME_SESSION);
 			if (session != null) {
-				cookie.append("; ").append(COOKIE_NAME_SESSION).append("=")
-						.append(URLEncoder.encode(session, DEFAULT_ENCODING));
+				cookie.append("; ")
+					.append(COOKIE_NAME_SESSION)
+					.append("=")
+					.append(URLEncoder.encode(session, DEFAULT_ENCODING));
 			}
-			RequestEntity<?> requestEntity = RequestEntity.get(apiUri).header("Cookie", cookie.toString())
-					.header("X-Real-IP", request.getRemoteAddr()).build();
+			RequestEntity<?> requestEntity = RequestEntity.get(apiUri)
+				.header("Cookie", cookie.toString())
+				.header("X-Real-IP", request.getRemoteAddr())
+				.build();
 			try {
 				ResponseEntity<SimpleUser> responseEntity = this.restTemplate.exchange(requestEntity, SimpleUser.class);
 				UserDetails ud = map(responseEntity.getBody());

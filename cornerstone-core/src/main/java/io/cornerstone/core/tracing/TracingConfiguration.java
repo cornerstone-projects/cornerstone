@@ -32,10 +32,10 @@ public class TracingConfiguration {
 	TracerBuilderCustomizer tracerBuilderCustomizer(Application application) {
 		return builder -> {
 			builder.withTag("java.version", System.getProperty("java.version"))
-					.withTag("server.info", application.getServerInfo())
-					.withTag("server.port", application.getServerPort())
-					.withTag(Constants.TRACER_HOSTNAME_TAG_KEY, application.getHostName())
-					.withTag(Constants.TRACER_IP_TAG_KEY, application.getHostAddress());
+				.withTag("server.info", application.getServerInfo())
+				.withTag("server.port", application.getServerPort())
+				.withTag(Constants.TRACER_HOSTNAME_TAG_KEY, application.getHostName())
+				.withTag(Constants.TRACER_IP_TAG_KEY, application.getHostAddress());
 		};
 	}
 

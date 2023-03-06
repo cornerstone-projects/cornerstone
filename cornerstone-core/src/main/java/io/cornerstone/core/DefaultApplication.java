@@ -46,8 +46,9 @@ public class DefaultApplication extends SpringBootServletInitializer implements 
 	private ApplicationContext context;
 
 	public DefaultApplication() {
-		boolean createdBySpring = StackWalker.getInstance(RETAIN_CLASS_REFERENCE).walk(
-				s -> s.map(StackFrame::getDeclaringClass).anyMatch(c -> c == AbstractAutowireCapableBeanFactory.class));
+		boolean createdBySpring = StackWalker.getInstance(RETAIN_CLASS_REFERENCE)
+			.walk(s -> s.map(StackFrame::getDeclaringClass)
+				.anyMatch(c -> c == AbstractAutowireCapableBeanFactory.class));
 		if (createdBySpring) {
 			currentApplication = this;
 		}
@@ -108,11 +109,12 @@ public class DefaultApplication extends SpringBootServletInitializer implements 
 	protected static void start(String[] args, Consumer<ApplicationContext> postStartAction) throws Exception {
 		init(args);
 		Class<?> caller = StackWalker.getInstance(RETAIN_CLASS_REFERENCE)
-				.walk(s -> s
-						.filter(f -> Objects.equals(f.getMethodName(), "main")
-								&& Objects.equals(f.getMethodType(), MethodType.methodType(void.class, String[].class)))
-						.findFirst().map(StackFrame::getDeclaringClass)
-						.orElseThrow(() -> new RuntimeException("start() method should be called in main method")));
+			.walk(s -> s
+				.filter(f -> Objects.equals(f.getMethodName(), "main")
+						&& Objects.equals(f.getMethodType(), MethodType.methodType(void.class, String[].class)))
+				.findFirst()
+				.map(StackFrame::getDeclaringClass)
+				.orElseThrow(() -> new RuntimeException("start() method should be called in main method")));
 		ApplicationContext ctx = SpringApplication.run(caller, args);
 		if (postStartAction != null) {
 			postStartAction.accept(ctx);

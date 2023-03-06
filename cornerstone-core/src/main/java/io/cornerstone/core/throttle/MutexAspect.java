@@ -49,8 +49,8 @@ public class MutexAspect extends BaseAspect {
 					context.setVariable(paramNames[i], paramValues[i]);
 				}
 			}
-			key = String.valueOf(
-					expressionParser.parseExpression(key, ParserContext.TEMPLATE_EXPRESSION).getValue(context));
+			key = String
+				.valueOf(expressionParser.parseExpression(key, ParserContext.TEMPLATE_EXPRESSION).getValue(context));
 		}
 		StringBuilder sb = new StringBuilder(key);
 		Application.current().ifPresent(a -> {

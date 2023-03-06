@@ -19,9 +19,13 @@ class CephFileStorageTests extends FileStorageTestBase {
 
 	@Container
 	static GenericContainer<?> container = new GenericContainer<>("quay.io/ceph/daemon")
-			.withEnv("CEPH_DEMO_ACCESS_KEY", ACCESS_KEY).withEnv("CEPH_DEMO_SECRET_KEY", SECRET_KEY)
-			.withEnv("RGW_NAME", "localhost").withEnv("CEPH_DEMO_UID", "admin").withEnv("NETWORK_AUTO_DETECT", "1")
-			.withExposedPorts(8080).withCommand("demo");
+		.withEnv("CEPH_DEMO_ACCESS_KEY", ACCESS_KEY)
+		.withEnv("CEPH_DEMO_SECRET_KEY", SECRET_KEY)
+		.withEnv("RGW_NAME", "localhost")
+		.withEnv("CEPH_DEMO_UID", "admin")
+		.withEnv("NETWORK_AUTO_DETECT", "1")
+		.withExposedPorts(8080)
+		.withCommand("demo");
 
 	@DynamicPropertySource
 	static void registerDynamicProperties(DynamicPropertyRegistry registry) {

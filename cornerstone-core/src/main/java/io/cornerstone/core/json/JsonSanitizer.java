@@ -83,8 +83,11 @@ public class JsonSanitizer {
 				String name = writer.getName();
 				if (include(writer) && !dropping.stream().anyMatch(entry -> entry.test(name, obj))) {
 					BeanWrapperImpl bw = new BeanWrapperImpl(obj);
-					Optional<Function<String, String>> func = mapping.entrySet().stream()
-							.filter(entry -> entry.getKey().test(name, obj)).findFirst().map(Entry::getValue);
+					Optional<Function<String, String>> func = mapping.entrySet()
+						.stream()
+						.filter(entry -> entry.getKey().test(name, obj))
+						.findFirst()
+						.map(Entry::getValue);
 					if (func.isPresent()) {
 						Object value = bw.getPropertyValue(name);
 						try {
@@ -112,8 +115,8 @@ public class JsonSanitizer {
 							annotation = AnnotationUtils.findAnnotation(bw.getPropertyDescriptor(name).getReadMethod(),
 									JsonSanitize.class);
 							if (annotation == null) {
-								annotation = AnnotationUtils.findAnnotation(
-										ReflectionUtils.getField(obj.getClass(), name), JsonSanitize.class);
+								annotation = AnnotationUtils
+									.findAnnotation(ReflectionUtils.getField(obj.getClass(), name), JsonSanitize.class);
 							}
 						}
 						catch (Exception ex) {
@@ -150,7 +153,8 @@ public class JsonSanitizer {
 			}
 		}).setFailOnUnknownId(false);
 		this.objectWriter = objectMapper.enable(SerializationFeature.INDENT_OUTPUT)
-				.addMixIn(Object.class, SanitizerMixIn.class).writer(filters);
+			.addMixIn(Object.class, SanitizerMixIn.class)
+			.writer(filters);
 	}
 
 	public String toJson(Object value) {

@@ -58,8 +58,8 @@ class UserControllerTests extends ControllerTestBase {
 				new ParameterizedTypeReference<Map<String, Object>>() {
 				});
 		assertThat(resp.getStatusCode()).isSameAs(BAD_REQUEST);
-		assertThat(resp.getBody().get("message")).isEqualTo(
-				this.messageSource.getMessage("username.already.exists", null, LocaleContextHolder.getLocale()));
+		assertThat(resp.getBody().get("message"))
+			.isEqualTo(this.messageSource.getMessage("username.already.exists", null, LocaleContextHolder.getLocale()));
 		u.setUsername("test");
 		ResponseEntity<User> response = restTemplate.postForEntity(PATH_LIST, u, User.class);
 		assertThat(response.getStatusCode()).isSameAs(OK);
@@ -97,11 +97,11 @@ class UserControllerTests extends ControllerTestBase {
 
 		// delete
 		assertThat(restTemplate.exchange(RequestEntity.method(DELETE, PATH_DETAIL, id).build(), void.class)
-				.getStatusCode()).isSameAs(BAD_REQUEST);
+			.getStatusCode()).isSameAs(BAD_REQUEST);
 		u4.setDisabled(true);
 		restTemplate.put(PATH_DETAIL, u4, id);
 		assertThat(restTemplate.exchange(RequestEntity.method(DELETE, PATH_DETAIL, id).build(), void.class)
-				.getStatusCode()).isSameAs(OK);
+			.getStatusCode()).isSameAs(OK);
 		assertThat(restTemplate.getForEntity(PATH_DETAIL, User.class, id).getStatusCode()).isSameAs(NOT_FOUND);
 	}
 
@@ -160,17 +160,18 @@ class UserControllerTests extends ControllerTestBase {
 		updatePasswordRequest.setConfirmedPassword("iamtest2");
 		ResultPage<User> page = restTemplate.exchange(RequestEntity.method(GET, PATH_LIST + "?query=admin").build(),
 				new ParameterizedTypeReference<ResultPage<User>>() {
-				}).getBody();
+				})
+			.getBody();
 		assertThat(page).isNotNull();
 		User admin = page.getResult().get(0);
-		ResponseEntity<?> response = restTemplate.exchange(
-				RequestEntity.method(PUT, PATH_PASSWORD, admin.getId()).body(updatePasswordRequest), void.class);
+		ResponseEntity<?> response = restTemplate
+			.exchange(RequestEntity.method(PUT, PATH_PASSWORD, admin.getId()).body(updatePasswordRequest), void.class);
 		assertThat(response.getStatusCode()).isSameAs(BAD_REQUEST); // caused by wrong
 																	// confirmed password
 
 		updatePasswordRequest.setConfirmedPassword(updatePasswordRequest.getPassword());
-		response = restTemplate.exchange(
-				RequestEntity.method(PUT, PATH_PASSWORD, admin.getId()).body(updatePasswordRequest), void.class);
+		response = restTemplate
+			.exchange(RequestEntity.method(PUT, PATH_PASSWORD, admin.getId()).body(updatePasswordRequest), void.class);
 		assertThat(response.getStatusCode()).isSameAs(OK);
 
 		response = restTemplate.exchange(RequestEntity.method(GET, PATH_LIST).build(),
@@ -193,9 +194,10 @@ class UserControllerTests extends ControllerTestBase {
 	@Test
 	void conflictVersion() {
 		TestRestTemplate restTemplate = adminRestTemplate();
-		ResultPage<User> page = restTemplate.exchange(RequestEntity.method(GET, PATH_LIST).build(),
-				new ParameterizedTypeReference<ResultPage<User>>() {
-				}).getBody();
+		ResultPage<User> page = restTemplate
+			.exchange(RequestEntity.method(GET, PATH_LIST).build(), new ParameterizedTypeReference<ResultPage<User>>() {
+			})
+			.getBody();
 		assertThat(page).isNotNull();
 		assertThat(page.getResult()).isNotEmpty();
 		User user = page.getResult().get(0);
@@ -203,7 +205,7 @@ class UserControllerTests extends ControllerTestBase {
 		user.setName(user.getName() + "2");
 		user.setVersion(user.getVersion() + 1);
 		ResponseEntity<User> response = restTemplate
-				.exchange(RequestEntity.method(PATCH, PATH_DETAIL, user.getId()).body(user), User.class);
+			.exchange(RequestEntity.method(PATCH, PATH_DETAIL, user.getId()).body(user), User.class);
 		assertThat(response.getStatusCode()).isSameAs(CONFLICT);
 	}
 
@@ -276,28 +278,30 @@ class UserControllerTests extends ControllerTestBase {
 	@Test
 	void testForbidden() {
 		TestRestTemplate restTemplate = adminRestTemplate();
-		ResultPage<User> page = restTemplate.exchange(RequestEntity.method(GET, PATH_LIST).build(),
-				new ParameterizedTypeReference<ResultPage<User>>() {
-				}).getBody();
+		ResultPage<User> page = restTemplate
+			.exchange(RequestEntity.method(GET, PATH_LIST).build(), new ParameterizedTypeReference<ResultPage<User>>() {
+			})
+			.getBody();
 		assertThat(page).isNotNull();
 		User user = page.getResult().get(0);
 
 		restTemplate = userRestTemplate();
 		assertThat(restTemplate.getForEntity(PATH_LIST, String.class).getStatusCode()).isSameAs(FORBIDDEN);
 		assertThat(restTemplate.getForEntity(PATH_DETAIL, String.class, user.getId()).getStatusCode())
-				.isSameAs(FORBIDDEN);
+			.isSameAs(FORBIDDEN);
 		User u = new User();
 		u.setName("temp");
 		u.setDisabled(true);
 		assertThat(restTemplate.postForEntity(PATH_LIST, u, User.class).getStatusCode()).isSameAs(FORBIDDEN);
 		user.setName("new name");
 		assertThat(restTemplate.exchange(RequestEntity.method(PUT, PATH_DETAIL, user.getId()).body(user), String.class)
-				.getStatusCode()).isSameAs(FORBIDDEN);
+			.getStatusCode()).isSameAs(FORBIDDEN);
 		assertThat(
 				restTemplate.exchange(RequestEntity.method(PATCH, PATH_DETAIL, user.getId()).body(user), String.class)
-						.getStatusCode()).isSameAs(FORBIDDEN);
+					.getStatusCode())
+			.isSameAs(FORBIDDEN);
 		assertThat(restTemplate.exchange(RequestEntity.method(DELETE, PATH_DETAIL, user.getId()).build(), String.class)
-				.getStatusCode()).isSameAs(FORBIDDEN);
+			.getStatusCode()).isSameAs(FORBIDDEN);
 	}
 
 }

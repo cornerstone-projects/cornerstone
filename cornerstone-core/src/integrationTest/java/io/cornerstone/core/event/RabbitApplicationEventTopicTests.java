@@ -25,8 +25,8 @@ class RabbitApplicationEventTopicTests extends ApplicationEventTopicTestBase {
 	void publishLocalScopeEvent() {
 		TestEvent event = new TestEvent("");
 		this.eventPublisher.publish(event, Scope.LOCAL);
-		then(this.rabbitTemplate).should(never()).convertAndSend(any(String.class), any(String.class),
-				any(TestEvent.class));
+		then(this.rabbitTemplate).should(never())
+			.convertAndSend(any(String.class), any(String.class), any(TestEvent.class));
 		then(this.testListener).should().listen(eq(event));
 	}
 

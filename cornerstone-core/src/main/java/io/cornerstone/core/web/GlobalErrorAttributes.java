@@ -21,8 +21,9 @@ public class GlobalErrorAttributes extends DefaultErrorAttributes {
 			Object errors = errorAttributes.get("errors");
 			if (errors instanceof List) {
 				@SuppressWarnings("unchecked")
-				String message = ((List<ObjectError>) errors).stream().map(ObjectError::getDefaultMessage)
-						.collect(Collectors.joining("; "));
+				String message = ((List<ObjectError>) errors).stream()
+					.map(ObjectError::getDefaultMessage)
+					.collect(Collectors.joining("; "));
 				errorAttributes.put("message", message);
 			}
 		}

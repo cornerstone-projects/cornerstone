@@ -145,7 +145,7 @@ public class TracingAspect extends BaseAspect {
 			return pjp.proceed();
 		}
 		RequestMapping requestMapping = AnnotatedElementUtils
-				.findMergedAnnotation(((MethodSignature) pjp.getSignature()).getMethod(), RequestMapping.class);
+			.findMergedAnnotation(((MethodSignature) pjp.getSignature()).getMethod(), RequestMapping.class);
 		if (requestMapping == null) {
 			return pjp.proceed();
 		}

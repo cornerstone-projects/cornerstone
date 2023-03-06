@@ -126,8 +126,10 @@ public class PredicateBuilder {
 	@Nullable
 	private static Dialect getDialect(CriteriaBuilder cb) {
 		if (cb instanceof CriteriaBuilderImpl) {
-			return ((CriteriaBuilderImpl) cb).getEntityManagerFactory().getServiceRegistry()
-					.getService(JdbcServices.class).getDialect();
+			return ((CriteriaBuilderImpl) cb).getEntityManagerFactory()
+				.getServiceRegistry()
+				.getService(JdbcServices.class)
+				.getDialect();
 		}
 		return null;
 	}

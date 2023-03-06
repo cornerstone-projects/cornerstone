@@ -97,21 +97,21 @@ public class JsonSerializationUtils {
 
 	public static ObjectMapper createObjectMapper(JsonFactory jsonFactory) {
 		ObjectMapper objectMapper = new ObjectMapper(jsonFactory)
-				.setSerializationInclusion(JsonInclude.Include.NON_NULL)
-				.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-				.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS).addMixIn(Throwable.class, ThrowableMixin.class)
-				.addMixIn(GrantedAuthority.class, SimpleGrantedAuthorityMixin.class)
-				.addMixIn(SimpleGrantedAuthority.class, SimpleGrantedAuthorityMixin.class)
-				.registerModule(new SimpleModule().addSerializer(new NullValueSerializer())
-						.addDeserializer(NullValue.class, new JsonDeserializer<NullValue>() {
-							@Override
-							public NullValue deserialize(JsonParser jsonparser,
-									DeserializationContext deserializationcontext)
-									throws IOException, JsonProcessingException {
-								return (NullValue) NullValue.INSTANCE;
-							}
-						}))
-				.setAnnotationIntrospector(SmartJacksonAnnotationIntrospector.INSTANCE);
+			.setSerializationInclusion(JsonInclude.Include.NON_NULL)
+			.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+			.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
+			.addMixIn(Throwable.class, ThrowableMixin.class)
+			.addMixIn(GrantedAuthority.class, SimpleGrantedAuthorityMixin.class)
+			.addMixIn(SimpleGrantedAuthority.class, SimpleGrantedAuthorityMixin.class)
+			.registerModule(new SimpleModule().addSerializer(new NullValueSerializer())
+				.addDeserializer(NullValue.class, new JsonDeserializer<NullValue>() {
+					@Override
+					public NullValue deserialize(JsonParser jsonparser, DeserializationContext deserializationcontext)
+							throws IOException, JsonProcessingException {
+						return (NullValue) NullValue.INSTANCE;
+					}
+				}))
+			.setAnnotationIntrospector(SmartJacksonAnnotationIntrospector.INSTANCE);
 		if (ClassUtils.isPresent("com.fasterxml.jackson.datatype.jsr310.JavaTimeModule",
 				JsonUtils.class.getClassLoader())) {
 			objectMapper.registerModule(new com.fasterxml.jackson.datatype.jsr310.JavaTimeModule());

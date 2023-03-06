@@ -49,10 +49,11 @@ class MixedPasswordEncoderTests extends ControllerTestBase {
 		MultiValueMap<String, String> data = new LinkedMultiValueMap<>();
 		data.add("username", username);
 		data.add("password", password);
-		return executeWithNoRedirects(template -> template.exchange(RequestEntity
-				.method(POST, this.testRestTemplate.getRootUri() + DEFAULT_LOGIN_PROCESSING_URL)
-				.header(ACCEPT, TEXT_HTML_VALUE).header(CONTENT_TYPE, APPLICATION_FORM_URLENCODED_VALUE).body(data),
-				String.class));
+		return executeWithNoRedirects(template -> template
+			.exchange(RequestEntity.method(POST, this.testRestTemplate.getRootUri() + DEFAULT_LOGIN_PROCESSING_URL)
+				.header(ACCEPT, TEXT_HTML_VALUE)
+				.header(CONTENT_TYPE, APPLICATION_FORM_URLENCODED_VALUE)
+				.body(data), String.class));
 	}
 
 	private <T> T executeWithNoRedirects(Function<RestTemplate, T> function) {

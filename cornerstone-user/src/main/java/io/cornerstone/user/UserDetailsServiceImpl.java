@@ -23,7 +23,7 @@ public class UserDetailsServiceImpl implements UserDetailsService, UserDetailsPa
 	public UserDetails updatePassword(UserDetails user, String newPassword) {
 		String username = user.getUsername();
 		User u = this.userRepository.findByUsername(username)
-				.orElseThrow(() -> new UsernameNotFoundException(username));
+			.orElseThrow(() -> new UsernameNotFoundException(username));
 		u.setPassword(newPassword);
 		this.userRepository.save(u);
 		return u;

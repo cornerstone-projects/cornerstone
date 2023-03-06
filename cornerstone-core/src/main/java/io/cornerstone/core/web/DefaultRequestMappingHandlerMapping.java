@@ -22,7 +22,7 @@ public class DefaultRequestMappingHandlerMapping extends RequestMappingHandlerMa
 				Object handler = handlerHolder.get();
 				if (handler != null) {
 					strVal = String.valueOf(PARSER.parseExpression(strVal, ParserContext.TEMPLATE_EXPRESSION)
-							.getValue(new StandardEvaluationContext(handler)));
+						.getValue(new StandardEvaluationContext(handler)));
 				}
 				if (resolver != null) {
 					strVal = resolver.resolveStringValue(strVal);

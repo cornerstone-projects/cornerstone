@@ -15,7 +15,7 @@ class MinioFileStorageTests extends FileStorageTestBase {
 
 	@Container
 	static GenericContainer<?> container = new GenericContainer<>("minio/minio").withCommand("server /data")
-			.withExposedPorts(9000);
+		.withExposedPorts(9000);
 
 	@DynamicPropertySource
 	static void registerDynamicProperties(DynamicPropertyRegistry registry) {

@@ -72,8 +72,8 @@ public class RedisConfigurationSupport {
 			ObjectProvider<LettuceClientConfigurationBuilderCustomizer> builderCustomizers,
 			ClientResources clientResources) {
 		try {
-			Method m = this.configuration.getClass().getDeclaredMethod("redisConnectionFactory", ObjectProvider.class,
-					ClientResources.class);
+			Method m = this.configuration.getClass()
+				.getDeclaredMethod("redisConnectionFactory", ObjectProvider.class, ClientResources.class);
 			m.setAccessible(true);
 			return (LettuceConnectionFactory) m.invoke(this.configuration, builderCustomizers, clientResources);
 		}
@@ -107,7 +107,8 @@ public class RedisConfigurationSupport {
 			return redisConnectionFactory;
 		}
 		TracingConfiguration.Builder builder = new TracingConfiguration.Builder(GlobalTracer.get())
-				.traceWithActiveSpanOnly(true).extensionTag(Tags.SPAN_KIND.getKey(), Tags.SPAN_KIND_CLIENT);
+			.traceWithActiveSpanOnly(true)
+			.extensionTag(Tags.SPAN_KIND.getKey(), Tags.SPAN_KIND_CLIENT);
 		StringBuilder service = new StringBuilder("redis");
 		RedisProperties properties = getProperties();
 		if ((properties.getSentinel() != null) && (properties.getSentinel().getNodes() != null)) {

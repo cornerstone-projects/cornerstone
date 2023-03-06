@@ -213,10 +213,11 @@ class LoginWithVerificationCodeTests extends ControllerTestBase {
 		if (verificationCode != null) {
 			data.add("verificationCode", verificationCode);
 		}
-		return executeWithNoRedirects(template -> template.exchange(RequestEntity
-				.method(POST, this.testRestTemplate.getRootUri() + DEFAULT_LOGIN_PROCESSING_URL)
-				.header(ACCEPT, TEXT_HTML_VALUE).header(CONTENT_TYPE, APPLICATION_FORM_URLENCODED_VALUE).body(data),
-				String.class));
+		return executeWithNoRedirects(template -> template
+			.exchange(RequestEntity.method(POST, this.testRestTemplate.getRootUri() + DEFAULT_LOGIN_PROCESSING_URL)
+				.header(ACCEPT, TEXT_HTML_VALUE)
+				.header(CONTENT_TYPE, APPLICATION_FORM_URLENCODED_VALUE)
+				.body(data), String.class));
 	}
 
 	private <T> T executeWithNoRedirects(Function<RestTemplate, T> function) {

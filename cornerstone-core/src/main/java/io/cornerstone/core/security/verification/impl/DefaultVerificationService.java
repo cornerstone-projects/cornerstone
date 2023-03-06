@@ -64,12 +64,12 @@ public class DefaultVerificationService implements VerificationService {
 			this.stringRedisTemplate.expire(key, this.properties.getExpiry());
 			if (times != null && times >= this.properties.getVerify().getMaxAttempts()) {
 				this.stringRedisTemplate
-						.delete(List.of(CACHE_NAMESPACE + receiver, CACHE_NAMESPACE + receiver + SUFFIX_THRESHOLD));
+					.delete(List.of(CACHE_NAMESPACE + receiver, CACHE_NAMESPACE + receiver + SUFFIX_THRESHOLD));
 			}
 		}
 		else {
 			this.stringRedisTemplate
-					.delete(List.of(CACHE_NAMESPACE + receiver, CACHE_NAMESPACE + receiver + SUFFIX_THRESHOLD));
+				.delete(List.of(CACHE_NAMESPACE + receiver, CACHE_NAMESPACE + receiver + SUFFIX_THRESHOLD));
 		}
 		return verified;
 	}

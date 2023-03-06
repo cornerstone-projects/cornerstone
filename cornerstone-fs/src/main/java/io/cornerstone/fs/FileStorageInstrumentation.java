@@ -37,8 +37,10 @@ public class FileStorageInstrumentation {
 			throw ex;
 		}
 		finally {
-			Metrics.timer("fs.operations", "name", fileStorage.getName(), "operation", methodName, "error",
-					String.valueOf(error)).record(System.nanoTime() - start, TimeUnit.NANOSECONDS);
+			Metrics
+				.timer("fs.operations", "name", fileStorage.getName(), "operation", methodName, "error",
+						String.valueOf(error))
+				.record(System.nanoTime() - start, TimeUnit.NANOSECONDS);
 		}
 	}
 

@@ -31,14 +31,14 @@ class CustomerRepositoryTests extends DataJpaTestBase {
 		Customer customer = new Customer();
 		customer.setName("name");
 		assertThatExceptionOfType(DataIntegrityViolationException.class)
-				.isThrownBy(() -> this.repository.save(customer));
+			.isThrownBy(() -> this.repository.save(customer));
 		customer.setIdNo("test");
 		customer.setPhone("123");
 		assertThatExceptionOfType(TransactionException.class).isThrownBy(() -> this.repository.save(customer))
-				.withRootCauseInstanceOf(ConstraintViolationException.class);
+			.withRootCauseInstanceOf(ConstraintViolationException.class);
 		customer.setIdNo(CitizenIdentificationNumberValidator.randomValue());
 		assertThatExceptionOfType(TransactionException.class).isThrownBy(() -> this.repository.save(customer))
-				.withRootCauseInstanceOf(ConstraintViolationException.class);
+			.withRootCauseInstanceOf(ConstraintViolationException.class);
 		customer.setPhone(MobilePhoneNumberValidator.randomValue());
 		Customer savedCustomer = this.repository.save(customer);
 		Long id = savedCustomer.getId();

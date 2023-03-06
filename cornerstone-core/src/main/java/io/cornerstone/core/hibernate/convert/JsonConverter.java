@@ -21,7 +21,8 @@ import org.springframework.core.ResolvableType;
 public abstract class JsonConverter<T> implements AttributeConverter<T, String> {
 
 	private static final ObjectMapper objectMapper = new ObjectMapper()
-			.setSerializationInclusion(JsonInclude.Include.NON_NULL).disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
+		.setSerializationInclusion(JsonInclude.Include.NON_NULL)
+		.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
 
 	private final Type type;
 
