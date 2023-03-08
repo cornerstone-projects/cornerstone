@@ -14,7 +14,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import lombok.Value;
 import lombok.experimental.UtilityClass;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
@@ -158,8 +157,8 @@ public class ReflectionUtils {
 		Class<?> objectType = method.getDeclaringClass();
 		MethodHandle mh = defaultMethods.computeIfAbsent(new MethodCacheKey(object, method), key -> {
 			try {
-				Object o = key.getObject();
-				Method m = key.getMethod();
+				Object o = key.object();
+				Method m = key.method();
 				if (JDK9PLUS) {
 					return MethodHandles.lookup()
 							.findSpecial(objectType, m.getName(),
@@ -179,13 +178,7 @@ public class ReflectionUtils {
 		return mh.invokeWithArguments(arguments);
 	}
 
-	@Value
-	private static class MethodCacheKey {
-
-		Object object;
-
-		Method method;
-
+	private record MethodCacheKey(Object object, Method method) {
 	}
 
 	private static final Map<MethodCacheKey, MethodHandle> defaultMethods = new ConcurrentHashMap<>();

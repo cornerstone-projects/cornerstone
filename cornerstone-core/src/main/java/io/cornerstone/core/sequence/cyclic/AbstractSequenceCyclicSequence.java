@@ -16,7 +16,6 @@ import java.util.Locale;
 import java.util.Map;
 
 import io.cornerstone.core.util.MaxAttemptsExceededException;
-import lombok.Value;
 
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataAccessResourceFailureException;
@@ -176,10 +175,10 @@ public abstract class AbstractSequenceCyclicSequence extends AbstractDatabaseCyc
 			int remainingAttempts = maxAttempts;
 			do {
 				Result result = queryTimestampWithSequence(con, stmt);
-				LocalDateTime now = result.current;
+				LocalDateTime now = result.current();
 				if (sameCycle(result)) {
 					if (updateLastUpdated(con, now, ct.getCycleStart(ct.skipCycles(now, 1)))) {
-						return getStringValue(now, getPaddingLength(), result.nextId);
+						return getStringValue(now, getPaddingLength(), result.nextId());
 					}
 				}
 				else {
@@ -189,7 +188,7 @@ public abstract class AbstractSequenceCyclicSequence extends AbstractDatabaseCyc
 						if (!sameCycle(result) && updateLastUpdated(con, now, ct.getCycleStart(now))) {
 							restartSequence(con, stmt);
 							result = queryTimestampWithSequence(con, stmt);
-							return getStringValue(result.current, getPaddingLength(), result.nextId);
+							return getStringValue(result.current(), getPaddingLength(), result.nextId());
 						}
 						con.commit();
 					}
@@ -230,7 +229,7 @@ public abstract class AbstractSequenceCyclicSequence extends AbstractDatabaseCyc
 	}
 
 	private boolean sameCycle(Result result) {
-		return getCycleType().isSameCycle(result.last, result.current);
+		return getCycleType().isSameCycle(result.last(), result.current());
 	}
 
 	private Result queryTimestampWithSequence(Connection con, Statement stmt) throws SQLException {
@@ -260,15 +259,7 @@ public abstract class AbstractSequenceCyclicSequence extends AbstractDatabaseCyc
 		}
 	}
 
-	@Value
-	private static class Result {
-
-		int nextId;
-
-		LocalDateTime current;
-
-		LocalDateTime last;
-
+	private record Result(int nextId, LocalDateTime current, LocalDateTime last) {
 	}
 
 }

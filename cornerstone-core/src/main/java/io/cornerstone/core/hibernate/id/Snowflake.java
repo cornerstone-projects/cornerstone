@@ -2,8 +2,6 @@ package io.cornerstone.core.hibernate.id;
 
 import java.util.concurrent.ThreadLocalRandom;
 
-import lombok.Value;
-
 public class Snowflake {
 
 	private static final long EPOCH = 1556150400000L;
@@ -73,25 +71,13 @@ public class Snowflake {
 	}
 
 	public Info parse(long id) {
-		return new Info(id, this.workerIdBits, this.sequenceBits);
+		long duration = id >> (this.sequenceBits + this.workerIdBits);
+		return new Info(EPOCH + duration,
+				(int) ((id - (duration << (this.sequenceBits + this.workerIdBits))) >> (this.sequenceBits)),
+				id - (duration << (this.sequenceBits + this.workerIdBits)) - (this.workerId << this.sequenceBits));
 	}
 
-	@Value
-	public static class Info {
-
-		private long timestamp;
-
-		private int workerId;
-
-		private long sequence;
-
-		Info(long id, int workerIdBits, int sequenceBits) {
-			long duration = id >> (sequenceBits + workerIdBits);
-			this.timestamp = EPOCH + duration;
-			this.workerId = (int) ((id - (duration << (sequenceBits + workerIdBits))) >> (sequenceBits));
-			this.sequence = id - (duration << (sequenceBits + workerIdBits)) - (this.workerId << sequenceBits);
-		}
-
+	public record Info(long timestamp, int workerId, long sequence) {
 	}
 
 }
