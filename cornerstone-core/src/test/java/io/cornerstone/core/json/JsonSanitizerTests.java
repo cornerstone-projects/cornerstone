@@ -16,13 +16,21 @@ class JsonSanitizerTests {
 	@Test
 	void testSanitize() {
 		JsonSanitizer sanitizer = new JsonSanitizer();
-		String json = "{\"password\":\"password\"}";
+		String json = """
+				{"password":"password"}
+				""";
 		assertThat(sanitizer.sanitize(json)).contains("\"******\"");
-		json = "{\"username\":\"username\",\"password\":\"password\"}";
+		json = """
+				{"username":"username","password":"password"}
+				""";
 		assertThat(sanitizer.sanitize(json)).contains("\"******\"");
-		json = "{\"user\":{\"username\":\"username\",\"password\":\"password\"}}";
+		json = """
+				{"user":{"username":"username","password":"password"}}
+				""";
 		assertThat(sanitizer.sanitize(json)).contains("\"******\"");
-		json = "{\"user\":{\"user2\":{\"username\":\"username\",\"password\":\"password\"}}}";
+		json = """
+				{"user":{"user2":{"username":"username","password":"password"}}}
+				""";
 		assertThat(sanitizer.sanitize(json)).contains("\"******\"");
 
 		sanitizer.getDropping().add((name, parent) -> name.equals("username"));
