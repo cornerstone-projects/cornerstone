@@ -160,6 +160,10 @@ public class JsonSerializationUtils {
 					|| declaringClass.getName().startsWith("java.")) {
 				return false;
 			}
+			Boolean bool = this.cache.get(member);
+			if (bool != null) {
+				return bool;
+			}
 			return this.cache.computeIfAbsent(member, mem -> {
 				if (mem instanceof Method) {
 					Method method = (Method) mem;

@@ -155,26 +155,33 @@ public class ReflectionUtils {
 			throw new IllegalArgumentException("Method is not default: " + method);
 		}
 		Class<?> objectType = method.getDeclaringClass();
-		MethodHandle mh = defaultMethods.computeIfAbsent(new MethodCacheKey(object, method), key -> {
-			try {
-				Object o = key.object();
-				Method m = key.method();
-				if (JDK9PLUS) {
-					return MethodHandles.lookup()
-						.findSpecial(objectType, m.getName(),
-								MethodType.methodType(m.getReturnType(), m.getParameterTypes()), objectType)
-						.bindTo(o);
+		MethodCacheKey mck = new MethodCacheKey(object, method);
+		MethodHandle mh = defaultMethods.get(mck);
+		if (mh == null) {
+			mh = defaultMethods.computeIfAbsent(mck, key -> {
+				try {
+					Object o = key.object();
+					Method m = key.method();
+					if (JDK9PLUS) {
+						return MethodHandles.lookup()
+							.findSpecial(objectType, m.getName(),
+									MethodType.methodType(m.getReturnType(), m.getParameterTypes()), objectType)
+							.bindTo(o);
+					}
+					else {
+						Constructor<Lookup> constructor = Lookup.class.getDeclaredConstructor(Class.class);
+						constructor.setAccessible(true);
+						return constructor.newInstance(objectType)
+							.in(objectType)
+							.unreflectSpecial(m, objectType)
+							.bindTo(o);
+					}
 				}
-				else {
-					Constructor<Lookup> constructor = Lookup.class.getDeclaredConstructor(Class.class);
-					constructor.setAccessible(true);
-					return constructor.newInstance(objectType).in(objectType).unreflectSpecial(m, objectType).bindTo(o);
+				catch (Exception ex) {
+					throw new RuntimeException(ex);
 				}
-			}
-			catch (Exception ex) {
-				throw new RuntimeException(ex);
-			}
-		});
+			});
+		}
 		return mh.invokeWithArguments(arguments);
 	}
 
