@@ -3,6 +3,5 @@ plugins {
 }
 
 dependencies {
-	api project(":cornerstone-core") 
-	testImplementation testFixtures(project(":cornerstone-core"))
+	api project(":cornerstone-core")
 }

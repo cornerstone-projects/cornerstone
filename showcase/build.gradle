@@ -16,7 +16,6 @@ dependencies {
 	developmentOnly "org.springframework.boot:spring-boot-devtools"
 	providedRuntime "org.springframework.boot:spring-boot-starter-tomcat" // if war not jar
 	runtimeOnly "com.mysql:mysql-connector-j"
-	testImplementation testFixtures(project(":cornerstone-core"))
 }
 
 springBoot {
