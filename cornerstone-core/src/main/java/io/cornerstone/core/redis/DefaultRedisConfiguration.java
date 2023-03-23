@@ -45,18 +45,12 @@ public class DefaultRedisConfiguration extends RedisConfigurationSupport {
 		return super.lettuceClientResources(customizers);
 	}
 
+	@Override
 	@Bean
-	public LettuceConnectionFactory rawRedisConnectionFactory(
+	public LettuceConnectionFactory redisConnectionFactory(
 			ObjectProvider<LettuceClientConfigurationBuilderCustomizer> builderCustomizers,
 			ClientResources lettuceClientResources) {
 		return super.redisConnectionFactory(builderCustomizers, lettuceClientResources);
-	}
-
-	@Bean(name = "redisConnectionFactory")
-	@Primary
-	public RedisConnectionFactory wrappedRedisConnectionFactory(
-			@Qualifier("rawRedisConnectionFactory") RedisConnectionFactory redisConnectionFactory) {
-		return wrap(redisConnectionFactory);
 	}
 
 	@Bean
@@ -76,7 +70,7 @@ public class DefaultRedisConfiguration extends RedisConfigurationSupport {
 	@Primary
 	@Override
 	public RedisMessageListenerContainer redisMessageListenerContainer(
-			@Qualifier("rawRedisConnectionFactory") RedisConnectionFactory redisConnectionFactory,
+			@Qualifier("redisConnectionFactory") RedisConnectionFactory redisConnectionFactory,
 			Optional<Executor> taskExecutor) {
 		return super.redisMessageListenerContainer(redisConnectionFactory, taskExecutor);
 	}

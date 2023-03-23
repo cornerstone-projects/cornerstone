@@ -22,7 +22,6 @@ dependencies {
 	api "io.github.resilience4j:resilience4j-spring-boot2:${property('resilience4j.version')}"
 	api "io.opentracing.contrib:opentracing-spring-jaeger-web-starter:${property('java-spring-jaeger.version')}"
 	api "io.opentracing.contrib:opentracing-jdbc:${property('opentracing-jdbc.version')}"
-	api "io.opentracing.contrib:opentracing-redis-spring-data2:${property('opentracing-spring-data-redis.version')}"
 	api "org.springdoc:springdoc-openapi-starter-webmvc-ui:${property('springdoc.version')}"
 	api "org.apache.commons:commons-pool2"
 	compileOnly "org.springframework.boot:spring-boot-starter-amqp"

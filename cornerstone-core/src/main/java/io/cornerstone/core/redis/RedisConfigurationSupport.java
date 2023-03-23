@@ -7,10 +7,6 @@ import java.util.concurrent.Executor;
 
 import io.lettuce.core.resource.ClientResources;
 import io.lettuce.core.resource.DefaultClientResources;
-import io.opentracing.contrib.redis.common.TracingConfiguration;
-import io.opentracing.contrib.redis.spring.data2.connection.TracingRedisConnectionFactory;
-import io.opentracing.tag.Tags;
-import io.opentracing.util.GlobalTracer;
 import lombok.Getter;
 
 import org.springframework.beans.factory.ObjectProvider;
@@ -100,40 +96,6 @@ public class RedisConfigurationSupport {
 		container.setConnectionFactory(redisConnectionFactory);
 		taskExecutor.ifPresent(container::setTaskExecutor);
 		return container;
-	}
-
-	protected RedisConnectionFactory wrap(RedisConnectionFactory redisConnectionFactory) {
-		if (redisConnectionFactory instanceof TracingRedisConnectionFactory) {
-			return redisConnectionFactory;
-		}
-		TracingConfiguration.Builder builder = new TracingConfiguration.Builder(GlobalTracer.get())
-			.traceWithActiveSpanOnly(true)
-			.extensionTag(Tags.SPAN_KIND.getKey(), Tags.SPAN_KIND_CLIENT);
-		StringBuilder service = new StringBuilder("redis");
-		RedisProperties properties = getProperties();
-		if ((properties.getSentinel() != null) && (properties.getSentinel().getNodes() != null)) {
-			properties.getSentinel().getNodes();
-			builder.extensionTag("peer.address", String.join(",", properties.getSentinel().getNodes()));
-			service.append("-sentinel");
-		}
-		else if ((properties.getCluster() != null) && (properties.getCluster().getNodes() != null)) {
-			builder.extensionTag("peer.address", String.join(",", properties.getCluster().getNodes()));
-			service.append("-cluster");
-		}
-		else {
-			if (properties.isSsl()) {
-				service.append("s");
-			}
-			service.append("://").append(properties.getHost());
-			if (properties.getPort() != 6379) {
-				service.append(":").append(properties.getPort());
-			}
-			if (properties.getDatabase() > 0) {
-				service.append("/").append(properties.getDatabase());
-			}
-		}
-		builder.extensionTag(Tags.PEER_SERVICE.getKey(), service.toString());
-		return new TracingRedisConnectionFactory(redisConnectionFactory, builder.build());
 	}
 
 }

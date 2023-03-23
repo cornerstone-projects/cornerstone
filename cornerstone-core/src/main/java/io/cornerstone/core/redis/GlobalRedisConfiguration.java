@@ -48,16 +48,10 @@ public class GlobalRedisConfiguration extends RedisConfigurationSupport {
 	}
 
 	@Bean
-	public LettuceConnectionFactory rawGlobalRedisConnectionFactory(
+	public LettuceConnectionFactory globalRedisConnectionFactory(
 			ObjectProvider<LettuceClientConfigurationBuilderCustomizer> builderCustomizers,
 			@Qualifier("globalLettuceClientResources") ClientResources lettuceClientResources) {
 		return super.redisConnectionFactory(builderCustomizers, lettuceClientResources);
-	}
-
-	@Bean
-	public RedisConnectionFactory globalRedisConnectionFactory(
-			@Qualifier("rawGlobalRedisConnectionFactory") RedisConnectionFactory redisConnectionFactory) {
-		return wrap(redisConnectionFactory);
 	}
 
 	@Bean
@@ -74,7 +68,7 @@ public class GlobalRedisConfiguration extends RedisConfigurationSupport {
 
 	@Bean
 	public RedisMessageListenerContainer globalRedisMessageListenerContainer(
-			@Qualifier("rawGlobalRedisConnectionFactory") RedisConnectionFactory redisConnectionFactory,
+			@Qualifier("globalRedisConnectionFactory") RedisConnectionFactory redisConnectionFactory,
 			Optional<Executor> taskExecutor) {
 		return super.redisMessageListenerContainer(redisConnectionFactory, taskExecutor);
 	}
