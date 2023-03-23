@@ -22,6 +22,7 @@ repositories {
 dependencyManagement {
 	imports {
 		mavenBom org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES
+		mavenBom "org.testcontainers:testcontainers-bom:${property('testcontainers.version')}"
 	}
 	generatedPomCustomization {
 		enabled = false
