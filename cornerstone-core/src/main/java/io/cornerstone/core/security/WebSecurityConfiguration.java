@@ -4,10 +4,7 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Stream;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -23,7 +20,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -139,14 +135,8 @@ public class WebSecurityConfiguration {
 					throws IOException {
 				if (RequestUtils.isRequestedFromApi(request)) {
 					response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-					Map<String, Object> map = new LinkedHashMap<>();
-					map.put("timestamp", new Date());
-					map.put("status", HttpStatus.OK.value());
-					map.put("message", HttpStatus.OK.getReasonPhrase());
-					map.put("path", WebSecurityConfiguration.this.properties.getLoginProcessingUrl());
-					map.put("targetUrl", url);
-					WebSecurityConfiguration.this.objectMapper.writeValue(response.getWriter(), map);
-					// see DefaultErrorAttributes::getErrorAttributes
+					WebSecurityConfiguration.this.objectMapper.writeValue(response.getWriter(),
+							Collections.singletonMap("targetUrl", url));
 				}
 				else {
 					super.sendRedirect(request, response, url);

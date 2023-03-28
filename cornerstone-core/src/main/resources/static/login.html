@@ -56,8 +56,8 @@
 					},
 					error: function (jqXHR) {
 						var data = jqXHR.responseJSON;
+						var message = data.message||data.detail;
 						if (jqXHR.status == 401) {
-							var message = data.message;
 							var input = 'username';
 							$('input[placeholder]').each(function (){
 								if(message.indexOf(this.placeholder) != -1)
@@ -66,7 +66,7 @@
 							$('<span class="invalid-feedback"></span>').appendTo($('#' + input).addClass('is-invalid').parent()).text(message);
 						} else {
 							console.log(data);
-							alert(data.message);
+							alert(message);
 						}
 					},
 					complete: function () {

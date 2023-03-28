@@ -183,9 +183,6 @@ class LoginWithVerificationCodeTests extends ControllerTestBase {
 
 		ResponseEntity<Map<String, Object>> response = restfulFormLogin(username, DEFAULT_PASSWORD, verificationCode);
 		assertThat(response.getStatusCode()).isSameAs(OK);
-		assertThat(response.getBody().get("status")).isEqualTo(OK.value());
-		assertThat(response.getBody().get("message")).isEqualTo(OK.getReasonPhrase());
-		assertThat(response.getBody().get("path")).isEqualTo(DEFAULT_LOGIN_PROCESSING_URL);
 		assertThat(response.getBody().get("targetUrl")).isEqualTo(DEFAULT_SUCCESS_URL);
 	}
 

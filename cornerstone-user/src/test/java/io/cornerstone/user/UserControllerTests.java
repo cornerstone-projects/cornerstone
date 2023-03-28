@@ -36,6 +36,7 @@ import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
+import static org.springframework.http.MediaType.APPLICATION_PROBLEM_JSON;
 
 class UserControllerTests extends ControllerTestBase {
 
@@ -58,7 +59,8 @@ class UserControllerTests extends ControllerTestBase {
 				new ParameterizedTypeReference<Map<String, Object>>() {
 				});
 		assertThat(resp.getStatusCode()).isSameAs(BAD_REQUEST);
-		assertThat(resp.getBody().get("message"))
+		assertThat(resp.getBody()
+			.get(resp.getHeaders().getContentType().isCompatibleWith(APPLICATION_PROBLEM_JSON) ? "detail" : "message"))
 			.isEqualTo(this.messageSource.getMessage("username.already.exists", null, LocaleContextHolder.getLocale()));
 		u.setUsername("test");
 		ResponseEntity<User> response = restTemplate.postForEntity(PATH_LIST, u, User.class);

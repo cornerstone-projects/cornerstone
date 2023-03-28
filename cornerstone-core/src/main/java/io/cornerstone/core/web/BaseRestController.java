@@ -19,7 +19,8 @@ public abstract class BaseRestController {
 	}
 
 	protected ResponseStatusException badRequest(String reason) {
-		return new ResponseStatusException(BAD_REQUEST, reason);
+		return new ResponseStatusException(BAD_REQUEST,
+				this.applicationContext.getMessage(reason, null, LocaleContextHolder.getLocale()));
 	}
 
 	protected ResponseStatusException invalidParam(String name) {
