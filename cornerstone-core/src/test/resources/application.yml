@@ -1,0 +1,7 @@
+server.error.include-binding-errors: never
+spring.springdoc.swagger-ui.enabled: false
+mysql.host: localhost
+---
+spring:
+  config.activate.on-profile: test
+  jpa.hbm2ddl.default_constraint_mode: CONSTRAINT
