@@ -30,9 +30,11 @@ import static org.springframework.core.env.StandardEnvironment.SYSTEM_ENVIRONMEN
 
 public class DefaultPropertiesPostProcessor implements EnvironmentPostProcessor, Ordered {
 
-	private static final String FILE_NAME = "default.yml";
+	public static final String FILE_NAME = "default.yml";
 
-	private static final String CONFIG_DIR_ON_K8S = "/etc/config/";
+	public static final String SYSTEM_PROPERTY_CONFIG_DIR = "config.dir";
+
+	public static final String DEFAULT_CONFIG_DIR = "/etc/config/";
 
 	// After ConfigDataEnvironmentPostProcessor
 	public static final int ORDER = ConfigDataEnvironmentPostProcessor.ORDER + 1;
@@ -81,11 +83,15 @@ public class DefaultPropertiesPostProcessor implements EnvironmentPostProcessor,
 		}
 
 		if (CloudPlatform.getActive(environment) == KUBERNETES) {
-			Path path = Path.of(CONFIG_DIR_ON_K8S);
+			String configDir = System.getProperty(SYSTEM_PROPERTY_CONFIG_DIR);
+			if (configDir == null) {
+				configDir = DEFAULT_CONFIG_DIR;
+			}
+			Path path = Path.of(configDir);
 			if (Files.exists(path)) {
-				ConfigTreePropertySource ps = new ConfigTreePropertySource("Config tree '" + path + "'", path);
+				ConfigTreePropertySource ps = new ConfigTreePropertySource("Config tree '" + configDir + "'", path);
 				environment.getPropertySources().addAfter(SYSTEM_ENVIRONMENT_PROPERTY_SOURCE_NAME, ps);
-				this.log.info("Add ConfigTreePropertySource from config directory:" + CONFIG_DIR_ON_K8S);
+				this.log.info("Add ConfigTreePropertySource from config directory:" + configDir);
 			}
 		}
 

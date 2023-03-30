@@ -1,8 +1,13 @@
 package io.cornerstone.core;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.function.Predicate;
 
 import io.cornerstone.test.SpringApplicationTestBase;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -15,6 +20,7 @@ import org.springframework.core.env.PropertySource;
 import org.springframework.core.env.StandardEnvironment;
 import org.springframework.test.context.TestPropertySource;
 
+import static io.cornerstone.core.DefaultPropertiesPostProcessor.SYSTEM_PROPERTY_CONFIG_DIR;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class DefaultPropertiesPostProcessorTests extends SpringApplicationTestBase {
@@ -56,8 +62,34 @@ class DefaultPropertiesPostProcessorTests extends SpringApplicationTestBase {
 	@TestPropertySource(properties = "spring.main.cloud-platform=kubernetes")
 	class KubernetesCloudPlatform {
 
+		static Path foobar;
+
+		@BeforeAll
+		static void init() throws IOException {
+			String configDir = System.getProperty("java.io.tmpdir") + "/etc/config/";
+			System.setProperty(SYSTEM_PROPERTY_CONFIG_DIR, configDir);
+			foobar = Path.of(configDir, "foo", "bar");
+			if (!Files.exists(foobar)) {
+				Files.createDirectories(foobar.getParent());
+				Files.write(foobar, "foobar".getBytes());
+			}
+		}
+
+		@AfterAll
+		static void cleanup() throws IOException {
+			Files.delete(foobar);
+			Files.delete(foobar.getParent());
+			Files.delete(foobar.getParent().getParent());
+			Files.delete(foobar.getParent().getParent().getParent());
+		}
+
 		@Autowired
 		private ConfigurableEnvironment env;
+
+		@Test
+		void configDirPropertySourceIsRegistered() {
+			assertThat(this.env.getProperty("foo.bar")).isEqualTo("foobar");
+		}
 
 		@Test
 		void cloudPlatformShouldBeActive() {
