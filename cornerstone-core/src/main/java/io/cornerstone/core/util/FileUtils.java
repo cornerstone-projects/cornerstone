@@ -33,19 +33,17 @@ public class FileUtils {
 				continue;
 			}
 			switch (s) {
-				case ".":
-					continue;
-				case "..":
+				case "." -> {
+				}
+				case ".." -> {
 					if ((list.size() > 0) && !list.get(list.size() - 1).equals("..")) {
 						list.remove(list.size() - 1);
 					}
 					else {
 						list.add("..");
 					}
-					break;
-				default:
-					list.add(s);
-					break;
+				}
+				default -> list.add(s);
 			}
 		}
 		String path = String.join("/", list);

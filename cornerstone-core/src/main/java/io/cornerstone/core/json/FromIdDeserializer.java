@@ -71,11 +71,8 @@ public class FromIdDeserializer extends StdDeserializer<Object> implements Conte
 				}
 				while (parser.nextToken() != JsonToken.END_ARRAY) {
 					switch (parser.currentToken()) {
-						case START_OBJECT:
-							coll.add(parser.readValueAs(componentType.getRawClass()));
-							break;
-						default:
-							coll.add(convert(parser, parser.getText(), componentType));
+						case START_OBJECT -> coll.add(parser.readValueAs(componentType.getRawClass()));
+						default -> coll.add(convert(parser, parser.getText(), componentType));
 					}
 				}
 				if (this.type.isArrayType()) {

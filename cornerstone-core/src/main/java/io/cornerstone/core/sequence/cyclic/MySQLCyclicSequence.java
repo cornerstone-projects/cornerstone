@@ -95,20 +95,13 @@ public class MySQLCyclicSequence extends AbstractDatabaseCyclicSequence {
 	}
 
 	private String getDateFormat() {
-		switch (getCycleType()) {
-			case MINUTE:
-				return "%Y%m%d%H%i";
-			case HOUR:
-				return "%Y%m%d%H";
-			case DAY:
-				return "%Y%m%d";
-			case MONTH:
-				return "%Y%m";
-			case YEAR:
-				return "%Y";
-			default:
-				throw new UnsupportedOperationException("Unknown cycle type");
-		}
+		return switch (getCycleType()) {
+			case MINUTE -> "%Y%m%d%H%i";
+			case HOUR -> "%Y%m%d%H";
+			case DAY -> "%Y%m%d";
+			case MONTH -> "%Y%m";
+			case YEAR -> "%Y";
+		};
 	}
 
 }

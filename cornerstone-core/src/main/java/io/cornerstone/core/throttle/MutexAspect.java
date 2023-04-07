@@ -55,16 +55,8 @@ public class MutexAspect extends BaseAspect {
 		StringBuilder sb = new StringBuilder(key);
 		Application.current().ifPresent(a -> {
 			switch (mutex.scope()) {
-				case GLOBAL:
-					break;
-				case APPLICATION:
-					sb.append('-').append(a.getName());
-					break;
-				case LOCAL:
-					sb.append('-').append(a.getInstanceId(true));
-					break;
-				default:
-					break;
+				case APPLICATION -> sb.append('-').append(a.getName());
+				case LOCAL -> sb.append('-').append(a.getInstanceId(true));
 			}
 		});
 		key = sb.toString();
