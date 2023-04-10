@@ -22,3 +22,6 @@ jaeger.host: localhost #shortcut for opentracing.jaeger.http-sender.url
 
 #file-storage:
 #  uri: ftp://admin:admin@localhost/temp
+---
+spring.config.activate.on-cloud-platform: kubernetes
+management.server.port: 8081

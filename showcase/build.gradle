@@ -1,6 +1,6 @@
 buildscript{
-	dependencies{
-		classpath('org.yaml:snakeyaml:2.0')
+	dependencies {
+		classpath("org.springframework.boot:spring-boot-starter:${property('spring-boot.version')}")
 	}
 }
 
@@ -23,7 +23,14 @@ springBoot {
 }
 
 tasks.register('kustomize', Copy) {
-	def cfg = new org.yaml.snakeyaml.Yaml().load(new File(project.projectDir, 'src/main/resources/application.yml').newInputStream())
+	def cfg = [:]
+	def file = new File(project.projectDir, 'src/main/resources/application.yml')
+	for (ps : new org.springframework.boot.env.YamlPropertySourceLoader().load(file.getName(), new org.springframework.core.io.FileSystemResource(file))) {
+		def source = ps.getSource()
+		def cp = source['spring.config.activate.on-cloud-platform']?.toString()
+		if (cp == null || cp.equalsIgnoreCase('kubernetes'))
+			cfg += source
+	}
 	def application = [name: cfg['spring.application.name']?:project.name, version: project.version]
 	def server = [port: cfg['server.port']?:8080]
 	def management = [server: [port: cfg['management.server.port']?:server.port], endpoints: [web: ['basePath': cfg['management.endpoints.web.base-path']?:'/actuator']]]
@@ -33,6 +40,7 @@ tasks.register('kustomize', Copy) {
 	into layout.buildDirectory.dir('k8s')
 	outputs.upToDateWhen { false } // disable UP-TO-DATE to force run every time
 }
+
 tasks.register('applyKustomization', Exec) {
 	dependsOn kustomize
 	workingDir layout.buildDirectory.dir('k8s')
