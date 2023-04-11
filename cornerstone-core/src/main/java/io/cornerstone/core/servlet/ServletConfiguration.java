@@ -63,7 +63,7 @@ public class ServletConfiguration {
 	FilterRegistrationBean<SsoFilter> ssoFilterRegistration(SsoFilter ssoFilter) {
 		FilterRegistrationBean<SsoFilter> registrationBean = new FilterRegistrationBean<>();
 		registrationBean.setFilter(ssoFilter);
-		registrationBean.setOrder(Ordered.HIGHEST_PRECEDENCE + 1);
+		registrationBean.setOrder(Ordered.HIGHEST_PRECEDENCE + 2);
 		return registrationBean;
 	}
 

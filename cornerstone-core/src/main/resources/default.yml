@@ -96,16 +96,10 @@ management.prometheus.metrics.export:
     push-rate: 30S
     base-url: http://localhost:9091
 
+management.tracing.enabled: false
+
 springdoc.swagger-ui.enabled: false
 springdoc.api-docs.enabled: ${springdoc.swagger-ui.enabled}
-
-opentracing:
-  enabled: false
-  jaeger:
-    enable-w3c-propagation: true
-    http-sender.url: http://${jaeger.host}:${jaeger.port}/api/traces
-    const-sampler.decision: true
-    log-spans: false
 
 # user defined variables to expand
 mysql:
@@ -113,10 +107,6 @@ mysql:
   port: 3306
   username: root
   password:
-
-jaeger:
-  host: localhost
-  port: 14268
 
 ---
 spring:
@@ -129,6 +119,7 @@ spring:
       hbm2ddl.default_constraint_mode: NO_CONSTRAINT
 springdoc.swagger-ui.enabled: true
 management.endpoints.web.exposure.include: "*"
+management.tracing.sampling.probability: 1.0
 logging:
   level:
     sql: TRACE
@@ -159,11 +150,10 @@ spring:
 logging.log4j2.config.override: classpath:log4j2-with-kafka.xml
 
 management.influx.metrics.export.enabled: true
-opentracing:
-  enabled: true
-  jaeger:
-    const-sampler.decision: false
-    probabilistic-sampler.sampling-rate: 0.01
+
+management.prometheus.metrics.export.enabled: true
+
+management.tracing.sampling.probability: 0.05
 
 ---
 spring.config.activate.on-cloud-platform: kubernetes
@@ -171,10 +161,6 @@ spring.config.activate.on-cloud-platform: kubernetes
 mysql:
   host: ${mysql.service.host:mysql.default.svc.cluster.local}
   port: ${mysql.service.port:3306}
-
-jaeger:
-  host: ${jaeger.service.host:jaeger.default.svc.cluster.local}
-  port: ${jaeger.service.port:14268}
 
 spring.data.redis:
   host: ${redis.service.host:redis.default.svc.cluster.local}

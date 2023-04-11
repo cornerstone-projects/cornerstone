@@ -1,87 +1,82 @@
 package io.cornerstone.core.tracing;
 
-import java.lang.reflect.Method;
-
-import javax.sql.DataSource;
+import java.util.Map.Entry;
 
 import io.cornerstone.core.Application;
-import io.jaegertracing.internal.Constants;
-import io.opentracing.Tracer;
-import io.opentracing.contrib.java.spring.jaeger.starter.TracerBuilderCustomizer;
-import io.opentracing.contrib.jdbc.TracingDataSource;
-import io.opentracing.noop.NoopTracerFactory;
-import io.opentracing.util.GlobalTracer;
-import lombok.extern.slf4j.Slf4j;
-import org.aopalliance.intercept.MethodInterceptor;
-import org.aopalliance.intercept.MethodInvocation;
+import io.micrometer.tracing.otel.bridge.OtelTracer;
+import io.opentelemetry.api.OpenTelemetry;
+import io.opentelemetry.api.common.AttributeKey;
+import io.opentelemetry.api.common.Attributes;
+import io.opentelemetry.api.common.AttributesBuilder;
+import io.opentelemetry.exporter.otlp.http.trace.OtlpHttpSpanExporter;
+import io.opentelemetry.exporter.otlp.http.trace.OtlpHttpSpanExporterBuilder;
+import io.opentelemetry.sdk.resources.Resource;
+import io.opentelemetry.sdk.trace.SdkTracerProvider;
+import io.opentelemetry.sdk.trace.SdkTracerProviderBuilder;
+import io.opentelemetry.sdk.trace.SpanProcessor;
+import io.opentelemetry.sdk.trace.samplers.Sampler;
+import io.opentelemetry.semconv.resource.attributes.ResourceAttributes;
 
-import org.springframework.aop.framework.ProxyFactory;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.config.BeanPostProcessor;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.boot.actuate.autoconfigure.tracing.ConditionalOnEnabledTracing;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.core.env.Environment;
 
-@Configuration(proxyBeanMethods = false)
-@Slf4j
+@Configuration
+@ConditionalOnEnabledTracing
+@ConditionalOnClass({ OtelTracer.class, SdkTracerProvider.class, OpenTelemetry.class, OtlpHttpSpanExporter.class })
+@EnableConfigurationProperties(OtlpProperties.class)
 public class TracingConfiguration {
 
 	@Bean
-	@TracingEnabled
-	TracerBuilderCustomizer tracerBuilderCustomizer(Application application) {
-		return builder -> {
-			builder.withTag("java.version", System.getProperty("java.version"))
-				.withTag("server.info", application.getServerInfo())
-				.withTag("server.port", application.getServerPort())
-				.withTag(Constants.TRACER_HOSTNAME_TAG_KEY, application.getHostName())
-				.withTag(Constants.TRACER_IP_TAG_KEY, application.getHostAddress());
-		};
+	SdkTracerProvider otelSdkTracerProvider(Environment environment, ObjectProvider<SpanProcessor> spanProcessors,
+			Sampler sampler, ObjectProvider<SdkTracerProviderBuilderCustomizer> customizers) {
+		String applicationName = environment.getProperty("spring.application.name", "application");
+		AttributesBuilder attributesBuilder = Attributes.builder();
+		attributesBuilder.put(ResourceAttributes.SERVICE_NAME, applicationName);
+		customizers.orderedStream().forEach((customizer) -> customizer.customize(attributesBuilder));
+		SdkTracerProviderBuilder builder = SdkTracerProvider.builder()
+			.setSampler(sampler)
+			.setResource(Resource.create(attributesBuilder.build()));
+		spanProcessors.orderedStream().forEach(builder::addSpanProcessor);
+		customizers.orderedStream().forEach((customizer) -> customizer.customize(builder));
+		return builder.build();
 	}
 
 	@Bean
-	@TracingEnabled
-	TracingAspect tracingAspect() {
-		return new TracingAspect();
+	@ConditionalOnMissingBean(value = OtlpHttpSpanExporter.class,
+			type = "io.opentelemetry.exporter.otlp.trace.OtlpGrpcSpanExporter")
+	OtlpHttpSpanExporter otlpHttpSpanExporter(OtlpProperties properties) {
+		OtlpHttpSpanExporterBuilder builder = OtlpHttpSpanExporter.builder()
+			.setEndpoint(properties.getEndpoint())
+			.setTimeout(properties.getTimeout())
+			.setCompression(properties.getCompression().name().toLowerCase());
+		for (Entry<String, String> header : properties.getHeaders().entrySet()) {
+			builder.addHeader(header.getKey(), header.getValue());
+		}
+		return builder.build();
 	}
 
 	@Bean
-	@TracingEnabled
-	static BeanPostProcessor tracingPostProcessor() {
-		return new BeanPostProcessor() {
+	SdkTracerProviderBuilderCustomizer applicationAttributesCustomizer(Application application) {
+		return new SdkTracerProviderBuilderCustomizer() {
 
 			@Override
-			public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
-				if (bean instanceof DataSource ds) {
-					bean = new TracingDataSource(GlobalTracer.get(), ds, null, true, null);
-					log.info("Wrapped DataSource [{}] with {}", beanName, bean.getClass().getName());
-				}
-				else if (bean instanceof PlatformTransactionManager) {
-					ProxyFactory pf = new ProxyFactory(bean);
-					pf.addAdvice(new MethodInterceptor() {
-						@Override
-						public Object invoke(MethodInvocation invocation) throws Throwable {
-							Method m = invocation.getMethod();
-							if (m.getDeclaringClass() == PlatformTransactionManager.class) {
-								return Tracing.executeCheckedCallable("transactionManager." + m.getName(),
-										() -> invocation.proceed(), "component", "tx");
-							}
-							return invocation.proceed();
-						}
-					});
-					bean = pf.getProxy();
-					log.info("Proxied PlatformTransactionManager [{}] with tracing supports", beanName);
-				}
-				return bean;
+			public void customize(SdkTracerProviderBuilder builder) {
+
+			}
+
+			@Override
+			public void customize(AttributesBuilder builder) {
+				builder.putAll(Attributes.of(ResourceAttributes.SERVICE_INSTANCE_ID, application.getInstanceId(),
+						AttributeKey.stringKey("server.info"), application.getServerInfo(),
+						AttributeKey.stringKey("java.version"), System.getProperty("java.version")));
 			}
 		};
-	}
-
-	@ConditionalOnProperty(value = TracingEnabled.KEY, havingValue = "false", matchIfMissing = false)
-	@Bean
-	public Tracer tracer() {
-		Tracing.disable();
-		return NoopTracerFactory.create();
 	}
 
 }

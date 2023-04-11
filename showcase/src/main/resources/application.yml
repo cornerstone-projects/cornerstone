@@ -18,8 +18,6 @@ management.influx.metrics.export:
   uri: http://localhost:8086
   db: metrics # org,bucket for V2
 
-jaeger.host: localhost #shortcut for opentracing.jaeger.http-sender.url
-
 #file-storage:
 #  uri: ftp://admin:admin@localhost/temp
 ---

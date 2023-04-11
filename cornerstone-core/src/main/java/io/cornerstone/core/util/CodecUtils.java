@@ -2,9 +2,6 @@ package io.cornerstone.core.util;
 
 import java.util.concurrent.ThreadLocalRandom;
 
-import io.cornerstone.core.tracing.Tracing;
-import io.opentracing.Span;
-import io.opentracing.util.GlobalTracer;
 import lombok.experimental.UtilityClass;
 import org.slf4j.MDC;
 
@@ -33,13 +30,8 @@ public class CodecUtils {
 	}
 
 	public static String generateRequestId() {
-		if (Tracing.isEnabled()) {
-			Span span = GlobalTracer.get().activeSpan();
-			if (span != null) {
-				return span.context().toTraceId();
-			}
-		}
-		return nextId();
+		String traceId = MDC.get("traceId");
+		return traceId != null ? traceId : nextId();
 	}
 
 	public static boolean putRequestIdIfAbsent() {
