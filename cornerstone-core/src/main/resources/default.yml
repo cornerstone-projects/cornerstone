@@ -83,11 +83,18 @@ logging:
   config: classpath:log4j2.xml
   level.org.springframework.context.support.ResourceBundleMessageSource: ERROR
 
-management.endpoints.web.exposure.include: health
+management.endpoints.web.exposure.include: [health, prometheus]
 management.influx.metrics.export:
   enabled: false
   db: metrics
   step: 10s
+
+management.prometheus.metrics.export:
+  enabled: false
+  pushgateway:
+    enabled: false
+    push-rate: 30S
+    base-url: http://localhost:9091
 
 springdoc.swagger-ui.enabled: false
 springdoc.api-docs.enabled: ${springdoc.swagger-ui.enabled}
