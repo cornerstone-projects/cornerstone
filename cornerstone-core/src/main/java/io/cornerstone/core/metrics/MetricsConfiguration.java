@@ -1,6 +1,7 @@
 package io.cornerstone.core.metrics;
 
 import io.cornerstone.core.Application;
+import io.micrometer.core.aop.CountedAspect;
 import io.micrometer.core.aop.TimedAspect;
 import io.micrometer.core.instrument.MeterRegistry;
 
@@ -18,8 +19,13 @@ public class MetricsConfiguration {
 	}
 
 	@Bean
-	TimedAspect timedAspect(MeterRegistry registry) {
-		return new TimedAspect(registry);
+	TimedAspect timedAspect(MeterRegistry meterRegistry) {
+		return new TimedAspect(meterRegistry);
+	}
+
+	@Bean
+	CountedAspect countedAspect(MeterRegistry meterRegistry) {
+		return new CountedAspect(meterRegistry);
 	}
 
 }
