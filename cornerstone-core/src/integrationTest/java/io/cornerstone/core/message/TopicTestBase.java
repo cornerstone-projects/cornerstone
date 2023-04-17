@@ -7,7 +7,6 @@ import org.junit.jupiter.params.provider.EnumSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.then;
 
 public abstract class TopicTestBase extends MessageTestBase {
@@ -24,7 +23,7 @@ public abstract class TopicTestBase extends MessageTestBase {
 		String message = scope.name();
 		this.testTopic.publish(message, scope);
 		Thread.sleep(100);
-		then(this.messageProcessor).should().process(eq(message));
+		then(this.messageProcessor).should().process(message);
 	}
 
 }

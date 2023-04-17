@@ -19,7 +19,6 @@ import org.springframework.test.context.ContextConfiguration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.never;
 
@@ -37,7 +36,7 @@ public class RabbitTopicTests extends TopicTestBase {
 		this.testTopic.publish("test", Scope.LOCAL);
 		then(this.rabbitTemplate).should(never())
 			.convertAndSend(any(String.class), this.routingKeyCaptor.capture(), any(Object.class));
-		then(this.messageProcessor).should().process(eq("test"));
+		then(this.messageProcessor).should().process("test");
 	}
 
 	@Test
@@ -47,7 +46,7 @@ public class RabbitTopicTests extends TopicTestBase {
 			.convertAndSend(any(String.class), this.routingKeyCaptor.capture(), any(Object.class));
 		assertThat(this.routingKeyCaptor.getValue()).endsWith('.' + this.application.getName());
 		Thread.sleep(100); // wait network response
-		then(this.messageProcessor).should().process(eq("test"));
+		then(this.messageProcessor).should().process("test");
 	}
 
 	@Test
@@ -57,7 +56,7 @@ public class RabbitTopicTests extends TopicTestBase {
 			.convertAndSend(any(String.class), this.routingKeyCaptor.capture(), any(Object.class));
 		assertThat(this.routingKeyCaptor.getValue()).doesNotEndWith('.' + this.application.getName());
 		Thread.sleep(100); // wait network response
-		then(this.messageProcessor).should().process(eq("test"));
+		then(this.messageProcessor).should().process("test");
 	}
 
 	static class Config {

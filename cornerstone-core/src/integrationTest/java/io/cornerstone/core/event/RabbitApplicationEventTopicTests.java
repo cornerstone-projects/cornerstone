@@ -27,7 +27,7 @@ class RabbitApplicationEventTopicTests extends ApplicationEventTopicTestBase {
 		this.eventPublisher.publish(event, Scope.LOCAL);
 		then(this.rabbitTemplate).should(never())
 			.convertAndSend(any(String.class), any(String.class), any(TestEvent.class));
-		then(this.testListener).should().listen(eq(event));
+		then(this.testListener).should().listen(event);
 	}
 
 	@Test
@@ -36,7 +36,7 @@ class RabbitApplicationEventTopicTests extends ApplicationEventTopicTestBase {
 		this.eventPublisher.publish(event, Scope.APPLICATION);
 		then(this.rabbitTemplate).should().convertAndSend(any(String.class), any(String.class), eq(event));
 		Thread.sleep(100); // wait network response
-		then(this.testListener).should().listen(eq(event));
+		then(this.testListener).should().listen(event);
 	}
 
 	@Test
@@ -45,7 +45,7 @@ class RabbitApplicationEventTopicTests extends ApplicationEventTopicTestBase {
 		this.eventPublisher.publish(event, Scope.GLOBAL);
 		then(this.rabbitTemplate).should().convertAndSend(any(String.class), any(String.class), eq(event));
 		Thread.sleep(100); // wait network response
-		then(this.testListener).should().listen(eq(event));
+		then(this.testListener).should().listen(event);
 	}
 
 }

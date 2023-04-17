@@ -48,7 +48,7 @@ class EventPublisherTests extends SpringApplicationTestBase {
 		TestEvent event = new TestEvent("");
 		this.eventPublisher.publish(event, Scope.LOCAL);
 		then(this.applicationEventTopic).shouldHaveNoInteractions();
-		then(this.testListener).should().listen(eq(event));
+		then(this.testListener).should().listen(event);
 	}
 
 	@Test
@@ -61,7 +61,7 @@ class EventPublisherTests extends SpringApplicationTestBase {
 		TestEvent event = new TestEvent("");
 		this.eventPublisher.publish(event, Scope.APPLICATION);
 		then(this.applicationEventTopic).should().publish(eq(event), eq(Scope.APPLICATION));
-		then(this.testListener).should().listen(eq(event));
+		then(this.testListener).should().listen(event);
 	}
 
 	@Test
@@ -74,7 +74,7 @@ class EventPublisherTests extends SpringApplicationTestBase {
 		TestEvent event = new TestEvent("");
 		this.eventPublisher.publish(event, Scope.GLOBAL);
 		then(this.applicationEventTopic).should().publish(eq(event), eq(Scope.GLOBAL));
-		then(this.testListener).should().listen(eq(event));
+		then(this.testListener).should().listen(event);
 	}
 
 	static class Config {

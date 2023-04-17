@@ -21,7 +21,6 @@ import org.springframework.test.context.ContextConfiguration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
@@ -40,7 +39,7 @@ class RedisTopicTests extends TopicTestBase {
 		given(this.connectionFactory.getConnection()).willAnswer(resultCaptor);
 		this.testTopic.publish("test", Scope.LOCAL);
 		assertThat(resultCaptor.getResult()).isNull();
-		then(this.messageProcessor).should().process(eq("test"));
+		then(this.messageProcessor).should().process("test");
 	}
 
 	@Test
@@ -51,7 +50,7 @@ class RedisTopicTests extends TopicTestBase {
 		then(resultCaptor.getResult()).should().publish(this.channelCaptor.capture(), any());
 		assertThat(new String(this.channelCaptor.getValue())).endsWith('.' + this.application.getName());
 		Thread.sleep(100); // wait network response
-		then(this.messageProcessor).should().process(eq("test"));
+		then(this.messageProcessor).should().process("test");
 	}
 
 	@Test
@@ -62,7 +61,7 @@ class RedisTopicTests extends TopicTestBase {
 		then(resultCaptor.getResult()).should().publish(this.channelCaptor.capture(), any());
 		assertThat(new String(this.channelCaptor.getValue())).doesNotEndWith('.' + this.application.getName());
 		Thread.sleep(100); // wait network response
-		then(this.messageProcessor).should().process(eq("test"));
+		then(this.messageProcessor).should().process("test");
 	}
 
 	static class Config {

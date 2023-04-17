@@ -12,7 +12,6 @@ import org.springframework.context.event.EventListener;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.then;
 
 @ContextConfiguration(classes = ApplicationEventTopicTestBase.Config.class)
@@ -31,7 +30,7 @@ abstract class ApplicationEventTopicTestBase {
 		TestEvent event = new TestEvent(scope.name());
 		this.eventPublisher.publish(event, scope);
 		Thread.sleep(100);
-		then(this.testListener).should().listen(eq(event));
+		then(this.testListener).should().listen(event);
 	}
 
 	static class Config {

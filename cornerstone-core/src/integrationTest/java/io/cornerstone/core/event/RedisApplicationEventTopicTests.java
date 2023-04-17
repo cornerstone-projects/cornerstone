@@ -13,7 +13,6 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.test.context.ContextConfiguration;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
@@ -27,7 +26,7 @@ class RedisApplicationEventTopicTests extends ApplicationEventTopicTestBase {
 	void publishLocalScopeEvent() {
 		TestEvent event = new TestEvent("");
 		this.eventPublisher.publish(event, Scope.LOCAL);
-		then(this.testListener).should().listen(eq(event));
+		then(this.testListener).should().listen(event);
 	}
 
 	@Test
@@ -38,7 +37,7 @@ class RedisApplicationEventTopicTests extends ApplicationEventTopicTestBase {
 		this.eventPublisher.publish(event, Scope.APPLICATION);
 		then(resultCaptor.getResult()).should().publish(any(), any());
 		Thread.sleep(100); // wait network response
-		then(this.testListener).should().listen(eq(event));
+		then(this.testListener).should().listen(event);
 	}
 
 	@Test
@@ -49,7 +48,7 @@ class RedisApplicationEventTopicTests extends ApplicationEventTopicTestBase {
 		this.eventPublisher.publish(event, Scope.GLOBAL);
 		then(resultCaptor.getResult()).should().publish(any(), any());
 		Thread.sleep(100); // wait network response
-		then(this.testListener).should().listen(eq(event));
+		then(this.testListener).should().listen(event);
 	}
 
 	static class Config {
