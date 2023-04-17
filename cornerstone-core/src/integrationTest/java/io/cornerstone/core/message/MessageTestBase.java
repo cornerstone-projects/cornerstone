@@ -8,6 +8,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ExtendWith(SpringExtension.class)
 abstract class MessageTestBase {
 
+	protected final String event = "test";
+
 	@MockBean
 	protected MessageProcessor messageProcessor;
 

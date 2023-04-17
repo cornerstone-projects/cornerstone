@@ -4,8 +4,6 @@ import io.cornerstone.core.event.EventPublisher;
 import io.cornerstone.test.DataJpaTestBase;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -22,6 +20,7 @@ import static io.cornerstone.core.hibernate.event.EntityOperationType.CREATE;
 import static io.cornerstone.core.hibernate.event.EntityOperationType.DELETE;
 import static io.cornerstone.core.hibernate.event.EntityOperationType.UPDATE;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.reset;
 
@@ -40,9 +39,6 @@ class PublishAwareTests extends DataJpaTestBase {
 	@SpyBean
 	TestListener testListener;
 
-	@Captor
-	ArgumentCaptor<EntityOperationEvent<TestEntity>> eventCaptor;
-
 	@AfterEach
 	void cleanup() {
 		this.repository.deleteAll();
@@ -51,44 +47,48 @@ class PublishAwareTests extends DataJpaTestBase {
 	@Test
 	void cud() {
 		TestEntity entity = this.repository.save(new TestEntity());
-		then(this.testListener).should().on(this.eventCaptor.capture());
-		EntityOperationEvent<TestEntity> event = this.eventCaptor.getValue();
-		assertThat(event).isNotNull();
-		assertThat(event.getType()).isSameAs(CREATE);
+		then(this.testListener).should().on(argThat(event -> {
+			assertThat(event).isNotNull();
+			assertThat(event.getType()).isSameAs(CREATE);
+			return true;
+		}));
 		reset(this.testListener);
 
 		entity.setName("test");
 		entity = this.repository.save(entity);
-		then(this.testListener).should().on(this.eventCaptor.capture());
-		event = this.eventCaptor.getValue();
-		assertThat(event).isNotNull();
-		assertThat(event.getType()).isSameAs(UPDATE);
+		then(this.testListener).should().on(argThat(event -> {
+			assertThat(event).isNotNull();
+			assertThat(event.getType()).isSameAs(UPDATE);
+			return true;
+		}));
 		reset(this.testListener);
 
 		this.repository.delete(entity);
-		then(this.testListener).should().on(this.eventCaptor.capture());
-		event = this.eventCaptor.getValue();
-		assertThat(event).isNotNull();
-		assertThat(event.getType()).isSameAs(DELETE);
-
+		then(this.testListener).should().on(argThat(event -> {
+			assertThat(event).isNotNull();
+			assertThat(event.getType()).isSameAs(DELETE);
+			return true;
+		}));
 	}
 
 	@Test
 	void saveAndUpdate() {
 		this.testService.saveAndUpdate();
-		then(this.testListener).should().on(this.eventCaptor.capture());
-		EntityOperationEvent<TestEntity> event = this.eventCaptor.getValue();
-		assertThat(event).isNotNull();
-		assertThat(event.getType()).isSameAs(CREATE);
+		then(this.testListener).should().on(argThat(event -> {
+			assertThat(event).isNotNull();
+			assertThat(event.getType()).isSameAs(CREATE);
+			return true;
+		}));
 	}
 
 	@Test
 	void saveAndUpdateAndDelete() {
 		this.testService.saveAndUpdateAndDelete();
-		then(this.testListener).should().on(this.eventCaptor.capture());
-		EntityOperationEvent<TestEntity> event = this.eventCaptor.getValue();
-		assertThat(event).isNotNull();
-		assertThat(event.getType()).isSameAs(DELETE);
+		then(this.testListener).should().on(argThat(event -> {
+			assertThat(event).isNotNull();
+			assertThat(event.getType()).isSameAs(DELETE);
+			return true;
+		}));
 	}
 
 	@EnableAspectJAutoProxy
