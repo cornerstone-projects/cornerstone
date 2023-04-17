@@ -17,4 +17,4 @@ pluginManagement {
 }
 
 rootProject.name = 'cornerstone'
-include('cornerstone-core', 'cornerstone-fs', 'cornerstone-user', 'cornerstone-loginrecord', 'showcase')
+include('cornerstone-bom', 'cornerstone-core', 'cornerstone-fs', 'cornerstone-user', 'cornerstone-loginrecord', 'showcase')
