@@ -1,3 +1,5 @@
+import org.springframework.boot.gradle.tasks.bundling.BootBuildImage
+
 buildscript {
 	dependencies {
 		classpath("""org.springframework.boot:spring-boot-starter:${property("spring-boot.version")}""")
@@ -20,6 +22,10 @@ dependencies {
 
 springBoot {
 	buildInfo()
+}
+
+tasks.withType<BootBuildImage>() {
+	createdDate.set("now")
 }
 
 val kustomize = tasks.register<Copy>("kustomize") {

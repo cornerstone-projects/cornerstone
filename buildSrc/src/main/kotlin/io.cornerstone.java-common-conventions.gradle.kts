@@ -17,13 +17,15 @@ repositories {
 		}
 	} else {
 		mavenCentral()
+		maven {
+			url = uri("https://repo.spring.io/milestone")
+		}
 	}
 }
 
 dependencyManagement {
 	imports {
 		mavenBom(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)
-		mavenBom("""org.testcontainers:testcontainers-bom:${property("testcontainers.version")}""")
 	}
 	generatedPomCustomization {
 		enabled(false)

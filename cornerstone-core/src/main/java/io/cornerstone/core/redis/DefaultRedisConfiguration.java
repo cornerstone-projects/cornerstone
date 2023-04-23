@@ -11,9 +11,11 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.data.redis.ClientResourcesBuilderCustomizer;
 import org.springframework.boot.autoconfigure.data.redis.LettuceClientConfigurationBuilderCustomizer;
+import org.springframework.boot.autoconfigure.data.redis.RedisConnectionDetails;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.ssl.SslBundles;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -31,11 +33,18 @@ import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 @RedisEnabled
 public class DefaultRedisConfiguration extends RedisConfigurationSupport {
 
+	@Bean
+	public static RedisConnectionDetails redisConnectionDetails(DefaultRedisProperties properties) {
+		return RedisConfigurationSupport.redisConnectionDetails(properties);
+	}
+
 	DefaultRedisConfiguration(DefaultRedisProperties properties,
 			ObjectProvider<RedisStandaloneConfiguration> standaloneConfigurationProvider,
 			ObjectProvider<RedisSentinelConfiguration> sentinelConfigurationProvider,
-			ObjectProvider<RedisClusterConfiguration> clusterConfigurationProvider) {
-		super(properties, standaloneConfigurationProvider, sentinelConfigurationProvider, clusterConfigurationProvider);
+			ObjectProvider<RedisClusterConfiguration> clusterConfigurationProvider,
+			RedisConnectionDetails redisConnectionDetails, ObjectProvider<SslBundles> sslBundles) {
+		super(properties, standaloneConfigurationProvider, sentinelConfigurationProvider, clusterConfigurationProvider,
+				redisConnectionDetails, sslBundles);
 	}
 
 	@Primary
