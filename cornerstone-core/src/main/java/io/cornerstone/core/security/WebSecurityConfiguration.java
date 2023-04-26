@@ -29,7 +29,6 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractAuthenticationFilterConfigurer;
-import org.springframework.security.config.annotation.web.configurers.AuthorizeHttpRequestsConfigurer;
 import org.springframework.security.config.annotation.web.configurers.FormLoginConfigurer;
 import org.springframework.security.config.core.GrantedAuthorityDefaults;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -89,21 +88,21 @@ public class WebSecurityConfiguration {
 		else {
 			permitAllPathPatterns = new String[] { "/**" };
 		}
-		AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry registry = http
-			.authorizeHttpRequests();
-		registry
-			.requestMatchers(Stream.of(permitAllPathPatterns)
-				.map(AntPathRequestMatcher::antMatcher)
-				.toArray(AntPathRequestMatcher[]::new))
-			.permitAll();
-		this.properties.getAuthorizeRequestsMapping().forEach((k, v) -> {
-			registry.requestMatchers(k).hasAnyAuthority(v.split("\\s*,\\s*"));
+		http.authorizeHttpRequests(configurer -> {
+			configurer
+				.requestMatchers(Stream.of(permitAllPathPatterns)
+					.map(AntPathRequestMatcher::antMatcher)
+					.toArray(AntPathRequestMatcher[]::new))
+				.permitAll();
+			this.properties.getAuthorizeRequestsMapping().forEach((k, v) -> {
+				configurer.requestMatchers(k).hasAnyAuthority(v.split("\\s*,\\s*"));
+			});
+			configurer.anyRequest().authenticated();
 		});
-		registry.anyRequest().authenticated();
 
 		http.requestCache(configurer -> configurer.disable());
 
-		http.exceptionHandling()
+		http.exceptionHandling(configurer -> configurer
 			.defaultAuthenticationEntryPointFor((request, response,
 					ex) -> response.sendError(HttpServletResponse.SC_UNAUTHORIZED, ex.getLocalizedMessage()),
 					RequestUtils::isRequestedFromApi)
@@ -114,25 +113,24 @@ public class WebSecurityConfiguration {
 							+ URLEncoder.encode(request.getRequestURI(), StandardCharsets.UTF_8);
 				}
 				response.sendRedirect(targetUrl);
-			}, request -> !RequestUtils.isRequestedFromApi(request));
+			}, request -> !RequestUtils.isRequestedFromApi(request)));
 
-		setAuthenticationFilter(http.formLogin(), new RestfulUsernamePasswordAuthenticationFilter(this.objectMapper));
-		http.formLogin(login -> {
-			login.loginPage(this.properties.getLoginPage())
+		http.formLogin(configurer -> {
+			setAuthenticationFilter(configurer, new RestfulUsernamePasswordAuthenticationFilter(this.objectMapper));
+			configurer.loginPage(this.properties.getLoginPage())
 				.loginProcessingUrl(this.properties.getLoginProcessingUrl())
 				.usernameParameter(this.properties.getUsernameParameter())
 				.passwordParameter(this.properties.getPasswordParameter())
 				.successHandler(authenticationSuccessHandler(http.getSharedObject(RequestCache.class)))
-				.failureHandler(authenticationFailureHandler())
-				.and();
+				.failureHandler(authenticationFailureHandler());
 		})
-			.logout(logout -> logout.logoutUrl(this.properties.getLogoutUrl())
+			.logout(configurer -> configurer.logoutUrl(this.properties.getLogoutUrl())
 				.logoutSuccessUrl(this.properties.getLoginPage()));
 		if (Application.current().map(Application::isUnitTest).orElse(true)) {
 			http.httpBasic(withDefaults());
 		}
-
-		http.csrf().disable().headers().frameOptions().sameOrigin();
+		http.csrf(configurer -> configurer.disable());
+		http.headers(configurer -> configurer.frameOptions(it -> it.sameOrigin()));
 	}
 
 	AuthenticationSuccessHandler authenticationSuccessHandler(RequestCache requestCache) {
@@ -177,11 +175,16 @@ public class WebSecurityConfiguration {
 	}
 
 	private void setAuthenticationFilter(FormLoginConfigurer<HttpSecurity> formLogin,
-			UsernamePasswordAuthenticationFilter authFilter) throws Exception {
-		Field f = AbstractAuthenticationFilterConfigurer.class.getDeclaredField("authFilter");
-		f.setAccessible(true); // AbstractAuthenticationFilterConfigurer::setAuthenticationFilter
-								// not visible
-		f.set(formLogin, authFilter);
+			UsernamePasswordAuthenticationFilter authFilter) {
+		try {
+			Field f = AbstractAuthenticationFilterConfigurer.class.getDeclaredField("authFilter");
+			f.setAccessible(true); // AbstractAuthenticationFilterConfigurer::setAuthenticationFilter
+									// not visible
+			f.set(formLogin, authFilter);
+		}
+		catch (Exception ex) {
+			throw new RuntimeException(ex);
+		}
 	}
 
 	@Bean
