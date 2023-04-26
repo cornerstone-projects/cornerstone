@@ -25,6 +25,8 @@ public class SecurityProperties {
 
 	public static final String DEFAULT_LOGOUT_URL = "/logout";
 
+	public static final String DEFAULT_TARGET_URL_KEY = "targetUrl";
+
 	private String loginPage = DEFAULT_LOGIN_PAGE;
 
 	private String loginProcessingUrl = DEFAULT_LOGIN_PROCESSING_URL;
@@ -36,6 +38,8 @@ public class SecurityProperties {
 	private String usernameParameter = SPRING_SECURITY_FORM_USERNAME_KEY;
 
 	private String passwordParameter = SPRING_SECURITY_FORM_PASSWORD_KEY;
+
+	private String targetUrlParameter = DEFAULT_TARGET_URL_KEY;
 
 	private boolean protecting = true;
 

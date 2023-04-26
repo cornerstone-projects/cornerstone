@@ -43,7 +43,7 @@
 				var f = $(this);
 				var btn = $(':input:submit:focus', f);
 				$.ajax({
-					url: f.attr('action'),
+					url: f.attr('action') + location.search,
 					method: f.attr('method'),
 					data: f.serialize(),
 					beforeSend: function () {

@@ -2,6 +2,8 @@ package io.cornerstone.core.security;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -99,10 +101,20 @@ public class WebSecurityConfiguration {
 		});
 		registry.anyRequest().authenticated();
 
+		http.requestCache(configurer -> configurer.disable());
+
 		http.exceptionHandling()
 			.defaultAuthenticationEntryPointFor((request, response,
 					ex) -> response.sendError(HttpServletResponse.SC_UNAUTHORIZED, ex.getLocalizedMessage()),
-					RequestUtils::isRequestedFromApi);
+					RequestUtils::isRequestedFromApi)
+			.defaultAuthenticationEntryPointFor((request, response, ex) -> {
+				String targetUrl = this.properties.getLoginPage();
+				if (!request.getRequestURI().equals(this.properties.getDefaultSuccessUrl())) {
+					targetUrl += '?' + this.properties.getTargetUrlParameter() + '='
+							+ URLEncoder.encode(request.getRequestURI(), StandardCharsets.UTF_8);
+				}
+				response.sendRedirect(targetUrl);
+			}, request -> !RequestUtils.isRequestedFromApi(request));
 
 		setAuthenticationFilter(http.formLogin(), new RestfulUsernamePasswordAuthenticationFilter(this.objectMapper));
 		http.formLogin(login -> {
@@ -133,10 +145,15 @@ public class WebSecurityConfiguration {
 			@Override
 			public void sendRedirect(HttpServletRequest request, HttpServletResponse response, String url)
 					throws IOException {
+				String targetUrl = request
+					.getParameter(WebSecurityConfiguration.this.properties.getTargetUrlParameter());
+				if (targetUrl != null && targetUrl.startsWith("/")) { // for security
+					url = targetUrl;
+				}
 				if (RequestUtils.isRequestedFromApi(request)) {
 					response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-					WebSecurityConfiguration.this.objectMapper.writeValue(response.getWriter(),
-							Collections.singletonMap("targetUrl", url));
+					WebSecurityConfiguration.this.objectMapper.writeValue(response.getWriter(), Collections
+						.singletonMap(WebSecurityConfiguration.this.properties.getTargetUrlParameter(), url));
 				}
 				else {
 					super.sendRedirect(request, response, url);
