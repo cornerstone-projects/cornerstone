@@ -7,7 +7,6 @@ import java.util.concurrent.Executor;
 
 import io.lettuce.core.resource.ClientResources;
 import io.lettuce.core.resource.DefaultClientResources;
-import lombok.Getter;
 
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.data.redis.ClientResourcesBuilderCustomizer;
@@ -27,22 +26,18 @@ import org.springframework.util.ClassUtils;
 
 public class RedisConfigurationSupport {
 
-	@Getter
-	private final RedisProperties properties;
-
 	private final Object configuration;
 
 	RedisConfigurationSupport(RedisProperties properties,
 			ObjectProvider<RedisStandaloneConfiguration> standaloneConfigurationProvider,
 			ObjectProvider<RedisSentinelConfiguration> sentinelConfigurationProvider,
 			ObjectProvider<RedisClusterConfiguration> clusterConfigurationProvider) {
-		this.properties = properties;
 		try {
 			Class<?> clazz = RedisAutoConfiguration.class;
 			Class<?> configurationClass = ClassUtils.forName(clazz.getPackageName() + ".LettuceConnectionConfiguration",
 					clazz.getClassLoader());
-			Constructor<?> ctor = configurationClass.getDeclaredConstructor(RedisProperties.class, ObjectProvider.class,
-					ObjectProvider.class, ObjectProvider.class);
+			Constructor<?> ctor = configurationClass.getDeclaredConstructor(
+					RedisConfigurationSupport.class.getDeclaredConstructors()[0].getParameterTypes());
 			ctor.setAccessible(true);
 			this.configuration = ctor.newInstance(properties, standaloneConfigurationProvider,
 					sentinelConfigurationProvider, clusterConfigurationProvider);
