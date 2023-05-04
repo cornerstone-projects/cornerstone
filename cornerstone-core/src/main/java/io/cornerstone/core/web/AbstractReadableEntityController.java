@@ -1,5 +1,7 @@
 package io.cornerstone.core.web;
 
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonView;
 import io.cornerstone.core.domain.ResultPage;
 import io.cornerstone.core.domain.View;
@@ -71,12 +73,23 @@ public abstract class AbstractReadableEntityController<T, ID> extends BaseRestCo
 		else {
 			page = this.repository.findAll(Example.of(example, getExampleMatcher()), pageable);
 		}
+		afterList(page.getContent());
 		return ResultPage.of(page);
 	}
 
 	@GetMapping(PATH_DETAIL)
 	public T get(@PathVariable ID id) {
-		return this.repository.findById(id).orElseThrow(() -> notFound(id));
+		T result = this.repository.findById(id).orElseThrow(() -> notFound(id));
+		afterGet(result);
+		return result;
+	}
+
+	protected void afterGet(T entity) {
+
+	}
+
+	protected void afterList(List<T> entity) {
+
 	}
 
 	protected Specification<T> getQuerySpecification(String query) {
