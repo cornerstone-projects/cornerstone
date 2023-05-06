@@ -11,8 +11,13 @@ import org.springframework.context.annotation.Configuration;
 public class ObservationConfiguration {
 
 	@Bean
-	public ObservedAspect observedAspect(ObservationRegistry observationRegistry) {
+	ObservedAspect observedAspect(ObservationRegistry observationRegistry) {
 		return new ObservedAspect(observationRegistry);
+	}
+
+	@Bean
+	ObserveTransactionalAspect observeTransactionalAspect(ObservationRegistry observationRegistry) {
+		return new ObserveTransactionalAspect(observationRegistry);
 	}
 
 	@Bean
