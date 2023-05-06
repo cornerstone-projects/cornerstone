@@ -30,7 +30,7 @@ dependencies {
 	compileOnly("org.springframework.boot:spring-boot-starter-amqp")
 	testFixturesApi("org.springframework.boot:spring-boot-starter-test")
 	testFixturesApi("org.springframework.security:spring-security-test")
-	testFixturesApi("org.testcontainers:testcontainers")
+	testFixturesApi("org.springframework.boot:spring-boot-testcontainers")
 	testFixturesApi("org.testcontainers:junit-jupiter")
 	testFixturesImplementation("org.testcontainers:mysql")
 	testFixturesImplementation("org.testcontainers:postgresql")

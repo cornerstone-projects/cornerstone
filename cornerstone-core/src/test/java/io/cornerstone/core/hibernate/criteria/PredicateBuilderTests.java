@@ -13,8 +13,10 @@ import jakarta.persistence.criteria.Root;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.testcontainers.service.connection.ServiceConnectionAutoConfiguration;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
@@ -31,6 +33,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @EnableJpaRepositories(basePackageClasses = TestEntityRepository.class)
 @EntityScan(basePackageClasses = TestEntity.class)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@ImportAutoConfiguration(ServiceConnectionAutoConfiguration.class)
 class PredicateBuilderTests extends DataJpaTestBase {
 
 	@Autowired

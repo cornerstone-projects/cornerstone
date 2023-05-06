@@ -1,32 +1,39 @@
 package io.cornerstone.test.containers;
 
-import io.cornerstone.core.redis.DefaultRedisConfiguration;
-import io.cornerstone.core.redis.DefaultRedisConfiguration.DefaultRedisProperties;
 import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.junit.jupiter.Container;
 
-import org.springframework.boot.context.properties.PropertyMapper;
-import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
+import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
+import org.springframework.boot.testcontainers.context.ImportTestcontainers;
+import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
+import org.springframework.boot.testcontainers.service.connection.ServiceConnectionAutoConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.Primary;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 
-@TestConfiguration(proxyBeanMethods = false)
-@Import(DefaultRedisConfiguration.class)
-public class Redis extends AbstractContainer {
+@ImportAutoConfiguration({ RedisAutoConfiguration.class, ServiceConnectionAutoConfiguration.class })
+@ImportTestcontainers(Redis.class)
+public class Redis {
 
-	@Override
-	protected int getExposedPort() {
-		return 6379;
+	@Container
+	@ServiceConnection
+	static GenericContainer<?> container = new GenericContainer<>("redis").withExposedPorts(6379);
+
+	// replace RedisTemplate<Object, Object> from RedisAutoConfiguration
+	@Bean
+	public RedisTemplate<String, ?> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
+		RedisTemplate<String, ?> template = new RedisTemplate<>();
+		template.setConnectionFactory(redisConnectionFactory);
+		return template;
 	}
 
-	@Primary
 	@Bean
-	public DefaultRedisProperties defaultRedisProperties(GenericContainer<?> redisContainer) {
-		DefaultRedisProperties properties = new DefaultRedisProperties();
-		PropertyMapper map = PropertyMapper.get();
-		map.from(redisContainer::getHost).to(properties::setHost);
-		map.from(redisContainer::getFirstMappedPort).to(properties::setPort);
-		return properties;
+	public RedisMessageListenerContainer redisMessageListenerContainer(RedisConnectionFactory redisConnectionFactory) {
+		RedisMessageListenerContainer container = new RedisMessageListenerContainer();
+		container.setConnectionFactory(redisConnectionFactory);
+		return container;
 	}
 
 }

@@ -1,16 +1,16 @@
 package io.cornerstone.test.containers;
 
 import org.testcontainers.containers.OracleContainer;
+import org.testcontainers.junit.jupiter.Container;
 
-import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.boot.testcontainers.context.ImportTestcontainers;
+import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 
-@TestConfiguration(proxyBeanMethods = false)
-public class Oracle extends JdbcDatabase<OracleContainer> {
+@ImportTestcontainers
+public class Oracle {
 
-	@SuppressWarnings("resource")
-	@Override
-	public OracleContainer createContainer() {
-		return new OracleContainer("gvenzl/oracle-xe").withPassword("Oracle18");
-	}
+	@Container
+	@ServiceConnection
+	static OracleContainer container = new OracleContainer("gvenzl/oracle-xe").withPassword("Oracle18");
 
 }

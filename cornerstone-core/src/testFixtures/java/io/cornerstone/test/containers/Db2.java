@@ -1,15 +1,16 @@
 package io.cornerstone.test.containers;
 
 import org.testcontainers.containers.Db2Container;
+import org.testcontainers.junit.jupiter.Container;
 
-import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.boot.testcontainers.context.ImportTestcontainers;
+import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 
-@TestConfiguration(proxyBeanMethods = false)
-public class Db2 extends JdbcDatabase<Db2Container> {
+@ImportTestcontainers
+public class Db2 {
 
-	@Override
-	protected String getImageName() {
-		return "ibmcom/db2";
-	}
+	@Container
+	@ServiceConnection
+	static Db2Container container = new Db2Container("ibmcom/db2");
 
 }

@@ -1,10 +1,16 @@
 package io.cornerstone.test.containers;
 
 import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
 
-import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.boot.testcontainers.context.ImportTestcontainers;
+import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 
-@TestConfiguration(proxyBeanMethods = false)
-public class PostgreSQL extends JdbcDatabase<PostgreSQLContainer<?>> {
+@ImportTestcontainers
+public class PostgreSQL {
+
+	@Container
+	@ServiceConnection
+	static PostgreSQLContainer<?> container = new PostgreSQLContainer<>("postgres");
 
 }
