@@ -19,6 +19,7 @@ import jakarta.persistence.ConstraintMode;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -42,7 +43,7 @@ public abstract class AbstractTreeableEntity<T extends AbstractTreeableEntity<T>
 	private static final long serialVersionUID = -2016525006418883120L;
 
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@JsonView(Persistable.class)
 	@Setter(PROTECTED)
 	private @Nullable Long id;
