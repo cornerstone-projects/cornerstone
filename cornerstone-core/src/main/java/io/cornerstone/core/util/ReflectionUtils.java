@@ -130,13 +130,15 @@ public class ReflectionUtils {
 	}
 
 	public static String stringify(Method method, boolean simpleParameterName) {
-		return stringify(method, false, false);
+		return stringify(method, false, DeclaringClassOption.FULL);
 	}
 
-	public static String stringify(Method method, boolean fullParameterName, boolean excludeDeclaringClass) {
+	public static String stringify(Method method, boolean fullParameterName,
+			DeclaringClassOption declaringClassOption) {
 		StringBuilder sb = new StringBuilder();
-		if (!excludeDeclaringClass) {
-			sb.append(method.getDeclaringClass().getName()).append(".");
+		switch (declaringClassOption) {
+			case FULL -> sb.append(method.getDeclaringClass().getName()).append(".");
+			case SIMPLE -> sb.append(method.getDeclaringClass().getSimpleName()).append(".");
 		}
 		sb.append(method.getName()).append("(");
 		Class<?>[] parameterTypes = method.getParameterTypes();
@@ -189,5 +191,11 @@ public class ReflectionUtils {
 	}
 
 	private static final Map<MethodCacheKey, MethodHandle> defaultMethods = new ConcurrentHashMap<>();
+
+	public enum DeclaringClassOption {
+
+		FULL, SIMPLE, NONE
+
+	}
 
 }
