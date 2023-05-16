@@ -42,5 +42,6 @@ dependencies {
 	implementation("""io.spring.javaformat:spring-javaformat-gradle-plugin:${property("javaformat-plugin.version")}""")
 	implementation("com.societegenerale.commons:arch-unit-gradle-plugin:4.0.0")
 	implementation("com.societegenerale.commons:arch-unit-build-plugin-core:4.0.1")
+	implementation("""org.graalvm.buildtools.native:org.graalvm.buildtools.native.gradle.plugin:${property("native-image.version")}""")
 	implementation("""org.springframework.boot:org.springframework.boot.gradle.plugin:${property("spring-boot.version")}""")
 }

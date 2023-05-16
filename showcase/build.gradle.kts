@@ -9,6 +9,7 @@ buildscript {
 plugins {
 	id("io.cornerstone.java-common-conventions")
 	id("org.springframework.boot")
+	id("org.graalvm.buildtools.native")
 }
 
 dependencies {
