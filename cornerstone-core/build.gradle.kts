@@ -25,6 +25,7 @@ dependencies {
 	api("io.micrometer:micrometer-tracing")
 	implementation("io.micrometer:micrometer-tracing-bridge-otel")
 	implementation("io.opentelemetry:opentelemetry-exporter-otlp")
+	implementation("""net.ttddyy.observation:datasource-micrometer-spring-boot:${property("datasource-micrometer.version")}""")
 	implementation("io.micrometer:micrometer-registry-prometheus")
 	implementation("io.prometheus:simpleclient_pushgateway")
 	compileOnly("org.springframework.boot:spring-boot-starter-amqp")

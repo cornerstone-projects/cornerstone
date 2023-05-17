@@ -97,6 +97,7 @@ management.prometheus.metrics.export:
     base-url: http://localhost:9091
 
 management.tracing.enabled: false
+jdbc.datasource-proxy.enabled: ${management.tracing.enabled}
 
 springdoc.swagger-ui.enabled: false
 springdoc.api-docs.enabled: ${springdoc.swagger-ui.enabled}
