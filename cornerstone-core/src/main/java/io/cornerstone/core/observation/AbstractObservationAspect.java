@@ -41,6 +41,9 @@ public abstract class AbstractObservationAspect implements Ordered {
 			.lowCardinalityKeyValue("method", signature.getName())
 			.lowCardinalityKeyValues(lowCardinalityKeyValues)
 			.highCardinalityKeyValues(highCardinalityKeyValues);
+		if (observation.getContextView().getParentObservation() == null) {
+			return pjp.proceed(); // do not create root observation
+		}
 		if (CompletionStage.class.isAssignableFrom(method.getReturnType())) {
 			observation.start();
 			Observation.Scope scope = observation.openScope();
