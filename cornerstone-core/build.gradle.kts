@@ -22,7 +22,6 @@ dependencies {
 	api("""io.github.resilience4j:resilience4j-spring-boot2:${property("resilience4j.version")}""")
 	api("""org.springdoc:springdoc-openapi-starter-webmvc-ui:${property("springdoc.version")}""")
 	api("org.apache.commons:commons-pool2")
-	api("io.micrometer:micrometer-tracing")
 	implementation("io.micrometer:micrometer-tracing-bridge-otel")
 	implementation("io.opentelemetry:opentelemetry-exporter-otlp")
 	implementation("""net.ttddyy.observation:datasource-micrometer-spring-boot:${property("datasource-micrometer.version")}""")
