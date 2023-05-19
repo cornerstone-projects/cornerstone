@@ -1,68 +1,47 @@
 package io.cornerstone.core.tracing;
 
-import java.util.Map.Entry;
+import java.time.Duration;
 
 import io.cornerstone.core.Application;
-import io.micrometer.tracing.otel.bridge.OtelTracer;
-import io.opentelemetry.api.OpenTelemetry;
+import io.micrometer.tracing.exporter.SpanExportingPredicate;
 import io.opentelemetry.api.common.Attributes;
 import io.opentelemetry.api.common.AttributesBuilder;
-import io.opentelemetry.exporter.otlp.http.trace.OtlpHttpSpanExporter;
-import io.opentelemetry.exporter.otlp.http.trace.OtlpHttpSpanExporterBuilder;
 import io.opentelemetry.sdk.resources.Resource;
-import io.opentelemetry.sdk.trace.SdkTracerProvider;
-import io.opentelemetry.sdk.trace.SdkTracerProviderBuilder;
-import io.opentelemetry.sdk.trace.SpanProcessor;
-import io.opentelemetry.sdk.trace.samplers.Sampler;
 import io.opentelemetry.semconv.resource.attributes.ResourceAttributes;
 
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.actuate.autoconfigure.tracing.ConditionalOnEnabledTracing;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.actuate.autoconfigure.tracing.SdkTracerProviderBuilderCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
 
 @Configuration
 @ConditionalOnEnabledTracing
-@ConditionalOnClass({ OtelTracer.class, SdkTracerProvider.class, OpenTelemetry.class, OtlpHttpSpanExporter.class })
-@EnableConfigurationProperties(OtlpProperties.class)
 public class TracingConfiguration {
 
 	@Autowired
 	private Application application;
 
 	@Bean
-	SdkTracerProvider otelSdkTracerProvider(Environment environment, ObjectProvider<SpanProcessor> spanProcessors,
-			Sampler sampler) {
-		String applicationName = environment.getProperty("spring.application.name", "application");
-		AttributesBuilder attributesBuilder = Attributes.builder();
-		attributesBuilder.put(ResourceAttributes.SERVICE_NAME, applicationName);
-		attributesBuilder.put(ResourceAttributes.SERVICE_INSTANCE_ID, this.application.getInstanceId());
-		attributesBuilder.put("server.info", this.application.getServerInfo());
-		attributesBuilder.put("java.version", System.getProperty("java.version"));
-		SdkTracerProviderBuilder builder = SdkTracerProvider.builder()
-			.setSampler(sampler)
-			.setResource(Resource.create(attributesBuilder.build()));
-		spanProcessors.orderedStream().forEach(builder::addSpanProcessor);
-		return builder.build();
+	SdkTracerProviderBuilderCustomizer resourceSdkTracerProviderBuilderCustomizer() {
+		return builder -> {
+			AttributesBuilder attributesBuilder = Attributes.builder();
+			attributesBuilder.put(ResourceAttributes.SERVICE_NAME, this.application.getName());
+			attributesBuilder.put(ResourceAttributes.SERVICE_INSTANCE_ID, this.application.getInstanceId());
+			attributesBuilder.put("server.info", this.application.getServerInfo());
+			attributesBuilder.put("java.version", System.getProperty("java.version"));
+			builder.setResource(Resource.create(attributesBuilder.build()));
+		};
 	}
 
 	@Bean
-	@ConditionalOnMissingBean(value = OtlpHttpSpanExporter.class,
-			type = "io.opentelemetry.exporter.otlp.trace.OtlpGrpcSpanExporter")
-	OtlpHttpSpanExporter otlpHttpSpanExporter(OtlpProperties properties) {
-		OtlpHttpSpanExporterBuilder builder = OtlpHttpSpanExporter.builder()
-			.setEndpoint(properties.getEndpoint())
-			.setTimeout(properties.getTimeout())
-			.setCompression(properties.getCompression().name().toLowerCase());
-		for (Entry<String, String> header : properties.getHeaders().entrySet()) {
-			builder.addHeader(header.getKey(), header.getValue());
-		}
-		return builder.build();
+	SpanExportingPredicate noTinySpanExportingPredicate(
+			@Value("${management.tracing.span.minimum-duration:PT0.001S}") Duration minimumDuration) {
+		return span -> {
+			Duration duration = Duration.between(span.getStartTimestamp(), span.getEndTimestamp());
+			return duration.compareTo(minimumDuration) > 0;
+		};
 	}
 
 }
