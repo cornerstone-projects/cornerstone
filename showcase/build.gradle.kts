@@ -24,7 +24,7 @@ springBoot {
 	buildInfo()
 }
 
-tasks.withType<BootBuildImage>() {
+tasks.withType<BootBuildImage> {
 	createdDate.set("now")
 }
 
