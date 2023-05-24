@@ -121,6 +121,7 @@ spring:
 springdoc.swagger-ui.enabled: true
 management.endpoints.web.exposure.include: "*"
 management.tracing.sampling.probability: 1.0
+management.tracing.span.minimum-duration: PT0.0S
 logging:
   level:
     sql: TRACE
