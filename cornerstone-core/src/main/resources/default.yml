@@ -125,7 +125,7 @@ management.tracing.span.minimum-duration: PT0.0S
 logging:
   level:
     sql: TRACE
-    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    org.hibernate.orm.jdbc.bind: TRACE
     web: DEBUG
     org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping: TRACE
     io.cornerstone.core.web.DefaultRequestMappingHandlerMapping: TRACE
