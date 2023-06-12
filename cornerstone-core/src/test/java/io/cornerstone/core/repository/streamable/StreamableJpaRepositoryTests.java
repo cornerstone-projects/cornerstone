@@ -7,7 +7,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import io.cornerstone.test.DataJpaTestBase;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -22,16 +24,26 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 @EnableJpaRepositories(basePackageClasses = TestEntityRepository.class)
 @EntityScan(basePackageClasses = TestEntity.class)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class StreamableJpaRepositoryTests extends DataJpaTestBase {
 
 	@Autowired
 	TestEntityRepository repository;
 
+	@BeforeAll
+	void prepare() {
+		int size = 5;
+		for (int i = 0; i < size; i++) {
+			TestEntity entity = new TestEntity();
+			entity.setIndex(i);
+			this.repository.save(entity);
+		}
+	}
+
 	@Test
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	void streamWithoutExistingTransaction() {
 		assertThatExceptionOfType(IllegalStateException.class).isThrownBy(this::doStream);
-		this.repository.deleteAll();
 	}
 
 	@Test
@@ -43,7 +55,6 @@ class StreamableJpaRepositoryTests extends DataJpaTestBase {
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	void forEachWithoutExistingTransaction() {
 		doForEach();
-		this.repository.deleteAll();
 	}
 
 	@Test
@@ -52,12 +63,6 @@ class StreamableJpaRepositoryTests extends DataJpaTestBase {
 	}
 
 	private void doStream() {
-		int size = 5;
-		for (int i = 0; i < size; i++) {
-			TestEntity entity = new TestEntity();
-			entity.setIndex(i);
-			this.repository.save(entity);
-		}
 		try (Stream<TestEntity> stream = this.repository.stream(Sort.by("index"))) {
 			List<Integer> indexes = stream.map(TestEntity::getIndex).collect(Collectors.toList());
 			assertThat(indexes).containsExactly(0, 1, 2, 3, 4);
@@ -78,12 +83,6 @@ class StreamableJpaRepositoryTests extends DataJpaTestBase {
 	}
 
 	private void doForEach() {
-		int size = 5;
-		for (int i = 0; i < size; i++) {
-			TestEntity entity = new TestEntity();
-			entity.setIndex(i);
-			this.repository.save(entity);
-		}
 		List<Integer> list = new ArrayList<>();
 		this.repository.forEach(Sort.by("index"), e -> list.add(e.getIndex()));
 		assertThat(list).containsExactly(0, 1, 2, 3, 4);
@@ -105,24 +104,15 @@ class StreamableJpaRepositoryTests extends DataJpaTestBase {
 	void forEachModifyWithoutExistingTransaction() {
 		doForEachModify();
 		assertThat(this.repository.findAll(Sort.by("index"))).extracting("index").containsExactly(0, 1, 2, 3, 4);
-		// not modified
-		this.repository.deleteAll();
 	}
 
 	@Test
 	void forEachModifyInExistingTransaction() {
 		doForEachModify();
 		assertThat(this.repository.findAll(Sort.by("index"))).extracting("index").containsExactly(1, 2, 3, 4, 5);
-		// modified
 	}
 
 	private void doForEachModify() {
-		int size = 5;
-		for (int i = 0; i < size; i++) {
-			TestEntity entity = new TestEntity();
-			entity.setIndex(i);
-			this.repository.save(entity);
-		}
 		AtomicInteger count = new AtomicInteger();
 		int batchSize = 2; // hibernate.jdbc.batch_size
 		this.repository.forEach(Sort.by("index"), e -> {
