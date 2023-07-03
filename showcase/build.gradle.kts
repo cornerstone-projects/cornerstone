@@ -25,7 +25,7 @@ springBoot {
 }
 
 tasks.withType<BootBuildImage> {
-	createdDate.set("now")
+	createdDate = "now"
 }
 
 val kustomize = tasks.register<Copy>("kustomize") {
