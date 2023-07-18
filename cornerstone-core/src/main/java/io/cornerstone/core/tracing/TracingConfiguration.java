@@ -36,7 +36,7 @@ public class TracingConfiguration {
 			attributesBuilder.put(ResourceAttributes.SERVICE_INSTANCE_ID, this.application.getInstanceId());
 			attributesBuilder.put("server.info", this.application.getServerInfo());
 			attributesBuilder.put("java.version", System.getProperty("java.version"));
-			builder.setResource(Resource.create(attributesBuilder.build()));
+			builder.setResource(Resource.getDefault().merge(Resource.create(attributesBuilder.build())));
 		};
 	}
 
