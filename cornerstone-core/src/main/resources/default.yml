@@ -45,6 +45,7 @@ spring.data.web:
     one-indexed-parameters: true
 
 spring.data.redis:
+  repositories.enabled: false
   timeout: 5s
   connect-timeout: 5s
   lettuce.pool:
@@ -52,7 +53,6 @@ spring.data.redis:
     max-idle: 10
     min-idle: 1
     max-wait: 10s
-    repositories.enabled: false
 
 spring.cache.redis.time-to-live: 300s
 
