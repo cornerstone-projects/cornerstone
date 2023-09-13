@@ -13,18 +13,17 @@ import io.cornerstone.core.coordination.LockFailedException;
 import io.cornerstone.core.coordination.LockService;
 import io.cornerstone.core.coordination.impl.StandaloneLockService;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-@ExtendWith(SpringExtension.class)
+@SpringJUnitConfig
 @ContextConfiguration(classes = MutexAspectTests.Config.class)
 public class MutexAspectTests {
 

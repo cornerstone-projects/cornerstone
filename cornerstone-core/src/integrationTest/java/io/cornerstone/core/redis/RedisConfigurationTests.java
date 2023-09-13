@@ -3,7 +3,6 @@ package io.cornerstone.core.redis;
 import io.cornerstone.core.redis.DefaultRedisConfiguration.DefaultRedisProperties;
 import io.cornerstone.core.redis.GlobalRedisConfiguration.GlobalRedisProperties;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -17,7 +16,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -26,7 +25,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 		"spring.data.redis.client-name=default", "global.data.redis.enabled=true", "global.data.redis.database=2",
 		"global.data.redis.client-name=global" })
 @Testcontainers
-@ExtendWith(SpringExtension.class)
+@SpringJUnitConfig
 class RedisConfigurationTests {
 
 	@Container

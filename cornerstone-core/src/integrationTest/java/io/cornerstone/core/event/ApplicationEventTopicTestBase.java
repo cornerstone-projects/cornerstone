@@ -1,7 +1,6 @@
 package io.cornerstone.core.event;
 
 import io.cornerstone.core.domain.Scope;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
@@ -10,12 +9,12 @@ import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.event.EventListener;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 import static org.mockito.BDDMockito.then;
 
 @ContextConfiguration(classes = ApplicationEventTopicTestBase.Config.class)
-@ExtendWith(SpringExtension.class)
+@SpringJUnitConfig
 abstract class ApplicationEventTopicTestBase {
 
 	@Autowired
