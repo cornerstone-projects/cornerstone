@@ -38,6 +38,7 @@ dependencies {
 	testFixturesImplementation("org.testcontainers:oracle-xe")
 	testFixturesImplementation("org.testcontainers:db2")
 	testFixturesImplementation("org.testcontainers:rabbitmq")
+	testFixturesImplementation("org.testcontainers:kafka")
 	integrationTestImplementation("org.springframework.boot:spring-boot-starter-amqp")
 	integrationTestRuntimeOnly("com.mysql:mysql-connector-j")
 	integrationTestRuntimeOnly("org.postgresql:postgresql")
