@@ -26,29 +26,27 @@ class RedisApplicationEventTopicTests extends ApplicationEventTopicTestBase {
 	void publishLocalScopeEvent() {
 		TestEvent event = new TestEvent("");
 		this.eventPublisher.publish(event, Scope.LOCAL);
-		then(this.testListener).should().listen(event);
+		assertEventListened(event);
 	}
 
 	@Test
-	void publishApplicationScopeEvent() throws Exception {
+	void publishApplicationScopeEvent() {
 		ResultCaptor<RedisConnection> resultCaptor = new ResultCaptor<>(Mockito::spy);
 		given(this.connectionFactory.getConnection()).willAnswer(resultCaptor);
 		TestEvent event = new TestEvent("");
 		this.eventPublisher.publish(event, Scope.APPLICATION);
 		then(resultCaptor.getResult()).should().publish(any(), any());
-		Thread.sleep(100); // wait network response
-		then(this.testListener).should().listen(event);
+		assertEventListened(event);
 	}
 
 	@Test
-	void publishGlobalScopeEvent() throws Exception {
+	void publishGlobalScopeEvent() {
 		ResultCaptor<RedisConnection> resultCaptor = new ResultCaptor<>(Mockito::spy);
 		given(this.connectionFactory.getConnection()).willAnswer(resultCaptor);
 		TestEvent event = new TestEvent("");
 		this.eventPublisher.publish(event, Scope.GLOBAL);
 		then(resultCaptor.getResult()).should().publish(any(), any());
-		Thread.sleep(100); // wait network response
-		then(this.testListener).should().listen(event);
+		assertEventListened(event);
 	}
 
 	static class Config {

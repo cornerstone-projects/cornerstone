@@ -35,28 +35,26 @@ class RedisTopicTests extends TopicTestBase {
 		given(this.connectionFactory.getConnection()).willAnswer(resultCaptor);
 		this.testTopic.publish(this.event, Scope.LOCAL);
 		assertThat(resultCaptor.getResult()).isNull();
-		then(this.messageProcessor).should().process(this.event);
+		assertMessageProcessed(this.event);
 	}
 
 	@Test
-	void publishApplicationScopeMessage() throws Exception {
+	void publishApplicationScopeMessage() {
 		ResultCaptor<RedisConnection> resultCaptor = new ResultCaptor<>(Mockito::spy);
 		given(this.connectionFactory.getConnection()).willAnswer(resultCaptor);
 		this.testTopic.publish(this.event, Scope.APPLICATION);
 		then(resultCaptor.getResult()).should()
 			.publish(eq((this.event.getClass().getName() + '.' + this.application.getName()).getBytes()), any());
-		Thread.sleep(100); // wait network response
-		then(this.messageProcessor).should().process(this.event);
+		assertMessageProcessed(this.event);
 	}
 
 	@Test
-	void publishGlobalScopeMessage() throws Exception {
+	void publishGlobalScopeMessage() {
 		ResultCaptor<RedisConnection> resultCaptor = new ResultCaptor<>(Mockito::spy);
 		given(this.connectionFactory.getConnection()).willAnswer(resultCaptor);
 		this.testTopic.publish(this.event, Scope.GLOBAL);
 		then(resultCaptor.getResult()).should().publish(eq((this.event.getClass().getName() + '.').getBytes()), any());
-		Thread.sleep(100); // wait network response
-		then(this.messageProcessor).should().process(this.event);
+		assertMessageProcessed(this.event);
 	}
 
 	static class Config {

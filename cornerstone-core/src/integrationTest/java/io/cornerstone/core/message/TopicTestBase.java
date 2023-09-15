@@ -7,8 +7,6 @@ import org.junit.jupiter.params.provider.EnumSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static org.mockito.BDDMockito.then;
-
 public abstract class TopicTestBase extends MessageTestBase {
 
 	@Autowired
@@ -19,11 +17,10 @@ public abstract class TopicTestBase extends MessageTestBase {
 
 	@ParameterizedTest
 	@EnumSource(Scope.class)
-	void publish(Scope scope) throws Exception {
+	void publish(Scope scope) {
 		String message = scope.name();
 		this.testTopic.publish(message, scope);
-		Thread.sleep(100);
-		then(this.messageProcessor).should().process(message);
+		assertMessageProcessed(message);
 	}
 
 }

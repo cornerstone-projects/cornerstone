@@ -31,26 +31,24 @@ public class RabbitTopicTests extends TopicTestBase {
 		this.testTopic.publish(this.event, Scope.LOCAL);
 		then(this.rabbitTemplate).should(never())
 			.convertAndSend(any(String.class), eq(this.event.getClass().getName()), any(Object.class));
-		then(this.messageProcessor).should().process(this.event);
+		assertMessageProcessed(this.event);
 	}
 
 	@Test
-	void publishApplicationScopeMessage() throws Exception {
+	void publishApplicationScopeMessage() {
 		this.testTopic.publish(this.event, Scope.APPLICATION);
 		then(this.rabbitTemplate).should()
 			.convertAndSend(any(String.class), eq(this.event.getClass().getName() + '.' + this.application.getName()),
 					any(Object.class));
-		Thread.sleep(100); // wait network response
-		then(this.messageProcessor).should().process(this.event);
+		assertMessageProcessed(this.event);
 	}
 
 	@Test
-	void publishGlobalScopeMessage() throws Exception {
+	void publishGlobalScopeMessage() {
 		this.testTopic.publish(this.event, Scope.GLOBAL);
 		then(this.rabbitTemplate).should()
 			.convertAndSend(any(String.class), eq(this.event.getClass().getName() + '.'), any(Object.class));
-		Thread.sleep(100); // wait network response
-		then(this.messageProcessor).should().process(this.event);
+		assertMessageProcessed(this.event);
 	}
 
 	static class Config {
