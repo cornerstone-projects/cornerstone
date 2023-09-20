@@ -1,0 +1,88 @@
+package io.cornerstone.core.kafka;
+
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+
+import io.cornerstone.test.containers.Kafka;
+import org.apache.kafka.clients.admin.NewTopic;
+import org.junit.jupiter.api.Test;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.config.TopicBuilder;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.support.Acknowledgment;
+import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.BDDMockito.then;
+import static org.mockito.BDDMockito.willAnswer;
+
+@ContextConfiguration(classes = { KafkaManualAckIntegrationTests.Config.class, Kafka.class })
+@TestPropertySource(properties = {
+		"spring.kafka.producer.value-serializer=org.springframework.kafka.support.serializer.JsonSerializer",
+		"spring.kafka.producer.properties.spring.json.add.type.headers=false",
+		"spring.kafka.consumer.value-deserializer=io.cornerstone.core.kafka.PersonDeserializer",
+		"spring.kafka.consumer.auto-offset-reset=earliest", "spring.kafka.consumer.enable-auto-commit=false",
+		"spring.kafka.listener.ack-mode=MANUAL_IMMEDIATE" })
+@SpringJUnitConfig
+class KafkaManualAckIntegrationTests {
+
+	private static final String TEST_TOPIC_NAME = "test-topic";
+
+	private static final String TEST_GROUP_NAME = "test-group";
+
+	@Autowired
+	private KafkaTemplate<String, Person> kafkaTemplate;
+
+	@SpyBean
+	private TestListener testListener;
+
+	@Test
+	void sendAndReceive() throws InterruptedException {
+		CountDownLatch latch = new CountDownLatch(2);
+		willAnswer(invocation -> {
+			latch.countDown();
+			return invocation.callRealMethod();
+		}).given(this.testListener).receive(any(), any());
+
+		this.kafkaTemplate.send(TEST_TOPIC_NAME, new Person("test1", 10));
+		this.kafkaTemplate.send(TEST_TOPIC_NAME, new Person("test2", 20));
+
+		assertThat(latch.await(10, TimeUnit.SECONDS)).isTrue();
+		then(this.testListener).should().receive(eq(new Person("test1", 10)), any());
+		then(this.testListener).should().receive(eq(new Person("test2", 20)), any());
+	}
+
+	static class Config {
+
+		@Bean
+		NewTopic testTopic() {
+			return TopicBuilder.name(TEST_TOPIC_NAME).build();
+		}
+
+		@Bean
+		TestListener testListener() {
+			return new TestListener();
+		}
+
+	}
+
+	static class TestListener {
+
+		@KafkaListener(id = TEST_GROUP_NAME, topics = TEST_TOPIC_NAME)
+		void receive(@Payload Person person, Acknowledgment ack) {
+			// process message
+			ack.acknowledge();
+		}
+
+	}
+
+}
