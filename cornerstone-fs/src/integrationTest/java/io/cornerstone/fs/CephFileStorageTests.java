@@ -1,6 +1,5 @@
 package io.cornerstone.fs;
 
-import io.cornerstone.core.util.CodecUtils;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -13,19 +12,19 @@ import org.springframework.test.context.TestPropertySource;
 @Testcontainers
 class CephFileStorageTests extends FileStorageTestBase {
 
-	private static final String ACCESS_KEY = CodecUtils.nextId(32);
+	private static final String ACCESS_KEY = "demo";
 
-	private static final String SECRET_KEY = CodecUtils.nextId(32);
+	private static final String SECRET_KEY = "demo";
 
 	@Container
-	static GenericContainer<?> container = new GenericContainer<>("quay.io/ceph/daemon")
+	static GenericContainer<?> container = new GenericContainer<>("quay.io/ceph/demo")
 		.withEnv("CEPH_DEMO_ACCESS_KEY", ACCESS_KEY)
 		.withEnv("CEPH_DEMO_SECRET_KEY", SECRET_KEY)
+		.withEnv("CEPH_DEMO_UID", "demo")
+		.withEnv("MON_IP", "127.0.0.1")
 		.withEnv("RGW_NAME", "localhost")
-		.withEnv("CEPH_DEMO_UID", "admin")
-		.withEnv("NETWORK_AUTO_DETECT", "1")
-		.withExposedPorts(8080)
-		.withCommand("demo");
+		.withEnv("CEPH_PUBLIC_NETWORK", "0.0.0.0/0")
+		.withExposedPorts(8080);
 
 	@DynamicPropertySource
 	static void registerDynamicProperties(DynamicPropertyRegistry registry) {
