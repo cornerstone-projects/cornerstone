@@ -5,11 +5,13 @@ plugins {
 	`kotlin-dsl`
 }
 
-FileInputStream("$rootDir/../gradle.properties").use {
-	Properties().apply { load(it) }.forEach {
-		val key = it.key as String
-		if (!hasProperty(key))
-			extra[key] = it.value
+ext {
+	FileInputStream("$rootDir/../gradle.properties").use {
+		Properties().apply { load(it) }.forEach {
+			val key = it.key as String
+			if (!has(key))
+				set(key, it.value)
+		}
 	}
 }
 
