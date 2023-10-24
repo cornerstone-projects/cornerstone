@@ -61,12 +61,6 @@ class KeysetScrollIntegrationTests extends DataJpaTestBase {
 		}
 
 		KeysetScrollPosition position = ScrollPosition.of(Map.of(), scrollDirection);
-		if (scrollDirection == ScrollPosition.Direction.BACKWARD
-				&& position.getDirection() == ScrollPosition.Direction.FORWARD) {
-			// remove this workaround if
-			// https://github.com/spring-projects/spring-data-commons/pull/2841 merged
-			position = position.backward();
-		}
 		while (true) {
 			ScrollPosition positionToUse = position;
 			Window<TestEntity> window = this.repository.findBy((root, query, cb) -> null,
