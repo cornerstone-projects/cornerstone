@@ -1,8 +1,6 @@
 package io.cornerstone.core.metrics;
 
 import io.cornerstone.core.Application;
-import io.micrometer.core.aop.CountedAspect;
-import io.micrometer.core.aop.TimedAspect;
 import io.micrometer.core.instrument.MeterRegistry;
 
 import org.springframework.boot.actuate.autoconfigure.metrics.MeterRegistryCustomizer;
@@ -16,16 +14,6 @@ public class MetricsConfiguration {
 	MeterRegistryCustomizer<MeterRegistry> meterRegistryCustomizer(Application application) {
 		return registry -> registry.config()
 			.commonTags("app", application.getName(), "instance.id", application.getInstanceId());
-	}
-
-	@Bean
-	TimedAspect timedAspect(MeterRegistry meterRegistry) {
-		return new TimedAspect(meterRegistry);
-	}
-
-	@Bean
-	CountedAspect countedAspect(MeterRegistry meterRegistry) {
-		return new CountedAspect(meterRegistry);
 	}
 
 }

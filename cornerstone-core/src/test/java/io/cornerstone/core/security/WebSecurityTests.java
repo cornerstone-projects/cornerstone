@@ -1,9 +1,7 @@
 package io.cornerstone.core.security;
 
-import java.net.HttpURLConnection;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.stream.Stream;
 
 import io.cornerstone.test.ControllerTestBase;
@@ -16,7 +14,6 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -29,7 +26,6 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
 
 import static io.cornerstone.core.security.WebSecurityTests.TEST_DEFAULT_SUCCESS_URL;
 import static io.cornerstone.core.security.WebSecurityTests.TEST_LOGIN_PAGE;
@@ -115,10 +111,9 @@ class WebSecurityTests extends ControllerTestBase {
 
 	@Test
 	void testAccessWithUnauthenticated() {
-		ResponseEntity<String> response = executeWithNoRedirects(template -> template
-			.exchange(RequestEntity.method(POST, this.testRestTemplate.getRootUri() + TEST_DEFAULT_SUCCESS_URL)
-				.header(ACCEPT, TEXT_HTML_VALUE)
-				.build(), String.class));
+		ResponseEntity<String> response = this.testRestTemplate.exchange(
+				RequestEntity.method(POST, TEST_DEFAULT_SUCCESS_URL).header(ACCEPT, TEXT_HTML_VALUE).build(),
+				String.class);
 		// GET always follow redirects
 		assertThat(response.getStatusCode()).isSameAs(FOUND);
 		assertThat(response.getHeaders().getLocation()).hasPath(TEST_LOGIN_PAGE);
@@ -126,11 +121,10 @@ class WebSecurityTests extends ControllerTestBase {
 
 	@Test
 	void testRestfulAccessWithUnauthenticated() {
-		ResponseEntity<Map<String, Object>> response = executeWithNoRedirects(template -> template
-			.exchange(RequestEntity.method(POST, this.testRestTemplate.getRootUri() + TEST_DEFAULT_SUCCESS_URL)
-				.header(ACCEPT, APPLICATION_JSON_VALUE)
-				.build(), new ParameterizedTypeReference<Map<String, Object>>() {
-				}));
+		ResponseEntity<Map<String, Object>> response = this.testRestTemplate.exchange(
+				RequestEntity.method(POST, TEST_DEFAULT_SUCCESS_URL).header(ACCEPT, APPLICATION_JSON_VALUE).build(),
+				new ParameterizedTypeReference<Map<String, Object>>() {
+				});
 		assertThat(response.getStatusCode()).isSameAs(UNAUTHORIZED);
 		assertThat(response.getBody().get("status")).isEqualTo(UNAUTHORIZED.value());
 		assertThat(response.getBody().get("message")).isEqualTo(this.messageSource.getMessage(
@@ -181,26 +175,10 @@ class WebSecurityTests extends ControllerTestBase {
 		MultiValueMap<String, String> data = new LinkedMultiValueMap<>();
 		data.add("username", username);
 		data.add("password", password);
-		return executeWithNoRedirects(template -> template
-			.exchange(RequestEntity.method(POST, this.testRestTemplate.getRootUri() + TEST_LOGIN_PROCESSING_URL)
-				.header(ACCEPT, TEXT_HTML_VALUE)
-				.header(CONTENT_TYPE, APPLICATION_FORM_URLENCODED_VALUE)
-				.body(data), String.class));
-	}
-
-	private <T> T executeWithNoRedirects(Function<RestTemplate, T> function) {
-		// disable follow redirects
-		HttpURLConnection.setFollowRedirects(false);
-		try {
-			SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
-			requestFactory.setOutputStreaming(false);
-			RestTemplate template = new RestTemplate(requestFactory);
-			template.setErrorHandler(this.testRestTemplate.getRestTemplate().getErrorHandler());
-			return function.apply(template);
-		}
-		finally {
-			HttpURLConnection.setFollowRedirects(true); // restore defaults
-		}
+		return this.testRestTemplate.exchange(RequestEntity.method(POST, TEST_LOGIN_PROCESSING_URL)
+			.header(ACCEPT, TEXT_HTML_VALUE)
+			.header(CONTENT_TYPE, APPLICATION_FORM_URLENCODED_VALUE)
+			.body(data), String.class);
 	}
 
 	@RestController

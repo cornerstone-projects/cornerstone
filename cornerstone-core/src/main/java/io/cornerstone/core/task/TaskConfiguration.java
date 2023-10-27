@@ -6,7 +6,7 @@ import io.github.resilience4j.bulkhead.BulkheadFullException;
 import io.github.resilience4j.ratelimiter.RequestNotPermitted;
 import lombok.extern.slf4j.Slf4j;
 
-import org.springframework.boot.task.TaskSchedulerCustomizer;
+import org.springframework.boot.task.ThreadPoolTaskSchedulerCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -27,7 +27,7 @@ public class TaskConfiguration {
 	}
 
 	@Bean
-	TaskSchedulerCustomizer taskSchedulerCustomizer() {
+	ThreadPoolTaskSchedulerCustomizer taskSchedulerCustomizer() {
 		return taskScheduler -> taskScheduler.setErrorHandler(ex -> {
 			if ((ex instanceof LockFailedException) || (ex instanceof BulkheadFullException)
 					|| (ex instanceof RequestNotPermitted)) {

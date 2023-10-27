@@ -8,7 +8,6 @@ import io.micrometer.tracing.exporter.SpanExportingPredicate;
 import io.opentelemetry.api.common.Attributes;
 import io.opentelemetry.api.common.AttributesBuilder;
 import io.opentelemetry.sdk.resources.Resource;
-import io.opentelemetry.semconv.resource.attributes.ResourceAttributes;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,8 +31,8 @@ public class TracingConfiguration {
 	SdkTracerProviderBuilderCustomizer resourceSdkTracerProviderBuilderCustomizer() {
 		return builder -> {
 			AttributesBuilder attributesBuilder = Attributes.builder();
-			attributesBuilder.put(ResourceAttributes.SERVICE_NAME, this.application.getName());
-			attributesBuilder.put(ResourceAttributes.SERVICE_INSTANCE_ID, this.application.getInstanceId());
+			attributesBuilder.put("service.name", this.application.getName());
+			attributesBuilder.put("service.instance.id", this.application.getInstanceId());
 			attributesBuilder.put("server.info", this.application.getServerInfo());
 			attributesBuilder.put("java.version", System.getProperty("java.version"));
 			builder.setResource(Resource.getDefault().merge(Resource.create(attributesBuilder.build())));

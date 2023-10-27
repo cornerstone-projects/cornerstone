@@ -144,8 +144,8 @@ public class FtpFileStorage extends AbstractFileStorage {
 		poolConfig.setMaxIdle(this.config.getPool().getMaxIdle());
 		poolConfig.setMinIdle(this.config.getPool().getMinIdle());
 		poolConfig.setMaxWait(this.config.getPool().getMaxWait());
-		poolConfig.setMinEvictableIdleTime(this.config.getPool().getMinEvictableIdleTime());
-		poolConfig.setSoftMinEvictableIdleTime(poolConfig.getMinEvictableIdleDuration());
+		poolConfig.setMinEvictableIdleDuration(this.config.getPool().getMinEvictableIdleTime());
+		poolConfig.setSoftMinEvictableIdleDuration(poolConfig.getMinEvictableIdleDuration());
 		poolConfig.setLifo(false);
 		poolConfig.setTestOnBorrow(true);
 		this.pool = new GenericObjectPool<>(factory, poolConfig);

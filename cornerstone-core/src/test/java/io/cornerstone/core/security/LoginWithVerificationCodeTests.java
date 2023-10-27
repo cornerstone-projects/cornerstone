@@ -1,11 +1,9 @@
 package io.cornerstone.core.security;
 
-import java.net.HttpURLConnection;
 import java.time.Duration;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.stream.Stream;
 
 import io.cornerstone.core.security.verification.VerificationAware;
@@ -25,7 +23,6 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -39,7 +36,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.RestTemplate;
 
 import static io.cornerstone.core.security.SecurityProperties.DEFAULT_LOGIN_PAGE;
 import static io.cornerstone.core.security.SecurityProperties.DEFAULT_LOGIN_PROCESSING_URL;
@@ -210,26 +206,10 @@ class LoginWithVerificationCodeTests extends ControllerTestBase {
 		if (verificationCode != null) {
 			data.add("verificationCode", verificationCode);
 		}
-		return executeWithNoRedirects(template -> template
-			.exchange(RequestEntity.method(POST, this.testRestTemplate.getRootUri() + DEFAULT_LOGIN_PROCESSING_URL)
-				.header(ACCEPT, TEXT_HTML_VALUE)
-				.header(CONTENT_TYPE, APPLICATION_FORM_URLENCODED_VALUE)
-				.body(data), String.class));
-	}
-
-	private <T> T executeWithNoRedirects(Function<RestTemplate, T> function) {
-		// disable follow redirects
-		HttpURLConnection.setFollowRedirects(false);
-		try {
-			SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
-			requestFactory.setOutputStreaming(false);
-			RestTemplate template = new RestTemplate(requestFactory);
-			template.setErrorHandler(this.testRestTemplate.getRestTemplate().getErrorHandler());
-			return function.apply(template);
-		}
-		finally {
-			HttpURLConnection.setFollowRedirects(true); // restore defaults
-		}
+		return this.testRestTemplate.exchange(RequestEntity.method(POST, DEFAULT_LOGIN_PROCESSING_URL)
+			.header(ACCEPT, TEXT_HTML_VALUE)
+			.header(CONTENT_TYPE, APPLICATION_FORM_URLENCODED_VALUE)
+			.body(data), String.class);
 	}
 
 	@ComponentScan

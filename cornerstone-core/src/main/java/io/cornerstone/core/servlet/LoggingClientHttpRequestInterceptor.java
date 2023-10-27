@@ -57,13 +57,7 @@ public class LoggingClientHttpRequestInterceptor implements ClientHttpRequestInt
 
 				@Override
 				public HttpStatusCode getStatusCode() throws IOException {
-					return HttpStatusCode.valueOf(getRawStatusCode());
-				}
-
-				@SuppressWarnings("deprecation")
-				@Override
-				public int getRawStatusCode() throws IOException {
-					return response.getRawStatusCode();
+					return response.getStatusCode();
 				}
 
 				@Override

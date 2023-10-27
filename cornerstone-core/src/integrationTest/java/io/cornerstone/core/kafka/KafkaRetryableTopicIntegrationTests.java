@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.task.TaskSchedulingAutoConfiguration;
-import org.springframework.boot.task.TaskSchedulerBuilder;
+import org.springframework.boot.task.ThreadPoolTaskSchedulerBuilder;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.kafka.annotation.DltHandler;
@@ -88,7 +88,8 @@ class KafkaRetryableTopicIntegrationTests {
 		// @Bean
 		// uncomment @Bean to not reuse TaskScheduler from TaskSchedulingAutoConfiguration
 		RetryTopicSchedulerWrapper retryTopicSchedulerWrapper() {
-			TaskSchedulerBuilder builder = new TaskSchedulerBuilder().threadNamePrefix("retry-tpoic-scheduler");
+			ThreadPoolTaskSchedulerBuilder builder = new ThreadPoolTaskSchedulerBuilder()
+				.threadNamePrefix("retry-tpoic-scheduler");
 			return new RetryTopicSchedulerWrapper(builder.build());
 		}
 

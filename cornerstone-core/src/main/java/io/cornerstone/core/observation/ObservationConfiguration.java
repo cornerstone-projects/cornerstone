@@ -3,11 +3,12 @@ package io.cornerstone.core.observation;
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationPredicate;
 import io.micrometer.observation.ObservationRegistry;
-import io.micrometer.observation.aop.ObservedAspect;
+import net.ttddyy.observation.tracing.DataSourceBaseContext;
 
 import org.springframework.boot.actuate.autoconfigure.tracing.ConditionalOnEnabledTracing;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.connection.lettuce.observability.LettuceObservationContext;
 import org.springframework.http.server.observation.ServerRequestObservationContext;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -17,11 +18,6 @@ import org.springframework.web.filter.ServerHttpObservationFilter;
 @Configuration
 @ConditionalOnEnabledTracing
 public class ObservationConfiguration {
-
-	@Bean
-	ObservedAspect observedAspect(ObservationRegistry observationRegistry) {
-		return new ObservedAspect(observationRegistry);
-	}
 
 	@Bean
 	ObserveTransactionalAspect observeTransactionalAspect(ObservationRegistry observationRegistry) {
@@ -68,6 +64,16 @@ public class ObservationConfiguration {
 			else {
 				return true;
 			}
+		};
+	}
+
+	@Bean
+	ObservationPredicate noParentlessDatabaseObservations() {
+		return (name, context) -> {
+			if (context instanceof LettuceObservationContext || context instanceof DataSourceBaseContext) {
+				return context.getParentObservation() != null;
+			}
+			return true;
 		};
 	}
 
