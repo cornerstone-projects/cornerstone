@@ -101,7 +101,7 @@ public class RedisLockService implements LockService {
 	}
 
 	String holder() {
-		return this.self + '$' + Thread.currentThread().getId();
+		return this.self + '$' + Thread.currentThread().threadId();
 	}
 
 }

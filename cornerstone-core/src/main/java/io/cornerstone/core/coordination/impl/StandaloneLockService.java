@@ -11,12 +11,12 @@ public class StandaloneLockService implements LockService {
 
 	@Override
 	public boolean tryLock(String name) {
-		return this.locks.putIfAbsent(name, Thread.currentThread().getId()) == null;
+		return this.locks.putIfAbsent(name, Thread.currentThread().threadId()) == null;
 	}
 
 	@Override
 	public void unlock(String name) {
-		if (!this.locks.remove(name, Thread.currentThread().getId())) {
+		if (!this.locks.remove(name, Thread.currentThread().threadId())) {
 			throw new IllegalStateException(
 					"Lock[" + name + "] is not held by thread:" + Thread.currentThread().getName());
 		}

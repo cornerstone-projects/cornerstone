@@ -6,7 +6,11 @@ plugins {
 	id("io.spring.javaformat")
 }
 
-java.sourceCompatibility = JavaVersion.VERSION_17
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(21)
+	}
+}
 
 repositories {
 	val repoUrlPrefix: String? by rootProject

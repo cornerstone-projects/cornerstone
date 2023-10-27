@@ -3,10 +3,8 @@ package io.cornerstone.core.servlet;
 import java.io.IOException;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.Collection;
@@ -303,26 +301,21 @@ public class SsoFilter implements Filter {
 		if ((b.indexOf("://") < 0) || (a.indexOf("://") < 0)) {
 			return true;
 		}
-		try {
-			String host1 = new URL(a).getHost();
-			if (host1 == null) {
-				host1 = "localhost";
-			}
-			String host2 = new URL(b).getHost();
-			if (host2 == null) {
-				host2 = "localhost";
-			}
-			if (host1.equalsIgnoreCase(host2)) {
-				return true;
-			}
-			String[] arr1 = host1.split("\\.");
-			String[] arr2 = host2.split("\\.");
-			return (arr1.length >= 2) && (arr2.length >= 2) && arr1[arr1.length - 1].equals(arr2[arr2.length - 1])
-					&& arr1[arr1.length - 2].equals(arr2[arr2.length - 2]);
+		String host1 = URI.create(a).getHost();
+		if (host1 == null) {
+			host1 = "localhost";
 		}
-		catch (MalformedURLException ex) {
-			return false;
+		String host2 = URI.create(a).getHost();
+		if (host2 == null) {
+			host2 = "localhost";
 		}
+		if (host1.equalsIgnoreCase(host2)) {
+			return true;
+		}
+		String[] arr1 = host1.split("\\.");
+		String[] arr2 = host2.split("\\.");
+		return (arr1.length >= 2) && (arr2.length >= 2) && arr1[arr1.length - 1].equals(arr2[arr2.length - 1])
+				&& arr1[arr1.length - 2].equals(arr2[arr2.length - 2]);
 	}
 
 	public static class SimpleUser implements Serializable {
