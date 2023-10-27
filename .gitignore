@@ -4,4 +4,7 @@ target/
 logs/
 .gradle/
 .idea/
+.settings/
+.classpath
+.project
 .reloadtrigger
