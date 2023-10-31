@@ -42,6 +42,13 @@ configurations.all {
 		if (requested.name == "spring-boot-starter-logging")
 			useTarget("${requested.group}:spring-boot-starter-log4j2:${requested.version}")
 	}
+	resolutionStrategy.dependencySubstitution {
+		substitute(module("junit:junit"))
+			.using(module("io.quarkus:quarkus-junit4-mock:3.5.0"))
+			.because(
+				"See https://github.com/testcontainers/testcontainers-java/issues/970"
+			)
+	}
 }
 
 testing {
@@ -97,7 +104,7 @@ tasks.named<Jar>("sourcesJar") {
 	duplicatesStrategy = DuplicatesStrategy.INCLUDE
 }
 
-tasks.withType<JavaCompile>() {
+tasks.withType<JavaCompile> {
 	options.encoding = "UTF-8"
 	options.compilerArgs.add("-parameters")
 }
