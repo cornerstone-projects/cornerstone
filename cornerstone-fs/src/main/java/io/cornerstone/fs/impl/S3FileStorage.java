@@ -49,7 +49,7 @@ public class S3FileStorage extends BucketFileStorage {
 	public void afterPropertiesSet() {
 		AWSCredentials credentials = new BasicAWSCredentials(this.config.getAccessKey(), this.config.getSecretKey());
 		ClientConfiguration clientConfig = new ClientConfiguration();
-		clientConfig.setProtocol(this.config.isUseHttps() ? Protocol.HTTP : Protocol.HTTPS);
+		clientConfig.setProtocol(this.config.isUseHttps() ? Protocol.HTTPS : Protocol.HTTP);
 		AmazonS3ClientBuilder builder = AmazonS3ClientBuilder.standard()
 			.withCredentials(new AWSStaticCredentialsProvider(credentials))
 			.withClientConfiguration(clientConfig);
