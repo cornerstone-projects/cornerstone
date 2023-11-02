@@ -27,10 +27,10 @@ publishing {
 			val repoUser: String? by project
 			val repoPassword: String? by project
 			maven {
-				if (version.endsWith("-SNAPSHOT")) {
-					url = uri("${repoUrlPrefix}/maven-snapshots/")
+				url = if (version.endsWith("-SNAPSHOT")) {
+					uri("${repoUrlPrefix}/maven-snapshots/")
 				} else {
-					url = uri("${repoUrlPrefix}/maven-releases/")
+					uri("${repoUrlPrefix}/maven-releases/")
 				}
 				isAllowInsecureProtocol = true
 				credentials {
