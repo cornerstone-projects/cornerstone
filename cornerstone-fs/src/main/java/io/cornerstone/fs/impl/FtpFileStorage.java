@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.net.URI;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -59,7 +60,7 @@ public class FtpFileStorage extends AbstractFileStorage {
 				FTPClient ftpClient = FtpFileStorage.this.uri.getScheme().equals("ftps") ? new FTPSClient()
 						: new FTPClient();
 				ftpClient.setDefaultTimeout(FtpFileStorage.this.config.getDefaultTimeout());
-				ftpClient.setDataTimeout(FtpFileStorage.this.config.getDataTimeout());
+				ftpClient.setDataTimeout(Duration.ofMillis(FtpFileStorage.this.config.getDataTimeout()));
 				ftpClient.setControlEncoding(FtpFileStorage.this.config.getControlEncoding());
 				ftpClient.connect(FtpFileStorage.this.uri.getHost(), FtpFileStorage.this.uri.getPort() > 0
 						? FtpFileStorage.this.uri.getPort() : ftpClient.getDefaultPort());
@@ -285,9 +286,8 @@ public class FtpFileStorage extends AbstractFileStorage {
 
 	@Override
 	public boolean exists(String path) {
-		boolean isFile = executeWrapped(ftpClient -> {
-			return ftpClient.getModificationTime(getPathname(path, ftpClient)) != null;
-		});
+		boolean isFile = executeWrapped(
+				ftpClient -> ftpClient.getModificationTime(getPathname(path, ftpClient)) != null);
 		return isFile || isDirectory(path);
 	}
 
@@ -302,9 +302,8 @@ public class FtpFileStorage extends AbstractFileStorage {
 		if (!parentFrom.startsWith(parentTo)) {
 			mkdir(parentTo);
 		}
-		return executeWrapped(ftpClient -> {
-			return ftpClient.rename(getPathname(fromPath_, ftpClient), getPathname(toPath_, ftpClient));
-		});
+		return executeWrapped(
+				ftpClient -> ftpClient.rename(getPathname(fromPath_, ftpClient), getPathname(toPath_, ftpClient)));
 	}
 
 	@Override
@@ -372,7 +371,7 @@ public class FtpFileStorage extends AbstractFileStorage {
 		}
 	}
 
-	public <T> T execute(Callback<T> callback) throws IOException {
+	protected <T> T execute(Callback<T> callback) throws IOException {
 		FTPClient ftpClient = null;
 		boolean deferReturn = false;
 		try {
@@ -414,7 +413,7 @@ public class FtpFileStorage extends AbstractFileStorage {
 		}
 	}
 
-	interface Callback<T> {
+	protected interface Callback<T> {
 
 		T doWithFTPClient(FTPClient ftpClient) throws IOException;
 
