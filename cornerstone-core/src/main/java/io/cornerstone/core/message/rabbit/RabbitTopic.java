@@ -21,7 +21,7 @@ import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.ResolvableType;
+import org.springframework.core.GenericTypeResolver;
 
 public abstract class RabbitTopic<T extends Serializable> implements Topic<T> {
 
@@ -46,7 +46,7 @@ public abstract class RabbitTopic<T extends Serializable> implements Topic<T> {
 	private Executor taskExecutor;
 
 	public RabbitTopic() {
-		Class<?> clazz = ResolvableType.forClass(getClass()).as(RabbitTopic.class).resolveGeneric(0);
+		Class<?> clazz = GenericTypeResolver.resolveTypeArgument(getClass(), RabbitTopic.class);
 		if (clazz == null) {
 			throw new IllegalArgumentException(getClass().getName() + " should be generic");
 		}

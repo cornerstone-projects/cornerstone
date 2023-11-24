@@ -5,7 +5,7 @@ import java.util.List;
 
 import jakarta.persistence.AttributeConverter;
 
-import org.springframework.core.ResolvableType;
+import org.springframework.core.GenericTypeResolver;
 
 public abstract class EnumListConverter<T extends Enum<T>> implements AttributeConverter<List<T>, String> {
 
@@ -15,7 +15,7 @@ public abstract class EnumListConverter<T extends Enum<T>> implements AttributeC
 
 	@SuppressWarnings("unchecked")
 	public EnumListConverter() {
-		this.enumType = (Class<T>) ResolvableType.forClass(getClass()).as(EnumListConverter.class).resolveGeneric(0);
+		this.enumType = (Class<T>) GenericTypeResolver.resolveTypeArgument((getClass()), EnumListConverter.class);
 	}
 
 	@Override

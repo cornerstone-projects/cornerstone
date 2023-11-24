@@ -10,7 +10,7 @@ import lombok.Setter;
 import org.springframework.amqp.core.AmqpAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.ResolvableType;
+import org.springframework.core.GenericTypeResolver;
 
 public abstract class RabbitQueue<T extends Serializable> implements Queue<T> {
 
@@ -29,7 +29,7 @@ public abstract class RabbitQueue<T extends Serializable> implements Queue<T> {
 	protected boolean durable = true;
 
 	public RabbitQueue() {
-		Class<?> clazz = ResolvableType.forClass(getClass()).as(RabbitQueue.class).resolveGeneric(0);
+		Class<?> clazz = GenericTypeResolver.resolveTypeArgument(getClass(), RabbitQueue.class);
 		if (clazz == null) {
 			throw new IllegalArgumentException(getClass().getName() + " should be generic");
 		}

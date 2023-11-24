@@ -11,7 +11,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.ResolvableType;
+import org.springframework.core.GenericTypeResolver;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.support.collections.DefaultRedisList;
 
@@ -35,7 +35,7 @@ public abstract class RedisQueue<T extends Serializable> implements Queue<T> {
 	protected BlockingDeque<T> queue;
 
 	public RedisQueue() {
-		Class<?> clazz = ResolvableType.forClass(getClass()).as(RedisQueue.class).resolveGeneric(0);
+		Class<?> clazz = GenericTypeResolver.resolveTypeArgument(getClass(), RedisQueue.class);
 		if (clazz == null) {
 			throw new IllegalArgumentException(getClass().getName() + " should be generic");
 		}

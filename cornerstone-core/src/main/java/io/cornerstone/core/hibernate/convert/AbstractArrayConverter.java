@@ -4,7 +4,7 @@ import java.lang.reflect.Array;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.springframework.core.ResolvableType;
+import org.springframework.core.GenericTypeResolver;
 
 @SuppressWarnings("unchecked")
 public abstract class AbstractArrayConverter<T> {
@@ -14,7 +14,7 @@ public abstract class AbstractArrayConverter<T> {
 	private final Class<?> clazz;
 
 	public AbstractArrayConverter() {
-		this.clazz = ResolvableType.forClass(getClass()).as(AbstractArrayConverter.class).resolveGeneric(0);
+		this.clazz = GenericTypeResolver.resolveTypeArgument(getClass(), AbstractArrayConverter.class);
 	}
 
 	public String convertToDatabaseColumn(T[] array) {

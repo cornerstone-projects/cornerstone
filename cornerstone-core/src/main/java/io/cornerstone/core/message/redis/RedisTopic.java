@@ -13,7 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.core.ResolvableType;
+import org.springframework.core.GenericTypeResolver;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
@@ -45,7 +45,7 @@ public abstract class RedisTopic<T extends Serializable> implements io.cornersto
 	private Executor taskExecutor;
 
 	public RedisTopic() {
-		Class<?> clazz = ResolvableType.forClass(getClass()).as(RedisTopic.class).resolveGeneric(0);
+		Class<?> clazz = GenericTypeResolver.resolveTypeArgument(getClass(), RedisTopic.class);
 		if (clazz == null) {
 			throw new IllegalArgumentException(getClass().getName() + " should be generic");
 		}
