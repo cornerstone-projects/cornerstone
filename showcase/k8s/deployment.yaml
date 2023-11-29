@@ -13,6 +13,7 @@ spec:
       labels:
         app: ${application.name}
     spec:
+      enableServiceLinks: false
       containers:
       - name: ${application.name}
         image: ${application.name}:${application.version}
