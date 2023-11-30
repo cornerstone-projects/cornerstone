@@ -116,7 +116,7 @@ tasks.withType<JavaCompile> {
 	options.compilerArgs.add("-parameters")
 }
 
-tasks.clean {
+tasks.named("clean") {
 	doLast {
 		delete("bin", "logs")
 	}
