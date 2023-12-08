@@ -36,7 +36,7 @@ public class FileUtils {
 				case "." -> {
 				}
 				case ".." -> {
-					if ((list.size() > 0) && !list.get(list.size() - 1).equals("..")) {
+					if ((!list.isEmpty()) && !list.get(list.size() - 1).equals("..")) {
 						list.remove(list.size() - 1);
 					}
 					else {
@@ -86,7 +86,7 @@ public class FileUtils {
 					BufferedInputStream bis = new BufferedInputStream(fis);
 					FileOutputStream fos = new FileOutputStream(zipFile);
 					BufferedOutputStream bos = new BufferedOutputStream(fos);
-					ZipOutputStream zos = new ZipOutputStream(bos);) {
+					ZipOutputStream zos = new ZipOutputStream(bos)) {
 				byte[] buf = new byte[1024];
 				int len;
 				ZipEntry ze = new ZipEntry(file.getName());
@@ -124,7 +124,7 @@ public class FileUtils {
 			if (!base.isEmpty()) {
 				out.putNextEntry(new ZipEntry(base + "/"));
 			}
-			base = base.length() == 0 ? "" : base + "/";
+			base = base.isEmpty() ? "" : base + "/";
 			for (File element : fl) {
 				zipDirctory(out, element, base + element.getName());
 			}

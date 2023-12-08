@@ -26,7 +26,7 @@ public class RedisCyclicSequence extends AbstractCyclicSequence {
 
 	private BoundValueOperations<String, String> boundValueOperations;
 
-	private RedisScript<Boolean> compareAndSetScript = new DefaultRedisScript<>(
+	private final RedisScript<Boolean> compareAndSetScript = new DefaultRedisScript<>(
 			"if redis.call('get',KEYS[1]) == ARGV[1] then redis.call('set',KEYS[1],ARGV[2]) return true else return false end",
 			Boolean.class);
 
@@ -91,7 +91,7 @@ public class RedisCyclicSequence extends AbstractCyclicSequence {
 				return restart;
 			}
 			try {
-				Thread.sleep(((1 + maxAttempts) - remainingAttempts) * 50);
+				Thread.sleep(((1 + maxAttempts) - remainingAttempts) * 50L);
 			}
 			catch (InterruptedException ex) {
 				this.logger.warn(ex.getMessage(), ex);

@@ -176,7 +176,7 @@ public class NumberUtils {
 		boolean isMust5;
 		int length = integer.length();
 		if (length > 4) {
-			String subInteger = "";
+			String subInteger;
 			if (length > 8) {
 				subInteger = integer.substring(length - 8, length - 4);
 			}

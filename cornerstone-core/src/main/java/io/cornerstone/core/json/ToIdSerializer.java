@@ -47,7 +47,7 @@ public class ToIdSerializer extends StdSerializer<Object> {
 			if (id == null) {
 				JsonInclude.Include include = sp.getConfig().getDefaultPropertyInclusion().getValueInclusion();
 				if (((include == JsonInclude.Include.NON_NULL) || (include == JsonInclude.Include.NON_EMPTY))) {
-					generator.writeObject(id);
+					generator.writeObject(null);
 					// how to skip current field ?
 				}
 				else {

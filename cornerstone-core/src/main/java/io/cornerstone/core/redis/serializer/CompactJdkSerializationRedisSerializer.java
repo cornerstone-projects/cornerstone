@@ -53,7 +53,7 @@ public class CompactJdkSerializationRedisSerializer extends JdkSerializationRedi
 	}
 
 	public static boolean isUtf8(byte[] bytes) {
-		int expectedLength = 0;
+		int expectedLength;
 		for (int i = 0; i < bytes.length; i++) {
 			if ((bytes[i] & 0b10000000) == 0b00000000) {
 				expectedLength = 1;

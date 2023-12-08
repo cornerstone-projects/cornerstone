@@ -28,7 +28,7 @@ public abstract class RedisQueue<T extends Serializable> implements Queue<T> {
 	@Setter
 	private boolean consuming;
 
-	private AtomicBoolean stopConsuming = new AtomicBoolean();
+	private final AtomicBoolean stopConsuming = new AtomicBoolean();
 
 	private Thread worker;
 

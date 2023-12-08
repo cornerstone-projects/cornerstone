@@ -35,7 +35,7 @@ public class TreeableRepositoryImpl<T extends AbstractTreeableEntity<T>> impleme
 			entity.setFullId(UUID.randomUUID().toString());
 			this.entityManager.persist(entity);
 			this.entityManager.flush();
-			String fullId = String.valueOf(entity.getId()) + ".";
+			String fullId = entity.getId() + ".";
 			if (parent != null) {
 				fullId = parent.getFullId() + fullId;
 			}
@@ -47,7 +47,7 @@ public class TreeableRepositoryImpl<T extends AbstractTreeableEntity<T>> impleme
 					|| ((parent != null) && (((entity.getLevel() - parent.getLevel()) != 1)
 							|| !entity.getFullId().startsWith(parent.getFullId()))));
 			if (positionChanged) {
-				String fullId = String.valueOf(entity.getId()) + ".";
+				String fullId = entity.getId() + ".";
 				if (parent != null) {
 					fullId = parent.getFullId() + fullId;
 				}

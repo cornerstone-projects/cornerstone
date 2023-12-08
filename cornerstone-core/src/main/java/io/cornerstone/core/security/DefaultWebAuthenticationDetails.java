@@ -12,7 +12,7 @@ public class DefaultWebAuthenticationDetails extends WebAuthenticationDetails {
 
 	private static final long serialVersionUID = -1899435340020810774L;
 
-	private String verificationCode;
+	private final String verificationCode;
 
 	public DefaultWebAuthenticationDetails(HttpServletRequest request, Map<String, String> requestBody) {
 		super(request);

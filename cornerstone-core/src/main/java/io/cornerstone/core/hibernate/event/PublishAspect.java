@@ -70,20 +70,22 @@ public class PublishAspect extends BaseAspect implements TransactionSynchronizat
 		for (AbstractEvent event : events) {
 			Object entity;
 			EntityOperationType action;
-			if (event instanceof PostInsertEvent evt) {
-				entity = evt.getEntity();
-				action = CREATE;
-			}
-			else if (event instanceof PostUpdateEvent evt) {
-				entity = evt.getEntity();
-				action = UPDATE;
-			}
-			else if (event instanceof PostDeleteEvent evt) {
-				entity = evt.getEntity();
-				action = DELETE;
-			}
-			else {
-				continue;
+			switch (event) {
+				case PostInsertEvent evt -> {
+					entity = evt.getEntity();
+					action = CREATE;
+				}
+				case PostUpdateEvent evt -> {
+					entity = evt.getEntity();
+					action = UPDATE;
+				}
+				case PostDeleteEvent evt -> {
+					entity = evt.getEntity();
+					action = DELETE;
+				}
+				case null, default -> {
+					continue;
+				}
 			}
 			EntityOperationType previousAction = actions.get(entity);
 			if ((action == UPDATE) && (previousAction == CREATE)) {

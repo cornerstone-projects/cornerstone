@@ -106,7 +106,7 @@ public class MySQLSimpleSequence extends AbstractDatabaseSimpleSequence {
 				}
 			}
 			if (tableExists) {
-				boolean rowExists = false;
+				boolean rowExists;
 				try (ResultSet rs = stmt
 					.executeQuery("SELECT NAME FROM `" + tableName + "` WHERE NAME='" + sequenceName + "'")) {
 					rowExists = rs.next();

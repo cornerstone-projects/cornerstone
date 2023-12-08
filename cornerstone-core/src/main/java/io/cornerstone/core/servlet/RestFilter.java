@@ -7,7 +7,6 @@ import java.util.List;
 
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
-import jakarta.servlet.FilterConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
@@ -118,16 +117,6 @@ public class RestFilter implements Filter {
 			}
 			return super.getHeaders(name);
 		}
-
-	}
-
-	@Override
-	public void init(FilterConfig config) throws ServletException {
-
-	}
-
-	@Override
-	public void destroy() {
 
 	}
 

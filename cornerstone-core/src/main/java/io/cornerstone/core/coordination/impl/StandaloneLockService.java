@@ -7,7 +7,7 @@ import io.cornerstone.core.coordination.LockService;
 
 public class StandaloneLockService implements LockService {
 
-	private Map<String, Long> locks = new ConcurrentHashMap<>();
+	private final Map<String, Long> locks = new ConcurrentHashMap<>();
 
 	@Override
 	public boolean tryLock(String name) {

@@ -8,7 +8,7 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 
 public class I18N {
 
-	private static Map<Class<?>, ResourceBundleMessageSource> cache = new ConcurrentHashMap<>();
+	private static final Map<Class<?>, ResourceBundleMessageSource> cache = new ConcurrentHashMap<>();
 
 	public static String getMessage(Class<?> baseClass, String code) {
 		ResourceBundleMessageSource messageSource = cache.get(baseClass);

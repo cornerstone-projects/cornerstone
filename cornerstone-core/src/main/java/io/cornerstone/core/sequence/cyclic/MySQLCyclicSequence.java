@@ -22,7 +22,7 @@ public class MySQLCyclicSequence extends AbstractDatabaseCyclicSequence {
 
 	private String restartSql;
 
-	private String selectLastInsertIdSql = "SELECT LAST_INSERT_ID(),@TIMESTAMP";
+	private static final String selectLastInsertIdSql = "SELECT LAST_INSERT_ID(),@TIMESTAMP";
 
 	@Override
 	public void afterPropertiesSet() {
@@ -62,7 +62,7 @@ public class MySQLCyclicSequence extends AbstractDatabaseCyclicSequence {
 					return nextId(stmt);
 				}
 				try {
-					Thread.sleep(((1 + maxAttempts) - remainingAttempts) * 50);
+					Thread.sleep(((1 + maxAttempts) - remainingAttempts) * 50L);
 				}
 				catch (InterruptedException ex) {
 					this.logger.warn(ex.getMessage(), ex);
@@ -78,12 +78,12 @@ public class MySQLCyclicSequence extends AbstractDatabaseCyclicSequence {
 	}
 
 	private String nextId(Statement stmt) throws SQLException {
-		try (ResultSet rs = stmt.executeQuery(this.selectLastInsertIdSql)) {
+		try (ResultSet rs = stmt.executeQuery(selectLastInsertIdSql)) {
 			if (!rs.next()) {
 				throw new DataAccessResourceFailureException("LAST_INSERT_ID() failed after executing an update");
 			}
 			int next = rs.getInt(1);
-			Long current = rs.getLong(2);
+			long current = rs.getLong(2);
 			if (current < 10000000000L) {
 				current *= 1000;
 			}

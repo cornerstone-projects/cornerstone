@@ -23,7 +23,7 @@ public class Snowflake {
 	}
 
 	public Snowflake(int workerId, int workerIdBits, int sequenceBits) {
-		long maxWorkerId = -1L ^ (-1L << workerIdBits);
+		long maxWorkerId = ~(-1L << workerIdBits);
 		if ((workerId > maxWorkerId) || (workerId < 0)) {
 			throw new IllegalArgumentException(
 					String.format("workerId can't be greater than %d or less than 0", maxWorkerId));
@@ -31,7 +31,7 @@ public class Snowflake {
 		this.workerId = workerId;
 		this.workerIdBits = workerIdBits;
 		this.sequenceBits = sequenceBits;
-		this.sequenceMask = -1L ^ (-1L << sequenceBits);
+		this.sequenceMask = ~(-1L << sequenceBits);
 	}
 
 	public synchronized long nextId() {
@@ -66,15 +66,16 @@ public class Snowflake {
 			}
 		}
 		this.lastTimestamp = timestamp;
-		return ((timestamp - EPOCH) << (this.sequenceBits + this.workerIdBits)) | (this.workerId << this.sequenceBits)
-				| this.sequence;
+		return ((timestamp - EPOCH) << (this.sequenceBits + this.workerIdBits))
+				| ((long) this.workerId << this.sequenceBits) | this.sequence;
 	}
 
 	public Info parse(long id) {
 		long duration = id >> (this.sequenceBits + this.workerIdBits);
 		return new Info(EPOCH + duration,
 				(int) ((id - (duration << (this.sequenceBits + this.workerIdBits))) >> (this.sequenceBits)),
-				id - (duration << (this.sequenceBits + this.workerIdBits)) - (this.workerId << this.sequenceBits));
+				id - (duration << (this.sequenceBits + this.workerIdBits))
+						- ((long) this.workerId << this.sequenceBits));
 	}
 
 	public record Info(long timestamp, int workerId, long sequence) {

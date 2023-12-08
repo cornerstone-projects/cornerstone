@@ -45,8 +45,7 @@ class JsonSanitizerTests {
 	void testToJson() {
 		JsonSanitizer sanitizer = new JsonSanitizer();
 		User user = new User("username", "password", 12);
-		User mate = new User("mate", "password", 11);
-		user.mate = mate;
+		user.mate = new User("mate", "password", 11);
 		assertThat(sanitizer.toJson(user)).contains("\"******\"");
 		assertThat(sanitizer.toJson(user)).contains("\"mate\"");
 		assertThat(sanitizer.toJson(Collections.singletonMap("user", user))).contains("\"user\"");

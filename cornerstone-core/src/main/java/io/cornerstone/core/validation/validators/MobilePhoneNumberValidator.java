@@ -60,7 +60,7 @@ public class MobilePhoneNumberValidator implements ConstraintValidator<MobilePho
 
 		UNKNOWN("142", "143", "154", "161", "162", "164", "190", "194");
 
-		private List<String> numberPrefixes;
+		private final List<String> numberPrefixes;
 
 		Carrier(String... strings) {
 			this.numberPrefixes = Collections.unmodifiableList(List.of(strings));

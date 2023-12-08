@@ -14,7 +14,7 @@ import org.springframework.test.context.TestPropertySource;
 class MinioFileStorageTests extends FileStorageTestBase {
 
 	@Container
-	static GenericContainer<?> container = new GenericContainer<>("minio/minio").withCommand("server /data")
+	static final GenericContainer<?> container = new GenericContainer<>("minio/minio").withCommand("server /data")
 		.withExposedPorts(9000);
 
 	@DynamicPropertySource

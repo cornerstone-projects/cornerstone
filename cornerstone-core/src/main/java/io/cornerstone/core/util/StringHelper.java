@@ -63,7 +63,7 @@ public class StringHelper {
 		return prefix + (underscore ? plural : prefix.isEmpty() ? plural : StringUtils.capitalize(plural));
 	}
 
-	private static Map<String, String> specialCases = new HashMap<>();
+	private static final Map<String, String> specialCases = new HashMap<>();
 	static {
 		specialCases.put("alumnus", "alumni");
 		specialCases.put("bison", "bison");

@@ -13,7 +13,7 @@ public abstract class EnumSetConverter<T extends Enum<T>> implements AttributeCo
 
 	public static final String SEPARATOR = AbstractCollectionConverter.SEPARATOR;
 
-	private Class<T> enumType;
+	private final Class<T> enumType;
 
 	@SuppressWarnings("unchecked")
 	public EnumSetConverter() {

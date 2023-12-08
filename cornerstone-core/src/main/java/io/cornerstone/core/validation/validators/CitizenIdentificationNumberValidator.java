@@ -82,8 +82,7 @@ public class CitizenIdentificationNumberValidator implements ConstraintValidator
 	public static String randomValue() {
 		ThreadLocalRandom random = ThreadLocalRandom.current();
 		String province = provinces.get(random.nextInt(provinces.size())) + '0';
-		String area = String.valueOf(1 + random.nextInt(3)) + String.valueOf(1 + random.nextInt(3))
-				+ String.valueOf(1 + random.nextInt(7));
+		String area = String.valueOf(1 + random.nextInt(3)) + (1 + random.nextInt(3)) + (1 + random.nextInt(7));
 		String dob = NumberUtils.format(1970 + random.nextInt(50), 4) + NumberUtils.format(1 + random.nextInt(12), 2)
 				+ NumberUtils.format(1 + random.nextInt(28), 2);
 		String seq = NumberUtils.format(1 + random.nextInt(999), 3);

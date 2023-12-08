@@ -76,11 +76,9 @@ public class SocialCreditIdentifierValidator implements ConstraintValidator<Soci
 	public static String randomValue() {
 		ThreadLocalRandom random = ThreadLocalRandom.current();
 		String province = provinces.get(random.nextInt(provinces.size())) + '0';
-		String area = String.valueOf(1 + random.nextInt(3)) + String.valueOf(1 + random.nextInt(3))
-				+ String.valueOf(1 + random.nextInt(7));
+		String area = String.valueOf(1 + random.nextInt(3)) + (1 + random.nextInt(3)) + (1 + random.nextInt(7));
 		String organizationCode = OrganizationCodeValidator.randomValue();
-		String s = String.valueOf(1 + random.nextInt(9)) + String.valueOf(1 + random.nextInt(5)) + province + area
-				+ organizationCode;
+		String s = String.valueOf(1 + random.nextInt(9)) + (1 + random.nextInt(5)) + province + area + organizationCode;
 		return s + getCheckBit(getPowerSum(s.toCharArray()));
 	}
 

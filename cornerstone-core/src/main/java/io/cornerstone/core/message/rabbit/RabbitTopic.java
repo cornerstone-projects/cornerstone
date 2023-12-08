@@ -25,7 +25,7 @@ import org.springframework.core.GenericTypeResolver;
 
 public abstract class RabbitTopic<T extends Serializable> implements Topic<T> {
 
-	protected static Logger log = LoggerFactory.getLogger(RabbitTopic.class);
+	protected static final Logger log = LoggerFactory.getLogger(RabbitTopic.class);
 
 	@Autowired
 	protected RabbitTemplate rabbitTemplate;
@@ -36,7 +36,7 @@ public abstract class RabbitTopic<T extends Serializable> implements Topic<T> {
 	@Value("${spring.rabbitmq.exchange:default}")
 	protected String exchange;
 
-	protected String routingKey = "";
+	protected String routingKey;
 
 	@Getter
 	protected String queueName;

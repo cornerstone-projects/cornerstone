@@ -4,7 +4,6 @@ import java.beans.FeatureDescriptor;
 import java.beans.PropertyDescriptor;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -23,10 +22,10 @@ public class BeanUtils {
 
 	public static void copyNonNullProperties(Object source, Object target, String... ignoreProperties) {
 		BeanWrapper bw = new BeanWrapperImpl(source);
-		Set<String> ignores = new HashSet<>(Stream.of(bw.getPropertyDescriptors())
+		Set<String> ignores = Stream.of(bw.getPropertyDescriptors())
 			.map(FeatureDescriptor::getName)
 			.filter(name -> bw.getPropertyValue(name) == null)
-			.collect(Collectors.toSet()));
+			.collect(Collectors.toSet());
 		if (ignoreProperties.length > 0) {
 			ignores.addAll(List.of(ignoreProperties));
 		}

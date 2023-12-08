@@ -25,44 +25,62 @@ public class PredicateBuilder {
 		if (predicate == null) {
 			return true;
 		}
-		if (predicate instanceof SqmNegatedPredicate np) {
-			return isConstantFalse(np.getWrappedPredicate());
-		}
-		else if (predicate instanceof SqmNullnessPredicate np) {
-			if (np.getExpression() instanceof SqmLiteral<?> literal) {
-				return np.isNegated() && literal.getLiteralValue() != null
-						|| !np.isNegated() && literal.getLiteralValue() == null;
+		return switch (predicate) {
+			case SqmNegatedPredicate np -> isConstantFalse(np.getWrappedPredicate());
+			case SqmNullnessPredicate np -> {
+				if (np.getExpression() instanceof SqmLiteral<?> literal) {
+					yield np.isNegated() && literal.getLiteralValue() != null
+							|| !np.isNegated() && literal.getLiteralValue() == null;
+				}
+				else {
+					yield false;
+				}
 			}
-		}
-		else if (predicate instanceof SqmBooleanExpressionPredicate bep) {
-			if (bep.getBooleanExpression() instanceof SqmLiteral<Boolean> literal) {
-				return !bep.isNegated() && literal.getLiteralValue() || bep.isNegated() && !literal.getLiteralValue();
+			case SqmBooleanExpressionPredicate bep -> {
+				if (bep.getBooleanExpression() instanceof SqmLiteral<Boolean> literal) {
+					yield !bep.isNegated() && literal.getLiteralValue()
+							|| bep.isNegated() && !literal.getLiteralValue();
+				}
+				else {
+					yield false;
+				}
+			}
+			default -> {
+				yield false;
+			}
+		};
 
-			}
-		}
-		return false;
 	}
 
 	public static boolean isConstantFalse(Predicate predicate) {
 		if (predicate == null) {
 			return false;
 		}
-		if (predicate instanceof SqmNegatedPredicate np) {
-			return isConstantTrue(np.getWrappedPredicate());
-		}
-		else if (predicate instanceof SqmNullnessPredicate np) {
-			if (np.getExpression() instanceof SqmLiteral<?> literal) {
-				return np.isNegated() && literal.getLiteralValue() == null
-						|| !np.isNegated() && literal.getLiteralValue() != null;
+		return switch (predicate) {
+			case SqmNegatedPredicate np -> isConstantTrue(np.getWrappedPredicate());
+			case SqmNullnessPredicate np -> {
+				if (np.getExpression() instanceof SqmLiteral<?> literal) {
+					yield np.isNegated() && literal.getLiteralValue() == null
+							|| !np.isNegated() && literal.getLiteralValue() != null;
+				}
+				else {
+					yield false;
+				}
 			}
-		}
-		else if (predicate instanceof SqmBooleanExpressionPredicate bep) {
-			if (bep.getBooleanExpression() instanceof SqmLiteral<Boolean> literal) {
-				return !bep.isNegated() && !literal.getLiteralValue() || bep.isNegated() && literal.getLiteralValue();
+			case SqmBooleanExpressionPredicate bep -> {
+				if (bep.getBooleanExpression() instanceof SqmLiteral<Boolean> literal) {
+					yield !bep.isNegated() && !literal.getLiteralValue()
+							|| bep.isNegated() && literal.getLiteralValue();
 
+				}
+				else {
+					yield false;
+				}
 			}
-		}
-		return false;
+			default -> {
+				yield false;
+			}
+		};
 	}
 
 	public static <T> Predicate andExample(Root<T> root, CriteriaBuilder cb, Predicate predicate, Example<T> example) {

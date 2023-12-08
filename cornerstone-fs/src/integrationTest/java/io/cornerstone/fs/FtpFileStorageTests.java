@@ -31,7 +31,7 @@ class FtpFileStorageTests extends FileStorageTestBase {
 	private static final String FTP_PASSWORD = "ftp";
 
 	@Container
-	static GenericContainer<?> container = new VsftpdContainer().withExposedPorts(21)
+	static final GenericContainer<?> container = new VsftpdContainer().withExposedPorts(21)
 		.withEnv("FTP_USER", FTP_USER)
 		.withEnv("FTP_PASSWORD", FTP_PASSWORD)
 		.withEnv("FTP_CHOWN_ROOT", "true");

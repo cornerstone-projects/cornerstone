@@ -15,7 +15,7 @@ import org.springframework.util.StringUtils;
 
 public abstract class AbstractCyclicSequence implements CyclicSequence, InitializingBean, BeanNameAware {
 
-	protected Logger logger = LoggerFactory.getLogger(getClass());
+	protected final Logger logger = LoggerFactory.getLogger(getClass());
 
 	@Getter
 	@Setter

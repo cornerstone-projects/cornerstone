@@ -3,6 +3,7 @@ package io.cornerstone.core.util;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
 
 import lombok.experimental.UtilityClass;
 
@@ -14,11 +15,11 @@ public class ExceptionUtils {
 	public static String getStackTraceAsString(Throwable t) {
 		try {
 			ByteArrayOutputStream os = new ByteArrayOutputStream();
-			PrintStream ps = new PrintStream(os, true, "UTF-8");
+			PrintStream ps = new PrintStream(os, true, StandardCharsets.UTF_8);
 			t.printStackTrace(ps);
 			ps.flush();
 			ps.close();
-			String s = os.toString("UTF-8");
+			String s = os.toString(StandardCharsets.UTF_8);
 			os.flush();
 			os.close();
 			return s;

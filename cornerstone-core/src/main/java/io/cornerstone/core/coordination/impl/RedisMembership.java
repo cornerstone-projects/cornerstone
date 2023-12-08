@@ -27,7 +27,7 @@ public class RedisMembership implements Membership, SchedulingConfigurer {
 
 	private static final String NAMESPACE = "membership:";
 
-	private Set<String> groups = Collections.newSetFromMap(new ConcurrentHashMap<>());
+	private final Set<String> groups = Collections.newSetFromMap(new ConcurrentHashMap<>());
 
 	@Value("${redis.membership.heartbeat:60000}")
 	private int heartbeat = 60000;

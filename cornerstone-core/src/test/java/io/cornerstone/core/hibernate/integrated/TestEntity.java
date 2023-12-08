@@ -9,6 +9,7 @@ import io.cornerstone.core.hibernate.convert.EnumArrayConverter;
 import io.cornerstone.core.hibernate.convert.EnumListConverter;
 import io.cornerstone.core.hibernate.convert.EnumSetConverter;
 import io.cornerstone.core.hibernate.convert.JsonConverter;
+import io.cornerstone.core.hibernate.id.SnowflakeIdentifierGenerator;
 import io.cornerstone.core.hibernate.type.JsonType;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
@@ -35,7 +36,7 @@ class TestEntity implements Persistable<Long> {
 
 	@Id
 	@GeneratedValue(generator = "snowflake")
-	@GenericGenerator(name = "snowflake", strategy = "io.cornerstone.core.hibernate.id.SnowflakeIdentifierGenerator")
+	@GenericGenerator(name = "snowflake", type = SnowflakeIdentifierGenerator.class)
 	private @Nullable Long id;
 
 	private String[] stringArray;

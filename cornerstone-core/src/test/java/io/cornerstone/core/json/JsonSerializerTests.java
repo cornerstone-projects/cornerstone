@@ -16,7 +16,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class JsonSerializerTests {
 
-	ObjectMapper mapper = new ObjectMapper();
+	final ObjectMapper mapper = new ObjectMapper();
 
 	@Getter
 	@Setter

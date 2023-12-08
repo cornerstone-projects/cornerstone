@@ -22,7 +22,7 @@ public abstract class RabbitQueue<T extends Serializable> implements Queue<T> {
 
 	@Getter
 	@Setter
-	protected String queueName = "";
+	protected String queueName;
 
 	@Getter
 	@Setter

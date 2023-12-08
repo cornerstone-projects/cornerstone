@@ -5,14 +5,14 @@ import lombok.Value;
 @Value
 public class VerificationCodeRequirement {
 
-	private boolean required;
+	boolean required;
 
-	private Integer length;
+	Integer length;
 
-	private Boolean passwordHidden;
+	Boolean passwordHidden;
 
-	private Boolean sendingRequired;
+	Boolean sendingRequired;
 
-	private Integer resendInterval;
+	Integer resendInterval;
 
 }

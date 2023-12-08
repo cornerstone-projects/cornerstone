@@ -31,20 +31,22 @@ public class MixedPasswordEncoder implements PasswordEncoder {
 		if (rawPassword == null || encodedPassword == null) {
 			return false;
 		}
-		switch (encodedPassword.length()) {
+		byte[] digested;
+		byte[] salt;
+		return switch (encodedPassword.length()) {
 			case 48:
-				byte[] digested = Hex.decode(encodedPassword);
-				byte[] salt = EncodingUtils.subArray(digested, 0, saltGenerator.getKeyLength());
-				return MessageDigest.isEqual(digested, digest(rawPassword, salt, true));
+				digested = Hex.decode(encodedPassword);
+				salt = EncodingUtils.subArray(digested, 0, saltGenerator.getKeyLength());
+				yield MessageDigest.isEqual(digested, digest(rawPassword, salt, true));
 			case 60:
-				return BCRYPT.matches(rawPassword, encodedPassword);
+				yield BCRYPT.matches(rawPassword, encodedPassword);
 			case 80:
 				digested = Hex.decode(encodedPassword);
 				salt = EncodingUtils.subArray(digested, 0, saltGenerator.getKeyLength());
-				return MessageDigest.isEqual(digested, digest(rawPassword, salt, false));
+				yield MessageDigest.isEqual(digested, digest(rawPassword, salt, false));
 			default:
-				return false;
-		}
+				yield false;
+		};
 	}
 
 	private static byte[] digest(CharSequence rawPassword, byte[] salt, boolean additionalMD5) {

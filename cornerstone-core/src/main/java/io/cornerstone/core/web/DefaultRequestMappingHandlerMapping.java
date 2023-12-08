@@ -12,7 +12,7 @@ public class DefaultRequestMappingHandlerMapping extends RequestMappingHandlerMa
 
 	private static final SpelExpressionParser PARSER = new SpelExpressionParser();
 
-	private static ThreadLocal<Object> handlerHolder = new ThreadLocal<>();
+	private static final ThreadLocal<Object> handlerHolder = new ThreadLocal<>();
 
 	@Override
 	public void setEmbeddedValueResolver(StringValueResolver resolver) {
@@ -24,9 +24,7 @@ public class DefaultRequestMappingHandlerMapping extends RequestMappingHandlerMa
 					strVal = String.valueOf(PARSER.parseExpression(strVal, ParserContext.TEMPLATE_EXPRESSION)
 						.getValue(new StandardEvaluationContext(handler)));
 				}
-				if (resolver != null) {
-					strVal = resolver.resolveStringValue(strVal);
-				}
+				strVal = resolver.resolveStringValue(strVal);
 				return strVal;
 			}
 		});

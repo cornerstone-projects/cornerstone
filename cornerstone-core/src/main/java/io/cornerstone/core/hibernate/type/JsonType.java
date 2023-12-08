@@ -67,7 +67,7 @@ public class JsonType extends BaseUserTypeSupport<Object> implements DynamicPara
 
 	static class JsonJavaType extends AbstractClassJavaType<Object> {
 
-		private static ObjectMapper objectMapper = new ObjectMapper()
+		private static final ObjectMapper objectMapper = new ObjectMapper()
 			.setSerializationInclusion(JsonInclude.Include.NON_NULL)
 			.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
 

@@ -2,6 +2,7 @@ package io.cornerstone.core.hibernate.id.sequence;
 
 import java.io.Serializable;
 
+import io.cornerstone.core.hibernate.id.SequenceIdentifierGenerator;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -22,7 +23,7 @@ class TestEntity implements Persistable<Long>, Serializable {
 
 	@Id
 	@GeneratedValue(generator = "sequence")
-	@GenericGenerator(name = "sequence", strategy = "io.cornerstone.core.hibernate.id.SequenceIdentifierGenerator",
+	@GenericGenerator(name = "sequence", type = SequenceIdentifierGenerator.class,
 			parameters = @Parameter(name = "sequenceName", value = "testSequence"))
 	private @Nullable Long id;
 

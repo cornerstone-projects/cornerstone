@@ -25,7 +25,7 @@ public class VerificationProperties {
 	private Verify verify = new Verify();
 
 	@Data
-	public class Verify {
+	public static class Verify {
 
 		private Duration interval = Duration.ofSeconds(5);
 
@@ -34,7 +34,7 @@ public class VerificationProperties {
 	}
 
 	@Data
-	public class Resend {
+	public static class Resend {
 
 		private Duration interval = Duration.ofSeconds(60);
 

@@ -22,7 +22,7 @@ public class DatabaseSimpleSequenceDelegate extends AbstractDatabaseSimpleSequen
 
 	@Override
 	public void afterPropertiesSet() throws java.lang.Exception {
-		DatabaseProduct databaseProduct = null;
+		DatabaseProduct databaseProduct;
 		try (Connection con = getDataSource().getConnection()) {
 			DatabaseMetaData dbmd = con.getMetaData();
 			databaseProduct = DatabaseProduct.parse(dbmd.getDatabaseProductName().toLowerCase(Locale.ROOT));

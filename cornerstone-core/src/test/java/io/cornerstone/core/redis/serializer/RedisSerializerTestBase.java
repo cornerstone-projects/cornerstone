@@ -93,7 +93,7 @@ public abstract class RedisSerializerTestBase {
 
 	enum Status {
 
-		ACTIVE, DISABLED;
+		ACTIVE, DISABLED
 
 	}
 

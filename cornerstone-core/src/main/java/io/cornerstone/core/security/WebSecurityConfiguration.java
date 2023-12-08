@@ -66,8 +66,7 @@ public class WebSecurityConfiguration {
 	private ObjectMapper objectMapper;
 
 	public void configure(WebSecurity web) {
-		List<String> ignoringPathPatterns = new ArrayList<>();
-		ignoringPathPatterns.addAll(this.properties.getIgnoringPathPatterns());
+		List<String> ignoringPathPatterns = new ArrayList<>(this.properties.getIgnoringPathPatterns());
 		this.ignoringRequestContributors.forEach(c -> ignoringPathPatterns.add(c.getIgnoringPathPattern()));
 		web.ignoring()
 			.requestMatchers(ignoringPathPatterns.stream()

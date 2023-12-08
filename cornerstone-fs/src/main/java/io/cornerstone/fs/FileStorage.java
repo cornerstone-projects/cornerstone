@@ -39,7 +39,7 @@ public interface FileStorage {
 		boolean paging = this.isBucketBased();
 		if (paging) {
 			String marker = null;
-			Paged<FileInfo> files = null;
+			Paged<FileInfo> files;
 			do {
 				files = this.listFilesAndDirectory(directory, 100, marker);
 				for (FileInfo entry : files.getResult()) {

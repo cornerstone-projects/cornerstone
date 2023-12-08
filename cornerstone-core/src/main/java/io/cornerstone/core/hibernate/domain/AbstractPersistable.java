@@ -32,7 +32,7 @@ public abstract class AbstractPersistable<ID extends Serializable> implements Pe
 		}
 		AbstractPersistable<?> that = (AbstractPersistable<?>) obj;
 		ID id = this.getId();
-		return id == null ? false : id.equals(that.getId());
+		return id != null && id.equals(that.getId());
 	}
 
 	@Override

@@ -10,9 +10,9 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class AopContext {
 
-	private static ThreadLocal<List<Class<?>>> bypass = new ThreadLocal<>();
+	private static final ThreadLocal<List<Class<?>>> bypass = new ThreadLocal<>();
 
-	private static ThreadLocal<Set<Class<?>>> disabled = new ThreadLocal<>();
+	private static final ThreadLocal<Set<Class<?>>> disabled = new ThreadLocal<>();
 
 	public static void reset() {
 		bypass.remove();

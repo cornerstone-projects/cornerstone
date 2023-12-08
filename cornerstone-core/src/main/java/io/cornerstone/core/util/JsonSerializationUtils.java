@@ -16,7 +16,6 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonDeserializer;
@@ -49,16 +48,12 @@ public class JsonSerializationUtils {
 		if (object == null) {
 			return null;
 		}
-		if (object instanceof Long) {
-			return (object + "L").getBytes();
-		}
-		else if (object instanceof Float) {
-			return (object + "F").getBytes();
-		}
-		else if (object instanceof Enum) {
-			return (object.getClass().getName() + '.' + ((Enum<?>) object).name()).getBytes();
-		}
-		return defaultTypingObjectMapper.writeValueAsBytes(object);
+		return switch (object) {
+			case Long l -> (object + "L").getBytes();
+			case Float v -> (object + "F").getBytes();
+			case Enum<?> en -> (object.getClass().getName() + '.' + en.name()).getBytes();
+			default -> defaultTypingObjectMapper.writeValueAsBytes(object);
+		};
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -107,7 +102,7 @@ public class JsonSerializationUtils {
 				.addDeserializer(NullValue.class, new JsonDeserializer<NullValue>() {
 					@Override
 					public NullValue deserialize(JsonParser jsonparser, DeserializationContext deserializationcontext)
-							throws IOException, JsonProcessingException {
+							throws IOException {
 						return (NullValue) NullValue.INSTANCE;
 					}
 				}))
@@ -127,7 +122,7 @@ public class JsonSerializationUtils {
 		return objectMapper;
 	}
 
-	@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
+	@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 	@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.NONE,
 			getterVisibility = JsonAutoDetect.Visibility.PUBLIC_ONLY,
 			isGetterVisibility = JsonAutoDetect.Visibility.NONE)

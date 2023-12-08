@@ -130,7 +130,7 @@ class PublishAwareTests extends DataJpaTestBase {
 		public void saveAndUpdate() {
 			TestEntity entity = this.repository.save(new TestEntity());
 			entity.setName("test");
-			entity = this.repository.save(entity);
+			this.repository.save(entity);
 		}
 
 		@Transactional

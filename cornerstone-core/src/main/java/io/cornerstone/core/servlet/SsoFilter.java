@@ -7,6 +7,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -15,7 +16,6 @@ import java.util.Set;
 import io.cornerstone.core.util.RequestUtils;
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
-import jakarta.servlet.FilterConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
@@ -82,20 +82,12 @@ public class SsoFilter implements Filter {
 	@Value("${ssoHandler.strictAccess:false}")
 	protected boolean strictAccess;
 
-	private AntPathMatcher antPathMatcher = new AntPathMatcher();
+	private final AntPathMatcher antPathMatcher = new AntPathMatcher();
 
 	public SsoFilter(RestTemplateBuilder builder, UserDetailsService userDetailsService, MessageSource messageSource) {
 		this.restTemplate = builder.build();
 		this.userDetailsService = userDetailsService;
 		this.messageSource = messageSource;
-	}
-
-	@Override
-	public void init(FilterConfig config) throws ServletException {
-	}
-
-	@Override
-	public void destroy() {
 	}
 
 	@Override
@@ -275,7 +267,9 @@ public class SsoFilter implements Filter {
 		}
 		String targetUrl = sb.toString();
 		StringBuilder redirectUrl = new StringBuilder(this.portalLoginUrl.indexOf("://") > 0 ? "" : this.portalBaseUrl);
-		redirectUrl.append(this.portalLoginUrl).append("?targetUrl=").append(URLEncoder.encode(targetUrl, "UTF-8"));
+		redirectUrl.append(this.portalLoginUrl)
+			.append("?targetUrl=")
+			.append(URLEncoder.encode(targetUrl, StandardCharsets.UTF_8));
 		response.sendRedirect(redirectUrl.toString());
 	}
 

@@ -590,13 +590,13 @@ public enum DatabaseProduct {
 				}
 			}
 			StringBuilder sb = new StringBuilder();
-			if (map.size() > 0) {
+			if (!map.isEmpty()) {
 				for (Map.Entry<String, String> entry : map.entrySet()) {
 					sb.append(entry.getKey()).append("=").append(entry.getValue()).append(separator);
 				}
 				sb.deleteCharAt(sb.length() - 1);
 			}
-			return uri + delimiter + sb.toString();
+			return uri + delimiter + sb;
 		}
 		else {
 			return jdbcUrl + delimiter + qs;

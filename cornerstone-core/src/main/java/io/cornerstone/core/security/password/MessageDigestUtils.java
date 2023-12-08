@@ -11,7 +11,7 @@ class MessageDigestUtils {
 
 	public static final String DEFAULT_ENCODING = "UTF-8";
 
-	private static ThreadLocal<SoftReference<MessageDigest>> MD5 = new ThreadLocal<>() {
+	private static final ThreadLocal<SoftReference<MessageDigest>> MD5 = new ThreadLocal<>() {
 
 		@Override
 		protected SoftReference<MessageDigest> initialValue() {
@@ -24,7 +24,7 @@ class MessageDigestUtils {
 		}
 	};
 
-	private static ThreadLocal<SoftReference<MessageDigest>> SHA = new ThreadLocal<>() {
+	private static final ThreadLocal<SoftReference<MessageDigest>> SHA = new ThreadLocal<>() {
 
 		@Override
 		protected SoftReference<MessageDigest> initialValue() {
@@ -37,7 +37,7 @@ class MessageDigestUtils {
 		}
 	};
 
-	private static ThreadLocal<SoftReference<MessageDigest>> SHA256 = new ThreadLocal<>() {
+	private static final ThreadLocal<SoftReference<MessageDigest>> SHA256 = new ThreadLocal<>() {
 
 		@Override
 		protected SoftReference<MessageDigest> initialValue() {

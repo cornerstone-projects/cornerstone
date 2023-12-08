@@ -148,7 +148,7 @@ public abstract class AbstractSequenceCyclicSequence extends AbstractDatabaseCyc
 			}
 			String sequenceName = getSequenceName();
 			if (tableExists) {
-				boolean rowExists = false;
+				boolean rowExists;
 				try (ResultSet rs = stmt
 					.executeQuery("SELECT NAME FROM " + tableName + " WHERE NAME='" + sequenceName + "'")) {
 					rowExists = rs.next();
@@ -201,7 +201,7 @@ public abstract class AbstractSequenceCyclicSequence extends AbstractDatabaseCyc
 					}
 				}
 				try {
-					Thread.sleep(((1 + maxAttempts) - remainingAttempts) * 50);
+					Thread.sleep(((1 + maxAttempts) - remainingAttempts) * 50L);
 				}
 				catch (InterruptedException ex) {
 					this.logger.warn(ex.getMessage(), ex);

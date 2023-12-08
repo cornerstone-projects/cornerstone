@@ -12,10 +12,10 @@ public class BaseEvent<T> extends ApplicationEvent {
 	private static final long serialVersionUID = -2892858943541156897L;
 
 	@Getter
-	private String instanceId = currentInstanceId();
+	private final String instanceId = currentInstanceId();
 
 	@Getter
-	protected T source;
+	protected final T source;
 
 	public BaseEvent(T source) {
 		super(source);
@@ -56,7 +56,7 @@ public class BaseEvent<T> extends ApplicationEvent {
 	public String toString() {
 		StringBuilder sb = new StringBuilder(getClass().getName());
 		if (!"".equals(this.source)) {
-			sb.append("[source=" + this.source + "]");
+			sb.append("[source=").append(this.source).append("]");
 		}
 		if (this.instanceId != null) {
 			sb.append(" from ").append(this.instanceId);

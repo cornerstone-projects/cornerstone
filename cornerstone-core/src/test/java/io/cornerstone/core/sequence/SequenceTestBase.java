@@ -20,10 +20,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 abstract class SequenceTestBase {
 
 	@Getter
-	private int threads = 5;
+	private final int threads = 5;
 
 	@Getter
-	private int loop = 1000;
+	private final int loop = 1000;
 
 	private static ExecutorService executorService;
 

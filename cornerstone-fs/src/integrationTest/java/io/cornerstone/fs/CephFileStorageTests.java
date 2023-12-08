@@ -17,7 +17,7 @@ class CephFileStorageTests extends FileStorageTestBase {
 	private static final String SECRET_KEY = "demo";
 
 	@Container
-	static GenericContainer<?> container = new GenericContainer<>("quay.io/ceph/demo")
+	static final GenericContainer<?> container = new GenericContainer<>("quay.io/ceph/demo")
 		.withEnv("CEPH_DEMO_ACCESS_KEY", ACCESS_KEY)
 		.withEnv("CEPH_DEMO_SECRET_KEY", SECRET_KEY)
 		.withEnv("CEPH_DEMO_UID", "demo")

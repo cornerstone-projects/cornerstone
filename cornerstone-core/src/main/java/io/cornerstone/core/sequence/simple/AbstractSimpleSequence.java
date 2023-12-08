@@ -13,7 +13,7 @@ import org.springframework.util.StringUtils;
 
 public abstract class AbstractSimpleSequence implements SimpleSequence, InitializingBean, BeanNameAware {
 
-	protected Logger logger = LoggerFactory.getLogger(getClass());
+	protected final Logger logger = LoggerFactory.getLogger(getClass());
 
 	@Setter
 	private String sequenceName;

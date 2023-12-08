@@ -92,9 +92,8 @@ public class UserController extends AbstractEntityController<User, Long> {
 				writer.write("id,username,name,phone,roles,disabled");
 				this.userRepository.forEach(Example.of(example, getExampleMatcher()), sort, u -> {
 					writer.write('\n');
-					writer.write(String.format("%s,%s,%s,%s,%s,%b", String.valueOf(u.getId()), u.getUsername(),
-							u.getName(), u.getPhone(), u.getRoles() != null ? String.join(" ", u.getRoles()) : "",
-							u.getDisabled()));
+					writer.write(String.format("%s,%s,%s,%s,%s,%b", u.getId(), u.getUsername(), u.getName(),
+							u.getPhone(), u.getRoles() != null ? String.join(" ", u.getRoles()) : "", u.getDisabled()));
 				});
 			}
 		});

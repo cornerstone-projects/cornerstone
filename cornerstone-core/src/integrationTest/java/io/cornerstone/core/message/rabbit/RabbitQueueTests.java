@@ -33,8 +33,7 @@ class RabbitQueueTests extends QueueTestBase {
 
 		@Bean
 		TestQueue testQueue(MessageProcessor messageProcessor) {
-			TestQueue queue = new TestQueue(messageProcessor);
-			return queue;
+			return new TestQueue(messageProcessor);
 		}
 
 	}

@@ -17,10 +17,10 @@ import org.springframework.test.context.ContextConfiguration;
 class DatabaseSequenceTests extends SequenceTestBase {
 
 	@Getter
-	private int threads = 5;
+	private final int threads = 5;
 
 	@Getter
-	private int loop = 1000;
+	private final int loop = 1000;
 
 	static class Config {
 

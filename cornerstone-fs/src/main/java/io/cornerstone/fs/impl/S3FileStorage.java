@@ -124,7 +124,7 @@ public class S3FileStorage extends BucketFileStorage {
 
 	@Override
 	protected boolean doMkdir(String path) {
-		if (path.equals("") || path.equals("/")) {
+		if (path.isEmpty() || path.equals("/")) {
 			return true;
 		}
 		if (!path.endsWith("/")) {
@@ -148,7 +148,7 @@ public class S3FileStorage extends BucketFileStorage {
 
 	@Override
 	public boolean delete(String path) {
-		if (path.equals("") || path.equals("/")) {
+		if (path.isEmpty() || path.equals("/")) {
 			return false;
 		}
 		path = normalizePath(path);
@@ -170,7 +170,7 @@ public class S3FileStorage extends BucketFileStorage {
 
 	@Override
 	public long getLastModified(String path) {
-		if (path.equals("") || path.equals("/")) {
+		if (path.isEmpty() || path.equals("/")) {
 			return 0;
 		}
 		path = normalizePath(path);
@@ -187,7 +187,7 @@ public class S3FileStorage extends BucketFileStorage {
 
 	@Override
 	public boolean exists(String path) {
-		if (path.equals("") || path.equals("/")) {
+		if (path.isEmpty() || path.equals("/")) {
 			return true;
 		}
 		if (path.endsWith("/")) {
@@ -199,7 +199,7 @@ public class S3FileStorage extends BucketFileStorage {
 
 	@Override
 	public boolean isDirectory(String path) {
-		if (path.equals("") || path.equals("/")) {
+		if (path.isEmpty() || path.equals("/")) {
 			return true;
 		}
 		if (!path.endsWith("/")) {

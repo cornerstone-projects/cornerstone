@@ -8,7 +8,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.BeanProperty;
 import com.fasterxml.jackson.databind.DeserializationContext;
@@ -42,14 +41,13 @@ public class FromIdDeserializer extends StdDeserializer<Object> implements Conte
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Object deserialize(JsonParser parser, DeserializationContext ctx)
-			throws IOException, JsonProcessingException {
+	public Object deserialize(JsonParser parser, DeserializationContext ctx) throws IOException {
 		if (this.type == null) {
 			return null;
 		}
 		try {
 			if (this.type.isCollectionLikeType() || this.type.isArrayType()) {
-				Collection<Object> coll = null;
+				Collection<Object> coll;
 				JavaType componentType = this.type.getContentType();
 				if (this.type.isArrayType()) {
 					coll = new ArrayList<>();

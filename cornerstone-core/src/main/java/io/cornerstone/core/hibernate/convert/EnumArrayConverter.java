@@ -11,7 +11,7 @@ public abstract class EnumArrayConverter<T extends Enum<T>> {
 
 	public static final String SEPARATOR = AbstractCollectionConverter.SEPARATOR;
 
-	private Class<T> enumType;
+	private final Class<T> enumType;
 
 	public EnumArrayConverter() {
 		this.enumType = (Class<T>) GenericTypeResolver.resolveTypeArgument(getClass(), EnumArrayConverter.class);

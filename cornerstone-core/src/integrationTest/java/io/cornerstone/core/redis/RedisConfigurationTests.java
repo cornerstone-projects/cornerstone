@@ -29,7 +29,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class RedisConfigurationTests {
 
 	@Container
-	static GenericContainer<?> container = new GenericContainer<>("redis").withExposedPorts(6379);
+	static final GenericContainer<?> container = new GenericContainer<>("redis").withExposedPorts(6379);
 
 	@DynamicPropertySource
 	static void registerDynamicProperties(DynamicPropertyRegistry registry) {

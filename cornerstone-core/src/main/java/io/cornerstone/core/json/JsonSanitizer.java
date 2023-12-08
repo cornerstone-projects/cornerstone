@@ -36,9 +36,9 @@ import org.springframework.core.annotation.AnnotationUtils;
 
 public class JsonSanitizer {
 
-	public static JsonSanitizer DEFAULT_INSTANCE;
+	public static final JsonSanitizer DEFAULT_INSTANCE;
 
-	private static ObjectMapper objectMapper;
+	private static final ObjectMapper objectMapper;
 	static {
 		objectMapper = new ObjectMapper();
 		objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
