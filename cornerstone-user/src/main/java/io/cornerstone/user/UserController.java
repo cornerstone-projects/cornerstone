@@ -19,7 +19,7 @@ import io.cornerstone.core.web.PageableAsQueryParam;
 import io.cornerstone.core.web.SortAsQueryParam;
 import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
-import org.hibernate.cfg.AvailableSettings;
+import org.hibernate.cfg.BatchSettings;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
@@ -35,7 +35,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.util.StringUtils;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -50,7 +49,6 @@ import static org.springframework.data.domain.Sort.Direction.ASC;
 import static org.springframework.http.HttpStatus.OK;
 
 @RestController
-@Validated
 @Secured(ADMIN_ROLE)
 public class UserController extends AbstractEntityController<User, Long> {
 
@@ -104,7 +102,7 @@ public class UserController extends AbstractEntityController<User, Long> {
 		try (BufferedReader reader = new BufferedReader(
 				new InputStreamReader(input.getInputStream(), StandardCharsets.UTF_8))) {
 			int batchSize = this.applicationContext.getEnvironment()
-				.getProperty("spring.jpa.properties." + AvailableSettings.STATEMENT_BATCH_SIZE, Integer.class, 50);
+				.getProperty("spring.jpa.properties." + BatchSettings.STATEMENT_BATCH_SIZE, Integer.class, 50);
 			String line;
 			List<User> batch = new ArrayList<>();
 			while ((line = reader.readLine()) != null) {

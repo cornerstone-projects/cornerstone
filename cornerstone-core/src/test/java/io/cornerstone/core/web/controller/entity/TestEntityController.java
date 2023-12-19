@@ -6,12 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestComponent;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RestController;
 
 @TestComponent
 @RestController
-@Validated
 class TestEntityController extends AbstractEntityController<TestEntity, Long> {
 
 	@Autowired

@@ -5,11 +5,9 @@ import io.cornerstone.core.web.AbstractEntityController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@Validated
 public class CustomerController extends AbstractEntityController<Customer, Long> {
 
 	@Autowired

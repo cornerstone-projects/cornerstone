@@ -11,7 +11,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -24,7 +23,6 @@ import static org.springframework.security.web.context.HttpSessionSecurityContex
 import static org.springframework.web.context.request.RequestAttributes.SCOPE_SESSION;
 
 @RestController
-@Validated
 public class CurrentUserController extends BaseRestController {
 
 	public static final String PATH_PROFILE = "/user/@self";
