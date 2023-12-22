@@ -56,8 +56,6 @@ spring.data.redis:
 
 spring.cache.redis.time-to-live: 300s
 
-spring.threads.virtual.enabled: true
-
 spring.task:
   execution:
     pool.maxSize: 100
