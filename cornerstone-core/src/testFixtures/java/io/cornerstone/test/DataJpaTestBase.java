@@ -1,7 +1,7 @@
 package io.cornerstone.test;
 
-import io.cornerstone.core.hibernate.convert.AbstractArrayConverter;
-import io.cornerstone.core.hibernate.id.SnowflakeProperties;
+import io.cornerstone.core.persistence.convert.AbstractArrayConverter;
+import io.cornerstone.core.persistence.id.SnowflakeProperties;
 import jakarta.persistence.EntityManager;
 
 import org.springframework.beans.factory.annotation.Autowired;

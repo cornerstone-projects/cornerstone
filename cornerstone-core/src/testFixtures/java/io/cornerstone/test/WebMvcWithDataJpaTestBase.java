@@ -1,7 +1,7 @@
 package io.cornerstone.test;
 
-import io.cornerstone.core.hibernate.convert.AbstractArrayConverter;
-import io.cornerstone.core.hibernate.id.SnowflakeProperties;
+import io.cornerstone.core.persistence.convert.AbstractArrayConverter;
+import io.cornerstone.core.persistence.id.SnowflakeProperties;
 
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;

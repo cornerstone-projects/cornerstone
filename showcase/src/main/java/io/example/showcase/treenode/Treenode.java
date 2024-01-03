@@ -1,6 +1,6 @@
 package io.example.showcase.treenode;
 
-import io.cornerstone.core.hibernate.domain.AbstractTreeableEntity;
+import io.cornerstone.core.persistence.domain.AbstractTreeableEntity;
 import jakarta.persistence.Entity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

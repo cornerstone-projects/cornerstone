@@ -1,6 +1,6 @@
 package io.cornerstone.core;
 
-import io.cornerstone.core.hibernate.convert.AbstractArrayConverter;
+import io.cornerstone.core.persistence.convert.AbstractArrayConverter;
 
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigurationExcludeFilter;

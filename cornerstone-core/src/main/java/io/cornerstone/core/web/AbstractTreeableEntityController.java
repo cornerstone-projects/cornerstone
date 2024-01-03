@@ -4,8 +4,8 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import io.cornerstone.core.domain.View;
-import io.cornerstone.core.hibernate.criteria.PredicateBuilder;
-import io.cornerstone.core.hibernate.domain.AbstractTreeableEntity;
+import io.cornerstone.core.persistence.criteria.PredicateBuilder;
+import io.cornerstone.core.persistence.domain.AbstractTreeableEntity;
 import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.annotation.PostConstruct;
 import jakarta.persistence.criteria.Predicate;

@@ -2,7 +2,7 @@ package io.cornerstone.user;
 
 import java.util.Optional;
 
-import io.cornerstone.core.repository.StreamableJpaRepository;
+import io.cornerstone.core.persistence.repository.StreamableJpaRepository;
 
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;

@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import io.cornerstone.core.domain.View;
-import io.cornerstone.core.hibernate.domain.AbstractEntity;
+import io.cornerstone.core.persistence.domain.AbstractEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Index;

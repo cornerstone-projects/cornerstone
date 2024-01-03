@@ -3,7 +3,7 @@ package io.example.showcase.customer;
 import com.fasterxml.jackson.annotation.JsonView;
 import io.cornerstone.core.domain.Versioned;
 import io.cornerstone.core.domain.View;
-import io.cornerstone.core.hibernate.domain.AbstractAuditableEntity;
+import io.cornerstone.core.persistence.domain.AbstractAuditableEntity;
 import io.cornerstone.core.validation.constraints.CitizenIdentificationNumber;
 import io.cornerstone.core.validation.constraints.MobilePhoneNumber;
 import jakarta.persistence.Column;

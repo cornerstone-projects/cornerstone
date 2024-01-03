@@ -11,7 +11,7 @@ import io.cornerstone.core.domain.Versioned;
 import io.cornerstone.core.domain.View.Creation;
 import io.cornerstone.core.domain.View.Edit;
 import io.cornerstone.core.domain.View.Update;
-import io.cornerstone.core.hibernate.domain.AbstractAuditableEntity;
+import io.cornerstone.core.persistence.domain.AbstractAuditableEntity;
 import io.cornerstone.core.security.verification.VerificationAware;
 import io.cornerstone.core.validation.constraints.MobilePhoneNumber;
 import jakarta.persistence.Column;

@@ -1,6 +1,6 @@
 package io.example.showcase.treenode;
 
-import io.cornerstone.core.repository.TreeableRepository;
+import io.cornerstone.core.persistence.repository.TreeableRepository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
