@@ -49,4 +49,18 @@ public class SecurityProperties {
 
 	private Map<String, String> authorizeRequestsMapping = Collections.emptyMap();
 
+	private Authentication authentication = new Authentication();
+
+	@Getter
+	@Setter
+	public static class Authentication {
+
+		private int lockdownForMinutes = 60;
+
+		private int maxAttempts = 5;
+
+		private int usernameMaxLength = 32;
+
+	}
+
 }

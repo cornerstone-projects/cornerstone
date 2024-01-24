@@ -23,6 +23,8 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
@@ -187,6 +189,11 @@ public class WebSecurityConfiguration {
 	}
 
 	@Bean
+	DefaultAuthenticationManager authenticationManager(List<AuthenticationProvider> providers) {
+		return new DefaultAuthenticationManager(providers, this.properties);
+	}
+
+	@Bean
 	DaoAuthenticationProvider daoAuthenticationProvider(ObjectProvider<UserDetailsService> userDetailsService,
 			ObjectProvider<PasswordEncoder> passwordEncoder,
 			ObjectProvider<UserDetailsPasswordService> userDetailsPasswordService) {
@@ -215,9 +222,10 @@ public class WebSecurityConfiguration {
 	}
 
 	@Bean
-	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+	public SecurityFilterChain filterChain(HttpSecurity http, AuthenticationManager authenticationManager)
+			throws Exception {
 		configure(http);
-		return http.build();
+		return http.authenticationManager(authenticationManager).build();
 	}
 
 	@Bean

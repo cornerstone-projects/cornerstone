@@ -36,8 +36,8 @@ import static org.mockito.Mockito.mock;
 import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
-@TestPropertySource(properties = { "defaultDaoAuthenticationProvider.usernameMaxLength=12",
-		"defaultDaoAuthenticationProvider.maxAttempts=3" })
+@TestPropertySource(
+		properties = { "security.authentication.username-max-length=12", "security.authentication.max-attempts=3" })
 @ContextConfiguration(classes = AttackProtectionTests.Config.class)
 class AttackProtectionTests extends ControllerTestBase {
 
@@ -81,7 +81,7 @@ class AttackProtectionTests extends ControllerTestBase {
 		String username = ADMIN_USERNAME;
 		Long maxAttempts = 3L;
 		String key = "fla:" + username;
-		String message = this.messageSource.getMessage("DefaultDaoAuthenticationProvider.maxAttemptsExceeded",
+		String message = this.messageSource.getMessage("DefaultAuthenticationManager.maxAttemptsExceeded",
 				new Object[] { maxAttempts }, "Login attempts exceed {0}", Locale.getDefault());
 		@SuppressWarnings("unchecked")
 		ValueOperations<String, String> opsForValue = mock(ValueOperations.class);
