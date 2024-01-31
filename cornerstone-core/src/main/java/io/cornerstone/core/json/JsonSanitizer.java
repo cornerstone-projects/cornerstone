@@ -223,8 +223,8 @@ public class JsonSanitizer {
 	}
 
 	private static boolean isNumeric(Class<?> type) {
-		return (Short.TYPE == type) || (Integer.TYPE == type) || (Long.TYPE == type) || (Float.TYPE == type)
-				|| (Double.TYPE == type) || (Number.class.isAssignableFrom(type));
+		return (short.class == type) || (int.class == type) || (long.class == type) || (float.class == type)
+				|| (double.class == type) || (Number.class.isAssignableFrom(type));
 	}
 
 	private static boolean isNumber(String value) {

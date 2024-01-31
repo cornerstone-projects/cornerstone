@@ -24,7 +24,7 @@ public class SequenceIdentifierGenerator implements IdentifierGenerator {
 
 	@Override
 	public Serializable generate(SharedSessionContractImplementor session, Object obj) {
-		return (this.type == Integer.class || this.type == Integer.TYPE) ? this.sequence.nextIntValue()
+		return (this.type == Integer.class || this.type == int.class) ? this.sequence.nextIntValue()
 				: this.type == String.class ? this.sequence.nextStringValue() : this.sequence.nextLongValue();
 	}
 
