@@ -1,3 +1,5 @@
+@file:Suppress("UnstableApiUsage")
+
 plugins {
 	java
 	checkstyle
@@ -61,7 +63,7 @@ testing {
 		val test by getting(JvmTestSuite::class) {
 			useJUnitJupiter()
 		}
-		register<JvmTestSuite>("integrationTest") {
+		val integrationTest by registering(JvmTestSuite::class) {
 			sources {
 				compileClasspath += sourceSets.test.get().output
 				runtimeClasspath += sourceSets.test.get().output
