@@ -1,6 +1,6 @@
 server.error.include-binding-errors: never
 spring.springdoc.swagger-ui.enabled: false
-mysql.host: localhost
+mysql.port: 3307
 ---
 spring:
   config.activate.on-profile: test

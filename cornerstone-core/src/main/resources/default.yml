@@ -162,7 +162,7 @@ management.tracing.sampling.probability: 0.05
 
 ---
 spring.config.activate.on-cloud-platform: kubernetes
-# env MYSQL_PORT -> tcp://10.108.159.183:3306 cause Malformed database URL, use MYSQL_SERVICE_PORT instead
+# env MYSQL_PORT -> tcp://10.108.159.183:3306 cause Malformed database URL if enableServiceLinks, use MYSQL_SERVICE_PORT instead
 mysql:
   host: ${mysql.service.host:mysql.default.svc.cluster.local}
   port: ${mysql.service.port:3306}
