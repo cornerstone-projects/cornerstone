@@ -1,3 +1,4 @@
 org.springframework.boot.env.EnvironmentPostProcessor=\
 io.cornerstone.core.DefaultPropertiesPostProcessor,\
+io.cornerstone.core.SecretPropertiesPostProcessor,\
 io.cornerstone.core.KubernetesConfigMapPostProcessor
