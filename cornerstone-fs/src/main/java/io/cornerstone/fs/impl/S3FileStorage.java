@@ -61,6 +61,9 @@ public class S3FileStorage extends BucketFileStorage {
 		else {
 			builder.withRegion(this.config.getRegion());
 		}
+		if (this.config.isChunkedEncodingDisabled()) {
+			builder.disableChunkedEncoding();
+		}
 		this.s3 = builder.build();
 		if (!this.s3.doesBucketExistV2(this.config.getBucket())) {
 			this.s3.createBucket(this.config.getBucket());

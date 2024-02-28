@@ -59,6 +59,8 @@ public class FileStorageProperties {
 
 		private boolean pathStyleAccess = true;
 
+		private boolean chunkedEncodingDisabled = true;
+
 		private int batchSize = 100;
 
 		private boolean hierarchicalDirectory;
