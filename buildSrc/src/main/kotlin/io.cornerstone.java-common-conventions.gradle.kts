@@ -1,11 +1,15 @@
 @file:Suppress("UnstableApiUsage")
 
+import io.spring.javaformat.gradle.tasks.Format
+
+
 plugins {
 	java
 	checkstyle
 	id("io.freefair.lombok")
 	id("io.spring.dependency-management")
 	id("io.spring.javaformat")
+	id("org.openrewrite.rewrite")
 }
 
 java.sourceCompatibility = JavaVersion.VERSION_21
@@ -34,6 +38,10 @@ dependencyManagement {
 	}
 }
 
+rewrite {
+	activeRecipe("org.openrewrite.java.migrate.UpgradeToJava21")
+}
+
 dependencies {
 	annotationProcessor("org.hibernate.orm:hibernate-jpamodelgen")
 	testAnnotationProcessor("org.hibernate.orm:hibernate-jpamodelgen")
@@ -42,6 +50,7 @@ dependencies {
 	testRuntimeOnly("com.h2database:h2")
 	testImplementation(testFixtures(project(":cornerstone-core")))
 	checkstyle("""io.spring.javaformat:spring-javaformat-checkstyle:${property("javaformat-plugin.version")}""")
+	rewrite("""org.openrewrite.recipe:rewrite-migrate-java:${property("rewrite-migrate-java.version")}""")
 }
 
 configurations.all {
@@ -120,6 +129,10 @@ tasks.named("clean") {
 	doLast {
 		delete("bin", "logs")
 	}
+}
+
+tasks.withType<Format>() {
+	dependsOn("rewriteRun")
 }
 
 val integration: String? by rootProject
