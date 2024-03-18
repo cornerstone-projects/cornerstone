@@ -51,10 +51,10 @@ public interface Application {
 
 	default String getInstanceId(boolean includeName) {
 		if (includeName) {
-			return String.format("%s@%s:%d", getName(), getHostAddress(), getServerPort());
+			return "%s@%s:%d".formatted(getName(), getHostAddress(), getServerPort());
 		}
 		else {
-			return String.format("%s:%d", getHostAddress(), getServerPort());
+			return "%s:%d".formatted(getHostAddress(), getServerPort());
 		}
 	}
 

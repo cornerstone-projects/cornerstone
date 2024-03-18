@@ -59,7 +59,7 @@ public class RedisCyclicSequence extends AbstractCyclicSequence {
 				connection.serverCommands().time();
 				return null;
 			});
-			long value = (Long) results.get(0);
+			long value = (Long) results.getFirst();
 			LocalDateTime now = LocalDateTime.ofInstant(Instant.ofEpochMilli((Long) results.get(1)),
 					TimeZone.getDefault().toZoneId());
 			final String stringValue = String.valueOf(value);

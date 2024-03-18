@@ -67,7 +67,7 @@ public class RedisMembership implements Membership, SchedulingConfigurer {
 	public String getLeader(String group) {
 		List<String> list = getMembers(group);
 		if (!list.isEmpty()) {
-			return list.get(0);
+			return list.getFirst();
 		}
 		return null;
 	}

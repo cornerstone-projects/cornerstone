@@ -46,7 +46,7 @@ public class StandaloneMembership implements Membership {
 			return null;
 		}
 		else {
-			return members.get(0);
+			return members.getFirst();
 		}
 	}
 

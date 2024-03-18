@@ -87,33 +87,33 @@ class KeysetScrollIntegrationTests extends DataJpaTestBase {
 			assertThat(contents.get(i)).hasSize(pageSize);
 		}
 		if (divisible) {
-			assertThat(contents.get(contents.size() - 1)).hasSize(pageSize);
+			assertThat(contents.getLast()).hasSize(pageSize);
 		}
 		else {
-			assertThat(contents.get(contents.size() - 1)).hasSize(total % pageSize);
+			assertThat(contents.getLast()).hasSize(total % pageSize);
 		}
 
-		List<TestEntity> first = contents.get(0);
-		List<TestEntity> last = contents.get(contents.size() - 1);
+		List<TestEntity> first = contents.getFirst();
+		List<TestEntity> last = contents.getLast();
 
 		if (sortDirection == Sort.Direction.ASC) {
 			if (scrollDirection == ScrollPosition.Direction.FORWARD) {
-				assertThat(first.get(0).getSeqNo()).isEqualTo(0);
-				assertThat(last.get(last.size() - 1).getSeqNo()).isEqualTo(total - 1);
+				assertThat(first.getFirst().getSeqNo()).isEqualTo(0);
+				assertThat(last.getLast().getSeqNo()).isEqualTo(total - 1);
 			}
 			else {
-				assertThat(first.get(first.size() - 1).getSeqNo()).isEqualTo(total - 1);
-				assertThat(last.get(0).getSeqNo()).isEqualTo(0);
+				assertThat(first.getLast().getSeqNo()).isEqualTo(total - 1);
+				assertThat(last.getFirst().getSeqNo()).isEqualTo(0);
 			}
 		}
 		else {
 			if (scrollDirection == ScrollPosition.Direction.FORWARD) {
-				assertThat(first.get(0).getSeqNo()).isEqualTo(total - 1);
-				assertThat(last.get(last.size() - 1).getSeqNo()).isEqualTo(0);
+				assertThat(first.getFirst().getSeqNo()).isEqualTo(total - 1);
+				assertThat(last.getLast().getSeqNo()).isEqualTo(0);
 			}
 			else {
-				assertThat(first.get(first.size() - 1).getSeqNo()).isEqualTo(0);
-				assertThat(last.get(0).getSeqNo()).isEqualTo(total - 1);
+				assertThat(first.getLast().getSeqNo()).isEqualTo(0);
+				assertThat(last.getFirst().getSeqNo()).isEqualTo(total - 1);
 			}
 		}
 	}

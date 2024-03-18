@@ -104,8 +104,8 @@ class CustomerControllerTests extends BaseControllerTests {
 		assertThat(page.getSize()).isEqualTo(10);
 		assertThat(page.getTotalPages()).isEqualTo(1);
 		assertThat(page.getTotalElements()).isEqualTo(size);
-		assertThat(page.getResult().get(0).getCreatedDate()).isNull(); // Customer.View.List
-																		// view
+		assertThat(page.getResult().getFirst().getCreatedDate()).isNull(); // Customer.View.List
+																			// view
 		response = restTemplate.exchange(RequestEntity.method(GET, PATH_LIST + "?page=2&size=1&sort=id,desc").build(),
 				new ParameterizedTypeReference<ResultPage<Customer>>() {
 				});

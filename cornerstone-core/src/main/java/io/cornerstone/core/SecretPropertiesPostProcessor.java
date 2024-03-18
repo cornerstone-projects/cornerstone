@@ -101,9 +101,9 @@ public class SecretPropertiesPostProcessor implements EnvironmentPostProcessor {
 			if (KEY_DECODER.equals(name)) {
 				return value;
 			}
-			if (value instanceof String) {
+			if (value instanceof String string) {
 				try {
-					value = this.decoder.apply((String) value);
+					value = this.decoder.apply(string);
 				}
 				catch (Exception ex) {
 					throw new RuntimeException("Failed to resolve property: " + name, ex);

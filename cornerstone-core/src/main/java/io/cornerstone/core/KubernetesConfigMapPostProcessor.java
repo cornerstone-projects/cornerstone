@@ -52,8 +52,8 @@ public class KubernetesConfigMapPostProcessor implements EnvironmentPostProcesso
 				this.log.info("Add ConfigTreePropertySource from config directory:" + configMapDir);
 			}
 			else if (!location.isOptional()) {
-				String message = String.format(
-						"Config map directory '%s' does not exist, add 'optional:' prefix if it's optional", location);
+				String message = "Config map directory '%s' does not exist, add 'optional:' prefix if it's optional"
+					.formatted(location);
 				throw new ConfigDataLocationNotFoundException(location, message, null);
 			}
 		}

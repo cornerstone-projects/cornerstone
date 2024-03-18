@@ -53,11 +53,11 @@ public class CurrentUserGenerator implements BeforeExecutionGenerator {
 	}
 
 	static Class<?> getPropertyType(Member member) {
-		if (member instanceof Field) {
-			return ((Field) member).getType();
+		if (member instanceof Field field) {
+			return field.getType();
 		}
-		else if (member instanceof Method) {
-			return ((Method) member).getReturnType();
+		else if (member instanceof Method method) {
+			return method.getReturnType();
 		}
 		else {
 			throw new AssertionFailure("member should have been a method or field");

@@ -24,7 +24,7 @@ public class RequestUtils {
 		}
 		List<MediaType> accepts = MediaType.parseMediaTypes(request.getHeader(ACCEPT));
 		if (!accepts.isEmpty()) {
-			MediaType accept = accepts.get(0);
+			MediaType accept = accepts.getFirst();
 			return !accept.equals(ALL) && accept.isCompatibleWith(APPLICATION_JSON);
 		}
 		return false;

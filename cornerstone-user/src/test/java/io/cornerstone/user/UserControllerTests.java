@@ -121,8 +121,8 @@ class UserControllerTests extends ControllerTestBase {
 		assertThat(page.getSize()).isEqualTo(10);
 		assertThat(page.getTotalPages()).isEqualTo(1);
 		assertThat(page.getTotalElements()).isEqualTo(2);
-		assertThat(page.getResult().get(0).getCreatedDate()).isNull(); // User.View.List
-																		// view
+		assertThat(page.getResult().getFirst().getCreatedDate()).isNull(); // User.View.List
+																			// view
 		response = restTemplate.exchange(
 				RequestEntity.method(GET, PATH_LIST + "?page=2&size=1&sort=username,desc").build(),
 				new ParameterizedTypeReference<ResultPage<User>>() {
@@ -133,7 +133,7 @@ class UserControllerTests extends ControllerTestBase {
 		assertThat(page.getResult()).hasSize(1);
 		assertThat(page.getPage()).isEqualTo(2);
 		assertThat(page.getSize()).isEqualTo(1);
-		assertThat(page.getResult().get(0).getUsername()).isEqualTo(ADMIN_USERNAME);
+		assertThat(page.getResult().getFirst().getUsername()).isEqualTo(ADMIN_USERNAME);
 
 		response = restTemplate.exchange(RequestEntity.method(GET, PATH_LIST + "?query=admin").build(),
 				new ParameterizedTypeReference<ResultPage<User>>() {
@@ -165,7 +165,7 @@ class UserControllerTests extends ControllerTestBase {
 				})
 			.getBody();
 		assertThat(page).isNotNull();
-		User admin = page.getResult().get(0);
+		User admin = page.getResult().getFirst();
 		ResponseEntity<?> response = restTemplate
 			.exchange(RequestEntity.method(PUT, PATH_PASSWORD, admin.getId()).body(updatePasswordRequest), void.class);
 		assertThat(response.getStatusCode()).isSameAs(BAD_REQUEST); // caused by wrong
@@ -202,7 +202,7 @@ class UserControllerTests extends ControllerTestBase {
 			.getBody();
 		assertThat(page).isNotNull();
 		assertThat(page.getResult()).isNotEmpty();
-		User user = page.getResult().get(0);
+		User user = page.getResult().getFirst();
 		assertThat(user.getVersion()).isNotNull();
 		user.setName(user.getName() + "2");
 		user.setVersion(user.getVersion() + 1);
@@ -266,9 +266,9 @@ class UserControllerTests extends ControllerTestBase {
 		ResultPage<User> page = response.getBody();
 		assertThat(page).isNotNull();
 		assertThat(page.getResult()).hasSize(2);
-		assertThat(page.getResult().get(0).getUsername()).isEqualTo("test1");
-		assertThat(page.getResult().get(0).getRoles()).containsExactly("A", "B", "C");
-		assertThat(page.getResult().get(0).getDisabled()).isSameAs(Boolean.TRUE);
+		assertThat(page.getResult().getFirst().getUsername()).isEqualTo("test1");
+		assertThat(page.getResult().getFirst().getRoles()).containsExactly("A", "B", "C");
+		assertThat(page.getResult().getFirst().getDisabled()).isSameAs(Boolean.TRUE);
 		assertThat(page.getResult().get(1).getUsername()).isEqualTo("test2");
 		assertThat(page.getResult().get(1).getRoles()).isNullOrEmpty();
 		assertThat(page.getResult().get(1).getDisabled()).isSameAs(Boolean.TRUE);
@@ -285,7 +285,7 @@ class UserControllerTests extends ControllerTestBase {
 			})
 			.getBody();
 		assertThat(page).isNotNull();
-		User user = page.getResult().get(0);
+		User user = page.getResult().getFirst();
 
 		restTemplate = userRestTemplate();
 		assertThat(restTemplate.getForEntity(PATH_LIST, String.class).getStatusCode()).isSameAs(FORBIDDEN);

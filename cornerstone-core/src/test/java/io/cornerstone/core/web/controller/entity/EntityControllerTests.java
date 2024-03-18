@@ -102,7 +102,8 @@ class EntityControllerTests extends WebMvcWithDataJpaTestBase {
 		assertThat(page.getSize()).isEqualTo(10);
 		assertThat(page.getTotalPages()).isEqualTo(1);
 		assertThat(page.getTotalElements()).isEqualTo(size);
-		assertThat(page.getResult().get(0).getCreatedDate()).isNull(); // View.List view
+		assertThat(page.getResult().getFirst().getCreatedDate()).isNull(); // View.List
+																			// view
 
 		page = this.restTemplate.exchange(RequestEntity.method(GET, PATH_LIST + "?page=2&size=1&sort=id,desc").build(),
 				new ParameterizedTypeReference<ResultPage<TestEntity>>() {

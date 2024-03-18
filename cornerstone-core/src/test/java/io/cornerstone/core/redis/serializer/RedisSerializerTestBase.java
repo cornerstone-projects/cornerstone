@@ -83,8 +83,8 @@ public abstract class RedisSerializerTestBase {
 		if (obj instanceof NullValue || obj instanceof Enum) {
 			assertThat(obj2).isSameAs(obj);
 		}
-		if (obj instanceof AtomicInteger) { // AtomicInteger not override equals
-			assertThat(((AtomicInteger) obj2).intValue()).isEqualTo(((AtomicInteger) obj).intValue());
+		if (obj instanceof AtomicInteger integer) { // AtomicInteger not override equals
+			assertThat(((AtomicInteger) obj2).intValue()).isEqualTo(integer.intValue());
 		}
 		else {
 			assertThat(obj2).isEqualTo(obj);

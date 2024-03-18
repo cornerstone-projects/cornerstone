@@ -48,7 +48,7 @@ public class RestFilter implements Filter {
 			boolean skip = !this.loggingBody;
 			if (!skip) {
 				List<MediaType> accepts = MediaType.parseMediaTypes(request.getHeader(ACCEPT));
-				MediaType accept = accepts.isEmpty() ? APPLICATION_JSON : accepts.get(0);
+				MediaType accept = accepts.isEmpty() ? APPLICATION_JSON : accepts.getFirst();
 				skip = !accept.isCompatibleWith(APPLICATION_JSON) && !accept.isCompatibleWith(TEXT_PLAIN);
 			}
 			if (skip) {

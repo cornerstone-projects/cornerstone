@@ -37,7 +37,7 @@ class LoginRecorderTests extends SpringApplicationTestBase {
 				new UsernamePasswordAuthenticationToken(USER_USERNAME, DEFAULT_PASSWORD)));
 		List<LoginRecord> list = this.loginRecordRepository.findAll();
 		assertThat(list).hasSize(1);
-		LoginRecord entity = list.get(0);
+		LoginRecord entity = list.getFirst();
 		assertThat(entity.getUsername()).isEqualTo(USER_USERNAME);
 		assertThat(entity.getFailed()).isEqualTo(Boolean.FALSE);
 		assertThat(entity.getDate()).isNotNull();
@@ -50,7 +50,7 @@ class LoginRecorderTests extends SpringApplicationTestBase {
 				new UsernamePasswordAuthenticationToken(USER_USERNAME, DEFAULT_PASSWORD), ex));
 		List<LoginRecord> list = this.loginRecordRepository.findAll();
 		assertThat(list).hasSize(1);
-		LoginRecord entity = list.get(0);
+		LoginRecord entity = list.getFirst();
 		assertThat(entity.getUsername()).isEqualTo(USER_USERNAME);
 		assertThat(entity.getFailed()).isEqualTo(Boolean.TRUE);
 		assertThat(entity.getCause()).isEqualTo(ex.getLocalizedMessage());

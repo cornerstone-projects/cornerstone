@@ -81,14 +81,14 @@ public class JsonType extends BaseUserTypeSupport<Object> implements DynamicPara
 
 				@Override
 				protected Object deepCopyNotNull(Object value) {
-					if (value instanceof Set) {
-						return new LinkedHashSet<>((Set<?>) value);
+					if (value instanceof Set<?> set) {
+						return new LinkedHashSet<>(set);
 					}
-					if (value instanceof Collection) {
-						return new ArrayList<>((Collection<?>) value);
+					if (value instanceof Collection<?> collection) {
+						return new ArrayList<>(collection);
 					}
-					if (value instanceof Map) {
-						return new LinkedHashMap<>((Map<?, ?>) value);
+					if (value instanceof Map<?, ?> map) {
+						return new LinkedHashMap<>(map);
 					}
 					Object obj;
 					try {
@@ -162,19 +162,19 @@ public class JsonType extends BaseUserTypeSupport<Object> implements DynamicPara
 				return value instanceof String ? (X) value : (X) toString(value);
 			}
 			else if (BinaryStream.class.isAssignableFrom(type) || byte[].class.isAssignableFrom(type)) {
-				String stringValue = (value instanceof String) ? (String) value : toString(value);
+				String stringValue = (value instanceof String s) ? s : toString(value);
 
 				return (X) new BinaryStreamImpl(
 						DataHelper.extractBytes(new ByteArrayInputStream(stringValue.getBytes())));
 			}
 			else if (Blob.class.isAssignableFrom(type)) {
-				String stringValue = (value instanceof String) ? (String) value : toString(value);
+				String stringValue = (value instanceof String s) ? s : toString(value);
 
 				final Blob blob = BlobJavaType.INSTANCE.fromString(stringValue);
 				return (X) blob;
 			}
 			else if (Object.class.isAssignableFrom(type)) {
-				String stringValue = (value instanceof String) ? (String) value : toString(value);
+				String stringValue = (value instanceof String s) ? s : toString(value);
 				try {
 					return (X) objectMapper.readTree(stringValue);
 				}

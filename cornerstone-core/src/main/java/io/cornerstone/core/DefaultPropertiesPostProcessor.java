@@ -74,7 +74,7 @@ public class DefaultPropertiesPostProcessor implements EnvironmentPostProcessor,
 		String version = CornerstoneVersion.getVersion();
 		Map<String, Object> map = new HashMap<>();
 		map.put("cornerstone.version", version != null ? version : "developing");
-		map.put("cornerstone.formatted-version", version != null ? String.format(" (v%s)", version) : " (developing)");
+		map.put("cornerstone.formatted-version", version != null ? " (v%s)".formatted(version) : " (developing)");
 		environment.getPropertySources().addLast(new MapPropertySource("cornerstone-version", map));
 	}
 

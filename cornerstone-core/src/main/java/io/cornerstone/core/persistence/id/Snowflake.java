@@ -26,7 +26,7 @@ public class Snowflake {
 		long maxWorkerId = ~(-1L << workerIdBits);
 		if ((workerId > maxWorkerId) || (workerId < 0)) {
 			throw new IllegalArgumentException(
-					String.format("workerId can't be greater than %d or less than 0", maxWorkerId));
+					"workerId can't be greater than %d or less than 0".formatted(maxWorkerId));
 		}
 		this.workerId = workerId;
 		this.workerIdBits = workerIdBits;
@@ -62,7 +62,7 @@ public class Snowflake {
 			}
 			else {
 				throw new IllegalStateException(
-						String.format("Clock moved backwards. Refusing to generate id for %d milliseconds", offset));
+						"Clock moved backwards. Refusing to generate id for %d milliseconds".formatted(offset));
 			}
 		}
 		this.lastTimestamp = timestamp;

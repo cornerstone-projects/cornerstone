@@ -36,8 +36,8 @@ public class FileUtils {
 				case "." -> {
 				}
 				case ".." -> {
-					if ((!list.isEmpty()) && !list.get(list.size() - 1).equals("..")) {
-						list.remove(list.size() - 1);
+					if ((!list.isEmpty()) && !list.getLast().equals("..")) {
+						list.removeLast();
 					}
 					else {
 						list.add("..");
