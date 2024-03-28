@@ -268,6 +268,22 @@ public class S3FileStorage extends BucketFileStorage {
 	}
 
 	@Override
+	public FileInfo getFileInfo(String path) {
+		path = normalizePath(path);
+		try {
+			ObjectMetadata om = this.s3.getObjectMetadata(getBucket(), path);
+			return new FileInfo(path.indexOf('/') > 0 ? path.substring(path.lastIndexOf('/') + 1) : path,
+					om.getContentLength() != 0, om.getContentLength(), om.getLastModified().getTime());
+		}
+		catch (AmazonS3Exception ex) {
+			if (NOT_FOUND.equals(ex.getErrorCode())) {
+				return null;
+			}
+			throw ex;
+		}
+	}
+
+	@Override
 	protected Paged<FileInfo> doListFilesAndDirectory(String path, int limit, String marker) {
 		if (!path.endsWith("/")) {
 			path += "/";

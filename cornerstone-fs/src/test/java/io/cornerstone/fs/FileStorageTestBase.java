@@ -48,10 +48,17 @@ abstract class FileStorageTestBase {
 		String path2 = "/test/test2/test2.txt";
 		writeToFile(this.fs, text, path);
 		writeToFile(this.fs, text, path2);
+		FileInfo info = this.fs.getFileInfo(path);
+		assertThat(info).isNotNull();
+		assertThat(info.isFile()).isTrue();
+		assertThat(info.getName()).isEqualTo("test.txt");
+		assertThat(info.getSize()).isEqualTo(text.length());
+		assertThat(info.getLastModified()).isGreaterThan(1700000000000L);
 		assertThat(this.fs.isDirectory("/test")).isTrue();
 		assertThat(this.fs.isDirectory("/test/test2/")).isTrue();
 		assertThat(this.fs.open("/test/test2/")).isNull();
 		assertThat(this.fs.open("/test/test2/notexists.txt")).isNull();
+		assertThat(this.fs.getFileInfo("/test/test2/notexists.txt")).isNull();
 		try (BufferedReader br = new BufferedReader(
 				new InputStreamReader(this.fs.open(path), StandardCharsets.UTF_8))) {
 			assertThat(br.lines().collect(Collectors.joining("\n"))).isEqualTo(text);
