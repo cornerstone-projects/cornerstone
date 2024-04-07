@@ -9,14 +9,12 @@ buildscript {
 plugins {
 	id("io.cornerstone.java-common-conventions")
 	id("org.springframework.boot")
-	war
 }
 
 dependencies {
 	implementation(project(":cornerstone-user"))
 	implementation(project(":cornerstone-loginrecord"))
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
-	providedRuntime("org.springframework.boot:spring-boot-starter-tomcat") // if war not jar
 	runtimeOnly("com.mysql:mysql-connector-j")
 }
 
