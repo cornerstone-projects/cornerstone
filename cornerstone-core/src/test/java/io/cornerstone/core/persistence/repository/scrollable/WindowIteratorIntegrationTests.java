@@ -1,7 +1,6 @@
 package io.cornerstone.core.persistence.repository.scrollable;
 
 import java.util.Collections;
-import java.util.Map;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -58,7 +57,7 @@ class WindowIteratorIntegrationTests extends DataJpaTestBase {
 			assumeTrue(sortDirection == Sort.Direction.ASC);
 		}
 
-		KeysetScrollPosition position = ScrollPosition.of(Map.of(), scrollDirection);
+		KeysetScrollPosition position = ScrollPosition.of(Collections.emptyMap(), scrollDirection);
 		if (scrollDirection == ScrollPosition.Direction.BACKWARD
 				&& position.getDirection() == ScrollPosition.Direction.FORWARD) {
 			// remove this workaround if

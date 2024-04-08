@@ -1,8 +1,8 @@
 package io.cornerstone.core.persistence.repository.scrollable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Stream;
 
 import io.cornerstone.test.DataJpaTestBase;
@@ -60,7 +60,7 @@ class KeysetScrollIntegrationTests extends DataJpaTestBase {
 			assumeTrue(sortDirection == Sort.Direction.ASC);
 		}
 
-		KeysetScrollPosition position = ScrollPosition.of(Map.of(), scrollDirection);
+		KeysetScrollPosition position = ScrollPosition.of(Collections.emptyMap(), scrollDirection);
 		while (true) {
 			ScrollPosition positionToUse = position;
 			Window<TestEntity> window = this.repository.findBy((root, query, cb) -> null,
