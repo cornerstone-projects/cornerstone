@@ -44,7 +44,7 @@ class DefaultPropertiesPostProcessorTests extends SpringApplicationTestBase {
 
 	@Test
 	void activateOnKubernetesCloudPlatformIsNotUsing() {
-		assertThat(this.env.getProperty("mysql.host")).isEqualTo("localhost");
+		assertThat(this.env.getProperty("mysql.host")).isNull();
 	}
 
 	@Test
@@ -99,7 +99,7 @@ class DefaultPropertiesPostProcessorTests extends SpringApplicationTestBase {
 
 		@Test
 		void activateOnKubernetesCloudPlatformIsNotUsing() {
-			assertThat(this.env.getProperty("mysql.host")).isEqualTo("localhost");
+			assertThat(this.env.getProperty("mysql.host")).isNull();
 		}
 
 	}

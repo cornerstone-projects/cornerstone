@@ -11,9 +11,9 @@ spring.autoconfigure.exclude:
 
 spring.datasource:
   name: ${spring.application.name}
-  url: jdbc:mysql://${mysql.host}:${mysql.port}/${spring.application.name}?createDatabaseIfNotExist=true&serverTimezone=Asia/Shanghai&autoReconnectForPools=true&useUnicode=true&useServerPrepStmts=true&cachePrepStmts=true&tinyInt1isBit=false&socketTimeout=60000&sslMode=DISABLED&allowPublicKeyRetrieval=true
-  username: ${mysql.username}
-  password: ${mysql.password}
+  url: jdbc:mysql://${mysql.host:localhost}:${mysql.port:3306}/${spring.application.name}?createDatabaseIfNotExist=true&serverTimezone=Asia/Shanghai&autoReconnectForPools=true&useUnicode=true&useServerPrepStmts=true&cachePrepStmts=true&tinyInt1isBit=false&socketTimeout=60000&sslMode=DISABLED&allowPublicKeyRetrieval=true
+  username: ${mysql.username:root}
+  password: ${mysql.password:}
   hikari:
     maximumPoolSize: 100
     minimumIdle: 5
@@ -45,6 +45,8 @@ spring.data.web:
     one-indexed-parameters: true
 
 spring.data.redis:
+  host: ${redis.host:localhost}
+  port: ${redis.port:6379}
   repositories.enabled: false
   timeout: 5s
   connect-timeout: 5s
@@ -104,13 +106,6 @@ jdbc.datasource-proxy.enabled: ${management.tracing.enabled}
 springdoc.swagger-ui.enabled: false
 springdoc.api-docs.enabled: ${springdoc.swagger-ui.enabled}
 
-# user defined variables to expand
-mysql:
-  host: localhost
-  port: 3306
-  username: root
-  password:
-
 ---
 spring:
   config.activate.on-profile: dev|test
@@ -159,11 +154,8 @@ management.tracing.sampling.probability: 0.05
 
 ---
 spring.config.activate.on-cloud-platform: kubernetes
-# env MYSQL_PORT -> tcp://10.108.159.183:3306 cause Malformed database URL if enableServiceLinks, use MYSQL_SERVICE_PORT instead
 mysql:
-  host: ${mysql.service.host:mysql.default.svc.cluster.local}
-  port: ${mysql.service.port:3306}
+  host: mysql.default.svc.cluster.local
 
-spring.data.redis:
-  host: ${redis.service.host:redis.default.svc.cluster.local}
-  port: ${redis.service.port:6379}
+redis:
+  host: redis.default.svc.cluster.local

@@ -1,25 +1,6 @@
 ### edit it according to your environment
 spring.application.name: showcase
 
-mysql:
-  host: localhost #shortcut for spring.datasource.url
-  port: 3306
-  username: root #alias to spring.datasource.username
-  password:
-
-spring.data.redis:
-  host: localhost
-  port: 6379
-
-spring.kafka.bootstrap-servers:
-  - localhost:9092
-
-management.influx.metrics.export:
-  uri: http://localhost:8086
-  db: metrics # org,bucket for V2
-
-#file-storage:
-#  uri: ftp://admin:admin@localhost/temp
 ---
 spring.config.activate.on-cloud-platform: kubernetes
 management.server.port: 8081

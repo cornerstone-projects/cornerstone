@@ -13,6 +13,7 @@ spec:
       labels:
         app: ${application.name}
     spec:
+      # env MYSQL_PORT -> tcp://10.108.159.183:3306 cause Malformed database URL if enableServiceLinks=true
       enableServiceLinks: false
       containers:
       - name: ${application.name}
