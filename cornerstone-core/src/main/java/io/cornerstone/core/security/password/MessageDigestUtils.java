@@ -11,44 +11,32 @@ class MessageDigestUtils {
 
 	public static final String DEFAULT_ENCODING = "UTF-8";
 
-	private static final ThreadLocal<SoftReference<MessageDigest>> MD5 = new ThreadLocal<>() {
-
-		@Override
-		protected SoftReference<MessageDigest> initialValue() {
-			try {
-				return new SoftReference<>(MessageDigest.getInstance("MD5"));
-			}
-			catch (NoSuchAlgorithmException ex) {
-				throw new IllegalStateException("md5 algorythm found");
-			}
+	private static final ThreadLocal<SoftReference<MessageDigest>> MD5 = ThreadLocal.withInitial(() -> {
+		try {
+			return new SoftReference<>(MessageDigest.getInstance("MD5"));
 		}
-	};
-
-	private static final ThreadLocal<SoftReference<MessageDigest>> SHA = new ThreadLocal<>() {
-
-		@Override
-		protected SoftReference<MessageDigest> initialValue() {
-			try {
-				return new SoftReference<>(MessageDigest.getInstance("SHA"));
-			}
-			catch (NoSuchAlgorithmException ex) {
-				throw new IllegalStateException("sha algorythm found");
-			}
+		catch (NoSuchAlgorithmException ex) {
+			throw new IllegalStateException("md5 algorythm found");
 		}
-	};
+	});
 
-	private static final ThreadLocal<SoftReference<MessageDigest>> SHA256 = new ThreadLocal<>() {
-
-		@Override
-		protected SoftReference<MessageDigest> initialValue() {
-			try {
-				return new SoftReference<>(MessageDigest.getInstance("SHA-256"));
-			}
-			catch (NoSuchAlgorithmException ex) {
-				throw new IllegalStateException("sha algorythm found");
-			}
+	private static final ThreadLocal<SoftReference<MessageDigest>> SHA = ThreadLocal.withInitial(() -> {
+		try {
+			return new SoftReference<>(MessageDigest.getInstance("SHA"));
 		}
-	};
+		catch (NoSuchAlgorithmException ex) {
+			throw new IllegalStateException("sha algorythm found");
+		}
+	});
+
+	private static final ThreadLocal<SoftReference<MessageDigest>> SHA256 = ThreadLocal.withInitial(() -> {
+		try {
+			return new SoftReference<>(MessageDigest.getInstance("SHA-256"));
+		}
+		catch (NoSuchAlgorithmException ex) {
+			throw new IllegalStateException("sha algorythm found");
+		}
+	});
 
 	static byte[] md5(byte[] input) {
 		SoftReference<MessageDigest> instanceRef = MD5.get();

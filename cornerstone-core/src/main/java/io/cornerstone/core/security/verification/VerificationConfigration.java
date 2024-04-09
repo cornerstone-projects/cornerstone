@@ -53,22 +53,14 @@ public class VerificationConfigration {
 	@ConditionalOnMissingBean
 	@Bean
 	VerificationCodeGenerator simpleVerificationCodeGenerator() {
-		return (receiver, length) -> {
-			StringBuilder sb = new StringBuilder();
-			for (int i = 0; i < length; i++) {
-				sb.append('0');
-			}
-			return sb.toString();
-		};
+		return (receiver, length) -> "0".repeat(length);
 	}
 
 	@Profile("dev")
 	@ConditionalOnMissingBean
 	@Bean
 	VerificationCodeNotifier simpleVerificationCodeNotifier() {
-		return (receiver, code) -> {
-			System.out.println("send to " + receiver + ": " + code);
-		};
+		return (receiver, code) -> System.out.println("send to " + receiver + ": " + code);
 	}
 
 }

@@ -80,9 +80,7 @@ class KafkaRetryableTopicIntegrationTests {
 		@Override
 		protected void configureCustomizers(CustomizersConfigurer customizersConfigurer) {
 			// Use the new 2.9 mechanism to avoid re-fetching the same records after pause
-			customizersConfigurer.customizeErrorHandler(eh -> {
-				eh.setSeekAfterError(false);
-			});
+			customizersConfigurer.customizeErrorHandler(eh -> eh.setSeekAfterError(false));
 		}
 
 		// @Bean

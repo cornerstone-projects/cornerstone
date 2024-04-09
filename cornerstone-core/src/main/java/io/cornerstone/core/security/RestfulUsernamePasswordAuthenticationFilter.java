@@ -65,9 +65,8 @@ public class RestfulUsernamePasswordAuthenticationFilter extends UsernamePasswor
 		if (contentType != null) {
 			if (MediaType.parseMediaType(contentType).isCompatibleWith(APPLICATION_JSON)) {
 				try {
-					requestBody = this.objectMapper.readValue(request.getInputStream(),
-							new TypeReference<Map<String, String>>() {
-							});
+					requestBody = this.objectMapper.readValue(request.getInputStream(), new TypeReference<>() {
+					});
 					request.setAttribute(ATTR_NAME_REQUEST_BODY, requestBody);
 					return requestBody;
 				}

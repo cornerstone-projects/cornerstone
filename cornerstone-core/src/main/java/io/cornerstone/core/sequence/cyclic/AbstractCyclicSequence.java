@@ -36,7 +36,7 @@ public abstract class AbstractCyclicSequence implements CyclicSequence, Initiali
 
 	@Override
 	public long nextLongValue() {
-		return Long.valueOf(nextStringValue());
+		return Long.parseLong(nextStringValue());
 	}
 
 	protected String getStringValue(LocalDateTime datetime, int paddingLength, int nextId) {

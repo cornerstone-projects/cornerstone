@@ -16,17 +16,14 @@ public class DefaultRequestMappingHandlerMapping extends RequestMappingHandlerMa
 
 	@Override
 	public void setEmbeddedValueResolver(StringValueResolver resolver) {
-		super.setEmbeddedValueResolver(new StringValueResolver() {
-			@Override
-			public String resolveStringValue(String strVal) {
-				Object handler = handlerHolder.get();
-				if (handler != null) {
-					strVal = String.valueOf(PARSER.parseExpression(strVal, ParserContext.TEMPLATE_EXPRESSION)
-						.getValue(new StandardEvaluationContext(handler)));
-				}
-				strVal = resolver.resolveStringValue(strVal);
-				return strVal;
+		super.setEmbeddedValueResolver(strVal -> {
+			Object handler = handlerHolder.get();
+			if (handler != null) {
+				strVal = String.valueOf(PARSER.parseExpression(strVal, ParserContext.TEMPLATE_EXPRESSION)
+					.getValue(new StandardEvaluationContext(handler)));
 			}
+			strVal = resolver.resolveStringValue(strVal);
+			return strVal;
 		});
 	}
 

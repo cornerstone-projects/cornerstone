@@ -77,9 +77,8 @@ class KubernetesConfigMapPostProcessorTests extends SpringApplicationTestBase {
 	@Test
 	void shouldThrowExceptionIfConfigMapDirDoesNotExist() {
 		System.setProperty(SYSTEM_PROPERTY_CONFIG_MAP_DIR, "/not/existing/dir");
-		assertThatExceptionOfType(ConfigDataLocationNotFoundException.class).isThrownBy(() -> {
-			createProcessor().postProcessEnvironment(createKubernetesEnvironment(), null);
-		});
+		assertThatExceptionOfType(ConfigDataLocationNotFoundException.class)
+			.isThrownBy(() -> createProcessor().postProcessEnvironment(createKubernetesEnvironment(), null));
 		System.clearProperty(SYSTEM_PROPERTY_CONFIG_MAP_DIR);
 	}
 

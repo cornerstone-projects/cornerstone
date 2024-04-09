@@ -34,13 +34,8 @@ class FileStorageMigrationTests {
 
 	@AfterAll
 	static void cleanup() {
-		try {
-			cleanup(source, "/");
-			cleanup(target, "/");
-		}
-		catch (IOException ex) {
-			ex.printStackTrace();
-		}
+		cleanup(source, "/");
+		cleanup(target, "/");
 	}
 
 	@Test
@@ -74,7 +69,7 @@ class FileStorageMigrationTests {
 		}
 	}
 
-	protected static void cleanup(FileStorage fs, String directory) throws IOException {
+	protected static void cleanup(FileStorage fs, String directory) {
 		if (directory == null) {
 			directory = "/";
 		}

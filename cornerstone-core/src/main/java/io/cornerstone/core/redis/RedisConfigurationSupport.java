@@ -2,7 +2,6 @@ package io.cornerstone.core.redis;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import java.util.Optional;
 import java.util.concurrent.Executor;
 
 import io.lettuce.core.resource.ClientResources;
@@ -89,10 +88,10 @@ public class RedisConfigurationSupport {
 	}
 
 	protected RedisMessageListenerContainer redisMessageListenerContainer(RedisConnectionFactory redisConnectionFactory,
-			Optional<Executor> taskExecutor) {
+			ObjectProvider<Executor> taskExecutor) {
 		RedisMessageListenerContainer container = new RedisMessageListenerContainer();
 		container.setConnectionFactory(redisConnectionFactory);
-		taskExecutor.ifPresent(container::setTaskExecutor);
+		taskExecutor.ifAvailable(container::setTaskExecutor);
 		return container;
 	}
 

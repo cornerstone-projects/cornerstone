@@ -100,8 +100,7 @@ public abstract class BucketFileStorage extends AbstractFileStorage {
 		write(is, path, -1, null);
 	}
 
-	protected abstract void doWrite(InputStream is, String path, long contentLength, String contentType)
-			throws IOException;
+	protected abstract void doWrite(InputStream is, String path, long contentLength, String contentType);
 
 	@Override
 	public String getFileUrl(String path) {

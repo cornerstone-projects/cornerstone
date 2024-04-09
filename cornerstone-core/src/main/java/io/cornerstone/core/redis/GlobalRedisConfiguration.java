@@ -1,6 +1,5 @@
 package io.cornerstone.core.redis;
 
-import java.util.Optional;
 import java.util.concurrent.Executor;
 
 import io.cornerstone.core.redis.DefaultRedisConfiguration.DefaultRedisProperties;
@@ -78,7 +77,7 @@ public class GlobalRedisConfiguration extends RedisConfigurationSupport {
 	@Bean
 	public RedisMessageListenerContainer globalRedisMessageListenerContainer(
 			@Qualifier("globalRedisConnectionFactory") RedisConnectionFactory redisConnectionFactory,
-			Optional<Executor> taskExecutor) {
+			ObjectProvider<Executor> taskExecutor) {
 		return super.redisMessageListenerContainer(redisConnectionFactory, taskExecutor);
 	}
 

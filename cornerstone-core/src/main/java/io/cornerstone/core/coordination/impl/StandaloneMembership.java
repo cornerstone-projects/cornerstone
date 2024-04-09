@@ -16,11 +16,7 @@ public class StandaloneMembership implements Membership {
 
 	@Override
 	public void join(String group) {
-		List<String> members = this.groups.get(group);
-		if (members == null) {
-			members = new ArrayList<>();
-			this.groups.put(group, members);
-		}
+		List<String> members = this.groups.computeIfAbsent(group, k -> new ArrayList<>());
 		if (!members.contains(this.self)) {
 			members.add(this.self);
 		}

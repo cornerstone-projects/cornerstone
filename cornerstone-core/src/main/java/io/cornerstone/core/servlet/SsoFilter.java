@@ -292,7 +292,7 @@ public class SsoFilter implements Filter {
 	}
 
 	protected static boolean isSameOrigin(String a, String b) {
-		if ((b.indexOf("://") < 0) || (a.indexOf("://") < 0)) {
+		if ((!b.contains("://")) || (!a.contains("://"))) {
 			return true;
 		}
 		String host1 = URI.create(a).getHost();

@@ -98,7 +98,7 @@ public abstract class AbstractReadableEntityController<T, ID> extends BaseRestCo
 	}
 
 	protected ExampleMatcher getExampleMatcher() {
-		return ExampleMatcher.matching().withMatcher("name", match -> match.contains());
+		return ExampleMatcher.matching().withMatcher("name", ExampleMatcher.GenericPropertyMatcher::contains);
 	}
 
 }

@@ -151,9 +151,7 @@ public class FileUtils {
 				return null;
 			}
 			Map<String, String> map = new HashMap<>();
-			mf.getMainAttributes().forEach((k, v) -> {
-				map.put(k.toString(), v.toString());
-			});
+			mf.getMainAttributes().forEach((k, v) -> map.put(k.toString(), v.toString()));
 			return map;
 		}
 		catch (IOException ex) {

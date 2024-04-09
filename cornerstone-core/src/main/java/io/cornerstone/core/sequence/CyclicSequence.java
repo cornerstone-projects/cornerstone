@@ -2,8 +2,6 @@ package io.cornerstone.core.sequence;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoField;
-import java.time.temporal.ChronoUnit;
 
 public interface CyclicSequence extends Sequence {
 
@@ -19,14 +17,13 @@ public interface CyclicSequence extends Sequence {
 		MINUTE("yyyyMMddHHmm") {
 			@Override
 			public boolean isSameCycle(LocalDateTime last, LocalDateTime now) {
-				return HOUR.isSameCycle(last, now)
-						&& (now.get(ChronoField.MINUTE_OF_HOUR) == last.get(ChronoField.MINUTE_OF_HOUR));
+				return HOUR.isSameCycle(last, now) && (now.getMinute() == last.getMinute());
 
 			}
 
 			@Override
 			public LocalDateTime skipCycles(LocalDateTime datetime, int cycles) {
-				return datetime.plus(cycles, ChronoUnit.MINUTES);
+				return datetime.plusMinutes(cycles);
 			}
 
 			@Override
@@ -39,13 +36,12 @@ public interface CyclicSequence extends Sequence {
 
 			@Override
 			public boolean isSameCycle(LocalDateTime last, LocalDateTime now) {
-				return DAY.isSameCycle(last, now)
-						&& (now.get(ChronoField.HOUR_OF_DAY) == last.get(ChronoField.HOUR_OF_DAY));
+				return DAY.isSameCycle(last, now) && (now.getHour() == last.getHour());
 			}
 
 			@Override
 			public LocalDateTime skipCycles(LocalDateTime datetime, int cycles) {
-				return datetime.plus(cycles, ChronoUnit.HOURS);
+				return datetime.plusHours(cycles);
 			}
 
 			@Override
@@ -57,13 +53,12 @@ public interface CyclicSequence extends Sequence {
 		DAY("yyyyMMdd") {
 			@Override
 			public boolean isSameCycle(LocalDateTime last, LocalDateTime now) {
-				return MONTH.isSameCycle(last, now)
-						&& (now.get(ChronoField.DAY_OF_YEAR) == last.get(ChronoField.DAY_OF_YEAR));
+				return MONTH.isSameCycle(last, now) && (now.getDayOfYear() == last.getDayOfYear());
 			}
 
 			@Override
 			public LocalDateTime skipCycles(LocalDateTime datetime, int cycles) {
-				return datetime.plus(cycles, ChronoUnit.DAYS);
+				return datetime.plusDays(cycles);
 			}
 
 			@Override
@@ -75,13 +70,12 @@ public interface CyclicSequence extends Sequence {
 		MONTH("yyyyMM") {
 			@Override
 			public boolean isSameCycle(LocalDateTime last, LocalDateTime now) {
-				return YEAR.isSameCycle(last, now)
-						&& (now.get(ChronoField.MONTH_OF_YEAR) == last.get(ChronoField.MONTH_OF_YEAR));
+				return YEAR.isSameCycle(last, now) && (now.getMonth() == last.getMonth());
 			}
 
 			@Override
 			public LocalDateTime skipCycles(LocalDateTime datetime, int cycles) {
-				return datetime.plus(cycles, ChronoUnit.MONTHS);
+				return datetime.plusMonths(cycles);
 			}
 
 			@Override
@@ -93,12 +87,12 @@ public interface CyclicSequence extends Sequence {
 		YEAR("yyyy") {
 			@Override
 			public boolean isSameCycle(LocalDateTime last, LocalDateTime now) {
-				return (now.get(ChronoField.YEAR) == last.get(ChronoField.YEAR));
+				return (now.getYear() == last.getYear());
 			}
 
 			@Override
 			public LocalDateTime skipCycles(LocalDateTime datetime, int cycles) {
-				return datetime.plus(cycles, ChronoUnit.YEARS);
+				return datetime.plusYears(cycles);
 			}
 
 			@Override
@@ -126,7 +120,7 @@ public interface CyclicSequence extends Sequence {
 		}
 
 		public LocalDateTime getCycleEnd(LocalDateTime datetime) {
-			return skipCycles(getCycleStart(datetime), 1).minus(1, ChronoUnit.NANOS);
+			return skipCycles(getCycleStart(datetime), 1).minusNanos(1);
 		}
 
 		public abstract LocalDateTime getCycleStart(LocalDateTime datetime);

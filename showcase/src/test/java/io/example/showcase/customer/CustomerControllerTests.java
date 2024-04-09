@@ -93,9 +93,9 @@ class CustomerControllerTests extends BaseControllerTests {
 			list.add(restTemplate.postForObject(PATH_LIST, c, Customer.class));
 		}
 
-		ResponseEntity<ResultPage<Customer>> response = restTemplate.exchange(
-				RequestEntity.method(GET, PATH_LIST).build(), new ParameterizedTypeReference<ResultPage<Customer>>() {
-				});
+		ResponseEntity<ResultPage<Customer>> response = restTemplate
+			.exchange(RequestEntity.method(GET, PATH_LIST).build(), new ParameterizedTypeReference<>() {
+			});
 		assertThat(response.getStatusCode()).isSameAs(OK);
 		ResultPage<Customer> page = response.getBody();
 		assertThat(page).isNotNull();
@@ -107,7 +107,7 @@ class CustomerControllerTests extends BaseControllerTests {
 		assertThat(page.getResult().getFirst().getCreatedDate()).isNull(); // Customer.View.List
 																			// view
 		response = restTemplate.exchange(RequestEntity.method(GET, PATH_LIST + "?page=2&size=1&sort=id,desc").build(),
-				new ParameterizedTypeReference<ResultPage<Customer>>() {
+				new ParameterizedTypeReference<>() {
 				});
 		assertThat(response.getStatusCode()).isSameAs(OK);
 		page = response.getBody();
@@ -117,7 +117,7 @@ class CustomerControllerTests extends BaseControllerTests {
 		assertThat(page.getSize()).isEqualTo(1);
 
 		response = restTemplate.exchange(RequestEntity.method(GET, PATH_LIST + "?query=test0").build(),
-				new ParameterizedTypeReference<ResultPage<Customer>>() {
+				new ParameterizedTypeReference<>() {
 				});
 		assertThat(response.getStatusCode()).isSameAs(OK);
 		page = response.getBody();
@@ -128,10 +128,9 @@ class CustomerControllerTests extends BaseControllerTests {
 		assertThat(page.getTotalPages()).isEqualTo(1);
 		assertThat(page.getTotalElements()).isEqualTo(1);
 
-		ResponseEntity<ResultPage<Customer>> response2 = restTemplate.exchange(
-				RequestEntity.method(GET, PATH_LIST + "?name=test0").build(),
-				new ParameterizedTypeReference<ResultPage<Customer>>() {
-				});
+		ResponseEntity<ResultPage<Customer>> response2 = restTemplate
+			.exchange(RequestEntity.method(GET, PATH_LIST + "?name=test0").build(), new ParameterizedTypeReference<>() {
+			});
 		assertThat(response2.getBody()).isEqualTo(response.getBody());
 
 		for (Customer c : list) {

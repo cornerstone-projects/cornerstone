@@ -64,7 +64,8 @@ class PredicateBuilderTests extends DataJpaTestBase {
 		CriteriaBuilder cb = this.entityManager.getCriteriaBuilder();
 		CriteriaQuery<TestEntity> cq = cb.createQuery(TestEntity.class);
 		Root<TestEntity> root = cq.from(TestEntity.class);
-		ExampleMatcher matcher = ExampleMatcher.matching().withMatcher("name", match -> match.contains());
+		ExampleMatcher matcher = ExampleMatcher.matching()
+			.withMatcher("name", ExampleMatcher.GenericPropertyMatcher::contains);
 		Predicate predicate = cb.isNotNull(root.get("name"));
 		TestEntity example = new TestEntity();
 		assertThat(PredicateBuilder.andExample(root, cb, predicate, Example.of(example, matcher))).isSameAs(predicate);

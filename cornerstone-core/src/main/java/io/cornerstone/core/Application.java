@@ -42,7 +42,7 @@ public interface Application {
 	}
 
 	default int getServerPort() {
-		return Integer.valueOf(getContext().getEnvironment().getProperty("local.server.port", "8080"));
+		return Integer.parseInt(getContext().getEnvironment().getProperty("local.server.port", "8080"));
 	}
 
 	default String getInstanceId() {

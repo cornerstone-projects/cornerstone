@@ -56,9 +56,7 @@ public class DefaultPropertiesPostProcessor implements EnvironmentPostProcessor,
 					String onCloudPlatform = (String) ps.getProperty("spring.config.activate.on-cloud-platform");
 					if (onCloudPlatform != null) {
 						CloudPlatform cloudPlatform = CloudPlatform.getActive(environment);
-						if (cloudPlatform == null || !cloudPlatform.name().equalsIgnoreCase(onCloudPlatform)) {
-							return false;
-						}
+						return cloudPlatform != null && cloudPlatform.name().equalsIgnoreCase(onCloudPlatform);
 					}
 					return true;
 				})

@@ -45,9 +45,7 @@ public class PredicateBuilder {
 					yield false;
 				}
 			}
-			default -> {
-				yield false;
-			}
+			default -> false;
 		};
 
 	}
@@ -77,9 +75,7 @@ public class PredicateBuilder {
 					yield false;
 				}
 			}
-			default -> {
-				yield false;
-			}
+			default -> false;
 		};
 	}
 

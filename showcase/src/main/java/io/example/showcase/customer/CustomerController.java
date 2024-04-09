@@ -39,7 +39,7 @@ public class CustomerController extends AbstractEntityController<Customer, Long>
 		return ExampleMatcher.matching()
 			.withIgnorePaths("address")
 			.withMatcher("idNo", match -> match.contains().ignoreCase())
-			.withMatcher("name", match -> match.contains());
+			.withMatcher("name", ExampleMatcher.GenericPropertyMatcher::contains);
 	}
 
 }

@@ -31,9 +31,11 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractAuthenticationFilterConfigurer;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.FormLoginConfigurer;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
+import org.springframework.security.config.annotation.web.configurers.RequestCacheConfigurer;
 import org.springframework.security.config.core.GrantedAuthorityDefaults;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsPasswordService;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -95,13 +97,12 @@ public class WebSecurityConfiguration {
 					.map(AntPathRequestMatcher::antMatcher)
 					.toArray(AntPathRequestMatcher[]::new))
 				.permitAll();
-			this.properties.getAuthorizeRequestsMapping().forEach((k, v) -> {
-				configurer.requestMatchers(k).hasAnyAuthority(v.split("\\s*,\\s*"));
-			});
+			this.properties.getAuthorizeRequestsMapping()
+				.forEach((k, v) -> configurer.requestMatchers(k).hasAnyAuthority(v.split("\\s*,\\s*")));
 			configurer.anyRequest().authenticated();
 		});
 
-		http.requestCache(configurer -> configurer.disable());
+		http.requestCache(RequestCacheConfigurer::disable);
 
 		http.exceptionHandling(configurer -> configurer
 			.defaultAuthenticationEntryPointFor((request, response,
@@ -130,8 +131,8 @@ public class WebSecurityConfiguration {
 		if (Application.current().map(Application::isUnitTest).orElse(true)) {
 			http.httpBasic(withDefaults());
 		}
-		http.csrf(configurer -> configurer.disable());
-		http.headers(configurer -> configurer.frameOptions(it -> it.sameOrigin()));
+		http.csrf(AbstractHttpConfigurer::disable);
+		http.headers(configurer -> configurer.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin));
 	}
 
 	AuthenticationSuccessHandler authenticationSuccessHandler(RequestCache requestCache) {
@@ -197,11 +198,8 @@ public class WebSecurityConfiguration {
 	DaoAuthenticationProvider daoAuthenticationProvider(ObjectProvider<UserDetailsService> userDetailsService,
 			ObjectProvider<PasswordEncoder> passwordEncoder,
 			ObjectProvider<UserDetailsPasswordService> userDetailsPasswordService) {
-		UserDetailsService uds = userDetailsService.getIfAvailable(() -> new UserDetailsService() {
-			@Override
-			public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-				throw new UsernameNotFoundException(username);
-			}
+		UserDetailsService uds = userDetailsService.getIfAvailable(() -> (UserDetailsService) username -> {
+			throw new UsernameNotFoundException(username);
 		});
 		DefaultDaoAuthenticationProvider provider = new DefaultDaoAuthenticationProvider();
 		provider.setUserDetailsService(uds);

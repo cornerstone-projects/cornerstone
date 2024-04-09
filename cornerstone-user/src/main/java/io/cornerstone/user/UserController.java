@@ -172,7 +172,7 @@ public class UserController extends AbstractEntityController<User, Long> {
 		return ExampleMatcher.matching()
 			.withIgnorePaths("password", "roles")
 			.withMatcher("username", match -> match.contains().ignoreCase())
-			.withMatcher("name", match -> match.contains());
+			.withMatcher("name", ExampleMatcher.GenericPropertyMatcher::contains);
 	}
 
 }

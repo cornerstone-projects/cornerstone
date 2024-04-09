@@ -1,11 +1,11 @@
 package io.cornerstone.core.json;
 
-import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Objects;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
@@ -41,7 +41,7 @@ public class FromIdDeserializer extends StdDeserializer<Object> implements Conte
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Object deserialize(JsonParser parser, DeserializationContext ctx) throws IOException {
+	public Object deserialize(JsonParser parser, DeserializationContext ctx) {
 		if (this.type == null) {
 			return null;
 		}
@@ -68,9 +68,11 @@ public class FromIdDeserializer extends StdDeserializer<Object> implements Conte
 					throw new RuntimeException("Not array node");
 				}
 				while (parser.nextToken() != JsonToken.END_ARRAY) {
-					switch (parser.currentToken()) {
-						case START_OBJECT -> coll.add(parser.readValueAs(componentType.getRawClass()));
-						default -> coll.add(convert(parser, parser.getText(), componentType));
+					if (Objects.requireNonNull(parser.currentToken()) == JsonToken.START_OBJECT) {
+						coll.add(parser.readValueAs(componentType.getRawClass()));
+					}
+					else {
+						coll.add(convert(parser, parser.getText(), componentType));
 					}
 				}
 				if (this.type.isArrayType()) {

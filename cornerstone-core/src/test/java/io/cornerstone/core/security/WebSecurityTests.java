@@ -123,7 +123,7 @@ class WebSecurityTests extends ControllerTestBase {
 	void testRestfulAccessWithUnauthenticated() {
 		ResponseEntity<Map<String, Object>> response = this.testRestTemplate.exchange(
 				RequestEntity.method(POST, TEST_DEFAULT_SUCCESS_URL).header(ACCEPT, APPLICATION_JSON_VALUE).build(),
-				new ParameterizedTypeReference<Map<String, Object>>() {
+				new ParameterizedTypeReference<>() {
 				});
 		assertThat(response.getStatusCode()).isSameAs(UNAUTHORIZED);
 		assertThat(response.getBody().get("status")).isEqualTo(UNAUTHORIZED.value());
@@ -167,7 +167,7 @@ class WebSecurityTests extends ControllerTestBase {
 		data.put("username", username);
 		data.put("password", password);
 		return this.testRestTemplate.exchange(RequestEntity.method(POST, TEST_LOGIN_PROCESSING_URL).body(data),
-				new ParameterizedTypeReference<Map<String, Object>>() {
+				new ParameterizedTypeReference<>() {
 				});
 	}
 

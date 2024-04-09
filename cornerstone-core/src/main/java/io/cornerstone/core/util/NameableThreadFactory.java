@@ -44,9 +44,8 @@ public class NameableThreadFactory implements ThreadFactory {
 			sb.append("-");
 		}
 		this.namePrefix = sb.toString();
-		this.uncaughtExceptionHandler = uncaughtExceptionHandler != null ? uncaughtExceptionHandler : (t, ex) -> {
-			log.error(ex.getMessage(), ex);
-		};
+		this.uncaughtExceptionHandler = uncaughtExceptionHandler != null ? uncaughtExceptionHandler
+				: (t, ex) -> log.error(ex.getMessage(), ex);
 	}
 
 	@Override

@@ -1,6 +1,5 @@
 package io.cornerstone.core.redis;
 
-import java.util.Optional;
 import java.util.concurrent.Executor;
 
 import io.cornerstone.core.redis.DefaultRedisConfiguration.DefaultRedisProperties;
@@ -80,7 +79,7 @@ public class DefaultRedisConfiguration extends RedisConfigurationSupport {
 	@Override
 	public RedisMessageListenerContainer redisMessageListenerContainer(
 			@Qualifier("redisConnectionFactory") RedisConnectionFactory redisConnectionFactory,
-			Optional<Executor> taskExecutor) {
+			ObjectProvider<Executor> taskExecutor) {
 		return super.redisMessageListenerContainer(redisConnectionFactory, taskExecutor);
 	}
 

@@ -39,10 +39,10 @@ public class Snowflake {
 		if (timestamp == this.lastTimestamp) {
 			this.sequence = (this.sequence + 1) & this.sequenceMask;
 			if (this.sequence == 0) {
-				timestamp = System.currentTimeMillis();
-				while (timestamp <= this.lastTimestamp) {
+				do {
 					timestamp = System.currentTimeMillis();
 				}
+				while (timestamp <= this.lastTimestamp);
 			}
 		}
 		else if (timestamp > this.lastTimestamp) {

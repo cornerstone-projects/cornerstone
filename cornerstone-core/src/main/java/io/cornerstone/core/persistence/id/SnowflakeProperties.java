@@ -48,7 +48,7 @@ public class SnowflakeProperties {
 				this.workerId = Integer.parseInt(id);
 				if (this.workerIdBits < 8) {
 					if (this.env.containsProperty(PREFIX + ".worker-id-bits")) {
-						log.warn("Increase snowflake workerIdBits from {} to {}", this.workerIdBits, 8);
+						log.warn("Increase snowflake workerIdBits from {} to 8", this.workerIdBits);
 					}
 					this.workerIdBits = 8;
 				}
@@ -64,7 +64,7 @@ public class SnowflakeProperties {
 				}
 				if (this.workerIdBits < 16) {
 					if (this.env.containsProperty(PREFIX + ".worker-id-bits")) {
-						log.warn("Increase snowflake workerIdBits from {} to {}", this.workerIdBits, 16);
+						log.warn("Increase snowflake workerIdBits from {} to 16", this.workerIdBits);
 					}
 					this.workerIdBits = 16;
 				}

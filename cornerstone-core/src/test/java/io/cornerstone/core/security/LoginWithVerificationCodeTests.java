@@ -193,7 +193,7 @@ class LoginWithVerificationCodeTests extends ControllerTestBase {
 			data.put("verificationCode", verificationCode);
 		}
 		return this.testRestTemplate.exchange(RequestEntity.method(POST, DEFAULT_LOGIN_PROCESSING_URL).body(data),
-				new ParameterizedTypeReference<Map<String, Object>>() {
+				new ParameterizedTypeReference<>() {
 				});
 	}
 

@@ -69,7 +69,7 @@ public class RedisCyclicSequence extends AbstractCyclicSequence {
 				int comparedValue = currentCycle.compareTo(stringValue.substring(0, patternLength));
 				if (comparedValue == 0) {
 					// in same cycle
-					if (Integer.valueOf(stringValue.substring(patternLength)) != 0) {
+					if (Integer.parseInt(stringValue.substring(patternLength)) != 0) {
 						// make sure sequence restart from 0001 not 0000
 						// for example 202012120000 increment by 202012119999
 						return stringValue;
@@ -77,7 +77,7 @@ public class RedisCyclicSequence extends AbstractCyclicSequence {
 				}
 				else if (comparedValue < 0) {
 					// in same cycle but overflow
-					long next = value - Long.valueOf(currentCycle) * ((long) Math.pow(10, getPaddingLength()));
+					long next = value - Long.parseLong(currentCycle) * ((long) Math.pow(10, getPaddingLength()));
 					return currentCycle + next;
 				}
 			}

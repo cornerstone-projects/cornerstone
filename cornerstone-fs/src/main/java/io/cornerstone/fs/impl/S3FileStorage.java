@@ -1,7 +1,6 @@
 package io.cornerstone.fs.impl;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
@@ -96,7 +95,7 @@ public class S3FileStorage extends BucketFileStorage {
 	}
 
 	@Override
-	public void doWrite(InputStream is, String path, long contentLength, String contentType) throws IOException {
+	public void doWrite(InputStream is, String path, long contentLength, String contentType) {
 		ObjectMetadata metadata = new ObjectMetadata();
 		if (contentLength > -1) {
 			metadata.setContentLength(contentLength);
@@ -108,7 +107,7 @@ public class S3FileStorage extends BucketFileStorage {
 	}
 
 	@Override
-	public InputStream open(String path) throws IOException {
+	public InputStream open(String path) {
 		path = normalizePath(path);
 		try {
 			S3Object object = this.s3.getObject(getBucket(), path);

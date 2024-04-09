@@ -99,10 +99,9 @@ public class JsonSerializationUtils {
 			.addMixIn(GrantedAuthority.class, SimpleGrantedAuthorityMixin.class)
 			.addMixIn(SimpleGrantedAuthority.class, SimpleGrantedAuthorityMixin.class)
 			.registerModule(new SimpleModule().addSerializer(new NullValueSerializer())
-				.addDeserializer(NullValue.class, new JsonDeserializer<NullValue>() {
+				.addDeserializer(NullValue.class, new JsonDeserializer<>() {
 					@Override
-					public NullValue deserialize(JsonParser jsonparser, DeserializationContext deserializationcontext)
-							throws IOException {
+					public NullValue deserialize(JsonParser jsonparser, DeserializationContext deserializationcontext) {
 						return (NullValue) NullValue.INSTANCE;
 					}
 				}))
@@ -160,8 +159,7 @@ public class JsonSerializationUtils {
 				return bool;
 			}
 			return this.cache.computeIfAbsent(member, mem -> {
-				if (mem instanceof Method) {
-					Method method = (Method) mem;
+				if (mem instanceof Method method) {
 					String name = method.getName();
 					if (name.startsWith("get") || name.startsWith("is")) {
 						name = name.startsWith("get") ? 's' + name.substring(1) : "set" + name.substring(2);
@@ -193,8 +191,6 @@ public class JsonSerializationUtils {
 
 		private static final long serialVersionUID = 1999052150548658808L;
 
-		private final String classIdentifier = "@class";
-
 		NullValueSerializer() {
 			super(NullValue.class);
 		}
@@ -202,7 +198,7 @@ public class JsonSerializationUtils {
 		@Override
 		public void serialize(NullValue value, JsonGenerator jgen, SerializerProvider provider) throws IOException {
 			jgen.writeStartObject();
-			jgen.writeStringField(this.classIdentifier, NullValue.class.getName());
+			jgen.writeStringField("@class", NullValue.class.getName());
 			jgen.writeEndObject();
 		}
 

@@ -42,7 +42,7 @@ public class DefaultVerificationManager implements VerificationManager {
 	public void send(String username) {
 		String receiver = getReceiver(this.userDetailsService.loadUserByUsername(username));
 		if (!StringUtils.hasLength(receiver)) {
-			log.warn("Receiver not found for user: {}", username);
+			log.warn("Send failed because receiver not found for user: {}", username);
 		}
 		else {
 			this.verificationService.send(receiver);
@@ -53,7 +53,7 @@ public class DefaultVerificationManager implements VerificationManager {
 	public boolean verify(UserDetails user, String verificationCode) {
 		String receiver = getReceiver(user);
 		if (!StringUtils.hasLength(receiver)) {
-			log.warn("Receiver not found for user: {}", user.getUsername());
+			log.warn("Verify failed because receiver not found for user: {}", user.getUsername());
 			return false;
 		}
 		return this.verificationService.verify(receiver, verificationCode);

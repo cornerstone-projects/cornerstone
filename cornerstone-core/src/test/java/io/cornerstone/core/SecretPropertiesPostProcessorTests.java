@@ -61,18 +61,18 @@ class SecretPropertiesPostProcessorTests extends SpringApplicationTestBase {
 	void decoderIsNotFound() throws Exception {
 		String content = KEY_DECODER + "=com.example.MyDecoder\nfoo=bar";
 		Files.write(configFile.toPath(), content.getBytes());
-		assertThatIllegalArgumentException().isThrownBy(() -> {
-			createProcessor().postProcessEnvironment(mock(ConfigurableEnvironment.class), null);
-		}).withMessageContaining("not found");
+		assertThatIllegalArgumentException()
+			.isThrownBy(() -> createProcessor().postProcessEnvironment(mock(ConfigurableEnvironment.class), null))
+			.withMessageContaining("not found");
 	}
 
 	@Test
 	void decoderIsInvalid() throws Exception {
 		String content = KEY_DECODER + "=" + InvalidDecoder.class.getName() + "\nfoo=bar";
 		Files.write(configFile.toPath(), content.getBytes());
-		assertThatIllegalArgumentException().isThrownBy(() -> {
-			createProcessor().postProcessEnvironment(mock(ConfigurableEnvironment.class), null);
-		}).withMessageContaining("java.util.function.Function<String,String>");
+		assertThatIllegalArgumentException()
+			.isThrownBy(() -> createProcessor().postProcessEnvironment(mock(ConfigurableEnvironment.class), null))
+			.withMessageContaining("java.util.function.Function<String,String>");
 	}
 
 	@Nested

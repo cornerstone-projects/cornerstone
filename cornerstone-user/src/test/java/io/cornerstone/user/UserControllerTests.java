@@ -56,7 +56,7 @@ class UserControllerTests extends ControllerTestBase {
 		// create
 		u.setUsername(ADMIN_USERNAME);
 		ResponseEntity<Map<String, Object>> resp = restTemplate.exchange(RequestEntity.method(POST, PATH_LIST).body(u),
-				new ParameterizedTypeReference<Map<String, Object>>() {
+				new ParameterizedTypeReference<>() {
 				});
 		assertThat(resp.getStatusCode()).isSameAs(BAD_REQUEST);
 		assertThat(resp.getBody()
@@ -111,7 +111,7 @@ class UserControllerTests extends ControllerTestBase {
 	void list() {
 		TestRestTemplate restTemplate = adminRestTemplate();
 		ResponseEntity<ResultPage<User>> response = restTemplate.exchange(RequestEntity.method(GET, PATH_LIST).build(),
-				new ParameterizedTypeReference<ResultPage<User>>() {
+				new ParameterizedTypeReference<>() {
 				});
 		assertThat(response.getStatusCode()).isSameAs(OK);
 		ResultPage<User> page = response.getBody();
@@ -125,7 +125,7 @@ class UserControllerTests extends ControllerTestBase {
 																			// view
 		response = restTemplate.exchange(
 				RequestEntity.method(GET, PATH_LIST + "?page=2&size=1&sort=username,desc").build(),
-				new ParameterizedTypeReference<ResultPage<User>>() {
+				new ParameterizedTypeReference<>() {
 				});
 		assertThat(response.getStatusCode()).isSameAs(OK);
 		page = response.getBody();
@@ -136,7 +136,7 @@ class UserControllerTests extends ControllerTestBase {
 		assertThat(page.getResult().getFirst().getUsername()).isEqualTo(ADMIN_USERNAME);
 
 		response = restTemplate.exchange(RequestEntity.method(GET, PATH_LIST + "?query=admin").build(),
-				new ParameterizedTypeReference<ResultPage<User>>() {
+				new ParameterizedTypeReference<>() {
 				});
 		assertThat(response.getStatusCode()).isSameAs(OK);
 		page = response.getBody();
@@ -148,8 +148,7 @@ class UserControllerTests extends ControllerTestBase {
 		assertThat(page.getTotalElements()).isEqualTo(1);
 
 		ResponseEntity<ResultPage<User>> response2 = restTemplate.exchange(
-				RequestEntity.method(GET, PATH_LIST + "?username=admin").build(),
-				new ParameterizedTypeReference<ResultPage<User>>() {
+				RequestEntity.method(GET, PATH_LIST + "?username=admin").build(), new ParameterizedTypeReference<>() {
 				});
 		assertThat(response2.getBody()).isEqualTo(response.getBody());
 	}
@@ -258,10 +257,9 @@ class UserControllerTests extends ControllerTestBase {
 		HttpEntity<String> entity = new HttpEntity<>(body, headers);
 		assertThat(restTemplate.postForEntity(PATH_LIST + ".csv", entity, void.class).getStatusCode()).isSameAs(OK);
 
-		ResponseEntity<ResultPage<User>> response = restTemplate.exchange(
-				RequestEntity.method(GET, PATH_LIST + "?name=xxx").build(),
-				new ParameterizedTypeReference<ResultPage<User>>() {
-				});
+		ResponseEntity<ResultPage<User>> response = restTemplate
+			.exchange(RequestEntity.method(GET, PATH_LIST + "?name=xxx").build(), new ParameterizedTypeReference<>() {
+			});
 		assertThat(response.getStatusCode()).isSameAs(OK);
 		ResultPage<User> page = response.getBody();
 		assertThat(page).isNotNull();
@@ -272,9 +270,7 @@ class UserControllerTests extends ControllerTestBase {
 		assertThat(page.getResult().get(1).getUsername()).isEqualTo("test2");
 		assertThat(page.getResult().get(1).getRoles()).isNullOrEmpty();
 		assertThat(page.getResult().get(1).getDisabled()).isSameAs(Boolean.TRUE);
-		page.getResult().forEach(u -> {
-			restTemplate.delete(PATH_DETAIL, u.getId());
-		});
+		page.getResult().forEach(u -> restTemplate.delete(PATH_DETAIL, u.getId()));
 	}
 
 	@Test
