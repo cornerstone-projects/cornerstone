@@ -1,10 +1,8 @@
 package io.cornerstone.core.sequence;
 
-import io.cornerstone.test.containers.PostgreSQL;
+import io.cornerstone.test.containers.UsePostgreSQLContainer;
 
-import org.springframework.test.context.ContextConfiguration;
-
-@ContextConfiguration(classes = PostgreSQL.class)
+@UsePostgreSQLContainer
 class PostgreSQLSequenceTests extends DatabaseSequenceTests {
 
 }

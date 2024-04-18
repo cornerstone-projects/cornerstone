@@ -1,10 +1,8 @@
 package io.cornerstone.core.sequence;
 
-import io.cornerstone.test.containers.MySQL;
+import io.cornerstone.test.containers.UseMySQLContainer;
 
-import org.springframework.test.context.ContextConfiguration;
-
-@ContextConfiguration(classes = MySQL.class)
+@UseMySQLContainer
 class MySQLSequenceTests extends DatabaseSequenceTests {
 
 }

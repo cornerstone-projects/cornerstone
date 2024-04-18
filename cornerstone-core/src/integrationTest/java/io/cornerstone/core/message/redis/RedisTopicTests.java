@@ -5,7 +5,7 @@ import io.cornerstone.core.DefaultApplication;
 import io.cornerstone.core.domain.Scope;
 import io.cornerstone.core.message.MessageProcessor;
 import io.cornerstone.core.message.TopicTestBase;
-import io.cornerstone.test.containers.Redis;
+import io.cornerstone.test.containers.UseRedisContainer;
 import io.cornerstone.test.mock.ResultCaptor;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
@@ -23,7 +23,8 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
-@ContextConfiguration(classes = { RedisTopicTests.Config.class, Redis.class })
+@UseRedisContainer
+@ContextConfiguration(classes = RedisTopicTests.Config.class)
 class RedisTopicTests extends TopicTestBase {
 
 	@SpyBean

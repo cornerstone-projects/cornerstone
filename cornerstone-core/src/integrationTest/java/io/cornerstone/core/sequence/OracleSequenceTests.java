@@ -1,10 +1,8 @@
 package io.cornerstone.core.sequence;
 
-import io.cornerstone.test.containers.Oracle;
+import io.cornerstone.test.containers.UseOracleContainer;
 
-import org.springframework.test.context.ContextConfiguration;
-
-@ContextConfiguration(classes = Oracle.class)
+@UseOracleContainer
 class OracleSequenceTests extends DatabaseSequenceTests {
 
 }

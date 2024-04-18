@@ -1,10 +1,8 @@
 package io.cornerstone.core.sequence;
 
-import io.cornerstone.test.containers.Db2;
+import io.cornerstone.test.containers.UseDb2Container;
 
-import org.springframework.test.context.ContextConfiguration;
-
-@ContextConfiguration(classes = Db2.class)
+@UseDb2Container
 class Db2SequenceTests extends DatabaseSequenceTests {
 
 }

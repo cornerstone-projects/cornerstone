@@ -3,7 +3,7 @@ package io.cornerstone.core.kafka;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import io.cornerstone.test.containers.Kafka;
+import io.cornerstone.test.containers.UseKafkaContainer;
 import lombok.SneakyThrows;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,7 +24,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.BDDMockito.willAnswer;
 
-@ContextConfiguration(classes = { KafkaIntegrationTests.Config.class, Kafka.class })
+@UseKafkaContainer
+@ContextConfiguration(classes = KafkaIntegrationTests.Config.class)
 @TestPropertySource(properties = "spring.kafka.consumer.auto-offset-reset=earliest")
 @SpringJUnitConfig
 class KafkaIntegrationTests {

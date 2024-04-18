@@ -1,7 +1,7 @@
 package io.cornerstone.core.event;
 
 import io.cornerstone.core.domain.Scope;
-import io.cornerstone.test.containers.RabbitMQ;
+import io.cornerstone.test.containers.UseRabbitMQContainer;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -14,7 +14,8 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.never;
 
-@ContextConfiguration(classes = { RabbitApplicationEventTopic.class, RabbitMQ.class })
+@UseRabbitMQContainer
+@ContextConfiguration(classes = RabbitApplicationEventTopic.class)
 @TestPropertySource(properties = "application-event.topic.type=rabbit")
 class RabbitApplicationEventTopicTests extends ApplicationEventTopicTestBase {
 

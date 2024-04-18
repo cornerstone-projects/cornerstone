@@ -6,7 +6,7 @@ import java.time.Period;
 import io.cornerstone.core.sequence.CyclicSequence.CycleType;
 import io.cornerstone.core.sequence.cyclic.RedisCyclicSequence;
 import io.cornerstone.core.sequence.simple.RedisSimpleSequence;
-import io.cornerstone.test.containers.Redis;
+import io.cornerstone.test.containers.UseRedisContainer;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +17,8 @@ import org.springframework.test.context.ContextConfiguration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@ContextConfiguration(classes = { RedisSequenceTests.Config.class, Redis.class })
+@UseRedisContainer
+@ContextConfiguration(classes = RedisSequenceTests.Config.class)
 class RedisSequenceTests extends SequenceTestBase {
 
 	@Autowired

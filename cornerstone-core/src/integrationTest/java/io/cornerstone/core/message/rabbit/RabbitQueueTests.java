@@ -2,7 +2,7 @@ package io.cornerstone.core.message.rabbit;
 
 import io.cornerstone.core.message.MessageProcessor;
 import io.cornerstone.core.message.QueueTestBase;
-import io.cornerstone.test.containers.RabbitMQ;
+import io.cornerstone.test.containers.UseRabbitMQContainer;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 
@@ -16,7 +16,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.then;
 
-@ContextConfiguration(classes = { RabbitQueueTests.Config.class, RabbitMQ.class })
+@UseRabbitMQContainer
+@ContextConfiguration(classes = RabbitQueueTests.Config.class)
 class RabbitQueueTests extends QueueTestBase {
 
 	@SpyBean

@@ -1,10 +1,8 @@
 package io.cornerstone.core.sequence;
 
-import io.cornerstone.test.containers.SQLServer;
+import io.cornerstone.test.containers.UseSQLServerContainer;
 
-import org.springframework.test.context.ContextConfiguration;
-
-@ContextConfiguration(classes = SQLServer.class)
+@UseSQLServerContainer
 class SQLServerSequenceTests extends DatabaseSequenceTests {
 
 }

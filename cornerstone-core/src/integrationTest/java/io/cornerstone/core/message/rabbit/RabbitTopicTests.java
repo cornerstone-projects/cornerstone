@@ -5,7 +5,7 @@ import io.cornerstone.core.DefaultApplication;
 import io.cornerstone.core.domain.Scope;
 import io.cornerstone.core.message.MessageProcessor;
 import io.cornerstone.core.message.TopicTestBase;
-import io.cornerstone.test.containers.RabbitMQ;
+import io.cornerstone.test.containers.UseRabbitMQContainer;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 
@@ -20,7 +20,8 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.never;
 
-@ContextConfiguration(classes = { RabbitTopicTests.Config.class, RabbitMQ.class })
+@UseRabbitMQContainer
+@ContextConfiguration(classes = RabbitTopicTests.Config.class)
 public class RabbitTopicTests extends TopicTestBase {
 
 	@SpyBean

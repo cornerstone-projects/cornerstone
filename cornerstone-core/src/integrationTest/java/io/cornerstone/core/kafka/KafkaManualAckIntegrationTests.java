@@ -3,7 +3,7 @@ package io.cornerstone.core.kafka;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import io.cornerstone.test.containers.Kafka;
+import io.cornerstone.test.containers.UseKafkaContainer;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.junit.jupiter.api.Test;
 
@@ -25,7 +25,8 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.BDDMockito.willAnswer;
 
-@ContextConfiguration(classes = { KafkaManualAckIntegrationTests.Config.class, Kafka.class })
+@UseKafkaContainer
+@ContextConfiguration(classes = KafkaManualAckIntegrationTests.Config.class)
 @TestPropertySource(properties = {
 		"spring.kafka.producer.value-serializer=org.springframework.kafka.support.serializer.JsonSerializer",
 		"spring.kafka.producer.properties.spring.json.add.type.headers=false",

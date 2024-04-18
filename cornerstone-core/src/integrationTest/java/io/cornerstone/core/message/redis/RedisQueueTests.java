@@ -2,7 +2,7 @@ package io.cornerstone.core.message.redis;
 
 import io.cornerstone.core.message.MessageProcessor;
 import io.cornerstone.core.message.QueueTestBase;
-import io.cornerstone.test.containers.Redis;
+import io.cornerstone.test.containers.UseRedisContainer;
 import io.cornerstone.test.mock.ResultCaptor;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
@@ -18,7 +18,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
-@ContextConfiguration(classes = { RedisQueueTests.Config.class, Redis.class })
+@UseRedisContainer
+@ContextConfiguration(classes = RedisQueueTests.Config.class)
 class RedisQueueTests extends QueueTestBase {
 
 	@SpyBean
