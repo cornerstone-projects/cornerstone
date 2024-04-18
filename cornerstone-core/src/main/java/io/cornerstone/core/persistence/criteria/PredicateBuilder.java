@@ -4,7 +4,6 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import org.hibernate.dialect.Dialect;
-import org.hibernate.dialect.H2Dialect;
 import org.hibernate.dialect.MySQLDialect;
 import org.hibernate.dialect.OracleDialect;
 import org.hibernate.engine.jdbc.spi.JdbcServices;
@@ -136,14 +135,8 @@ public class PredicateBuilder {
 		// for mysql 5.7:
 		// create function regexp_like (text varchar(255), pattern varchar(255)) returns
 		// integer deterministic return text regexp pattern;
-		// for postgresql:
-		// create or replace function regexp_like(character varying,character varying)
-		// returns integer as $$ select ($1 ~ $2)::int; $$ language sql immutable;
-		if (dialect instanceof H2Dialect && dialect.getVersion().isSameOrAfter(2)) {
-			return cb.equal(cb.function("regexp_like", Boolean.class, root.get(propertyName), cb.literal(pattern)),
-					Boolean.TRUE);
-		}
-		return cb.equal(cb.function("regexp_like", Integer.class, root.get(propertyName), cb.literal(pattern)), 1);
+		return cb.equal(cb.function("regexp_like", Boolean.class, root.get(propertyName), cb.literal(pattern)),
+				Boolean.TRUE);
 	}
 
 	@Nullable
