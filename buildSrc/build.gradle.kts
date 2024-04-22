@@ -37,7 +37,6 @@ repositories {
 
 dependencies {
 	implementation("""io.freefair.lombok:io.freefair.lombok.gradle.plugin:${property("lombok-plugin.version")}""")
-	implementation("""org.openrewrite.rewrite:org.openrewrite.rewrite.gradle.plugin:${property("openrewrite-plugin.version")}""")
 	implementation("""io.spring.gradle:dependency-management-plugin:${property("dependency-management-plugin.version")}""")
 	implementation("""io.spring.javaformat:spring-javaformat-gradle-plugin:${property("javaformat-plugin.version")}""")
 	implementation("""org.springframework.boot:org.springframework.boot.gradle.plugin:${property("spring-boot.version")}""")
