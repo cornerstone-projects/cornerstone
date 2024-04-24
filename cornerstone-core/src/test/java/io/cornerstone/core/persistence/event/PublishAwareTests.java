@@ -92,7 +92,7 @@ class PublishAwareTests extends DataJpaTestBase {
 	}
 
 	@EnableAspectJAutoProxy
-	public static class Config {
+	static class Config {
 
 		@Bean
 		EventPublisher eventPublisher() {
@@ -121,20 +121,20 @@ class PublishAwareTests extends DataJpaTestBase {
 
 	}
 
-	public static class TestService {
+	static class TestService {
 
 		@Autowired
 		TestEntityRepository repository;
 
 		@Transactional
-		public void saveAndUpdate() {
+		void saveAndUpdate() {
 			TestEntity entity = this.repository.save(new TestEntity());
 			entity.setName("test");
 			this.repository.save(entity);
 		}
 
 		@Transactional
-		public void saveAndUpdateAndDelete() {
+		void saveAndUpdateAndDelete() {
 			TestEntity entity = this.repository.save(new TestEntity());
 			entity.setName("test");
 			entity = this.repository.save(entity);
@@ -143,10 +143,10 @@ class PublishAwareTests extends DataJpaTestBase {
 
 	}
 
-	public static class TestListener {
+	static class TestListener {
 
 		@EventListener
-		public void on(EntityOperationEvent<TestEntity> event) {
+		void on(EntityOperationEvent<TestEntity> event) {
 
 		}
 

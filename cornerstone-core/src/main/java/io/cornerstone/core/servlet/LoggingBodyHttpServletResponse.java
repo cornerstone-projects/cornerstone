@@ -149,7 +149,7 @@ public class LoggingBodyHttpServletResponse extends HttpServletResponseWrapper {
 					byte[] bytes = this.cachedContent.toByteArray();
 					this.cachedContent = null;
 					if (bytes.length > 0) {
-						String str = new String(bytes, 0, bytes.length, this.characterEncoding);
+						String str = new String(bytes, this.characterEncoding);
 						str = JsonSanitizer.DEFAULT_INSTANCE.sanitize(str);
 						String method = MDC.get("method");
 						String url = MDC.get("url");

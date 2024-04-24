@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
-import java.util.stream.Collectors;
 
 import org.springframework.util.StringUtils;
 
@@ -78,12 +77,8 @@ public enum DatabaseProduct {
 
 		@Override
 		public String getJdbcUrl(String host, int port, String databaseName, String params) {
-			StringBuilder sb = new StringBuilder(getJdbcUrlPrefix());
-			sb.append(":thin:@");
-			sb.append(StringUtils.hasLength(host) ? host : "localhost");
-			sb.append(":").append(port > 0 ? port : getDefaultPort());
-			sb.append(":").append(databaseName);
-			return sb.toString();
+			return getJdbcUrlPrefix() + ":thin:@" + (StringUtils.hasLength(host) ? host : "localhost") + ":"
+					+ (port > 0 ? port : getDefaultPort()) + ":" + databaseName;
 		}
 
 		@Override
@@ -513,7 +508,7 @@ public enum DatabaseProduct {
 	public List<String> getKeywords() {
 		try (BufferedReader br = new BufferedReader(
 				new InputStreamReader(getClass().getResourceAsStream("keywords.txt"), StandardCharsets.UTF_8))) {
-			List<String> lines = br.lines().collect(Collectors.toList());
+			List<String> lines = br.lines().toList();
 			for (String line : lines) {
 				if (line.startsWith(name() + "=")) {
 					String s = line.substring(line.indexOf("=") + 1);

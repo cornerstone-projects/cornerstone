@@ -3,9 +3,11 @@ package io.cornerstone.core.security;
 import java.util.Map;
 
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.Getter;
 
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 
+@Getter
 public class DefaultWebAuthenticationDetails extends WebAuthenticationDetails {
 
 	public static final String PARAMETER_NAME_VERIFICATION_CODE = "verificationCode";
@@ -22,10 +24,6 @@ public class DefaultWebAuthenticationDetails extends WebAuthenticationDetails {
 		else {
 			this.verificationCode = request.getParameter(PARAMETER_NAME_VERIFICATION_CODE);
 		}
-	}
-
-	public String getVerificationCode() {
-		return this.verificationCode;
 	}
 
 }

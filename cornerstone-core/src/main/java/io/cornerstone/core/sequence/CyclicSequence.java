@@ -3,6 +3,8 @@ package io.cornerstone.core.sequence;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+import lombok.Getter;
+
 public interface CyclicSequence extends Sequence {
 
 	@Override
@@ -102,6 +104,7 @@ public interface CyclicSequence extends Sequence {
 
 		};
 
+		@Getter
 		private final String pattern;
 
 		private final DateTimeFormatter formatter;
@@ -109,10 +112,6 @@ public interface CyclicSequence extends Sequence {
 		CycleType(String pattern) {
 			this.pattern = pattern;
 			this.formatter = DateTimeFormatter.ofPattern(pattern);
-		}
-
-		public String getPattern() {
-			return this.pattern;
 		}
 
 		public String format(LocalDateTime datetime) {

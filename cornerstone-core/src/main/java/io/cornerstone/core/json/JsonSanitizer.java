@@ -81,7 +81,7 @@ public class JsonSanitizer {
 			public void serializeAsField(Object obj, JsonGenerator jgen, SerializerProvider provider,
 					PropertyWriter writer) throws Exception {
 				String name = writer.getName();
-				if (include(writer) && !dropping.stream().anyMatch(entry -> entry.test(name, obj))) {
+				if (include(writer) && dropping.stream().noneMatch(entry -> entry.test(name, obj))) {
 					BeanWrapperImpl bw = new BeanWrapperImpl(obj);
 					Optional<Function<String, String>> func = mapping.entrySet()
 						.stream()

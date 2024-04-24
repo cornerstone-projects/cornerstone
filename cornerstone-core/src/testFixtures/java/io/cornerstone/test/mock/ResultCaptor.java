@@ -2,11 +2,13 @@ package io.cornerstone.test.mock;
 
 import java.util.function.UnaryOperator;
 
+import lombok.Getter;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
 public class ResultCaptor<T> implements Answer<T> {
 
+	@Getter
 	private T result;
 
 	private final UnaryOperator<T> operator;
@@ -17,10 +19,6 @@ public class ResultCaptor<T> implements Answer<T> {
 
 	public ResultCaptor(UnaryOperator<T> operator) {
 		this.operator = operator;
-	}
-
-	public T getResult() {
-		return this.result;
 	}
 
 	@SuppressWarnings("unchecked")

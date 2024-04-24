@@ -63,11 +63,11 @@ public class MixedPasswordEncoder implements PasswordEncoder {
 		if (!isShaInput) {
 			input = MessageDigestUtils.sha(input);
 		}
-		byte[] digested = MessageDigestUtils.sha256(EncodingUtils.concatenate(new byte[][] { salt, input }));
+		byte[] digested = MessageDigestUtils.sha256(EncodingUtils.concatenate(salt, input));
 		if (additionalMD5) {
-			digested = MessageDigestUtils.md5(EncodingUtils.concatenate(new byte[][] { salt, digested }));
+			digested = MessageDigestUtils.md5(EncodingUtils.concatenate(salt, digested));
 		}
-		digested = EncodingUtils.concatenate(new byte[][] { salt, digested });
+		digested = EncodingUtils.concatenate(salt, digested);
 		return digested;
 	}
 

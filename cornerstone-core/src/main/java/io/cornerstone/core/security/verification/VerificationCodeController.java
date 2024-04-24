@@ -34,10 +34,10 @@ public class VerificationCodeController implements PermitAllRequestContributor {
 	@GetMapping("/{username}")
 	public VerificationCodeRequirement requirement(@PathVariable String username) {
 		if (this.verificationCodeCheckers.isEmpty() || !StringUtils.hasLength(username)
-				|| !this.verificationCodeCheckers.stream().anyMatch(c -> !c.skip(username))) {
+				|| this.verificationCodeCheckers.stream().allMatch(c -> c.skip(username))) {
 			return new VerificationCodeRequirement(false, null, null, null, null);
 		}
-		boolean passwordHidden = this.verificationCodeCheckers.stream().noneMatch(c -> !c.skipPasswordCheck(username));
+		boolean passwordHidden = this.verificationCodeCheckers.stream().allMatch(c -> c.skipPasswordCheck(username));
 		boolean sendingRequired = this.verificationCodeCheckers.stream().anyMatch(c -> !c.skipSend());
 		return new VerificationCodeRequirement(true, this.properties.getLength(), passwordHidden, sendingRequired,
 				sendingRequired ? (int) this.properties.getResend().getInterval().toSeconds() : null);

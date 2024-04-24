@@ -105,15 +105,13 @@ public class AccessFilter implements Filter {
 				response.setHeader(HTTP_HEADER_REQUEST_ID, requestId);
 			}
 			if ((requestId.indexOf('.') < 0) && (sessionId != null)) {
-				requestId = new StringBuilder(sessionId).append('.').append(requestId).toString();
+				requestId = sessionId + '.' + requestId;
 			}
 			request.setAttribute(HTTP_HEADER_REQUEST_ID, requestId);
 		}
 		MDC.put(MDC_KEY_REQUEST_ID, requestId);
-		StringBuilder sb = new StringBuilder();
-		sb.append(" request:");
-		sb.append(requestId);
-		MDC.put(MDC_KEY_REQUEST, sb.toString());
+		String sb = " request:" + requestId;
+		MDC.put(MDC_KEY_REQUEST, sb);
 
 		MDC.put("server", this.serverTag);
 		long start = System.nanoTime();
@@ -121,9 +119,7 @@ public class AccessFilter implements Filter {
 			chain.doFilter(request, response);
 			long responseTime = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start);
 			if (responseTime > this.responseTimeThreshold) {
-				StringBuilder msg = new StringBuilder();
-				msg.append(request.getQueryString()).append(" response time:").append(responseTime).append("ms");
-				this.accesWarnLog.warn(msg.toString());
+				this.accesWarnLog.warn("{} response time:{}ms", request.getQueryString(), responseTime);
 				Metrics.timer("http.access.slow", List.of(Tag.of("uri", uri)))
 					.record(responseTime, TimeUnit.MILLISECONDS);
 			}

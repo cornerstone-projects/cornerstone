@@ -54,7 +54,6 @@ public class DefaultDaoAuthenticationProvider extends DaoAuthenticationProvider 
 					}
 					catch (AuthenticationException ex2) {
 						ex = ex2;
-						continue;
 					}
 				}
 			}

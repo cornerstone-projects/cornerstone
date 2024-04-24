@@ -36,7 +36,7 @@ public class AopUtils {
 					&& candidate instanceof Advised advised) {
 				Object target = advised.getTargetSource().getTarget();
 				if (target != null) {
-					return (T) getUltimateTargetObject(target);
+					return getUltimateTargetObject(target);
 				}
 			}
 		}

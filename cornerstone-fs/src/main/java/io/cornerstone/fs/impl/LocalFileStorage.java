@@ -38,7 +38,7 @@ public class LocalFileStorage extends AbstractFileStorage {
 		}
 		if (!this.directory.exists()) {
 			if (!this.directory.mkdirs()) {
-				log.error("mkdirs error:" + this.directory.getAbsolutePath());
+				log.error("mkdirs error:{}", this.directory.getAbsolutePath());
 			}
 		}
 	}

@@ -1,6 +1,5 @@
 package io.cornerstone.core.validation.validators;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -8,6 +7,7 @@ import io.cornerstone.core.util.NumberUtils;
 import io.cornerstone.core.validation.constraints.MobilePhoneNumber;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
+import lombok.Getter;
 
 import org.springframework.util.StringUtils;
 
@@ -44,6 +44,7 @@ public class MobilePhoneNumberValidator implements ConstraintValidator<MobilePho
 		return false;
 	}
 
+	@Getter
 	enum Carrier {
 
 		// https://zh.wikipedia.org/wiki/%E4%B8%AD%E5%9B%BD%E5%86%85%E5%9C%B0%E7%A7%BB%E5%8A%A8%E7%BB%88%E7%AB%AF%E9%80%9A%E8%AE%AF%E5%8F%B7%E6%AE%B5
@@ -63,11 +64,7 @@ public class MobilePhoneNumberValidator implements ConstraintValidator<MobilePho
 		private final List<String> numberPrefixes;
 
 		Carrier(String... strings) {
-			this.numberPrefixes = Collections.unmodifiableList(List.of(strings));
-		}
-
-		public List<String> getNumberPrefixes() {
-			return this.numberPrefixes;
+			this.numberPrefixes = List.of(strings);
 		}
 
 		public static Carrier parse(String number) {

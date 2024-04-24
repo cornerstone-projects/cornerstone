@@ -198,7 +198,7 @@ public class WebSecurityConfiguration {
 	DaoAuthenticationProvider daoAuthenticationProvider(ObjectProvider<UserDetailsService> userDetailsService,
 			ObjectProvider<PasswordEncoder> passwordEncoder,
 			ObjectProvider<UserDetailsPasswordService> userDetailsPasswordService) {
-		UserDetailsService uds = userDetailsService.getIfAvailable(() -> (UserDetailsService) username -> {
+		UserDetailsService uds = userDetailsService.getIfAvailable(() -> username -> {
 			throw new UsernameNotFoundException(username);
 		});
 		DefaultDaoAuthenticationProvider provider = new DefaultDaoAuthenticationProvider();

@@ -67,7 +67,7 @@ public abstract class JsonConverter<T> implements AttributeConverter<T, String> 
 			return null;
 		}
 		try {
-			return (T) objectMapper.readValue(string, objectMapper.constructType(this.type));
+			return objectMapper.readValue(string, objectMapper.constructType(this.type));
 		}
 		catch (Exception ex) {
 			throw new IllegalArgumentException(string + " is not valid json ", ex);

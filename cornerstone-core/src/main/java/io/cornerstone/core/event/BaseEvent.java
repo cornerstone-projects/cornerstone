@@ -7,14 +7,13 @@ import lombok.Getter;
 
 import org.springframework.context.ApplicationEvent;
 
+@Getter
 public class BaseEvent<T> extends ApplicationEvent {
 
 	private static final long serialVersionUID = -2892858943541156897L;
 
-	@Getter
 	private final String instanceId = currentInstanceId();
 
-	@Getter
 	protected final T source;
 
 	public BaseEvent(T source) {

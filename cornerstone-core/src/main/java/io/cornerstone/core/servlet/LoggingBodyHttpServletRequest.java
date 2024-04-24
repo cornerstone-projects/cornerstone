@@ -130,7 +130,7 @@ public class LoggingBodyHttpServletRequest extends HttpServletRequestWrapper {
 				if (this.cachedContent != null) {
 					byte[] bytes = this.cachedContent.toByteArray();
 					this.cachedContent = null;
-					String str = new String(bytes, 0, bytes.length, this.characterEncoding);
+					String str = new String(bytes, this.characterEncoding);
 					str = JsonSanitizer.DEFAULT_INSTANCE.sanitize(str);
 					this.logger.info("\n{}", str);
 				}

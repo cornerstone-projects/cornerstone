@@ -38,12 +38,11 @@ class JsonSerializerTests {
 
 	}
 
+	@Getter
 	static class Department {
 
-		@Getter
 		private Long id;
 
-		@Getter
 		@Setter
 		private String name;
 

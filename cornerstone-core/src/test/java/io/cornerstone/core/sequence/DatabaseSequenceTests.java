@@ -12,14 +12,13 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.ContextConfiguration;
 
+@Getter
 @ContextConfiguration(classes = DatabaseSequenceTests.Config.class)
 @ImportAutoConfiguration(DataSourceAutoConfiguration.class)
 class DatabaseSequenceTests extends SequenceTestBase {
 
-	@Getter
 	private final int threads = 5;
 
-	@Getter
 	private final int loop = 1000;
 
 	static class Config {

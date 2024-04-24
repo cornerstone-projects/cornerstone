@@ -14,7 +14,7 @@ public abstract class AbstractCollectionConverter<T> {
 		if (collection.isEmpty()) {
 			return "";
 		}
-		return String.join(SEPARATOR, collection.stream().map(Object::toString).collect(Collectors.toList()));
+		return collection.stream().map(Object::toString).collect(Collectors.joining(SEPARATOR));
 	}
 
 	protected Collection<T> doConvertToEntityAttribute(String string) {

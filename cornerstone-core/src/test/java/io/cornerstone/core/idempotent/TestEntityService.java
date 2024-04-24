@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.dao.OptimisticLockingFailureException;
 
 @RequiredArgsConstructor
-public class TestEntityService {
+class TestEntityService {
 
 	public static final String SEQ_NO_FOR_LOCKING_FAILURE = "000001";
 
@@ -15,7 +15,7 @@ public class TestEntityService {
 
 	private final AtomicInteger counter = new AtomicInteger();
 
-	public TestEntity save(Request request) {
+	TestEntity save(Request request) {
 		if (SEQ_NO_FOR_LOCKING_FAILURE.equals(request.getSeqNo())) {
 			int times = this.counter.incrementAndGet();
 			if (times % 3 != 0) {

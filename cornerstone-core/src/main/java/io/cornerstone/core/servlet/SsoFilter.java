@@ -22,6 +22,8 @@ import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 
@@ -266,11 +268,9 @@ public class SsoFilter implements Filter {
 			sb.append("?").append(queryString);
 		}
 		String targetUrl = sb.toString();
-		StringBuilder redirectUrl = new StringBuilder(this.portalLoginUrl.indexOf("://") > 0 ? "" : this.portalBaseUrl);
-		redirectUrl.append(this.portalLoginUrl)
-			.append("?targetUrl=")
-			.append(URLEncoder.encode(targetUrl, StandardCharsets.UTF_8));
-		response.sendRedirect(redirectUrl.toString());
+		String redirectUrl = (this.portalLoginUrl.indexOf("://") > 0 ? "" : this.portalBaseUrl) + this.portalLoginUrl
+				+ "?targetUrl=" + URLEncoder.encode(targetUrl, StandardCharsets.UTF_8);
+		response.sendRedirect(redirectUrl);
 	}
 
 	protected static String getCookieValue(HttpServletRequest request, String cookieName) {
@@ -312,6 +312,8 @@ public class SsoFilter implements Filter {
 				&& arr1[arr1.length - 2].equals(arr2[arr2.length - 2]);
 	}
 
+	@Setter
+	@Getter
 	public static class SimpleUser implements Serializable {
 
 		private static final long serialVersionUID = 2064378429236105592L;
@@ -321,30 +323,6 @@ public class SsoFilter implements Filter {
 		private String name;
 
 		private Set<String> roles = new LinkedHashSet<>(0);
-
-		public String getUsername() {
-			return this.username;
-		}
-
-		public void setUsername(String username) {
-			this.username = username;
-		}
-
-		public String getName() {
-			return this.name;
-		}
-
-		public void setName(String name) {
-			this.name = name;
-		}
-
-		public Set<String> getRoles() {
-			return this.roles;
-		}
-
-		public void setRoles(Set<String> roles) {
-			this.roles = roles;
-		}
 
 	}
 

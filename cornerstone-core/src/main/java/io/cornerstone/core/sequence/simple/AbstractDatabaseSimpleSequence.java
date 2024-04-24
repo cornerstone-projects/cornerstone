@@ -5,18 +5,14 @@ import javax.sql.DataSource;
 import lombok.Getter;
 import lombok.Setter;
 
+@Getter
+@Setter
 public abstract class AbstractDatabaseSimpleSequence extends AbstractSimpleSequence {
 
-	@Getter
-	@Setter
 	private DataSource dataSource;
 
-	@Getter
-	@Setter
 	private String tableName = DEFAULT_TABLE_NAME;
 
-	@Getter
-	@Setter
 	private int cacheSize = 1;
 
 	protected String getActualSequenceName() {

@@ -7,11 +7,11 @@ import org.springframework.core.ResolvableType;
 import org.springframework.core.ResolvableTypeProvider;
 import org.springframework.data.domain.Persistable;
 
+@Getter
 public class EntityOperationEvent<T extends Persistable<?>> extends BaseEvent<T> implements ResolvableTypeProvider {
 
 	private static final long serialVersionUID = -3336231774669978161L;
 
-	@Getter
 	private final EntityOperationType type;
 
 	public EntityOperationEvent(T entity, EntityOperationType type) {

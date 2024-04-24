@@ -111,7 +111,7 @@ class KafkaRetryableTopicIntegrationTests {
 		@RetryableTopic(kafkaTemplate = "kafkaTemplate", backoff = @Backoff(multiplier = 2))
 		@KafkaListener(id = TEST_GROUP_NAME, topics = TEST_TOPIC_NAME)
 		void receive(@Payload Person person) {
-			this.logger.warn("Try process: " + person);
+			this.logger.warn("Try process: {}", person);
 			if (person.age() != 20) {
 				throw new RuntimeException("Failed to process " + person);
 			}
@@ -119,7 +119,7 @@ class KafkaRetryableTopicIntegrationTests {
 
 		@DltHandler
 		void handleDlt(Person person) {
-			this.logger.error("handle DLT: " + person);
+			this.logger.error("handle DLT: {}", person);
 		}
 
 	}

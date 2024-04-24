@@ -32,6 +32,7 @@ import static java.lang.StackWalker.Option.RETAIN_CLASS_REFERENCE;
 import static org.springframework.core.env.AbstractEnvironment.ACTIVE_PROFILES_PROPERTY_NAME;
 import static org.springframework.jndi.JndiLocatorDelegate.IGNORE_JNDI_PROPERTY_NAME;
 
+@Getter
 public class DefaultApplication extends SpringBootServletInitializer implements Application {
 
 	private static String hostName = "localhost";
@@ -41,7 +42,6 @@ public class DefaultApplication extends SpringBootServletInitializer implements 
 	static volatile Application currentApplication;
 
 	@Autowired
-	@Getter
 	private ApplicationContext context;
 
 	public DefaultApplication() {

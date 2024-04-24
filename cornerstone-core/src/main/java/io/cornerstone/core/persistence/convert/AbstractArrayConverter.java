@@ -24,7 +24,7 @@ public abstract class AbstractArrayConverter<T> {
 		if (array.length == 0) {
 			return "";
 		}
-		return String.join(SEPARATOR, Stream.of(array).map(Object::toString).collect(Collectors.toList()));
+		return Stream.of(array).map(Object::toString).collect(Collectors.joining(SEPARATOR));
 	}
 
 	public T[] convertToEntityAttribute(String string) {
