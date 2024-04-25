@@ -1,30 +1,13 @@
 package io.cornerstone.core.persistence.convert;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
-import jakarta.persistence.AttributeConverter;
-
-public abstract class AbstractListConverter<T> extends AbstractCollectionConverter<T>
-		implements AttributeConverter<List<T>, String> {
+public abstract class AbstractListConverter<T> extends AbstractCollectionConverter<List<T>, T> {
 
 	@Override
-	public String convertToDatabaseColumn(List<T> list) {
-		return doConvertToDatabaseColumn(list);
-	}
-
-	@Override
-	public List<T> convertToEntityAttribute(String string) {
-		return (List<T>) super.doConvertToEntityAttribute(string);
-	}
-
-	@Override
-	protected Collection<T> collection() {
+	protected List<T> createCollection() {
 		return new ArrayList<>();
 	}
-
-	@Override
-	protected abstract T convert(String s);
 
 }

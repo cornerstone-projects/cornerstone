@@ -6,6 +6,10 @@ import java.util.LinkedHashSet;
 import java.util.List;
 
 import io.cornerstone.test.DataJpaTestBase;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.metamodel.EntityType;
+import jakarta.persistence.metamodel.SingularAttribute;
+import org.hibernate.type.BasicType;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +28,21 @@ class ConvertersTests extends DataJpaTestBase {
 	@Autowired
 	TestEntityRepository repository;
 
+	@Autowired
+	EntityManager entityManager;
+
 	@Test
-	void test() {
+	void testMetamodel() {
+		EntityType<TestEntity> entityType = this.entityManager.getMetamodel().entity(TestEntity.class);
+		List.of("stringArray", "stringList", "stringSet", "stringMap", "integerArray", "integerList", "integerSet",
+				"longArray", "longList", "longSet", "enumArray", "enumList", "enumSet", "testComponentList")
+			.forEach(name -> assertThat(entityType.getAttribute(name)).isInstanceOfSatisfying(SingularAttribute.class,
+					sa -> assertThat(sa.getType()).isInstanceOfSatisfying(BasicType.class,
+							bt -> assertThat(bt.getJdbcJavaType().getJavaType()).isEqualTo(String.class))));
+	}
+
+	@Test
+	void testSaveAndGet() {
 		TestEntity entity = new TestEntity();
 		entity.setStringArray(new String[] { "a", "b", "c" });
 		entity.setStringList(List.of(entity.getStringArray()));

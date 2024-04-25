@@ -1,30 +1,13 @@
 package io.cornerstone.core.persistence.convert;
 
-import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import jakarta.persistence.AttributeConverter;
-
-public abstract class AbstractSetConverter<T> extends AbstractCollectionConverter<T>
-		implements AttributeConverter<Set<T>, String> {
+public abstract class AbstractSetConverter<T> extends AbstractCollectionConverter<Set<T>, T> {
 
 	@Override
-	public String convertToDatabaseColumn(Set<T> list) {
-		return doConvertToDatabaseColumn(list);
-	}
-
-	@Override
-	public Set<T> convertToEntityAttribute(String string) {
-		return (Set<T>) super.doConvertToEntityAttribute(string);
-	}
-
-	@Override
-	protected Collection<T> collection() {
+	protected Set<T> createCollection() {
 		return new LinkedHashSet<>();
 	}
-
-	@Override
-	protected abstract T convert(String s);
 
 }

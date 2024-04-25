@@ -7,9 +7,4 @@ import jakarta.persistence.Converter;
 public class IntegerArrayConverter extends AbstractArrayConverter<Integer>
 		implements AttributeConverter<Integer[], String> {
 
-	@Override
-	protected Integer convert(String s) {
-		return Integer.valueOf(s);
-	}
-
 }

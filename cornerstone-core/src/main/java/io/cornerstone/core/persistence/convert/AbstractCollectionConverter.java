@@ -3,11 +3,27 @@ package io.cornerstone.core.persistence.convert;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
-public abstract class AbstractCollectionConverter<T> {
+import jakarta.persistence.AttributeConverter;
+
+import org.springframework.core.ResolvableType;
+import org.springframework.core.convert.support.DefaultConversionService;
+
+@SuppressWarnings("unchecked")
+public abstract class AbstractCollectionConverter<C extends Collection<T>, T> implements AttributeConverter<C, String> {
 
 	public static final String SEPARATOR = ",";
 
-	protected static <T> String doConvertToDatabaseColumn(Collection<T> collection) {
+	private final Class<T> componentType;
+
+	public AbstractCollectionConverter() {
+		this.componentType = (Class<T>) ResolvableType.forClass(getClass())
+			.as(AbstractCollectionConverter.class)
+			.getGeneric(1)
+			.resolve();
+	}
+
+	@Override
+	public String convertToDatabaseColumn(C collection) {
 		if (collection == null) {
 			return null;
 		}
@@ -17,12 +33,13 @@ public abstract class AbstractCollectionConverter<T> {
 		return collection.stream().map(Object::toString).collect(Collectors.joining(SEPARATOR));
 	}
 
-	protected Collection<T> doConvertToEntityAttribute(String string) {
+	@Override
+	public C convertToEntityAttribute(String string) {
 		if (string == null) {
 			return null;
 		}
 		String[] arr = string.split(SEPARATOR + "\\s*");
-		Collection<T> collection = collection();
+		C collection = createCollection();
 		for (String s : arr) {
 			if (!s.isEmpty()) {
 				collection.add(convert(s));
@@ -31,8 +48,10 @@ public abstract class AbstractCollectionConverter<T> {
 		return collection;
 	}
 
-	protected abstract Collection<T> collection();
+	protected T convert(String s) {
+		return DefaultConversionService.getSharedInstance().convert(s, this.componentType);
+	}
 
-	protected abstract T convert(String s);
+	protected abstract C createCollection();
 
 }
