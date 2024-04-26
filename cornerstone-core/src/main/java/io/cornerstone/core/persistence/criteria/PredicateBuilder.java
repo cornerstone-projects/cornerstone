@@ -6,6 +6,7 @@ import jakarta.persistence.criteria.Root;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.dialect.MySQLDialect;
 import org.hibernate.dialect.OracleDialect;
+import org.hibernate.dialect.PostgreSQLDialect;
 import org.hibernate.engine.jdbc.spi.JdbcServices;
 import org.hibernate.query.sqm.internal.SqmCriteriaNodeBuilder;
 import org.hibernate.query.sqm.tree.expression.SqmLiteral;
@@ -95,20 +96,19 @@ public class PredicateBuilder {
 	}
 
 	public static <T> Predicate contains(Root<T> root, CriteriaBuilder cb, String propertyName, String item) {
-		Assert.doesNotContain(item, ",", "'item' should not contains comma");
+		Assert.doesNotContain(item, ",", "'item' should not contains ','");
+		Assert.doesNotContain(item, "%", "'item' should not contains '%'");
 		Dialect dialect = getDialect(cb);
 		if (dialect instanceof MySQLDialect) {
 			return cb.greaterThan(cb.function("find_in_set", Integer.class, cb.literal(item), root.get(propertyName)),
 					0);
 		}
-		// @formatter:off
-		/** https://hibernate.atlassian.net/browse/HHH-16419
+
 		if (dialect instanceof PostgreSQLDialect) {
-			return cb.equal(cb.literal(item), cb.function("any", String.class,
-					cb.function("string_to_array", String[].class, root.get(propertyName), cb.literal(","))));
+			return cb.equal(cb.literal(item),
+					cb.function("sql", String.class, cb.literal("any(string_to_array(" + propertyName + ",','))")));
 		}
-		*/
-		// @formatter:on
+
 		return cb.like(cb.concat(cb.concat(",", root.get(propertyName)), ","), '%' + item + '%');
 	}
 
