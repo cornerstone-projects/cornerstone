@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.RequestEntity;
@@ -47,7 +48,7 @@ import static org.springframework.http.MediaType.TEXT_HTML_VALUE;
 		"security.login-processing-url=" + TEST_LOGIN_PROCESSING_URL,
 		"security.default-success-url=" + TEST_DEFAULT_SUCCESS_URL,
 		"security.authorize-requests-mapping[/admin/**]=ADMIN" })
-@ContextConfiguration(classes = WebSecurityTests.Config.class)
+@ContextConfiguration
 class WebSecurityTests extends ControllerTestBase {
 
 	static final String TEST_LOGIN_PROCESSING_URL = "/test";
@@ -234,6 +235,7 @@ class WebSecurityTests extends ControllerTestBase {
 	}
 
 	@ComponentScan
+	@Configuration
 	static class Config {
 
 		@Bean

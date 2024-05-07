@@ -18,6 +18,7 @@ import org.mockito.Captor;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
@@ -57,7 +58,7 @@ import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED_VAL
 import static org.springframework.http.MediaType.TEXT_HTML_VALUE;
 
 @TestPropertySource(properties = { "verification.code.enabled=true" })
-@ContextConfiguration(classes = LoginWithVerificationCodeTests.Config.class)
+@ContextConfiguration
 class LoginWithVerificationCodeTests extends ControllerTestBase {
 
 	@MockBean
@@ -213,6 +214,7 @@ class LoginWithVerificationCodeTests extends ControllerTestBase {
 	}
 
 	@ComponentScan
+	@Configuration
 	static class Config {
 
 		@Bean

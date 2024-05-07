@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.core.BoundValueOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.test.context.ContextConfiguration;
@@ -18,7 +19,7 @@ import org.springframework.test.context.ContextConfiguration;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @UseRedisContainer
-@ContextConfiguration(classes = RedisSequenceTests.Config.class)
+@ContextConfiguration
 class RedisSequenceTests extends SequenceTestBase {
 
 	@Autowired
@@ -60,6 +61,7 @@ class RedisSequenceTests extends SequenceTestBase {
 		this.sample3Sequence.nextStringValue();
 	}
 
+	@Configuration
 	static class Config {
 
 		@Bean

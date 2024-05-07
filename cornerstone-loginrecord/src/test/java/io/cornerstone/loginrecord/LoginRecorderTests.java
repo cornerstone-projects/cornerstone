@@ -13,11 +13,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.authentication.event.AuthenticationFailureBadCredentialsEvent;
 import org.springframework.security.authentication.event.AuthenticationSuccessEvent;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.test.context.ContextConfiguration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@ContextConfiguration(classes = LoginRecorderTests.Config.class)
 class LoginRecorderTests extends SpringApplicationTestBase {
 
 	@Autowired
@@ -55,10 +53,6 @@ class LoginRecorderTests extends SpringApplicationTestBase {
 		assertThat(entity.getFailed()).isEqualTo(Boolean.TRUE);
 		assertThat(entity.getCause()).isEqualTo(ex.getLocalizedMessage());
 		assertThat(entity.getDate()).isNotNull();
-	}
-
-	static class Config {
-
 	}
 
 }

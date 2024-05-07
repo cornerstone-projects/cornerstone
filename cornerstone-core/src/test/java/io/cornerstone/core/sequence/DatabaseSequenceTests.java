@@ -10,10 +10,11 @@ import lombok.Getter;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
 
 @Getter
-@ContextConfiguration(classes = DatabaseSequenceTests.Config.class)
+@ContextConfiguration
 @ImportAutoConfiguration(DataSourceAutoConfiguration.class)
 class DatabaseSequenceTests extends SequenceTestBase {
 
@@ -21,6 +22,7 @@ class DatabaseSequenceTests extends SequenceTestBase {
 
 	private final int loop = 1000;
 
+	@Configuration
 	static class Config {
 
 		@Bean

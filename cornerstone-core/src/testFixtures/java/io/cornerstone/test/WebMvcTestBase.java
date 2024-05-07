@@ -10,6 +10,7 @@ import org.springframework.boot.context.TypeExcludeFilter;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.ComponentScan.Filter;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -18,7 +19,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.client.RestTemplate;
 
 @WebMvcTest
-@ContextConfiguration(classes = WebMvcTestBase.Config.class)
+@ContextConfiguration
 @ImportAutoConfiguration(exclude = SecurityAutoConfiguration.class)
 @ActiveProfiles("test")
 public abstract class WebMvcTestBase {
@@ -33,6 +34,7 @@ public abstract class WebMvcTestBase {
 		this.restTemplate = new RestTemplate(new MockMvcClientHttpRequestFactory(this.mockMvc));
 	}
 
+	@Configuration
 	@ComponentScan(basePackageClasses = DefaultWebMvcConfigurer.class,
 			excludeFilters = { @Filter(type = FilterType.CUSTOM, classes = TypeExcludeFilter.class),
 					@Filter(type = FilterType.CUSTOM, classes = AutoConfigurationExcludeFilter.class) })

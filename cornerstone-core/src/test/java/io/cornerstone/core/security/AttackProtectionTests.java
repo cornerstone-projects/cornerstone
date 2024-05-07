@@ -14,6 +14,7 @@ import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
@@ -38,7 +39,7 @@ import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
 @TestPropertySource(
 		properties = { "security.authentication.username-max-length=12", "security.authentication.max-attempts=3" })
-@ContextConfiguration(classes = AttackProtectionTests.Config.class)
+@ContextConfiguration
 class AttackProtectionTests extends ControllerTestBase {
 
 	@Autowired
@@ -110,6 +111,7 @@ class AttackProtectionTests extends ControllerTestBase {
 	}
 
 	@ComponentScan
+	@Configuration
 	static class Config {
 
 		@Bean

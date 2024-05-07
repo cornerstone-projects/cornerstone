@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.event.EventListener;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
@@ -24,7 +25,7 @@ import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.reset;
 
-@ContextConfiguration(classes = { PublishAwareTests.Config.class })
+@ContextConfiguration
 @EnableJpaRepositories(basePackageClasses = TestEntityRepository.class)
 @EntityScan(basePackageClasses = TestEntity.class)
 @Transactional(propagation = Propagation.NOT_SUPPORTED)
@@ -91,6 +92,7 @@ class PublishAwareTests extends DataJpaTestBase {
 		}));
 	}
 
+	@Configuration
 	@EnableAspectJAutoProxy
 	static class Config {
 

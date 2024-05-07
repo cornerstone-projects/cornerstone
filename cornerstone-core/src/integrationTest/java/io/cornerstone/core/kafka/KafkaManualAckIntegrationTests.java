@@ -10,12 +10,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.config.TopicBuilder;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
@@ -26,7 +26,6 @@ import static org.mockito.BDDMockito.then;
 import static org.mockito.BDDMockito.willAnswer;
 
 @UseKafkaContainer
-@ContextConfiguration(classes = KafkaManualAckIntegrationTests.Config.class)
 @TestPropertySource(properties = {
 		"spring.kafka.producer.value-serializer=org.springframework.kafka.support.serializer.JsonSerializer",
 		"spring.kafka.producer.properties.spring.json.add.type.headers=false",
@@ -62,6 +61,7 @@ class KafkaManualAckIntegrationTests {
 		then(this.testListener).should().receive(eq(new Person("test2", 20)), any());
 	}
 
+	@Configuration
 	static class Config {
 
 		@Bean

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
@@ -22,7 +23,7 @@ import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 
-@ContextConfiguration(classes = IdempotentTests.Config.class)
+@ContextConfiguration
 @EnableJpaRepositories(basePackageClasses = TestEntityRepository.class)
 @EntityScan(basePackageClasses = TestEntity.class)
 @Transactional(propagation = Propagation.NOT_SUPPORTED)
@@ -82,6 +83,7 @@ class IdempotentTests extends DataJpaTestBase {
 		then(this.testEntityService).should(times(2)).tryFind(any(DataIntegrityViolationException.class), eq(request));
 	}
 
+	@Configuration
 	@EnableRetry(order = Ordered.HIGHEST_PRECEDENCE)
 	static class Config {
 

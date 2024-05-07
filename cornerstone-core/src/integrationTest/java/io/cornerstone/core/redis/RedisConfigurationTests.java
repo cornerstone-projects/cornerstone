@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.TestPropertySource;
@@ -20,12 +19,11 @@ import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@ContextConfiguration(classes = { DefaultRedisConfiguration.class, GlobalRedisConfiguration.class })
 @TestPropertySource(properties = { "spring.data.redis.enabled=true", "spring.data.redis.database=1",
 		"spring.data.redis.client-name=default", "global.data.redis.enabled=true", "global.data.redis.database=2",
 		"global.data.redis.client-name=global" })
 @Testcontainers
-@SpringJUnitConfig
+@SpringJUnitConfig({ DefaultRedisConfiguration.class, GlobalRedisConfiguration.class })
 class RedisConfigurationTests {
 
 	@Container

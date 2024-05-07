@@ -12,10 +12,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.config.TopicBuilder;
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
@@ -25,7 +25,6 @@ import static org.mockito.BDDMockito.then;
 import static org.mockito.BDDMockito.willAnswer;
 
 @UseKafkaContainer
-@ContextConfiguration(classes = KafkaIntegrationTests.Config.class)
 @TestPropertySource(properties = "spring.kafka.consumer.auto-offset-reset=earliest")
 @SpringJUnitConfig
 class KafkaIntegrationTests {
@@ -64,6 +63,7 @@ class KafkaIntegrationTests {
 		assertMessageListened(TEST_MESSAGE);
 	}
 
+	@Configuration
 	static class Config {
 
 		@Bean

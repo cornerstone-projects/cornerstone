@@ -10,6 +10,7 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -17,7 +18,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.then;
 
 @UseRabbitMQContainer
-@ContextConfiguration(classes = RabbitQueueTests.Config.class)
+@ContextConfiguration
 class RabbitQueueTests extends QueueTestBase {
 
 	@SpyBean
@@ -30,6 +31,7 @@ class RabbitQueueTests extends QueueTestBase {
 		then(this.rabbitTemplate).should().convertAndSend(any(String.class), eq(message));
 	}
 
+	@Configuration
 	static class Config {
 
 		@Bean

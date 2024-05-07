@@ -15,6 +15,7 @@ import org.springframework.boot.autoconfigure.task.TaskSchedulingAutoConfigurati
 import org.springframework.boot.task.ThreadPoolTaskSchedulerBuilder;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.annotation.DltHandler;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.annotation.RetryableTopic;
@@ -25,7 +26,6 @@ import org.springframework.kafka.retrytopic.RetryTopicSchedulerWrapper;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
@@ -37,7 +37,6 @@ import static org.mockito.BDDMockito.willAnswer;
 import static org.mockito.Mockito.times;
 
 @UseKafkaContainer
-@ContextConfiguration(classes = KafkaRetryableTopicIntegrationTests.Config.class)
 @TestPropertySource(properties = {
 		"spring.kafka.producer.value-serializer=org.springframework.kafka.support.serializer.JsonSerializer",
 		"spring.kafka.producer.properties.spring.json.add.type.headers=false",
@@ -74,6 +73,7 @@ class KafkaRetryableTopicIntegrationTests {
 		then(this.testListener).should(times(3)).receive(eq(new Person("test1", 30)));
 	}
 
+	@Configuration
 	@EnableScheduling
 	@ImportAutoConfiguration(TaskSchedulingAutoConfiguration.class)
 	static class Config extends RetryTopicConfigurationSupport {

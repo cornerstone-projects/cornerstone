@@ -12,8 +12,8 @@ import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.EventListener;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -21,7 +21,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.BDDMockito.willAnswer;
 
-@ContextConfiguration(classes = ApplicationEventTopicTestBase.Config.class)
 @SpringJUnitConfig
 abstract class ApplicationEventTopicTestBase {
 
@@ -55,6 +54,7 @@ abstract class ApplicationEventTopicTestBase {
 		assertEventListened(event);
 	}
 
+	@Configuration
 	static class Config {
 
 		@Bean

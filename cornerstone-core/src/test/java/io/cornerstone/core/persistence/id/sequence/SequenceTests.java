@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -19,7 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @EnableJpaRepositories(basePackageClasses = TestEntityRepository.class)
 @EntityScan(basePackageClasses = TestEntity.class)
-@ContextConfiguration(classes = SequenceTests.Config.class)
+@ContextConfiguration
 class SequenceTests extends DataJpaTestBase {
 
 	@Autowired
@@ -37,6 +38,7 @@ class SequenceTests extends DataJpaTestBase {
 
 	}
 
+	@Configuration
 	static class Config {
 
 		@Bean

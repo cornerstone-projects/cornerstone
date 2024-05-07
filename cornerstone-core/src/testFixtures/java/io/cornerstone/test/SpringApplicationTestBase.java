@@ -10,7 +10,7 @@ import org.springframework.test.context.ContextConfiguration;
 
 @AutoConfigureTestDatabase
 @SpringApplicationTest(webEnvironment = WebEnvironment.NONE)
-@ContextConfiguration(classes = SpringApplicationTestBase.TestApplication.class)
+@ContextConfiguration
 public abstract class SpringApplicationTestBase {
 
 	public static final String USER_USERNAME = "user";

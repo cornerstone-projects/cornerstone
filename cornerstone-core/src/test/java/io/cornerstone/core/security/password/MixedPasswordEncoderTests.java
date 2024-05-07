@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -30,7 +31,7 @@ import static org.springframework.http.HttpStatus.FOUND;
 import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED_VALUE;
 import static org.springframework.http.MediaType.TEXT_HTML_VALUE;
 
-@ContextConfiguration(classes = MixedPasswordEncoderTests.Config.class)
+@ContextConfiguration
 class MixedPasswordEncoderTests extends ControllerTestBase {
 
 	@Test
@@ -52,6 +53,7 @@ class MixedPasswordEncoderTests extends ControllerTestBase {
 	}
 
 	@ComponentScan
+	@Configuration
 	static class Config {
 
 		@Bean

@@ -10,6 +10,7 @@ import org.mockito.Mockito;
 
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisListCommands;
 import org.springframework.test.context.ContextConfiguration;
@@ -19,7 +20,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
 @UseRedisContainer
-@ContextConfiguration(classes = RedisQueueTests.Config.class)
+@ContextConfiguration
 class RedisQueueTests extends QueueTestBase {
 
 	@SpyBean
@@ -33,6 +34,7 @@ class RedisQueueTests extends QueueTestBase {
 		then(resultCaptor.getResult()).should().rPush(any(), any());
 	}
 
+	@Configuration
 	static class Config {
 
 		@Bean
