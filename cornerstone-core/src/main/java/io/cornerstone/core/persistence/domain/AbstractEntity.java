@@ -9,7 +9,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.GenericGenerator;
 
 import org.springframework.data.domain.Persistable;
 import org.springframework.lang.Nullable;
@@ -25,7 +24,8 @@ public abstract class AbstractEntity extends AbstractPersistable<Long> {
 
 	@Id
 	@GeneratedValue(generator = "snowflake")
-	@GenericGenerator(name = "snowflake", type = SnowflakeIdentifierGenerator.class)
+	@SuppressWarnings("deprecation")
+	@org.hibernate.annotations.GenericGenerator(name = "snowflake", type = SnowflakeIdentifierGenerator.class)
 	@JsonProperty(access = Access.WRITE_ONLY)
 	@Setter(PROTECTED)
 	private @Nullable Long id;

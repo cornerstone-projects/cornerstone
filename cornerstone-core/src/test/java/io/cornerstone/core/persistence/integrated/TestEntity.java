@@ -22,7 +22,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
 import org.springframework.data.domain.Persistable;
@@ -36,7 +35,8 @@ class TestEntity implements Persistable<Long> {
 
 	@Id
 	@GeneratedValue(generator = "snowflake")
-	@GenericGenerator(name = "snowflake", type = SnowflakeIdentifierGenerator.class)
+	@SuppressWarnings("deprecation")
+	@org.hibernate.annotations.GenericGenerator(name = "snowflake", type = SnowflakeIdentifierGenerator.class)
 	private @Nullable Long id;
 
 	private String[] stringArray;

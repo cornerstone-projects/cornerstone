@@ -8,7 +8,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
 import org.springframework.data.domain.Persistable;
@@ -23,7 +22,8 @@ class TestEntity implements Persistable<Long>, Serializable {
 
 	@Id
 	@GeneratedValue(generator = "sequence")
-	@GenericGenerator(name = "sequence", type = SequenceIdentifierGenerator.class,
+	@SuppressWarnings("deprecation")
+	@org.hibernate.annotations.GenericGenerator(name = "sequence", type = SequenceIdentifierGenerator.class,
 			parameters = @Parameter(name = "sequenceName", value = "testSequence"))
 	private @Nullable Long id;
 
