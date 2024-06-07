@@ -32,6 +32,7 @@ dependencyManagement {
 	generatedPomCustomization {
 		enabled(false)
 	}
+	applyMavenExclusions(false)
 }
 
 dependencies {
