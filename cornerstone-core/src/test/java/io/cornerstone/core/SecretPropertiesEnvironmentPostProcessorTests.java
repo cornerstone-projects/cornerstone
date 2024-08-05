@@ -21,13 +21,13 @@ import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 
-import static io.cornerstone.core.SecretPropertiesPostProcessor.KEY_DECODER;
+import static io.cornerstone.core.SecretPropertiesEnvironmentPostProcessor.KEY_DECODER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.mockito.Mockito.mock;
 
 @DirtiesContext(classMode = ClassMode.BEFORE_CLASS)
-class SecretPropertiesPostProcessorTests extends SpringApplicationTestBase {
+class SecretPropertiesEnvironmentPostProcessorTests extends SpringApplicationTestBase {
 
 	static File configFile;
 
@@ -102,8 +102,8 @@ class SecretPropertiesPostProcessorTests extends SpringApplicationTestBase {
 
 	}
 
-	private static SecretPropertiesPostProcessor createProcessor() {
-		return new SecretPropertiesPostProcessor(new DeferredLogFactory() {
+	private static SecretPropertiesEnvironmentPostProcessor createProcessor() {
+		return new SecretPropertiesEnvironmentPostProcessor(new DeferredLogFactory() {
 			@Override
 			public Log getLog(Supplier<Log> destination) {
 				return LogFactory.getLog(getClass());

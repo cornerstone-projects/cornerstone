@@ -22,7 +22,7 @@ import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.util.FileSystemUtils;
 
-import static io.cornerstone.core.KubernetesConfigMapPostProcessor.SYSTEM_PROPERTY_CONFIG_MAP_DIR;
+import static io.cornerstone.core.KubernetesConfigMapEnvironmentPostProcessor.SYSTEM_PROPERTY_CONFIG_MAP_DIR;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.BDDMockito.given;
@@ -30,7 +30,7 @@ import static org.mockito.Mockito.mock;
 
 @DirtiesContext(classMode = ClassMode.BEFORE_CLASS)
 @TestPropertySource(properties = "spring.main.cloud-platform=kubernetes")
-class KubernetesConfigMapPostProcessorTests extends SpringApplicationTestBase {
+class KubernetesConfigMapEnvironmentPostProcessorTests extends SpringApplicationTestBase {
 
 	static Path configMapDir;
 
@@ -54,7 +54,7 @@ class KubernetesConfigMapPostProcessorTests extends SpringApplicationTestBase {
 
 	@Test
 	void cloudPlatformShouldBeActive() {
-		assertThat(CloudPlatform.KUBERNETES.isActive(this.env));
+		assertThat(CloudPlatform.KUBERNETES.isActive(this.env)).isTrue();
 	}
 
 	@Test
@@ -97,8 +97,8 @@ class KubernetesConfigMapPostProcessorTests extends SpringApplicationTestBase {
 		}
 	}
 
-	private static KubernetesConfigMapPostProcessor createProcessor() {
-		return new KubernetesConfigMapPostProcessor(new DeferredLogFactory() {
+	private static KubernetesConfigMapEnvironmentPostProcessor createProcessor() {
+		return new KubernetesConfigMapEnvironmentPostProcessor(new DeferredLogFactory() {
 			@Override
 			public Log getLog(Supplier<Log> destination) {
 				return LogFactory.getLog(getClass());

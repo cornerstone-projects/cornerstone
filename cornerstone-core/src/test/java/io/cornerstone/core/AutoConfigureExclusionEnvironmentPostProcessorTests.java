@@ -8,11 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.test.context.TestPropertySource;
 
-import static io.cornerstone.core.AutoConfigureExclusionPostProcessor.PROPERTY_NAME_AUTOCONFIGURE_EXCLUDE;
-import static io.cornerstone.core.AutoConfigureExclusionPostProcessor.PROPERTY_NAME_AUTOCONFIGURE_EXCLUSIONS;
+import static io.cornerstone.core.AutoConfigureExclusionEnvironmentPostProcessor.PROPERTY_NAME_AUTOCONFIGURE_EXCLUDE;
+import static io.cornerstone.core.AutoConfigureExclusionEnvironmentPostProcessor.PROPERTY_NAME_AUTOCONFIGURE_EXCLUSIONS;
 import static org.assertj.core.api.Assertions.assertThat;
 
-class AutoConfigureExclusionPostProcessorTests extends SpringApplicationTestBase {
+class AutoConfigureExclusionEnvironmentPostProcessorTests extends SpringApplicationTestBase {
 
 	private static final String FOO_AUTO_CONFIGURATION = "com.example.FooAutoConfiguration";
 
@@ -82,4 +82,3 @@ class AutoConfigureExclusionPostProcessorTests extends SpringApplicationTestBase
 	}
 
 }
-

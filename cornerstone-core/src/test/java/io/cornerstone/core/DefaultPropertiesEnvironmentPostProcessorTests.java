@@ -12,7 +12,7 @@ import org.springframework.test.context.TestPropertySource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class DefaultPropertiesPostProcessorTests extends SpringApplicationTestBase {
+class DefaultPropertiesEnvironmentPostProcessorTests extends SpringApplicationTestBase {
 
 	@Autowired
 	private Environment env;

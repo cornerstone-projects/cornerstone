@@ -18,7 +18,7 @@ import org.springframework.core.env.ConfigurableEnvironment;
 import static org.springframework.boot.cloud.CloudPlatform.KUBERNETES;
 import static org.springframework.core.env.StandardEnvironment.SYSTEM_ENVIRONMENT_PROPERTY_SOURCE_NAME;
 
-public class KubernetesConfigMapPostProcessor implements EnvironmentPostProcessor, Ordered {
+public class KubernetesConfigMapEnvironmentPostProcessor implements EnvironmentPostProcessor, Ordered {
 
 	public static final String SYSTEM_PROPERTY_CONFIG_MAP_DIR = "config-map.dir";
 
@@ -28,7 +28,7 @@ public class KubernetesConfigMapPostProcessor implements EnvironmentPostProcesso
 
 	private final Log log;
 
-	public KubernetesConfigMapPostProcessor(DeferredLogFactory factory) {
+	public KubernetesConfigMapEnvironmentPostProcessor(DeferredLogFactory factory) {
 		this.log = factory.getLog(getClass());
 	}
 

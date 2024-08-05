@@ -23,7 +23,7 @@ import org.springframework.core.env.Profiles;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.io.DefaultResourceLoader;
 
-public class DefaultPropertiesPostProcessor implements EnvironmentPostProcessor, Ordered {
+public class DefaultPropertiesEnvironmentPostProcessor implements EnvironmentPostProcessor, Ordered {
 
 	private static final ConfigDataLocation LOCATION = ConfigDataLocation.of("classpath:default.yml");
 
@@ -32,7 +32,7 @@ public class DefaultPropertiesPostProcessor implements EnvironmentPostProcessor,
 
 	private final Log log;
 
-	public DefaultPropertiesPostProcessor(DeferredLogFactory factory) {
+	public DefaultPropertiesEnvironmentPostProcessor(DeferredLogFactory factory) {
 		this.log = factory.getLog(getClass());
 	}
 

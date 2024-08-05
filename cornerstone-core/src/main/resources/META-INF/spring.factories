@@ -1,5 +1,5 @@
 org.springframework.boot.env.EnvironmentPostProcessor=\
-io.cornerstone.core.AutoConfigureExclusionPostProcessor,\
-io.cornerstone.core.DefaultPropertiesPostProcessor,\
-io.cornerstone.core.SecretPropertiesPostProcessor,\
-io.cornerstone.core.KubernetesConfigMapPostProcessor
+io.cornerstone.core.AutoConfigureExclusionEnvironmentPostProcessor,\
+io.cornerstone.core.DefaultPropertiesEnvironmentPostProcessor,\
+io.cornerstone.core.SecretPropertiesEnvironmentPostProcessor,\
+io.cornerstone.core.KubernetesConfigMapEnvironmentPostProcessor

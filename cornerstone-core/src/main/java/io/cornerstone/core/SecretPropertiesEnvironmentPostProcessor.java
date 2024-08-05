@@ -25,7 +25,7 @@ import org.springframework.util.ClassUtils;
 
 import static org.springframework.core.env.StandardEnvironment.SYSTEM_ENVIRONMENT_PROPERTY_SOURCE_NAME;
 
-public class SecretPropertiesPostProcessor implements EnvironmentPostProcessor {
+public class SecretPropertiesEnvironmentPostProcessor implements EnvironmentPostProcessor {
 
 	static final String KEY_DECODER = "DECODER";
 
@@ -34,7 +34,7 @@ public class SecretPropertiesPostProcessor implements EnvironmentPostProcessor {
 
 	private final Log log;
 
-	public SecretPropertiesPostProcessor(DeferredLogFactory factory) {
+	public SecretPropertiesEnvironmentPostProcessor(DeferredLogFactory factory) {
 		this.log = factory.getLog(getClass());
 	}
 

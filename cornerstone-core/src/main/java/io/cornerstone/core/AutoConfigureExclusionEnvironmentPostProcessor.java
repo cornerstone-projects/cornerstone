@@ -18,7 +18,7 @@ import org.springframework.core.env.MapPropertySource;
  * original author tmoschou@github
  */
 @Order(Ordered.LOWEST_PRECEDENCE)
-public class AutoConfigureExclusionPostProcessor implements EnvironmentPostProcessor {
+public class AutoConfigureExclusionEnvironmentPostProcessor implements EnvironmentPostProcessor {
 
 	// see AutoConfigurationImportSelector.PROPERTY_NAME_AUTOCONFIGURE_EXCLUDE
 	static final String PROPERTY_NAME_AUTOCONFIGURE_EXCLUDE = "spring.autoconfigure.exclude";
