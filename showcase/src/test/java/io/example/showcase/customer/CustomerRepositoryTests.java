@@ -27,25 +27,32 @@ class CustomerRepositoryTests extends DataJpaTestBase {
 	@Test
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	void save() {
-		Customer customer = new Customer();
-		customer.setName("name");
-		assertThatExceptionOfType(DataIntegrityViolationException.class)
-			.isThrownBy(() -> this.repository.save(customer));
-		customer.setIdNo("test");
-		customer.setPhone("123");
-		assertThatExceptionOfType(TransactionException.class).isThrownBy(() -> this.repository.save(customer))
+		Customer c1 = new Customer();
+		c1.setName("name");
+		assertThatExceptionOfType(DataIntegrityViolationException.class).isThrownBy(() -> this.repository.save(c1));
+		Customer c2 = new Customer();
+		c1.setName("name");
+		c2.setIdNo("test");
+		c2.setPhone("123");
+		assertThatExceptionOfType(TransactionException.class).isThrownBy(() -> this.repository.save(c2))
 			.withRootCauseInstanceOf(ConstraintViolationException.class);
-		customer.setIdNo(CitizenIdentificationNumberValidator.randomValue());
-		assertThatExceptionOfType(TransactionException.class).isThrownBy(() -> this.repository.save(customer))
+		Customer c3 = new Customer();
+		c3.setName("name");
+		c3.setIdNo(CitizenIdentificationNumberValidator.randomValue());
+		c3.setPhone("123");
+		assertThatExceptionOfType(TransactionException.class).isThrownBy(() -> this.repository.save(c3))
 			.withRootCauseInstanceOf(ConstraintViolationException.class);
-		customer.setPhone(MobilePhoneNumberValidator.randomValue());
-		Customer savedCustomer = this.repository.save(customer);
+		Customer c4 = new Customer();
+		c4.setName("name");
+		c4.setIdNo(CitizenIdentificationNumberValidator.randomValue());
+		c4.setPhone(MobilePhoneNumberValidator.randomValue());
+		Customer savedCustomer = this.repository.save(c4);
 		Long id = savedCustomer.getId();
 		assertThat(id).isNotNull();
 		savedCustomer = this.repository.findById(id).orElseThrow(IllegalStateException::new);
-		assertThat(savedCustomer.getName()).isEqualTo(customer.getName());
-		assertThat(savedCustomer.getIdNo()).isEqualTo(customer.getIdNo());
-		assertThat(savedCustomer.getPhone()).isEqualTo(customer.getPhone());
+		assertThat(savedCustomer.getName()).isEqualTo(c4.getName());
+		assertThat(savedCustomer.getIdNo()).isEqualTo(c4.getIdNo());
+		assertThat(savedCustomer.getPhone()).isEqualTo(c4.getPhone());
 		assertThat(savedCustomer.getCreatedDate()).isNotNull();
 		this.repository.delete(savedCustomer);
 	}
