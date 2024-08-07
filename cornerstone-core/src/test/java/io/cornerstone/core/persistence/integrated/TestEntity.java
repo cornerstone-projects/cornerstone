@@ -11,7 +11,6 @@ import io.cornerstone.core.persistence.convert.EnumSetConverter;
 import io.cornerstone.core.persistence.convert.JsonConverter;
 import io.cornerstone.core.persistence.id.SnowflakeIdentifierGenerator;
 import io.cornerstone.core.persistence.type.JsonType;
-import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -76,8 +75,7 @@ class TestEntity implements Persistable<Long> {
 	}
 
 	@Converter(autoApply = true)
-	static class TestEnumArrayConverter extends EnumArrayConverter<TestEnum>
-			implements AttributeConverter<TestEnum[], String> {
+	static class TestEnumArrayConverter extends EnumArrayConverter<TestEnum> {
 
 	}
 

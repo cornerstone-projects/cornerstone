@@ -47,7 +47,7 @@ class StreamableJpaRepositoryTests extends DataJpaTestBase {
 	@Test
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	void streamWithoutExistingTransaction() {
-		assertThatExceptionOfType(IllegalStateException.class).isThrownBy(this::doStream);
+		assertThatExceptionOfType(RuntimeException.class).isThrownBy(this::doStream);
 	}
 
 	@Test

@@ -8,7 +8,6 @@ import io.cornerstone.core.persistence.convert.EnumArrayConverter;
 import io.cornerstone.core.persistence.convert.EnumListConverter;
 import io.cornerstone.core.persistence.convert.EnumSetConverter;
 import io.cornerstone.core.persistence.convert.JsonConverter;
-import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 import jakarta.persistence.Entity;
 import lombok.Getter;
@@ -50,8 +49,7 @@ class TestEntity extends AbstractPersistable<Long> {
 	private List<TestComponent> testComponentList;
 
 	@Converter(autoApply = true)
-	static class TestEnumArrayConverter extends EnumArrayConverter<TestEnum>
-			implements AttributeConverter<TestEnum[], String> {
+	static class TestEnumArrayConverter extends EnumArrayConverter<TestEnum> {
 
 	}
 
