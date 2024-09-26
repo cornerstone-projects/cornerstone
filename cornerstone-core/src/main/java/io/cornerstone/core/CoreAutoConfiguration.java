@@ -14,7 +14,7 @@ import org.springframework.context.annotation.FilterType;
 import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-@EnableRetry
+@EnableRetry(order = -100)
 @EnableTransactionManagement(order = 0, proxyTargetClass = true)
 @AutoConfiguration
 @ComponentScan(excludeFilters = { @Filter(type = FilterType.CUSTOM, classes = TypeExcludeFilter.class),
