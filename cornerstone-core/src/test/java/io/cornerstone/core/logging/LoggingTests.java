@@ -14,7 +14,7 @@ import org.springframework.test.context.junit.jupiter.EnabledIf;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(OutputCaptureExtension.class)
-public class LoggingTests {
+class LoggingTests {
 
 	@Test
 	@EnabledIf("#{T(java.lang.Thread).currentThread().getName()=='main'}")

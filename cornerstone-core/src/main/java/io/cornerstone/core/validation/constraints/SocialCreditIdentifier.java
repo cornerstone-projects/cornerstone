@@ -9,7 +9,8 @@ import io.cornerstone.core.validation.validators.SocialCreditIdentifierValidator
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
-@Target({ ElementType.METHOD, ElementType.FIELD, ElementType.ANNOTATION_TYPE, ElementType.CONSTRUCTOR, ElementType.PARAMETER })
+@Target({ ElementType.METHOD, ElementType.FIELD, ElementType.ANNOTATION_TYPE, ElementType.CONSTRUCTOR,
+		ElementType.PARAMETER })
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = { SocialCreditIdentifierValidator.class })
 public @interface SocialCreditIdentifier {

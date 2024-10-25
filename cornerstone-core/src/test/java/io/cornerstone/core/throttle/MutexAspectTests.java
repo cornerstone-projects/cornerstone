@@ -23,7 +23,7 @@ import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 @SpringJUnitConfig
-public class MutexAspectTests {
+class MutexAspectTests {
 
 	@Autowired
 	private EchoService echoService;

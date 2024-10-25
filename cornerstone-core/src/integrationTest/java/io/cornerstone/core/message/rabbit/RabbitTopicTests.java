@@ -23,7 +23,7 @@ import static org.mockito.Mockito.never;
 
 @UseRabbitMQContainer
 @ContextConfiguration
-public class RabbitTopicTests extends TopicTestBase {
+class RabbitTopicTests extends TopicTestBase {
 
 	@SpyBean
 	private RabbitTemplate rabbitTemplate;

@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import org.springframework.data.redis.serializer.RedisSerializer;
 
-public class JsonRedisSerializerTests extends RedisSerializerTestBase {
+class JsonRedisSerializerTests extends RedisSerializerTestBase {
 
 	@Override
 	@Test
