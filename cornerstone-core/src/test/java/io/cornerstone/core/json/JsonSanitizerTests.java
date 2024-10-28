@@ -81,9 +81,12 @@ class JsonSanitizerTests {
 	@Test
 	void testToJsonWithAnnotation() {
 		JsonSanitizer sanitizer = new JsonSanitizer();
-		Person p = new Person("test", "13333333333", 12);
+		Person p = new Person("test", "13333333333", "13333333333", "13333333333", "13333333333", 12);
 		String json = sanitizer.toJson(p);
 		assertThat(json).contains("\"1**********\"");
+		assertThat(json).contains("\"****3333333\"");
+		assertThat(json).contains("\"133****3333\"");
+		assertThat(json).contains("\"1333333333****\"");
 		assertThat(json).doesNotContain("age");
 	}
 
@@ -108,7 +111,16 @@ class JsonSanitizerTests {
 		private final String name;
 
 		@JsonSanitize("1**********")
-		private final String phone;
+		private final String phone1;
+
+		@JsonSanitize(value = "****", position = 0)
+		private final String phone2;
+
+		@JsonSanitize(value = "****", position = 3)
+		private final String phone3;
+
+		@JsonSanitize(value = "****", position = 10)
+		private final String phone4;
 
 		@JsonSanitize
 		private final int age;

@@ -142,7 +142,9 @@ public class JsonSanitizer {
 								jgen.writeBooleanField(name, Boolean.getBoolean(newValue));
 							}
 							else {
-								jgen.writeStringField(name, newValue);
+								Object value = bw.getPropertyValue(name);
+								jgen.writeStringField(name, sanitzeString(value != null ? value.toString() : null,
+										newValue, annotation.position()));
 							}
 						}
 					}
@@ -155,6 +157,22 @@ public class JsonSanitizer {
 		this.objectWriter = objectMapper.enable(SerializationFeature.INDENT_OUTPUT)
 			.addMixIn(Object.class, SanitizerMixIn.class)
 			.writer(filters);
+	}
+
+	private static String sanitzeString(String value, String mask, int position) {
+		if (value != null && position >= 0) {
+			int length = value.length();
+			if (length > position) {
+				StringBuilder sb = new StringBuilder();
+				sb.append(value, 0, position);
+				sb.append(mask);
+				if (length > position + mask.length()) {
+					sb.append(value.substring(position + mask.length()));
+				}
+				mask = sb.toString();
+			}
+		}
+		return mask;
 	}
 
 	public String toJson(Object value) {
