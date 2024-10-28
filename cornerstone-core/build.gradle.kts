@@ -1,5 +1,6 @@
 plugins {
 	id("io.cornerstone.java-library-conventions")
+	id("io.cornerstone.optional-dependencies")
 	`java-test-fixtures`
 }
 
@@ -27,7 +28,7 @@ dependencies {
 	implementation("""net.ttddyy.observation:datasource-micrometer-spring-boot:${property("datasource-micrometer.version")}""")
 	implementation("io.micrometer:micrometer-registry-prometheus")
 	implementation("io.prometheus:simpleclient_pushgateway")
-	compileOnly("org.springframework.boot:spring-boot-starter-amqp")
+	optional("org.springframework.boot:spring-boot-starter-amqp")
 	testFixturesApi("org.springframework.boot:spring-boot-starter-test")
 	testFixturesApi("org.springframework.security:spring-security-test")
 	testFixturesApi("org.springframework.boot:spring-boot-testcontainers")
