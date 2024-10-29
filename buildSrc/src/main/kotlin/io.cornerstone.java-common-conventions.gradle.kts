@@ -85,6 +85,12 @@ testing {
 				}
 			}
 		}
+
+		val integration: String? by rootProject
+		if (integration != null) {
+			val check by tasks.existing
+			check.get().dependsOn(integrationTest)
+		}
 	}
 }
 
@@ -120,11 +126,4 @@ tasks.named("clean") {
 	doLast {
 		delete("bin", "logs")
 	}
-}
-
-val integration: String? by rootProject
-if (integration != null) {
-	val check by tasks.existing
-	val integrationTest by tasks.existing
-	check.get().dependsOn(integrationTest)
 }
