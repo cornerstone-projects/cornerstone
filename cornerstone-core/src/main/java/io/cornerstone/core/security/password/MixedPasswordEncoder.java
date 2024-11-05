@@ -5,6 +5,7 @@ import java.security.MessageDigest;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.codec.Hex;
 import org.springframework.security.crypto.codec.Utf8;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.keygen.BytesKeyGenerator;
 import org.springframework.security.crypto.keygen.KeyGenerators;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -15,6 +16,8 @@ public class MixedPasswordEncoder implements PasswordEncoder {
 	private static final BytesKeyGenerator saltGenerator = KeyGenerators.secureRandom();
 
 	private static final PasswordEncoder BCRYPT = new BCryptPasswordEncoder();
+
+	private static final PasswordEncoder FALLBACK = PasswordEncoderFactories.createDelegatingPasswordEncoder();
 
 	@Override
 	public String encode(CharSequence rawPassword) {
@@ -45,7 +48,7 @@ public class MixedPasswordEncoder implements PasswordEncoder {
 				salt = EncodingUtils.subArray(digested, 0, saltGenerator.getKeyLength());
 				yield MessageDigest.isEqual(digested, digest(rawPassword, salt, false));
 			default:
-				yield false;
+				yield FALLBACK.matches(rawPassword, encodedPassword);
 		};
 	}
 
