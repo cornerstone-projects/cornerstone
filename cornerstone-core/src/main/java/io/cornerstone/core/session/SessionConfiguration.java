@@ -1,6 +1,11 @@
 package io.cornerstone.core.session;
 
+import java.util.List;
+import java.util.stream.Stream;
+
 import io.cornerstone.core.redis.serializer.CompactJdkSerializationRedisSerializer;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -16,6 +21,9 @@ import org.springframework.session.config.SessionRepositoryCustomizer;
 import org.springframework.session.config.annotation.web.http.EnableSpringHttpSession;
 import org.springframework.session.data.redis.RedisIndexedSessionRepository;
 import org.springframework.session.data.redis.RedisSessionRepository;
+import org.springframework.session.web.http.CookieHttpSessionIdResolver;
+import org.springframework.session.web.http.HeaderHttpSessionIdResolver;
+import org.springframework.session.web.http.HttpSessionIdResolver;
 
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnClass(RedisSessionRepository.class)
@@ -53,7 +61,7 @@ public class SessionConfiguration {
 	}
 
 	@Bean
-	public RedisSerializer<?> springSessionDefaultRedisSerializer() {
+	RedisSerializer<?> springSessionDefaultRedisSerializer() {
 		return new CompactJdkSerializationRedisSerializer(getClass().getClassLoader()) {
 			@Override
 			public Object deserialize(byte[] bytes) throws SerializationException {
@@ -68,6 +76,44 @@ public class SessionConfiguration {
 				}
 			}
 		};
+	}
+
+	@Bean
+	HttpSessionIdResolver httpSessionIdResolver() {
+		return new CompositeHttpSessionIdResolver(HeaderHttpSessionIdResolver.xAuthToken(),
+				new CookieHttpSessionIdResolver());
+	}
+
+	static class CompositeHttpSessionIdResolver implements HttpSessionIdResolver {
+
+		private final HttpSessionIdResolver[] resolvers;
+
+		CompositeHttpSessionIdResolver(HttpSessionIdResolver... resolvers) {
+			this.resolvers = resolvers;
+		}
+
+		@Override
+		public List<String> resolveSessionIds(HttpServletRequest request) {
+			return Stream.of(this.resolvers)
+				.flatMap((resolver) -> resolver.resolveSessionIds(request).stream())
+				.distinct()
+				.toList();
+		}
+
+		@Override
+		public void setSessionId(HttpServletRequest request, HttpServletResponse response, String sessionId) {
+			for (HttpSessionIdResolver resolver : this.resolvers) {
+				resolver.setSessionId(request, response, sessionId);
+			}
+		}
+
+		@Override
+		public void expireSession(HttpServletRequest request, HttpServletResponse response) {
+			for (HttpSessionIdResolver resolver : this.resolvers) {
+				resolver.expireSession(request, response);
+			}
+		}
+
 	}
 
 }
