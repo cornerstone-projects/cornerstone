@@ -76,6 +76,11 @@ spring.jackson:
 
 spring.messages:
   basename: messages,i18n/messages,org.springframework.security.messages
+
+spring.http.client:
+  connect-timeout: 5s
+  read-timeout: 30s
+  factory: JDK
   
 security.permit-all-path-patterns:
   - /actuator/**

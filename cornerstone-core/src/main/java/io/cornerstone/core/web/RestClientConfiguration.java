@@ -1,8 +1,6 @@
 package io.cornerstone.core.web;
 
-import java.time.Duration;
-
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.client.ClientHttpRequestFactories;
 import org.springframework.boot.web.client.ClientHttpRequestFactorySettings;
 import org.springframework.boot.web.client.RestClientCustomizer;
@@ -12,19 +10,14 @@ import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.JdkClientHttpRequestFactory;
 
 @Configuration(proxyBeanMethods = false)
+@EnableConfigurationProperties(HttpClientProperties.class)
 public class RestClientConfiguration {
 
-	@Value("${restClient.connectTimeout:5s}")
-	private Duration connectTimeout;
-
-	@Value("${restClient.readTimeout:30s}")
-	private Duration readTimeout;
-
 	@Bean
-	RestClientCustomizer restClientCustomizer() {
+	RestClientCustomizer restClientCustomizer(HttpClientProperties properties) {
 		ClientHttpRequestFactorySettings settings = ClientHttpRequestFactorySettings.DEFAULTS
-			.withConnectTimeout(this.connectTimeout)
-			.withReadTimeout(this.readTimeout);
+			.withConnectTimeout(properties.getConnectTimeout())
+			.withReadTimeout(properties.getReadTimeout());
 		ClientHttpRequestFactory requestFactory = ClientHttpRequestFactories.get(JdkClientHttpRequestFactory.class,
 				settings);
 		return builder -> builder.requestFactory(requestFactory);
