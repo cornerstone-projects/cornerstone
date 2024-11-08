@@ -9,9 +9,13 @@ import org.springframework.boot.web.client.RestClientCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.ClientHttpRequestFactory;
+import org.springframework.http.client.JdkClientHttpRequestFactory;
 
 @Configuration(proxyBeanMethods = false)
 public class RestClientConfiguration {
+
+	@Value("${restClient.connectTimeout:5s}")
+	private Duration connectTimeout;
 
 	@Value("${restClient.readTimeout:30s}")
 	private Duration readTimeout;
@@ -19,8 +23,10 @@ public class RestClientConfiguration {
 	@Bean
 	RestClientCustomizer restClientCustomizer() {
 		ClientHttpRequestFactorySettings settings = ClientHttpRequestFactorySettings.DEFAULTS
+			.withConnectTimeout(this.connectTimeout)
 			.withReadTimeout(this.readTimeout);
-		ClientHttpRequestFactory requestFactory = ClientHttpRequestFactories.get(settings);
+		ClientHttpRequestFactory requestFactory = ClientHttpRequestFactories.get(JdkClientHttpRequestFactory.class,
+				settings);
 		return builder -> builder.requestFactory(requestFactory);
 	}
 
