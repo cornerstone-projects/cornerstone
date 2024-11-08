@@ -159,7 +159,7 @@ public class SsoFilter implements Filter {
 						: this.portalBaseUrl + this.portalApiUserSelfUrl);
 			}
 			catch (URISyntaxException ex) {
-				ex.printStackTrace();
+				log.error(ex.getMessage(), ex);
 				return;
 			}
 			StringBuilder cookie = new StringBuilder();
