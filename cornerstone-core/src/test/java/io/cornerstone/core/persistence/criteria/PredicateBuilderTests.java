@@ -20,13 +20,7 @@ import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
-import static io.cornerstone.core.persistence.criteria.PredicateBuilder.contains;
-import static io.cornerstone.core.persistence.criteria.PredicateBuilder.isConstantFalse;
-import static io.cornerstone.core.persistence.criteria.PredicateBuilder.isConstantTrue;
-import static io.cornerstone.core.persistence.criteria.PredicateBuilder.itemContains;
-import static io.cornerstone.core.persistence.criteria.PredicateBuilder.itemEndsWith;
-import static io.cornerstone.core.persistence.criteria.PredicateBuilder.itemStartsWith;
-import static io.cornerstone.core.persistence.criteria.PredicateBuilder.regexpLike;
+import static io.cornerstone.core.persistence.criteria.PredicateBuilder.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @EnableJpaRepositories(basePackageClasses = TestEntityRepository.class)

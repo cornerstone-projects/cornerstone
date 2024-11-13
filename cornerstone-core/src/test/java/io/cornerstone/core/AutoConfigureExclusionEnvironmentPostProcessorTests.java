@@ -8,8 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.test.context.TestPropertySource;
 
-import static io.cornerstone.core.AutoConfigureExclusionEnvironmentPostProcessor.PROPERTY_NAME_AUTOCONFIGURE_EXCLUDE;
-import static io.cornerstone.core.AutoConfigureExclusionEnvironmentPostProcessor.PROPERTY_NAME_AUTOCONFIGURE_EXCLUSIONS;
+import static io.cornerstone.core.AutoConfigureExclusionEnvironmentPostProcessor.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class AutoConfigureExclusionEnvironmentPostProcessorTests extends SpringApplicationTestBase {

@@ -16,8 +16,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.http.RequestEntity;
 import org.springframework.web.client.HttpClientErrorException.MethodNotAllowed;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.*;
 import static org.springframework.http.HttpMethod.GET;
 
 @ComponentScan // scan @RestController in this package

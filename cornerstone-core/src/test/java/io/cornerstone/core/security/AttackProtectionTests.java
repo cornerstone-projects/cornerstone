@@ -31,11 +31,10 @@ import org.springframework.test.context.TestPropertySource;
 import static io.cornerstone.core.security.SecurityProperties.DEFAULT_LOGIN_PROCESSING_URL;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.then;
+import static org.mockito.BDDMockito.*;
 import static org.mockito.Mockito.mock;
-import static org.springframework.http.HttpMethod.POST;
-import static org.springframework.http.HttpStatus.UNAUTHORIZED;
+import static org.springframework.http.HttpMethod.*;
+import static org.springframework.http.HttpStatus.*;
 
 @TestPropertySource(
 		properties = { "security.authentication.username-max-length=12", "security.authentication.max-attempts=3" })

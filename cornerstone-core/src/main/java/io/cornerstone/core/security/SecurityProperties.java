@@ -9,8 +9,7 @@ import lombok.Setter;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-import static org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.SPRING_SECURITY_FORM_PASSWORD_KEY;
-import static org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.SPRING_SECURITY_FORM_USERNAME_KEY;
+import static org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.*;
 
 @ConfigurationProperties(prefix = "security")
 @Getter

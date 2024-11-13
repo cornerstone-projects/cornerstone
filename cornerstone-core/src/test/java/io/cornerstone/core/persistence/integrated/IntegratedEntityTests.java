@@ -12,9 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
-import static io.cornerstone.core.persistence.integrated.TestEntity.TestEnum.A;
-import static io.cornerstone.core.persistence.integrated.TestEntity.TestEnum.B;
-import static io.cornerstone.core.persistence.integrated.TestEntity.TestEnum.C;
+import static io.cornerstone.core.persistence.integrated.TestEntity.TestEnum.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @EnableJpaRepositories(basePackageClasses = TestEntityRepository.class)

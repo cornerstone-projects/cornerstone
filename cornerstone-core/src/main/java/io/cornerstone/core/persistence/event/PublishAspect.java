@@ -23,9 +23,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
-import static io.cornerstone.core.persistence.event.EntityOperationType.CREATE;
-import static io.cornerstone.core.persistence.event.EntityOperationType.DELETE;
-import static io.cornerstone.core.persistence.event.EntityOperationType.UPDATE;
+import static io.cornerstone.core.persistence.event.EntityOperationType.*;
 
 @Aspect
 @Component

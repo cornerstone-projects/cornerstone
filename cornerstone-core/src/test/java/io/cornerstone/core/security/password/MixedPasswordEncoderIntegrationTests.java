@@ -20,16 +20,13 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
-import static io.cornerstone.core.security.SecurityProperties.DEFAULT_LOGIN_PROCESSING_URL;
-import static io.cornerstone.core.security.SecurityProperties.DEFAULT_SUCCESS_URL;
+import static io.cornerstone.core.security.SecurityProperties.*;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.http.HttpHeaders.ACCEPT;
-import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
-import static org.springframework.http.HttpMethod.POST;
-import static org.springframework.http.HttpStatus.FOUND;
-import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED_VALUE;
-import static org.springframework.http.MediaType.TEXT_HTML_VALUE;
+import static org.springframework.http.HttpHeaders.*;
+import static org.springframework.http.HttpMethod.*;
+import static org.springframework.http.HttpStatus.*;
+import static org.springframework.http.MediaType.*;
 
 @ContextConfiguration
 class MixedPasswordEncoderIntegrationTests extends ControllerTestBase {

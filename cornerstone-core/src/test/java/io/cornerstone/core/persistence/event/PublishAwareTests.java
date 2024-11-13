@@ -17,9 +17,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import static io.cornerstone.core.persistence.event.EntityOperationType.CREATE;
-import static io.cornerstone.core.persistence.event.EntityOperationType.DELETE;
-import static io.cornerstone.core.persistence.event.EntityOperationType.UPDATE;
+import static io.cornerstone.core.persistence.event.EntityOperationType.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.BDDMockito.then;

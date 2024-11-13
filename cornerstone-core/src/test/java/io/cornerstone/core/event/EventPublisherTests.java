@@ -16,10 +16,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.EventListener;
 import org.springframework.test.context.ContextConfiguration;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.BDDMockito.then;
-import static org.mockito.BDDMockito.willAnswer;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.BDDMockito.*;
 
 @TestMethodOrder(OrderAnnotation.class)
 @ContextConfiguration

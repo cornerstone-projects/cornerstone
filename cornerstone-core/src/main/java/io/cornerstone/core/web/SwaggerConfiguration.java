@@ -28,8 +28,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.SortDefault;
 
 import static io.cornerstone.core.security.DefaultWebAuthenticationDetails.PARAMETER_NAME_VERIFICATION_CODE;
-import static org.springframework.http.HttpStatus.OK;
-import static org.springframework.http.HttpStatus.UNAUTHORIZED;
+import static org.springframework.http.HttpStatus.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @Configuration(proxyBeanMethods = false)

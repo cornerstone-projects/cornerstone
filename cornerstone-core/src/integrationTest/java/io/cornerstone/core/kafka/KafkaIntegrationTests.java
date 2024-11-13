@@ -21,8 +21,7 @@ import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.then;
-import static org.mockito.BDDMockito.willAnswer;
+import static org.mockito.BDDMockito.*;
 
 @UseKafkaContainer
 @TestPropertySource(properties = "spring.kafka.consumer.auto-offset-reset=earliest")

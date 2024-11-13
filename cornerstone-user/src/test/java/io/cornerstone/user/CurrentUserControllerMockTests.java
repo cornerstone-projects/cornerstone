@@ -7,12 +7,9 @@ import org.springframework.http.RequestEntity;
 import org.springframework.web.client.HttpClientErrorException.BadRequest;
 import org.springframework.web.client.RestTemplate;
 
-import static io.cornerstone.user.CurrentUserController.PATH_PASSWORD;
-import static io.cornerstone.user.CurrentUserController.PATH_PROFILE;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.springframework.http.HttpMethod.PATCH;
-import static org.springframework.http.HttpMethod.PUT;
+import static io.cornerstone.user.CurrentUserController.*;
+import static org.assertj.core.api.Assertions.*;
+import static org.springframework.http.HttpMethod.*;
 import static org.springframework.http.HttpStatus.OK;
 
 class CurrentUserControllerMockTests extends ControllerMockTestBase {

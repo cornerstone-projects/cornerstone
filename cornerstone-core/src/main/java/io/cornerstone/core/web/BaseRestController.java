@@ -5,8 +5,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.web.server.ResponseStatusException;
 
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.*;
 
 public abstract class BaseRestController {
 

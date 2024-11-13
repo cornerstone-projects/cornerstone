@@ -19,14 +19,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 
-import static jakarta.servlet.DispatcherType.ERROR;
-import static jakarta.servlet.DispatcherType.REQUEST;
-import static org.springframework.http.HttpHeaders.ACCEPT;
-import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
-import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.http.MediaType.TEXT_PLAIN;
-import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
+import static jakarta.servlet.DispatcherType.*;
+import static org.springframework.http.HttpHeaders.*;
+import static org.springframework.http.MediaType.*;
 
 public class RestFilter implements Filter {
 

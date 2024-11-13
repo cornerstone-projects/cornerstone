@@ -28,21 +28,13 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import static io.cornerstone.core.security.WebSecurityTests.TEST_DEFAULT_SUCCESS_URL;
-import static io.cornerstone.core.security.WebSecurityTests.TEST_LOGIN_PAGE;
-import static io.cornerstone.core.security.WebSecurityTests.TEST_LOGIN_PROCESSING_URL;
+import static io.cornerstone.core.security.WebSecurityTests.*;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.http.HttpHeaders.ACCEPT;
-import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
-import static org.springframework.http.HttpMethod.POST;
-import static org.springframework.http.HttpStatus.FORBIDDEN;
-import static org.springframework.http.HttpStatus.FOUND;
-import static org.springframework.http.HttpStatus.OK;
-import static org.springframework.http.HttpStatus.UNAUTHORIZED;
-import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED_VALUE;
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.http.MediaType.TEXT_HTML_VALUE;
+import static org.springframework.http.HttpHeaders.*;
+import static org.springframework.http.HttpMethod.*;
+import static org.springframework.http.HttpStatus.*;
+import static org.springframework.http.MediaType.*;
 
 @TestPropertySource(properties = { "security.login-page=" + TEST_LOGIN_PAGE,
 		"security.login-processing-url=" + TEST_LOGIN_PROCESSING_URL,

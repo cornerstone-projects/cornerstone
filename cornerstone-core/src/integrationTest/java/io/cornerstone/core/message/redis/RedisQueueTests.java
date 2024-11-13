@@ -16,8 +16,7 @@ import org.springframework.data.redis.connection.RedisListCommands;
 import org.springframework.test.context.ContextConfiguration;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.then;
+import static org.mockito.BDDMockito.*;
 
 @UseRedisContainer
 @ContextConfiguration

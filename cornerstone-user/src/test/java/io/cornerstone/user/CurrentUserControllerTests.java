@@ -7,13 +7,10 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 
-import static io.cornerstone.user.CurrentUserController.PATH_PASSWORD;
-import static io.cornerstone.user.CurrentUserController.PATH_PROFILE;
+import static io.cornerstone.user.CurrentUserController.*;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.http.HttpMethod.PATCH;
-import static org.springframework.http.HttpMethod.PUT;
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.HttpMethod.*;
+import static org.springframework.http.HttpStatus.*;
 
 class CurrentUserControllerTests extends ControllerTestBase {
 

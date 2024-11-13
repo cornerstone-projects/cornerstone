@@ -20,8 +20,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.*;
 
 @EnableJpaRepositories(basePackageClasses = TestEntityRepository.class)
 @EntityScan(basePackageClasses = TestEntity.class)

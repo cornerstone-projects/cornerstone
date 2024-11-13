@@ -22,8 +22,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 
 import static io.cornerstone.core.SecretPropertiesEnvironmentPostProcessor.KEY_DECODER;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 
 @DirtiesContext(classMode = ClassMode.BEFORE_CLASS)

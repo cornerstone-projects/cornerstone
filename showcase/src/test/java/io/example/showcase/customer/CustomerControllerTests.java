@@ -14,11 +14,8 @@ import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.http.HttpMethod.DELETE;
-import static org.springframework.http.HttpMethod.GET;
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
-import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.HttpMethod.*;
+import static org.springframework.http.HttpStatus.*;
 
 class CustomerControllerTests extends BaseControllerTests {
 

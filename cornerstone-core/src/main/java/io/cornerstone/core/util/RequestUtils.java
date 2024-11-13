@@ -8,8 +8,7 @@ import lombok.experimental.UtilityClass;
 import org.springframework.http.MediaType;
 
 import static org.springframework.http.HttpHeaders.ACCEPT;
-import static org.springframework.http.MediaType.ALL;
-import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.http.MediaType.*;
 
 @UtilityClass
 public class RequestUtils {
