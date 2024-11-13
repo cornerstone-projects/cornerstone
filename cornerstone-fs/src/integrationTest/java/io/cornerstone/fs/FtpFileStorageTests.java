@@ -18,8 +18,7 @@ import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.TestPropertySource;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @TestPropertySource(properties = { "file-storage.ftp.data-timeout=30000", "file-storage.ftp.buffer-threshold=8",
 		"file-storage.ftp.pool.max-total=5" })
@@ -82,7 +81,7 @@ class FtpFileStorageTests extends FileStorageTestBase {
 		cdl.await();
 		es.shutdown();
 
-		assertThat(errors.intValue(), is(0));
+		assertThat(errors.intValue()).isEqualTo(0);
 	}
 
 	static class VsftpdContainer extends GenericContainer<VsftpdContainer> {
