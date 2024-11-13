@@ -45,6 +45,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import static io.cornerstone.user.UserSetup.ADMIN_ROLE;
+import static io.cornerstone.user.User_.*;
 import static org.springframework.data.domain.Sort.Direction.ASC;
 import static org.springframework.http.HttpStatus.OK;
 
@@ -62,7 +63,7 @@ public class UserController extends AbstractEntityController<User, Long> {
 	@GetMapping(PATH_LIST)
 	@JsonView({ View.List.class })
 	@PageableAsQueryParam
-	public ResultPage<User> list(@PageableDefault(sort = "username", direction = ASC) Pageable pageable,
+	public ResultPage<User> list(@PageableDefault(sort = USERNAME, direction = ASC) Pageable pageable,
 			@RequestParam(required = false) String query, @Parameter(hidden = true) User example) {
 		// use "username asc" override default sort "id desc"
 		return super.list(pageable, query, example);
@@ -163,16 +164,16 @@ public class UserController extends AbstractEntityController<User, Long> {
 	@Override
 	protected Specification<User> getQuerySpecification(String query) {
 		String q = '%' + query + '%';
-		return (root, cq, cb) -> cb.or(cb.or(cb.like(root.get("username"), q), cb.like(root.get("name"), q)),
-				cb.equal(root.get("phone"), query));
+		return (root, cq, cb) -> cb.or(cb.or(cb.like(root.get(username), q), cb.like(root.get(name), q)),
+				cb.equal(root.get(phone), query));
 	}
 
 	@Override
 	protected ExampleMatcher getExampleMatcher() {
 		return ExampleMatcher.matching()
-			.withIgnorePaths("password", "roles")
-			.withMatcher("username", match -> match.contains().ignoreCase())
-			.withMatcher("name", ExampleMatcher.GenericPropertyMatcher::contains);
+			.withIgnorePaths(PASSWORD, ROLES)
+			.withMatcher(USERNAME, match -> match.contains().ignoreCase())
+			.withMatcher(NAME, ExampleMatcher.GenericPropertyMatcher::contains);
 	}
 
 }

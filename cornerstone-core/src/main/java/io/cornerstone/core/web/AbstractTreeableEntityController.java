@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import static io.cornerstone.core.persistence.domain.AbstractTreeableEntity_.*;
+
 public abstract class AbstractTreeableEntityController<T extends AbstractTreeableEntity<T>>
 		extends AbstractEntityController<T, Long> {
 
@@ -37,8 +39,8 @@ public abstract class AbstractTreeableEntityController<T extends AbstractTreeabl
 	public List<T> children(@PathVariable Long id, @RequestParam(required = false) String query,
 			@Parameter(hidden = true) T example) {
 		Specification<T> spec = (root, cq, cb) -> {
-			Predicate predicate = ((id == null) || (id < 1)) ? cb.isNull(root.get("parent"))
-					: cb.equal(root.get("parent").get("id"), id);
+			Predicate predicate = ((id == null) || (id < 1)) ? cb.isNull(root.get(PARENT))
+					: cb.equal(root.get(PARENT).get(ID), id);
 			if (StringUtils.hasText(query)) {
 				predicate = cb.and(predicate, getQuerySpecification(query).toPredicate(root, cq, cb));
 			}
@@ -70,9 +72,9 @@ public abstract class AbstractTreeableEntityController<T extends AbstractTreeabl
 	private void validateName(T entity, @Nullable Long id) {
 		T parent = entity.getParent();
 		Specification<T> spec = (root, cq, cb) -> {
-			Predicate p = cb.and(parent != null ? cb.equal(root.get("parent"), parent) : cb.isNull(root.get("parent")),
-					cb.equal(root.get("name"), entity.getName()));
-			return id != null ? cb.and(p, cb.notEqual(root.get("id"), id)) : p;
+			Predicate p = cb.and(parent != null ? cb.equal(root.get(PARENT), parent) : cb.isNull(root.get(PARENT)),
+					cb.equal(root.get(NAME), entity.getName()));
+			return id != null ? cb.and(p, cb.notEqual(root.get(ID), id)) : p;
 		};
 		if (this.specificationExecutor.count(spec) > 0) {
 			throw badRequest("name.already.exists");

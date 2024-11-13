@@ -8,6 +8,8 @@ import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.web.bind.annotation.RestController;
 
+import static io.cornerstone.core.web.controller.entity.TestEntity_.*;
+
 @TestComponent
 @RestController
 class TestEntityController extends AbstractEntityController<TestEntity, Long> {
@@ -32,16 +34,16 @@ class TestEntityController extends AbstractEntityController<TestEntity, Long> {
 	@Override
 	protected Specification<TestEntity> getQuerySpecification(String query) {
 		String q = '%' + query + '%';
-		return (root, cq, cb) -> cb.or(cb.or(cb.like(root.get("idNo"), q), cb.like(root.get("name"), q)),
-				cb.equal(root.get("phone"), query));
+		return (root, cq, cb) -> cb.or(cb.or(cb.like(root.get(idNo), q), cb.like(root.get(name), q)),
+				cb.equal(root.get(phone), query));
 	}
 
 	@Override
 	protected ExampleMatcher getExampleMatcher() {
 		return ExampleMatcher.matching()
-			.withIgnorePaths("address")
-			.withMatcher("idNo", match -> match.contains().ignoreCase())
-			.withMatcher("name", ExampleMatcher.GenericPropertyMatcher::contains);
+			.withIgnorePaths(ADDRESS)
+			.withMatcher(ID_NO, match -> match.contains().ignoreCase())
+			.withMatcher(NAME, ExampleMatcher.GenericPropertyMatcher::contains);
 	}
 
 }
