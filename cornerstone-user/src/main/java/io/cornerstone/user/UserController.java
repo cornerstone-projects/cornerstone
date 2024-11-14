@@ -19,9 +19,9 @@ import io.cornerstone.core.web.PageableAsQueryParam;
 import io.cornerstone.core.web.SortAsQueryParam;
 import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.hibernate.cfg.BatchSettings;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
@@ -49,15 +49,14 @@ import static io.cornerstone.user.User_.*;
 import static org.springframework.data.domain.Sort.Direction.ASC;
 import static org.springframework.http.HttpStatus.OK;
 
+@RequiredArgsConstructor
 @RestController
 @Secured(ADMIN_ROLE)
 public class UserController extends AbstractEntityController<User, Long> {
 
-	@Autowired
-	private UserRepository userRepository;
+	private final UserRepository userRepository;
 
-	@Autowired
-	private PasswordEncoder passwordEncoder;
+	private final PasswordEncoder passwordEncoder;
 
 	@Override
 	@GetMapping(PATH_LIST)

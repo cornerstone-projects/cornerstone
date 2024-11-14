@@ -5,8 +5,8 @@ import io.cornerstone.core.util.BeanUtils;
 import io.cornerstone.core.web.BaseRestController;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.support.TransactionSynchronization;
@@ -22,6 +22,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import static org.springframework.security.web.context.HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY;
 import static org.springframework.web.context.request.RequestAttributes.SCOPE_SESSION;
 
+@RequiredArgsConstructor
 @RestController
 public class CurrentUserController extends BaseRestController {
 
@@ -29,11 +30,9 @@ public class CurrentUserController extends BaseRestController {
 
 	public static final String PATH_PASSWORD = PATH_PROFILE + "/password";
 
-	@Autowired
-	private UserRepository userRepository;
+	private final UserRepository userRepository;
 
-	@Autowired
-	private PasswordEncoder passwordEncoder;
+	private final PasswordEncoder passwordEncoder;
 
 	@GetMapping(PATH_PROFILE)
 	@JsonView({ User.View.Profile.class })

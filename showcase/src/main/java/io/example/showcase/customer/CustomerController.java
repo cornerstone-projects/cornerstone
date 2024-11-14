@@ -1,19 +1,19 @@
 package io.example.showcase.customer;
 
 import io.cornerstone.core.web.AbstractEntityController;
+import lombok.RequiredArgsConstructor;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.web.bind.annotation.RestController;
 
 import static io.example.showcase.customer.Customer_.*;
 
+@RequiredArgsConstructor
 @RestController
 public class CustomerController extends AbstractEntityController<Customer, Long> {
 
-	@Autowired
-	private CustomerRepository customerRepository;
+	private final CustomerRepository customerRepository;
 
 	@Override
 	protected void beforeSave(Customer customer) {
