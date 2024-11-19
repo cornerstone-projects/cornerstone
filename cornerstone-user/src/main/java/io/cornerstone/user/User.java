@@ -24,8 +24,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import static java.util.stream.Collectors.toList;
-
 @Entity
 @Getter
 @Setter
@@ -65,7 +63,7 @@ public class User extends AbstractAuditableEntity implements UserDetails, Versio
 		if (this.roles == null) {
 			return Collections.emptyList();
 		}
-		return this.roles.stream().map(SimpleGrantedAuthority::new).collect(toList());
+		return this.roles.stream().map(SimpleGrantedAuthority::new).toList();
 	}
 
 	@JsonIgnore

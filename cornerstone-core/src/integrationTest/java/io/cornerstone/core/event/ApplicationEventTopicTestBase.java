@@ -46,7 +46,7 @@ abstract class ApplicationEventTopicTestBase {
 	}
 
 	@ParameterizedTest
-	@EnumSource(Scope.class)
+	@EnumSource
 	void publish(Scope scope) {
 		TestEvent event = new TestEvent(scope.name());
 		this.eventPublisher.publish(event, scope);

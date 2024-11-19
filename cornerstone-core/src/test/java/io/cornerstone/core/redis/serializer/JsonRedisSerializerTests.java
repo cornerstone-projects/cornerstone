@@ -9,7 +9,7 @@ class JsonRedisSerializerTests extends RedisSerializerTestBase {
 
 	@Override
 	@Test
-	@Disabled
+	@Disabled("not supported")
 	void testDateAndTime() {
 		super.testDateAndTime();
 	}

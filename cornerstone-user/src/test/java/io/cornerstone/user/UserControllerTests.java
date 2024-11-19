@@ -8,7 +8,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import io.cornerstone.core.domain.ResultPage;
 import io.cornerstone.test.ControllerTestBase;
@@ -221,7 +220,7 @@ class UserControllerTests extends ControllerTestBase {
 		List<String> ids = new ArrayList<>();
 		try (InputStream is = resource.getInputStream();
 				BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
-			List<String> lines = reader.lines().collect(Collectors.toList());
+			List<String> lines = reader.lines().toList();
 			assertThat(lines).hasSize(size + 3);
 			assertThat(lines).element(4).asString().contains(",test,");
 			for (int i = 3; i < (size + 3); i++) {
@@ -232,7 +231,7 @@ class UserControllerTests extends ControllerTestBase {
 		response = restTemplate.getForEntity(PATH_LIST + ".csv?sort=createdDate&disabled=true", Resource.class);
 		try (InputStream is = response.getBody().getInputStream();
 				BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
-			List<String> lines = reader.lines().collect(Collectors.toList());
+			List<String> lines = reader.lines().toList();
 			assertThat(lines).hasSize(size / 2 + 1);
 		}
 

@@ -10,6 +10,7 @@ import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.util.Enumeration;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -92,7 +93,7 @@ public class DefaultApplication extends SpringBootServletInitializer implements 
 				DefaultApplication.class.getClassLoader())) {
 			String profiles = System.getProperty(ACTIVE_PROFILES_PROPERTY_NAME);
 			if (profiles == null) {
-				profiles = System.getenv(ACTIVE_PROFILES_PROPERTY_NAME.replaceAll("\\.", "_").toUpperCase());
+				profiles = System.getenv(ACTIVE_PROFILES_PROPERTY_NAME.replaceAll("\\.", "_").toUpperCase(Locale.ROOT));
 				if (profiles == null) {
 					System.setProperty(ACTIVE_PROFILES_PROPERTY_NAME, "dev");
 				}

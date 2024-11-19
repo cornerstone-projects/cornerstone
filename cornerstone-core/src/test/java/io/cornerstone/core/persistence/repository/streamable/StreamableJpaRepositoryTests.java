@@ -3,7 +3,6 @@ package io.cornerstone.core.persistence.repository.streamable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import io.cornerstone.test.DataJpaTestBase;
@@ -68,26 +67,20 @@ class StreamableJpaRepositoryTests extends DataJpaTestBase {
 
 	private void doStream() {
 		try (Stream<TestEntity> stream = this.repository.stream(Sort.by(INDEX))) {
-			List<Integer> indexes = stream.peek(this.entityManager::detach)
-				.map(TestEntity::getIndex)
-				.collect(Collectors.toList());
+			List<Integer> indexes = stream.peek(this.entityManager::detach).map(TestEntity::getIndex).toList();
 			assertThat(indexes).containsExactly(0, 1, 2, 3, 4);
 		}
 
 		try (Stream<TestEntity> stream = this.repository.stream((root, cq, cb) -> cb.ge(root.get(index), 1),
 				Sort.by(INDEX))) {
-			List<Integer> indexes = stream.peek(this.entityManager::detach)
-				.map(TestEntity::getIndex)
-				.collect(Collectors.toList());
+			List<Integer> indexes = stream.peek(this.entityManager::detach).map(TestEntity::getIndex).toList();
 			assertThat(indexes).containsExactly(1, 2, 3, 4);
 		}
 
 		TestEntity example = new TestEntity();
 		example.setIndex(1);
 		try (Stream<TestEntity> stream = this.repository.stream(Example.of(example), Sort.unsorted())) {
-			List<Integer> indexes = stream.peek(this.entityManager::detach)
-				.map(TestEntity::getIndex)
-				.collect(Collectors.toList());
+			List<Integer> indexes = stream.peek(this.entityManager::detach).map(TestEntity::getIndex).toList();
 			assertThat(indexes).containsExactly(1);
 		}
 	}

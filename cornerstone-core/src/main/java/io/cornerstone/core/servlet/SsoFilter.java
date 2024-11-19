@@ -2,11 +2,11 @@ package io.cornerstone.core.servlet;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -57,7 +57,7 @@ import org.springframework.web.client.RestTemplate;
 @Slf4j
 public class SsoFilter implements Filter {
 
-	public static final String DEFAULT_ENCODING = "UTF-8";
+	public static final Charset DEFAULT_ENCODING = StandardCharsets.UTF_8;
 
 	public static final String COOKIE_NAME_TOKEN = "T";
 
@@ -280,12 +280,7 @@ public class SsoFilter implements Filter {
 		}
 		for (Cookie cookie : cookies) {
 			if (cookieName.equalsIgnoreCase(cookie.getName())) {
-				try {
-					return URLDecoder.decode(cookie.getValue(), DEFAULT_ENCODING);
-				}
-				catch (UnsupportedEncodingException ex) {
-					return cookie.getValue();
-				}
+				return URLDecoder.decode(cookie.getValue(), DEFAULT_ENCODING);
 			}
 		}
 		return null;

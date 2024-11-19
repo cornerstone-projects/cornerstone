@@ -1,5 +1,7 @@
 package io.cornerstone.core.persistence.id;
 
+import java.util.Locale;
+
 import io.cornerstone.core.Application;
 import io.cornerstone.core.util.NumberUtils;
 import jakarta.annotation.PostConstruct;
@@ -57,7 +59,7 @@ public class SnowflakeProperties {
 				// IPv6
 				index = ip.lastIndexOf(':');
 				id = ip.substring(index + 1);
-				id = String.valueOf(NumberUtils.xToDecimal(16, id.toUpperCase()));
+				id = String.valueOf(NumberUtils.xToDecimal(16, id.toUpperCase(Locale.ROOT)));
 				this.workerId = Integer.parseInt(id);
 				if (this.workerId < 0) {
 					this.workerId += 2 << 16;

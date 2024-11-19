@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import io.cornerstone.core.util.FileUtils;
 import io.cornerstone.fs.FileInfo;
@@ -167,7 +166,7 @@ public abstract class BucketFileStorage extends AbstractFileStorage {
 	protected Paged<FileInfo> doListFiles(String path, int limit, String marker) {
 		Paged<FileInfo> all = doListFilesAndDirectory(path, limit, marker);
 		return new Paged<>(all.getMarker(), all.getNextMarker(),
-				all.getResult().stream().filter(FileInfo::isFile).collect(Collectors.toList()));
+				all.getResult().stream().filter(FileInfo::isFile).toList());
 	}
 
 	@Override

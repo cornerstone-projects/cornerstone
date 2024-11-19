@@ -21,7 +21,6 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 import static io.cornerstone.core.security.SecurityProperties.*;
-import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpHeaders.*;
 import static org.springframework.http.HttpMethod.*;
@@ -60,7 +59,7 @@ class MixedPasswordEncoderIntegrationTests extends ControllerTestBase {
 		}
 
 		private static User createUser(String username, String password, String... roles) {
-			return new User(username, password, Stream.of(roles).map(SimpleGrantedAuthority::new).collect(toList()));
+			return new User(username, password, Stream.of(roles).map(SimpleGrantedAuthority::new).toList());
 		}
 
 	}

@@ -29,7 +29,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import static io.cornerstone.core.security.WebSecurityTests.*;
-import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpHeaders.*;
 import static org.springframework.http.HttpMethod.*;
@@ -237,7 +236,7 @@ class WebSecurityTests extends ControllerTestBase {
 		}
 
 		private static User createUser(String username, String password, String... roles) {
-			return new User(username, password, Stream.of(roles).map(SimpleGrantedAuthority::new).collect(toList()));
+			return new User(username, password, Stream.of(roles).map(SimpleGrantedAuthority::new).toList());
 		}
 
 	}

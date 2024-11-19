@@ -1,6 +1,7 @@
 package io.cornerstone.core.util;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import org.springframework.util.StringUtils;
@@ -30,7 +31,7 @@ public class StringHelper {
 		String word;
 		if (index > 0) {
 			prefix = string.substring(0, index);
-			word = string.substring(index).toLowerCase();
+			word = string.substring(index).toLowerCase(Locale.ROOT);
 		}
 		else {
 			prefix = "";

@@ -1,6 +1,7 @@
 package io.cornerstone.core;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -60,7 +61,7 @@ public class DefaultPropertiesEnvironmentPostProcessor implements EnvironmentPos
 					}
 					return true;
 				})
-				.collect(Collectors.toList());
+				.collect(Collectors.toCollection(ArrayList::new));
 			Collections.reverse(list);
 			list.forEach(environment.getPropertySources()::addLast);
 			this.log.info("Add default properties from " + LOCATION);

@@ -29,7 +29,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 
 import static io.cornerstone.core.security.SecurityProperties.DEFAULT_LOGIN_PROCESSING_URL;
-import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.*;
 import static org.mockito.Mockito.mock;
@@ -120,7 +119,7 @@ class AttackProtectionTests extends ControllerTestBase {
 		}
 
 		private static User createUser(String username, String password, String... roles) {
-			return new User(username, password, Stream.of(roles).map(SimpleGrantedAuthority::new).collect(toList()));
+			return new User(username, password, Stream.of(roles).map(SimpleGrantedAuthority::new).toList());
 		}
 
 	}

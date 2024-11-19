@@ -16,7 +16,7 @@ public abstract class TopicTestBase extends MessageTestBase {
 	protected Topic<String> testTopic;
 
 	@ParameterizedTest
-	@EnumSource(Scope.class)
+	@EnumSource
 	void publish(Scope scope) {
 		String message = scope.name();
 		this.testTopic.publish(message, scope);

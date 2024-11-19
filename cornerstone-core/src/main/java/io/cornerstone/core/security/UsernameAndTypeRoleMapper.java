@@ -2,6 +2,7 @@ package io.cornerstone.core.security;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 
 import io.cornerstone.core.util.ReflectionUtils;
 
@@ -30,7 +31,7 @@ public class UsernameAndTypeRoleMapper implements UserRoleMapper {
 		if (!StringUtils.hasLength(name)) {
 			name = c.getSuperclass().getSimpleName();
 		}
-		return name.toUpperCase();
+		return name.toUpperCase(Locale.ROOT);
 	}
 
 }

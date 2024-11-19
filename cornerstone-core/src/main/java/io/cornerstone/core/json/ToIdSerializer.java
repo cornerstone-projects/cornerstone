@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -32,14 +31,14 @@ public class ToIdSerializer extends StdSerializer<Object> {
 			List<Object> ids = coll.stream()
 				.map(Optional::ofNullable)
 				.map(o -> o.map(o2 -> new BeanWrapperImpl(o2).getPropertyValue("id")).orElse(null))
-				.collect(Collectors.toList());
+				.toList();
 			generator.writeObject(ids);
 		}
 		else if (obj instanceof Object[] array) {
 			List<Object> ids = Stream.of(array)
 				.map(Optional::ofNullable)
 				.map(o -> o.map(o2 -> new BeanWrapperImpl(o2).getPropertyValue("id")).orElse(null))
-				.collect(Collectors.toList());
+				.toList();
 			generator.writeObject(ids);
 		}
 		else {
