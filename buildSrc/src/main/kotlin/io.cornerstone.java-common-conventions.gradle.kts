@@ -6,9 +6,26 @@ plugins {
 	id("io.freefair.lombok")
 	id("io.spring.dependency-management")
 	id("io.spring.javaformat")
+	id("com.societegenerale.commons.arch-unit-gradle-plugin")
 }
 
 java.sourceCompatibility = JavaVersion.VERSION_21
+
+archUnit {
+	if (project.name.contains("-bom")) {
+		isSkip = true
+	}
+	preConfiguredRules = listOf(
+		"com.societegenerale.commons.plugin.rules.NoInjectedFieldTest",
+		"com.societegenerale.commons.plugin.rules.NoTestIgnoreWithoutCommentRuleTest",
+		"com.societegenerale.commons.plugin.rules.NoPrefixForInterfacesRuleTest",
+		"com.societegenerale.commons.plugin.rules.NoPowerMockRuleTest",
+		"com.societegenerale.commons.plugin.rules.NoJodaTimeRuleTest",
+		"com.societegenerale.commons.plugin.rules.NoJunitAssertRuleTest",
+		"com.societegenerale.commons.plugin.rules.StringFieldsThatAreActuallyDatesRuleTest",
+		"io.cornerstone.build.architecture.ArchitectureRuleTest"
+	)
+}
 
 repositories {
 	val repoUrlPrefix: String? by rootProject

@@ -2,6 +2,7 @@ import java.util.Properties
 import java.io.FileInputStream
 
 plugins {
+	java
 	`kotlin-dsl`
 }
 
@@ -39,5 +40,7 @@ dependencies {
 	implementation("""io.freefair.lombok:io.freefair.lombok.gradle.plugin:${property("lombok-plugin.version")}""")
 	implementation("""io.spring.gradle:dependency-management-plugin:${property("dependency-management-plugin.version")}""")
 	implementation("""io.spring.javaformat:spring-javaformat-gradle-plugin:${property("javaformat-plugin.version")}""")
+	implementation("com.societegenerale.commons:arch-unit-gradle-plugin:4.0.0")
+	implementation("com.societegenerale.commons:arch-unit-build-plugin-core:4.0.1")
 	implementation("""org.springframework.boot:org.springframework.boot.gradle.plugin:${property("spring-boot.version")}""")
 }
