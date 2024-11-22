@@ -142,6 +142,8 @@ spring.security.user.password: "{bcrypt}$2a$10$g1WqDyVfiD4vEOQZr.yRZOnWlzuAs2gMi
 
 spring.main.allow-bean-definition-overriding: true
 
+spring.http.client.redirects: DONT_FOLLOW
+
 logging:
   config: classpath:log4j2-test.xml
 
