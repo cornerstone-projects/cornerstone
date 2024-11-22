@@ -9,8 +9,6 @@ import io.cornerstone.test.ControllerTestBase;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -27,6 +25,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 
 import static io.cornerstone.core.security.SecurityProperties.DEFAULT_LOGIN_PROCESSING_URL;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -43,10 +43,10 @@ class AttackProtectionTests extends ControllerTestBase {
 	@Autowired
 	MessageSource messageSource;
 
-	@MockBean
+	@MockitoBean
 	StringRedisTemplate stringRedisTemplate;
 
-	@SpyBean
+	@MockitoSpyBean
 	UserDetailsService userDetailsService;
 
 	@Test

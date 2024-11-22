@@ -6,7 +6,7 @@ import java.util.concurrent.TimeUnit;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -18,7 +18,7 @@ abstract class MessageTestBase {
 
 	protected final String event = "test";
 
-	@MockBean
+	@MockitoBean
 	protected MessageProcessor messageProcessor;
 
 	private final CountDownLatch latch = new CountDownLatch(1);

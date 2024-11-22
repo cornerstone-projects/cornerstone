@@ -11,10 +11,10 @@ import org.junit.jupiter.api.Test;
 
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.then;
@@ -24,7 +24,7 @@ import static org.mockito.Mockito.never;
 @ContextConfiguration
 class RabbitTopicTests extends TopicTestBase {
 
-	@SpyBean
+	@MockitoSpyBean
 	private RabbitTemplate rabbitTemplate;
 
 	@Test

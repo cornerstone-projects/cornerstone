@@ -8,7 +8,6 @@ import org.apache.kafka.clients.admin.NewTopic;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -17,6 +16,7 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -40,7 +40,7 @@ class KafkaManualAckIntegrationTests {
 	@Autowired
 	private KafkaTemplate<String, Person> kafkaTemplate;
 
-	@SpyBean
+	@MockitoSpyBean
 	private TestListener testListener;
 
 	@Test

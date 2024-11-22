@@ -6,12 +6,12 @@ import io.cornerstone.test.mock.ResultCaptor;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.*;
@@ -20,7 +20,7 @@ import static org.mockito.BDDMockito.*;
 @ContextConfiguration
 class RedisApplicationEventTopicTests extends ApplicationEventTopicTestBase {
 
-	@SpyBean
+	@MockitoSpyBean
 	private RedisConnectionFactory connectionFactory;
 
 	@Test

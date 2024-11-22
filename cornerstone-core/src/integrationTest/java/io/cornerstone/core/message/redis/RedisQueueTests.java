@@ -8,12 +8,12 @@ import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisListCommands;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.*;
@@ -22,7 +22,7 @@ import static org.mockito.BDDMockito.*;
 @ContextConfiguration
 class RedisQueueTests extends QueueTestBase {
 
-	@SpyBean
+	@MockitoSpyBean
 	private RedisConnectionFactory connectionFactory;
 
 	@Test

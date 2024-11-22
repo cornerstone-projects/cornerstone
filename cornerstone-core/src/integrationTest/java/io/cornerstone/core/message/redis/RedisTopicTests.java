@@ -11,12 +11,12 @@ import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.*;
@@ -26,7 +26,7 @@ import static org.mockito.BDDMockito.*;
 @ContextConfiguration
 class RedisTopicTests extends TopicTestBase {
 
-	@SpyBean
+	@MockitoSpyBean
 	private RedisConnectionFactory connectionFactory;
 
 	@Test

@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
-import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
@@ -13,6 +12,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,7 +30,7 @@ class IdempotentTests extends DataJpaTestBase {
 	@Autowired
 	TestEntityRepository testEntityRepository;
 
-	@SpyBean
+	@MockitoSpyBean
 	IdempotentTestEntityService testEntityService;
 
 	@Test
@@ -86,7 +86,7 @@ class IdempotentTests extends DataJpaTestBase {
 	static class Config {
 
 		@Bean
-		TestEntityService testEntityService(TestEntityRepository repository) {
+		IdempotentTestEntityService testEntityService(TestEntityRepository repository) {
 			return new IdempotentTestEntityService(repository);
 		}
 

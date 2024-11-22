@@ -5,9 +5,9 @@ import io.cornerstone.test.containers.UseRabbitMQContainer;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.then;
@@ -18,7 +18,7 @@ import static org.mockito.Mockito.never;
 @TestPropertySource(properties = "application-event.topic.type=rabbit")
 class RabbitApplicationEventTopicTests extends ApplicationEventTopicTestBase {
 
-	@SpyBean
+	@MockitoSpyBean
 	private RabbitTemplate rabbitTemplate;
 
 	@Test

@@ -10,10 +10,10 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.EventListener;
+import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -26,7 +26,7 @@ abstract class ApplicationEventTopicTestBase {
 	@Autowired
 	protected EventPublisher eventPublisher;
 
-	@SpyBean
+	@MockitoSpyBean
 	protected TestLisenter testListener;
 
 	private final CountDownLatch latch = new CountDownLatch(1);
