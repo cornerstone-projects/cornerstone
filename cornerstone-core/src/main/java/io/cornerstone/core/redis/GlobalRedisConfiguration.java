@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.data.redis.ClientResourcesBuilderCustomizer;
 import org.springframework.boot.autoconfigure.data.redis.LettuceClientConfigurationBuilderCustomizer;
+import org.springframework.boot.autoconfigure.data.redis.LettuceClientOptionsBuilderCustomizer;
 import org.springframework.boot.autoconfigure.data.redis.RedisConnectionDetails;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -57,9 +58,11 @@ public class GlobalRedisConfiguration extends RedisConfigurationSupport {
 
 	@Bean
 	public LettuceConnectionFactory globalRedisConnectionFactory(
-			ObjectProvider<LettuceClientConfigurationBuilderCustomizer> builderCustomizers,
-			@Qualifier("globalLettuceClientResources") ClientResources lettuceClientResources) {
-		return super.redisConnectionFactory(builderCustomizers, lettuceClientResources);
+			ObjectProvider<LettuceClientConfigurationBuilderCustomizer> clientConfigurationBuilderCustomizers,
+			ObjectProvider<LettuceClientOptionsBuilderCustomizer> clientOptionsBuilderCustomizers,
+			ClientResources lettuceClientResources) {
+		return super.redisConnectionFactory(clientConfigurationBuilderCustomizers, clientOptionsBuilderCustomizers,
+				lettuceClientResources);
 	}
 
 	@Bean

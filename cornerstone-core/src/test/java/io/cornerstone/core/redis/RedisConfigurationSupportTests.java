@@ -21,7 +21,8 @@ class RedisConfigurationSupportTests {
 				mock(ObjectProvider.class), mock(ObjectProvider.class), connectionDetails, mock(ObjectProvider.class));
 		DefaultClientResources clientResources = rcs.lettuceClientResources(mock(ObjectProvider.class));
 		assertThat(clientResources).isNotNull();
-		assertThat(rcs.redisConnectionFactory(mock(ObjectProvider.class), clientResources)).isNotNull();
+		assertThat(rcs.redisConnectionFactory(mock(ObjectProvider.class), mock(ObjectProvider.class), clientResources))
+			.isNotNull();
 	}
 
 }

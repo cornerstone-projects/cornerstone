@@ -10,6 +10,7 @@ import io.lettuce.core.resource.DefaultClientResources;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.data.redis.ClientResourcesBuilderCustomizer;
 import org.springframework.boot.autoconfigure.data.redis.LettuceClientConfigurationBuilderCustomizer;
+import org.springframework.boot.autoconfigure.data.redis.LettuceClientOptionsBuilderCustomizer;
 import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
 import org.springframework.boot.autoconfigure.data.redis.RedisConnectionDetails;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
@@ -62,13 +63,16 @@ public class RedisConfigurationSupport {
 	}
 
 	protected LettuceConnectionFactory redisConnectionFactory(
-			ObjectProvider<LettuceClientConfigurationBuilderCustomizer> builderCustomizers,
+			ObjectProvider<LettuceClientConfigurationBuilderCustomizer> clientConfigurationBuilderCustomizers,
+			ObjectProvider<LettuceClientOptionsBuilderCustomizer> clientOptionsBuilderCustomizers,
 			ClientResources clientResources) {
 		try {
 			Method m = this.configuration.getClass()
-				.getDeclaredMethod("redisConnectionFactory", ObjectProvider.class, ClientResources.class);
+				.getDeclaredMethod("redisConnectionFactory", ObjectProvider.class, ObjectProvider.class,
+						ClientResources.class);
 			m.setAccessible(true);
-			return (LettuceConnectionFactory) m.invoke(this.configuration, builderCustomizers, clientResources);
+			return (LettuceConnectionFactory) m.invoke(this.configuration, clientConfigurationBuilderCustomizers,
+					clientOptionsBuilderCustomizers, clientResources);
 		}
 		catch (Exception ex) {
 			throw new RuntimeException(ex.getMessage(), ex);
