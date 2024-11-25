@@ -88,14 +88,12 @@ class StreamableJpaRepositoryTests extends DataJpaTestBase {
 	private void doForEach() {
 		List<Integer> list = new ArrayList<>();
 		this.repository.forEach(Sort.by(INDEX), e -> {
-			this.entityManager.detach(e);
 			list.add(e.getIndex());
 		});
 		assertThat(list).containsExactly(0, 1, 2, 3, 4);
 		list.clear();
 
 		this.repository.forEach((root, cq, cb) -> cb.ge(root.get(index), 1), Sort.by(INDEX), e -> {
-			this.entityManager.detach(e);
 			list.add(e.getIndex());
 		});
 		assertThat(list).containsExactly(1, 2, 3, 4);
@@ -104,7 +102,6 @@ class StreamableJpaRepositoryTests extends DataJpaTestBase {
 		TestEntity example = new TestEntity();
 		example.setIndex(1);
 		this.repository.forEach(Example.of(example), Sort.unsorted(), e -> {
-			this.entityManager.detach(e);
 			list.add(e.getIndex());
 		});
 		assertThat(list).containsExactly(1);
@@ -130,7 +127,7 @@ class StreamableJpaRepositoryTests extends DataJpaTestBase {
 			e.setIndex(e.getIndex() + 1);
 			if ((count.incrementAndGet() % batchSize) == 0) {
 				this.repository.flush();
-				this.entityManager.detach(e);
+				this.entityManager.clear();
 			}
 		});
 	}

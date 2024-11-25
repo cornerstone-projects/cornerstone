@@ -3,6 +3,8 @@ package io.cornerstone.core.persistence.repository;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
+import jakarta.persistence.EntityManager;
+
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
@@ -11,6 +13,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.NoRepositoryBean;
 import org.springframework.lang.Nullable;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 @NoRepositoryBean
 public interface StreamableJpaRepository<T, ID> extends JpaRepository<T, ID>, JpaSpecificationExecutor<T> {
@@ -45,6 +48,10 @@ public interface StreamableJpaRepository<T, ID> extends JpaRepository<T, ID>, Jp
 		// avoid org.springframework.dao.InvalidDataAccessApiUsageException
 		// see JpaQueryExecution.StreamExecution::doExecute
 		try (Stream<T> all = stream(spec, sort)) {
+			if (TransactionSynchronizationManager.isCurrentTransactionReadOnly()
+					&& this instanceof BeanProviderCapable bpc) {
+				consumer = consumer.andThen(bpc.getBean(EntityManager.class)::detach);
+			}
 			all.forEach(consumer);
 		}
 	}
@@ -54,6 +61,10 @@ public interface StreamableJpaRepository<T, ID> extends JpaRepository<T, ID>, Jp
 		// avoid org.springframework.dao.InvalidDataAccessApiUsageException
 		// see JpaQueryExecution.StreamExecution::doExecute
 		try (Stream<S> all = stream(example, sort)) {
+			if (TransactionSynchronizationManager.isCurrentTransactionReadOnly()
+					&& this instanceof BeanProviderCapable bpc) {
+				consumer = consumer.andThen(bpc.getBean(EntityManager.class)::detach);
+			}
 			all.forEach(consumer);
 		}
 	}
