@@ -3,3 +3,6 @@ io.cornerstone.core.AutoConfigureExclusionEnvironmentPostProcessor,\
 io.cornerstone.core.DefaultPropertiesEnvironmentPostProcessor,\
 io.cornerstone.core.SecretPropertiesEnvironmentPostProcessor,\
 io.cornerstone.core.KubernetesConfigMapEnvironmentPostProcessor
+
+io.cornerstone.core.persistence.repository.BeanProviderCapable=\
+io.cornerstone.core.persistence.repository.BeanProviderCapableImpl
