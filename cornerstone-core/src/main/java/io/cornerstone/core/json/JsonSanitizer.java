@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.StringJoiner;
 import java.util.TimeZone;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -105,8 +106,7 @@ public class JsonSanitizer {
 								jgen.writeStringField(name, newValue);
 							}
 						}
-						catch (Exception ex) {
-							ex.printStackTrace();
+						catch (Exception ignore) {
 						}
 					}
 					else {
@@ -119,7 +119,7 @@ public class JsonSanitizer {
 									.findAnnotation(ReflectionUtils.getField(obj.getClass(), name), JsonSanitize.class);
 							}
 						}
-						catch (Exception ex) {
+						catch (Exception ignore) {
 
 						}
 						if (annotation == null) {
@@ -143,7 +143,7 @@ public class JsonSanitizer {
 							}
 							else {
 								Object value = bw.getPropertyValue(name);
-								jgen.writeStringField(name, sanitzeString(value != null ? value.toString() : null,
+								jgen.writeStringField(name, sanitizeString(value != null ? value.toString() : null,
 										newValue, annotation.position()));
 							}
 						}
@@ -159,7 +159,7 @@ public class JsonSanitizer {
 			.writer(filters);
 	}
 
-	private static String sanitzeString(String value, String mask, int position) {
+	private static String sanitizeString(String value, String mask, int position) {
 		if (value != null && position >= 0) {
 			int length = value.length();
 			if (length > position) {
@@ -173,6 +173,32 @@ public class JsonSanitizer {
 			}
 		}
 		return mask;
+	}
+
+	public String sanitizeValue(Object data, JsonSanitize config) {
+		if (config != null) {
+			if (data instanceof String) {
+				data = sanitizeString((String) data, config.value(), config.position());
+			}
+			else if (org.springframework.beans.BeanUtils.isSimpleValueType(data.getClass())) {
+				data = !config.value().equals(JsonSanitize.DEFAULT_NONE) ? config.value() : null;
+			}
+		}
+		return toJson(data);
+	}
+
+	public String sanitizeArray(Object[] data, JsonSanitize[] config) {
+		if (data == null) {
+			return null;
+		}
+		if (data.length == 0) {
+			return "[]";
+		}
+		StringJoiner joiner = new StringJoiner(", ", "[ ", " ]");
+		for (int i = 0; i < data.length; i++) {
+			joiner.add(sanitizeValue(data[i], config != null && config.length > i ? config[i] : null));
+		}
+		return joiner.toString();
 	}
 
 	public String toJson(Object value) {

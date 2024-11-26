@@ -1,5 +1,7 @@
 package io.cornerstone.core.json;
 
+import java.lang.annotation.Annotation;
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.Map;
 import java.util.function.BiPredicate;
@@ -83,6 +85,71 @@ class JsonSanitizerTests {
 		JsonSanitizer sanitizer = new JsonSanitizer();
 		Person p = new Person("test", "13333333333", "13333333333", "13333333333", "13333333333", 12);
 		String json = sanitizer.toJson(p);
+		assertThat(json).contains("\"1**********\"");
+		assertThat(json).contains("\"****3333333\"");
+		assertThat(json).contains("\"133****3333\"");
+		assertThat(json).contains("\"1333333333****\"");
+		assertThat(json).doesNotContain("age");
+	}
+
+	@Test
+	void testSanitizeValue() {
+		JsonSanitizer sanitizer = new JsonSanitizer();
+		JsonSanitize config = new JsonSanitize() {
+			@Override
+			public Class<? extends Annotation> annotationType() {
+				return JsonSanitize.class;
+			}
+
+			@Override
+			public String value() {
+				return "**";
+			}
+
+			@Override
+			public int position() {
+				return 2;
+			}
+
+		};
+		assertThat(sanitizer.sanitizeValue("test", config)).isEqualTo("\"te**\"");
+		assertThat(sanitizer.sanitizeValue(new BigDecimal("12.3"), config)).isEqualTo("\"**\"");
+
+		String json = sanitizer
+			.sanitizeValue(new Person("test", "13333333333", "13333333333", "13333333333", "13333333333", 12), config);
+		assertThat(json).contains("\"1**********\"");
+		assertThat(json).contains("\"****3333333\"");
+		assertThat(json).contains("\"133****3333\"");
+		assertThat(json).contains("\"1333333333****\"");
+		assertThat(json).doesNotContain("age");
+	}
+
+	@Test
+	void testSanitizeArray() {
+		JsonSanitizer sanitizer = new JsonSanitizer();
+		assertThat(sanitizer.sanitizeArray(new Object[] { 1, "test", null }, null)).isEqualTo("[ 1, \"test\", null ]");
+
+		String json = sanitizer.sanitizeArray(
+				new Object[] { 1, "test",
+						new Person("test", "13333333333", "13333333333", "13333333333", "13333333333", 12) },
+				new JsonSanitize[] { null, new JsonSanitize() {
+					@Override
+					public Class<? extends Annotation> annotationType() {
+						return JsonSanitize.class;
+					}
+
+					@Override
+					public String value() {
+						return "**";
+					}
+
+					@Override
+					public int position() {
+						return 2;
+					}
+
+				}, null });
+		assertThat(json).contains("\"te**\"");
 		assertThat(json).contains("\"1**********\"");
 		assertThat(json).contains("\"****3333333\"");
 		assertThat(json).contains("\"133****3333\"");
