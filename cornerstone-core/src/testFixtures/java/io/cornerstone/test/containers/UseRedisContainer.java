@@ -3,7 +3,7 @@ package io.cornerstone.test.containers;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import org.testcontainers.containers.GenericContainer;
+import com.redis.testcontainers.RedisContainer;
 import org.testcontainers.junit.jupiter.Container;
 
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
@@ -30,7 +30,7 @@ public @interface UseRedisContainer {
 
 		@Container
 		@ServiceConnection
-		static GenericContainer<?> container = new GenericContainer<>("redis").withExposedPorts(6379);
+		static RedisContainer container = new RedisContainer("redis");
 
 	}
 

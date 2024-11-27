@@ -41,6 +41,7 @@ dependencies {
 	testFixturesImplementation("org.testcontainers:db2")
 	testFixturesImplementation("org.testcontainers:rabbitmq")
 	testFixturesImplementation("org.testcontainers:kafka")
+	testFixturesImplementation("com.redis:testcontainers-redis")
 	integrationTestRuntimeOnly("com.mysql:mysql-connector-j")
 	integrationTestRuntimeOnly("org.postgresql:postgresql")
 	integrationTestRuntimeOnly("com.microsoft.sqlserver:mssql-jdbc")

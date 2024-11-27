@@ -3,8 +3,8 @@ package io.cornerstone.test.containers;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import org.testcontainers.containers.KafkaContainer;
 import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.kafka.ConfluentKafkaContainer;
 import org.testcontainers.utility.DockerImageName;
 
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
@@ -26,8 +26,8 @@ public @interface UseKafkaContainer {
 
 		@Container
 		@ServiceConnection
-		static KafkaContainer container = new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka"))
-			.withEmbeddedZookeeper();
+		static ConfluentKafkaContainer container = new ConfluentKafkaContainer(
+				DockerImageName.parse("confluentinc/cp-kafka"));
 
 	}
 
