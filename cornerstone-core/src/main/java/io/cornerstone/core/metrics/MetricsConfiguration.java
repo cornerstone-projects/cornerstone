@@ -13,7 +13,7 @@ public class MetricsConfiguration {
 	@Bean
 	MeterRegistryCustomizer<MeterRegistry> meterRegistryCustomizer(Application application) {
 		return registry -> registry.config()
-			.commonTags("app", application.getName(), "instance.id", application.getInstanceId());
+			.commonTags("service.name", application.getName(), "service.id", application.getInstanceId());
 	}
 
 }

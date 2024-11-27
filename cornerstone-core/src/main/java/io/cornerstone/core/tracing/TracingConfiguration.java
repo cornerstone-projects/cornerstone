@@ -32,7 +32,7 @@ public class TracingConfiguration {
 		return builder -> {
 			AttributesBuilder attributesBuilder = Attributes.builder();
 			attributesBuilder.put("service.name", this.application.getName());
-			attributesBuilder.put("service.instance.id", this.application.getInstanceId());
+			attributesBuilder.put("service.id", this.application.getInstanceId());
 			attributesBuilder.put("server.info", this.application.getServerInfo());
 			attributesBuilder.put("java.version", System.getProperty("java.version"));
 			builder.setResource(Resource.getDefault().merge(Resource.create(attributesBuilder.build())));
