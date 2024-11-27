@@ -3,6 +3,7 @@ package io.cornerstone.core.tracing;
 import java.time.Duration;
 
 import io.cornerstone.core.Application;
+import io.lettuce.core.tracing.MicrometerTracing;
 import io.micrometer.observation.ObservationRegistry;
 import io.micrometer.tracing.exporter.SpanExportingPredicate;
 import io.opentelemetry.api.common.Attributes;
@@ -18,7 +19,6 @@ import org.springframework.boot.autoconfigure.data.redis.ClientResourcesBuilderC
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
-import org.springframework.data.redis.connection.lettuce.observability.MicrometerTracingAdapter;
 
 @Configuration
 @ConditionalOnEnabledTracing
@@ -49,11 +49,11 @@ public class TracingConfiguration {
 	}
 
 	@Bean
-	@ConditionalOnClass(MicrometerTracingAdapter.class)
+	@ConditionalOnClass(MicrometerTracing.class)
 	ClientResourcesBuilderCustomizer clientResourcesBuilderCustomizerForTracing(ObservationRegistry observationRegistry,
 			Environment env) {
 		return builder -> builder
-			.tracing(new MicrometerTracingAdapter(observationRegistry, "redis", env.matchesProfiles("dev")));
+			.tracing(new MicrometerTracing(observationRegistry, "redis", env.matchesProfiles("dev")));
 	}
 
 }

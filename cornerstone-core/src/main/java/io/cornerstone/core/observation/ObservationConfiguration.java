@@ -1,5 +1,6 @@
 package io.cornerstone.core.observation;
 
+import io.lettuce.core.tracing.LettuceObservationContext;
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationPredicate;
 import io.micrometer.observation.ObservationRegistry;
@@ -8,7 +9,6 @@ import net.ttddyy.observation.tracing.DataSourceBaseContext;
 import org.springframework.boot.actuate.autoconfigure.tracing.ConditionalOnEnabledTracing;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.redis.connection.lettuce.observability.LettuceObservationContext;
 import org.springframework.http.server.observation.ServerRequestObservationContext;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
