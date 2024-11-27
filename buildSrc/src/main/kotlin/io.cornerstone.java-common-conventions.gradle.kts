@@ -51,6 +51,8 @@ dependencyManagement {
 	}
 }
 
+val mockitoAgent = configurations.create("mockitoAgent")
+
 dependencies {
 	annotationProcessor("org.hibernate.orm:hibernate-jpamodelgen")
 	testAnnotationProcessor("org.hibernate.orm:hibernate-jpamodelgen")
@@ -59,6 +61,7 @@ dependencies {
 	testRuntimeOnly("com.h2database:h2")
 	testImplementation(testFixtures(project(":cornerstone-core")))
 	checkstyle("""io.spring.javaformat:spring-javaformat-checkstyle:${property("javaformat-plugin.version")}""")
+	mockitoAgent("org.mockito:mockito-core") { isTransitive = false }
 }
 
 configurations.all {
@@ -137,6 +140,10 @@ tasks.named<Jar>("sourcesJar") {
 tasks.withType<JavaCompile> {
 	options.encoding = "UTF-8"
 	options.compilerArgs.add("-parameters")
+}
+
+tasks.withType<Test> {
+	jvmArgs(listOf("-javaagent:${mockitoAgent.asPath}", "-Xshare:off"))
 }
 
 tasks.named("clean") {
