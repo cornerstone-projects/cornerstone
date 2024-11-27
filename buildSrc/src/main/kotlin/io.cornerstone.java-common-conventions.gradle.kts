@@ -12,7 +12,7 @@ plugins {
 java.sourceCompatibility = JavaVersion.VERSION_21
 
 archUnit {
-	if (project.name.contains("-bom")) {
+	if (project.name.endsWith("-bom")) {
 		isSkip = true
 	}
 	preConfiguredRules = listOf(
@@ -143,4 +143,9 @@ tasks.named("clean") {
 	doLast {
 		delete("bin", "logs")
 	}
+}
+
+tasks.register("checkstyle") {
+	description = "Run Checkstyle analysis for all classes"
+	sourceSets.map { "checkstyle" + it.name.replaceFirstChar(Char::titlecase) }.forEach(::dependsOn)
 }
