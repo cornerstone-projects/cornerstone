@@ -1,45 +1,66 @@
 <?xml version="1.0"?>
 <!DOCTYPE Configuration>
 <Configuration>
-	<Properties>
-		<Property name="logs.kafka.bootstrap.servers">${sys:kafka.bootstrap.servers:-localhost:9092}</Property>
-	</Properties>
-	<Appenders>
-		<Kafka name="KAFKA-REST" topic="app.logs.rest">
-			<PatternLayout
-				pattern="%d %t%X{request}%X{server} %X{method}%X{url} %m%n"
-				charset="UTF-8" />
-			<Property name="bootstrap.servers">${sys:logs.kafka.bootstrap.servers}</Property>
-		</Kafka>
-		<Kafka name="KAFKA-ACCESS" topic="app.logs.access">
-			<PatternLayout
-				pattern="%d %X{username}@%X{remoteAddr} %X{method}%X{url}%X{userAgent}%X{referer}%X{request}%X{server}%X{responseTime}"
-				charset="UTF-8" />
-			<Property name="bootstrap.servers">${sys:logs.kafka.bootstrap.servers}</Property>
-		</Kafka>
-		<Kafka name="KAFKA-APPLICATION" topic="app.logs.application">
-			<PatternLayout
-				pattern="%d %c %t%X{request}%X{server}%X{url} %p %m%th{10}"
-				charset="UTF-8" />
-			<Property name="bootstrap.servers">${sys:logs.kafka.bootstrap.servers}</Property>
-		</Kafka>
-	</Appenders>
+    <Properties>
+        <Property name="logs.kafka.bootstrap.servers">${sys:kafka.bootstrap.servers:-localhost:9092}</Property>
+    </Properties>
+    <Appenders>
+        <Kafka name="KAFKA-REST" topic="app.logs.rest" syncSend="false">
+            <Select>
+                <SystemPropertyArbiter propertyName="FILE_LOG_STRUCTURED_FORMAT">
+                    <StructuredLogLayout format="${sys:FILE_LOG_STRUCTURED_FORMAT}" charset="${sys:FILE_LOG_CHARSET}"/>
+                </SystemPropertyArbiter>
+                <DefaultArbiter>
+                    <PatternLayout
+                            pattern="%d %t%X{request}%X{server} %X{method}%X{url} %m%n"
+                            charset="UTF-8"/>
+                </DefaultArbiter>
+            </Select>
+            <Property name="bootstrap.servers">${sys:logs.kafka.bootstrap.servers}</Property>
+        </Kafka>
+        <Kafka name="KAFKA-ACCESS" topic="app.logs.access" syncSend="false">
+            <Select>
+                <SystemPropertyArbiter propertyName="FILE_LOG_STRUCTURED_FORMAT">
+                    <StructuredLogLayout format="${sys:FILE_LOG_STRUCTURED_FORMAT}" charset="${sys:FILE_LOG_CHARSET}"/>
+                </SystemPropertyArbiter>
+                <DefaultArbiter>
+                    <PatternLayout
+                            pattern="%d %X{username}@%X{remoteAddr} %X{method}%X{url}%X{userAgent}%X{referer}%X{request}%X{server}%X{responseTime}"
+                            charset="UTF-8"/>
+                </DefaultArbiter>
+            </Select>
+            <Property name="bootstrap.servers">${sys:logs.kafka.bootstrap.servers}</Property>
+        </Kafka>
+        <Kafka name="KAFKA-APPLICATION" topic="app.logs.application" syncSend="false">
+            <Select>
+                <SystemPropertyArbiter propertyName="FILE_LOG_STRUCTURED_FORMAT">
+                    <StructuredLogLayout format="${sys:FILE_LOG_STRUCTURED_FORMAT}" charset="${sys:FILE_LOG_CHARSET}"/>
+                </SystemPropertyArbiter>
+                <DefaultArbiter>
+                    <PatternLayout
+                            pattern="%d %c %t%X{request}%X{server}%X{url} %p %m%th{10}"
+                            charset="UTF-8"/>
+                </DefaultArbiter>
+            </Select>
+            <Property name="bootstrap.servers">${sys:logs.kafka.bootstrap.servers}</Property>
+        </Kafka>
+    </Appenders>
 
-	<Loggers>
-		<Logger name="rest" additivity="false">
-			<AppenderRef ref="REST" />
-			<AppenderRef ref="KAFKA-REST" />
-		</Logger>
-		<Logger name="access" level="INFO" additivity="false">
-			<AppenderRef ref="ACCESS" />
-			<AppenderRef ref="KAFKA-ACCESS" />
-		</Logger>
-		<Root level="INFO">
-			<AppenderRef ref="CONSOLE" />
-			<AppenderRef ref="APPLICATION" />
-			<AppenderRef ref="ERROR" />
-			<AppenderRef ref="KAFKA-APPLICATION" />
-		</Root>
-	</Loggers>
+    <Loggers>
+        <Logger name="rest" additivity="false">
+            <AppenderRef ref="REST"/>
+            <AppenderRef ref="KAFKA-REST"/>
+        </Logger>
+        <Logger name="access" level="INFO" additivity="false">
+            <AppenderRef ref="ACCESS"/>
+            <AppenderRef ref="KAFKA-ACCESS"/>
+        </Logger>
+        <Root level="INFO">
+            <AppenderRef ref="CONSOLE"/>
+            <AppenderRef ref="APPLICATION"/>
+            <AppenderRef ref="ERROR"/>
+            <AppenderRef ref="KAFKA-APPLICATION"/>
+        </Root>
+    </Loggers>
 
 </Configuration>

@@ -1,0 +1,157 @@
+<?xml version="1.0"?>
+<!DOCTYPE Configuration>
+<Configuration>
+    <Properties>
+        <Property name="log.dir">${spring:logging.file.path}</Property>
+    </Properties>
+    <Appenders>
+        <Console name="CONSOLE" target="SYSTEM_OUT" follow="true">
+            <Select>
+                <SystemPropertyArbiter propertyName="CONSOLE_LOG_STRUCTURED_FORMAT">
+                    <StructuredLogLayout format="${sys:CONSOLE_LOG_STRUCTURED_FORMAT}"
+                                         charset="${sys:CONSOLE_LOG_CHARSET}"/>
+                </SystemPropertyArbiter>
+                <DefaultArbiter>
+                    <PatternLayout
+                            pattern="%style{%d %25.25t %60.60c{1.}}{cyan} %highlight{%p %m}%n%throwable"/>
+                </DefaultArbiter>
+            </Select>
+            <ThresholdFilter level="${sys:CONSOLE_LOG_THRESHOLD:-TRACE}"/>
+        </Console>
+        <SpringProfile name="!test">
+            <RollingFile name="APPLICATION"
+                         fileName="${log.dir}/application.log"
+                         filePattern="${log.dir}/application.log.%d{yyyy-MM-dd}">
+                <Select>
+                    <SystemPropertyArbiter propertyName="FILE_LOG_STRUCTURED_FORMAT">
+                        <StructuredLogLayout format="${sys:FILE_LOG_STRUCTURED_FORMAT}"
+                                             charset="${sys:FILE_LOG_CHARSET}"/>
+                    </SystemPropertyArbiter>
+                    <DefaultArbiter>
+                        <PatternLayout
+                                pattern="%d %c %t%X{request}%X{url} %p %m%n%throwable{10}"
+                                charset="${sys:FILE_LOG_CHARSET}"/>
+                    </DefaultArbiter>
+                </Select>
+                <ThresholdFilter level="${sys:FILE_LOG_THRESHOLD:-TRACE}"/>
+                <TimeBasedTriggeringPolicy/>
+            </RollingFile>
+            <RollingFile name="ERROR"
+                         fileName="${log.dir}/application-error.log"
+                         filePattern="${log.dir}/application-error.log.%d{yyyy-MM-dd}">
+                <Select>
+                    <SystemPropertyArbiter propertyName="FILE_LOG_STRUCTURED_FORMAT">
+                        <StructuredLogLayout format="${sys:FILE_LOG_STRUCTURED_FORMAT}"
+                                             charset="${sys:FILE_LOG_CHARSET}"/>
+                    </SystemPropertyArbiter>
+                    <DefaultArbiter>
+                        <PatternLayout
+                                pattern="%d %c %t%X{request}%X{url} %p %m%n" charset="${sys:FILE_LOG_CHARSET}"/>
+                    </DefaultArbiter>
+                </Select>
+                <ThresholdFilter level="ERROR"/>
+                <TimeBasedTriggeringPolicy/>
+            </RollingFile>
+            <RollingFile name="SQL" fileName="${log.dir}/sql.log"
+                         filePattern="${log.dir}/sql.log.%d{yyyy-MM-dd}">
+                <Select>
+                    <SystemPropertyArbiter propertyName="FILE_LOG_STRUCTURED_FORMAT">
+                        <StructuredLogLayout format="${sys:FILE_LOG_STRUCTURED_FORMAT}"
+                                             charset="${sys:FILE_LOG_CHARSET}"/>
+                    </SystemPropertyArbiter>
+                    <DefaultArbiter>
+                        <PatternLayout
+                                pattern="%d %c %t%X{request}%X{url} %p %m%n" charset="${sys:FILE_LOG_CHARSET}"/>
+                    </DefaultArbiter>
+                </Select>
+                <ThresholdFilter level="ALL"/>
+                <TimeBasedTriggeringPolicy/>
+            </RollingFile>
+            <RollingFile name="REST" fileName="${log.dir}/rest.log"
+                         filePattern="${log.dir}/rest.log.%d{yyyy-MM-dd}">
+                <Select>
+                    <SystemPropertyArbiter propertyName="FILE_LOG_STRUCTURED_FORMAT">
+                        <StructuredLogLayout format="${sys:FILE_LOG_STRUCTURED_FORMAT}"
+                                             charset="${sys:FILE_LOG_CHARSET}"/>
+                    </SystemPropertyArbiter>
+                    <DefaultArbiter>
+                        <PatternLayout
+                                pattern="%d %t%X{request} %X{method}%X{url} %m%n" charset="${sys:FILE_LOG_CHARSET}"/>
+                    </DefaultArbiter>
+                </Select>
+                <ThresholdFilter level="ALL"/>
+                <TimeBasedTriggeringPolicy/>
+            </RollingFile>
+            <RollingFile name="ACCESS"
+                         fileName="${log.dir}/access.log"
+                         filePattern="${log.dir}/access.log.%d{yyyy-MM-dd}">
+                <Select>
+                    <SystemPropertyArbiter propertyName="FILE_LOG_STRUCTURED_FORMAT">
+                        <StructuredLogLayout format="${sys:FILE_LOG_STRUCTURED_FORMAT}"
+                                             charset="${sys:FILE_LOG_CHARSET}"/>
+                    </SystemPropertyArbiter>
+                    <DefaultArbiter>
+                        <PatternLayout
+                                pattern="%d %X{username}@%X{remoteAddr} %X{method}%X{url}%X{userAgent}%X{referer}%X{request}%X{responseTime}%n"
+                                charset="${sys:FILE_LOG_CHARSET}"/>
+                    </DefaultArbiter>
+                </Select>
+                <ThresholdFilter level="INFO"/>
+                <TimeBasedTriggeringPolicy/>
+            </RollingFile>
+            <RollingFile name="ACCESS-WARN"
+                         fileName="${log.dir}/access-warn.log"
+                         filePattern="${log.dir}/access-warn.log.%d{yyyy-MM-dd}">
+                <Select>
+                    <SystemPropertyArbiter propertyName="FILE_LOG_STRUCTURED_FORMAT">
+                        <StructuredLogLayout format="${sys:FILE_LOG_STRUCTURED_FORMAT}"
+                                             charset="${sys:FILE_LOG_CHARSET}"/>
+                    </SystemPropertyArbiter>
+                    <DefaultArbiter>
+                        <PatternLayout
+                                pattern="%d %X{username}@%X{remoteAddr} %X{method}%X{url}%X{userAgent}%X{referer}%X{request} %m%n"
+                                charset="${sys:FILE_LOG_CHARSET}8"/>
+                    </DefaultArbiter>
+                </Select>
+                <ThresholdFilter level="WARN"/>
+                <TimeBasedTriggeringPolicy/>
+            </RollingFile>
+        </SpringProfile>
+    </Appenders>
+
+    <Loggers>
+        <Logger name="org.apache.catalina.startup.DigesterFactory" level="ERROR"/>
+        <Logger name="org.apache.catalina.util.LifecycleBase" level="ERROR"/>
+        <Logger name="org.apache.coyote.http11.Http11NioProtocol" level="WARN"/>
+        <Logger name="org.apache.sshd.common.util.SecurityUtils" level="WARN"/>
+        <Logger name="org.apache.tomcat.util.net.NioSelectorPool" level="WARN"/>
+        <Logger name="org.eclipse.jetty.util.component.AbstractLifeCycle" level="ERROR"/>
+        <Logger name="org.hibernate.validator.internal.util.Version" level="WARN"/>
+        <Logger name="org.springframework.boot.actuate.endpoint.jmx" level="WARN"/>
+        <Logger name="org.hibernate.SQL" additivity="false">
+            <AppenderRef ref="SQL"/>
+        </Logger>
+        <Logger name="org.hibernate.type.descriptor.sql.BasicBinder"
+                additivity="false">
+            <AppenderRef ref="SQL"/>
+        </Logger>
+        <Logger name="org.springframework.jdbc.core" additivity="false">
+            <AppenderRef ref="SQL"/>
+        </Logger>
+        <Logger name="rest" additivity="false">
+            <AppenderRef ref="REST"/>
+        </Logger>
+        <Logger name="access" level="INFO" additivity="false">
+            <AppenderRef ref="ACCESS"/>
+        </Logger>
+        <Logger name="access-warn" level="WARN" additivity="false">
+            <AppenderRef ref="ACCESS-WARN"/>
+        </Logger>
+        <Root level="INFO">
+            <AppenderRef ref="CONSOLE"/>
+            <AppenderRef ref="APPLICATION"/>
+            <AppenderRef ref="ERROR"/>
+        </Root>
+    </Loggers>
+
+</Configuration>

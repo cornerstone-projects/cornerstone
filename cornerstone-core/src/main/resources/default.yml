@@ -87,10 +87,13 @@ security.permit-all-path-patterns:
   - /assets/**
 
 logging:
-  config: classpath:log4j2.xml
+  config: classpath:log4j2-cornerstone.xml
+  file.path: ${user.home}/${spring.application.name:app}/logs/${server.port:}
   level.org.springframework.context.support:
       ResourceBundleMessageSource: ERROR
       "[PostProcessorRegistrationDelegate$BeanPostProcessorChecker]": ERROR
+  structured:
+    format.file: ecs
 
 management.endpoints.web.exposure.include: [health, prometheus]
 management.influx.metrics.export:
@@ -143,9 +146,6 @@ spring.security.user.password: "{bcrypt}$2a$10$g1WqDyVfiD4vEOQZr.yRZOnWlzuAs2gMi
 spring.main.allow-bean-definition-overriding: true
 
 spring.http.client.redirects: DONT_FOLLOW
-
-logging:
-  config: classpath:log4j2-test.xml
 
 ---
 spring:
