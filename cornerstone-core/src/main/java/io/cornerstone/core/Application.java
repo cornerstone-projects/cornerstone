@@ -91,6 +91,15 @@ public interface Application {
 		return Optional.ofNullable(DefaultApplication.currentApplication);
 	}
 
+	static String getInstanceId(Environment env) {
+		try {
+			return "%s:%d".formatted(findHostAddress(), findPort(env));
+		}
+		catch (IOException ex) {
+			throw new RuntimeException(ex);
+		}
+	}
+
 	private static int findPort(Environment env) {
 		return Integer.parseInt(env.getProperty("local.server.port", "8080"));
 	}
