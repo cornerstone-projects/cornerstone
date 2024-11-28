@@ -31,8 +31,6 @@ import org.springframework.util.StringUtils;
 @Slf4j
 public class AccessFilter implements Filter {
 
-	public static final String HTTP_HEADER_INSTANCE_ID = "X-Instance-Id";
-
 	public static final String HTTP_HEADER_REQUEST_ID = "X-Request-Id";
 
 	public static final String MDC_KEY_REQUEST_ID = CodecUtils.MDC_KEY_REQUEST_ID;
@@ -41,7 +39,7 @@ public class AccessFilter implements Filter {
 
 	private final Logger accessLog = LoggerFactory.getLogger("access");
 
-	private final Logger accesWarnLog = LoggerFactory.getLogger("access-warn");
+	private final Logger accessWarnLog = LoggerFactory.getLogger("access-warn");
 
 	public static final long DEFAULT_RESPONSETIMETHRESHOLD = 5000;
 
@@ -119,7 +117,7 @@ public class AccessFilter implements Filter {
 			chain.doFilter(request, response);
 			long responseTime = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start);
 			if (responseTime > this.responseTimeThreshold) {
-				this.accesWarnLog.warn("{} response time:{}ms", request.getQueryString(), responseTime);
+				this.accessWarnLog.warn("{} response time:{}ms", request.getQueryString(), responseTime);
 				Metrics.timer("http.access.slow", List.of(Tag.of("uri", uri)))
 					.record(responseTime, TimeUnit.MILLISECONDS);
 			}
