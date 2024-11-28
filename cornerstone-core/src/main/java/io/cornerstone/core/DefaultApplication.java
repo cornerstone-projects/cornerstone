@@ -6,13 +6,8 @@ import java.lang.StackWalker.StackFrame;
 import java.lang.invoke.MethodType;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.net.Inet4Address;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.util.Enumeration;
 import java.util.Locale;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.function.Consumer;
 
 import io.cornerstone.core.util.ReflectionUtils;
@@ -36,9 +31,9 @@ import static org.springframework.jndi.JndiLocatorDelegate.IGNORE_JNDI_PROPERTY_
 @Getter
 public class DefaultApplication extends SpringBootServletInitializer implements Application {
 
-	private static String hostName = "localhost";
+	private String hostName;
 
-	private static String hostAddress = "127.0.0.1";
+	private String hostAddress;
 
 	static volatile Application currentApplication;
 
@@ -56,38 +51,23 @@ public class DefaultApplication extends SpringBootServletInitializer implements 
 
 	@Override
 	public String getHostName() {
-		return hostName;
+		if (this.hostName == null) {
+			this.hostName = Application.super.getHostName();
+		}
+		return this.hostName;
 	}
 
 	@Override
 	public String getHostAddress() {
-		return hostAddress;
-	}
-
-	private static Optional<String> findHostAddress() throws IOException {
-		Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces();
-		while (en.hasMoreElements()) {
-			NetworkInterface n = en.nextElement();
-			Enumeration<InetAddress> ee = n.getInetAddresses();
-			while (ee.hasMoreElements()) {
-				InetAddress addr = ee.nextElement();
-				if (addr.isLoopbackAddress()) {
-					continue;
-				}
-				if (addr.isSiteLocalAddress() && (addr instanceof Inet4Address)) {
-					return Optional.of(addr.getHostAddress());
-				}
-			}
+		if (this.hostAddress == null) {
+			this.hostAddress = Application.super.getHostAddress();
 		}
-		return Optional.empty();
+		return this.hostAddress;
 	}
 
 	protected static void init(String[] args) throws IOException {
 
 		System.setProperty(IGNORE_JNDI_PROPERTY_NAME, String.valueOf(true));
-
-		hostName = InetAddress.getLocalHost().getHostName();
-		findHostAddress().ifPresent(addr -> hostAddress = addr);
 
 		if (ClassUtils.isPresent("org.springframework.boot.devtools.RemoteSpringApplication",
 				DefaultApplication.class.getClassLoader())) {

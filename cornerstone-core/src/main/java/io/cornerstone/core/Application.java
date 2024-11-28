@@ -1,11 +1,18 @@
 package io.cornerstone.core;
 
+import java.io.IOException;
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.UnknownHostException;
+import java.util.Enumeration;
 import java.util.Optional;
 
 import jakarta.servlet.ServletContext;
 
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.env.Environment;
 import org.springframework.core.env.Profiles;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
@@ -14,9 +21,23 @@ public interface Application {
 
 	ApplicationContext getContext();
 
-	String getHostName();
+	default String getHostName() {
+		try {
+			return InetAddress.getLocalHost().getHostName();
+		}
+		catch (UnknownHostException ex) {
+			throw new RuntimeException(ex);
+		}
+	}
 
-	String getHostAddress();
+	default String getHostAddress() {
+		try {
+			return findHostAddress();
+		}
+		catch (IOException ex) {
+			throw new RuntimeException(ex);
+		}
+	}
 
 	default String getName() {
 		String name = getContext().getEnvironment().getProperty("spring.application.name");
@@ -34,7 +55,7 @@ public interface Application {
 			try {
 				return getContext().getBean(ServletContext.class).getServerInfo();
 			}
-			catch (NoSuchBeanDefinitionException ex) {
+			catch (NoSuchBeanDefinitionException ignored) {
 
 			}
 		}
@@ -42,7 +63,7 @@ public interface Application {
 	}
 
 	default int getServerPort() {
-		return Integer.parseInt(getContext().getEnvironment().getProperty("local.server.port", "8080"));
+		return findPort(getContext().getEnvironment());
 	}
 
 	default String getInstanceId() {
@@ -68,6 +89,28 @@ public interface Application {
 
 	static Optional<Application> current() {
 		return Optional.ofNullable(DefaultApplication.currentApplication);
+	}
+
+	private static int findPort(Environment env) {
+		return Integer.parseInt(env.getProperty("local.server.port", "8080"));
+	}
+
+	private static String findHostAddress() throws IOException {
+		Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces();
+		while (en.hasMoreElements()) {
+			NetworkInterface n = en.nextElement();
+			Enumeration<InetAddress> ee = n.getInetAddresses();
+			while (ee.hasMoreElements()) {
+				InetAddress addr = ee.nextElement();
+				if (addr.isLoopbackAddress()) {
+					continue;
+				}
+				if (addr.isSiteLocalAddress() && (addr instanceof Inet4Address)) {
+					return addr.getHostAddress();
+				}
+			}
+		}
+		return "127.0.0.1";
 	}
 
 }
