@@ -94,6 +94,9 @@ logging:
       "[PostProcessorRegistrationDelegate$BeanPostProcessorChecker]": ERROR
   structured:
     format.file: ecs
+    json:
+      customizer: io.cornerstone.core.logging.DefaultStructuredLoggingJsonMembersCustomizer
+      exclude: ["request", "server"]
 
 management.endpoints.web.exposure.include: [health, prometheus]
 management.influx.metrics.export:
