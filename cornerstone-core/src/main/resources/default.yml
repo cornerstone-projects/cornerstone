@@ -89,9 +89,12 @@ security.permit-all-path-patterns:
 logging:
   config: classpath:log4j2-cornerstone.xml
   file.path: ${user.home}/${spring.application.name:app}/logs/${server.port:}
-  level.org.springframework.context.support:
+  level.org.springframework:
+    context.support:
       ResourceBundleMessageSource: ERROR
       "[PostProcessorRegistrationDelegate$BeanPostProcessorChecker]": ERROR
+    security.config.annotation.authentication.configuration:
+      "[InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer]": ERROR
   structured:
     format.file: ecs
     json:
