@@ -3,6 +3,7 @@
 <Configuration>
     <Properties>
         <Property name="log.dir">${spring:logging.file.path}</Property>
+        <Property name="rollover.max">${spring:logging.file.rollover.max:-30}</Property>
     </Properties>
     <Appenders>
         <Console name="CONSOLE" target="SYSTEM_OUT" follow="true">
@@ -35,6 +36,13 @@
                 </Select>
                 <ThresholdFilter level="${sys:FILE_LOG_THRESHOLD:-TRACE}"/>
                 <TimeBasedTriggeringPolicy/>
+                <DefaultRolloverStrategy max="${rollover.max}">
+                    <Delete basePath="${log.dir}" maxDepth="1">
+                        <IfFileName glob="*.log.*">
+                            <IfLastModified age="P${rollover.max}D"/>
+                        </IfFileName>
+                    </Delete>
+                </DefaultRolloverStrategy>
             </RollingFile>
             <RollingFile name="ERROR"
                          fileName="${log.dir}/application-error.log"
@@ -51,6 +59,13 @@
                 </Select>
                 <ThresholdFilter level="ERROR"/>
                 <TimeBasedTriggeringPolicy/>
+                <DefaultRolloverStrategy max="${rollover.max}">
+                    <Delete basePath="${log.dir}" maxDepth="1">
+                        <IfFileName glob="*.log.*">
+                            <IfLastModified age="P${rollover.max}D"/>
+                        </IfFileName>
+                    </Delete>
+                </DefaultRolloverStrategy>
             </RollingFile>
             <RollingFile name="SQL" fileName="${log.dir}/sql.log"
                          filePattern="${log.dir}/sql.log.%d{yyyy-MM-dd}">
@@ -66,6 +81,13 @@
                 </Select>
                 <ThresholdFilter level="ALL"/>
                 <TimeBasedTriggeringPolicy/>
+                <DefaultRolloverStrategy max="${rollover.max}">
+                    <Delete basePath="${log.dir}" maxDepth="1">
+                        <IfFileName glob="*.log.*">
+                            <IfLastModified age="P${rollover.max}D"/>
+                        </IfFileName>
+                    </Delete>
+                </DefaultRolloverStrategy>
             </RollingFile>
             <RollingFile name="REST" fileName="${log.dir}/rest.log"
                          filePattern="${log.dir}/rest.log.%d{yyyy-MM-dd}">
@@ -81,6 +103,13 @@
                 </Select>
                 <ThresholdFilter level="ALL"/>
                 <TimeBasedTriggeringPolicy/>
+                <DefaultRolloverStrategy max="${rollover.max}">
+                    <Delete basePath="${log.dir}" maxDepth="1">
+                        <IfFileName glob="*.log.*">
+                            <IfLastModified age="P${rollover.max}D"/>
+                        </IfFileName>
+                    </Delete>
+                </DefaultRolloverStrategy>
             </RollingFile>
             <RollingFile name="ACCESS"
                          fileName="${log.dir}/access.log"
@@ -98,6 +127,13 @@
                 </Select>
                 <ThresholdFilter level="INFO"/>
                 <TimeBasedTriggeringPolicy/>
+                <DefaultRolloverStrategy max="${rollover.max}">
+                    <Delete basePath="${log.dir}" maxDepth="1">
+                        <IfFileName glob="*.log.*">
+                            <IfLastModified age="P${rollover.max}D"/>
+                        </IfFileName>
+                    </Delete>
+                </DefaultRolloverStrategy>
             </RollingFile>
             <RollingFile name="ACCESS-WARN"
                          fileName="${log.dir}/access-warn.log"
@@ -115,6 +151,13 @@
                 </Select>
                 <ThresholdFilter level="WARN"/>
                 <TimeBasedTriggeringPolicy/>
+                <DefaultRolloverStrategy max="${rollover.max}">
+                    <Delete basePath="${log.dir}" maxDepth="1">
+                        <IfFileName glob="*.log.*">
+                            <IfLastModified age="P${rollover.max}D"/>
+                        </IfFileName>
+                    </Delete>
+                </DefaultRolloverStrategy>
             </RollingFile>
         </SpringProfile>
     </Appenders>
