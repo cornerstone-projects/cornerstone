@@ -11,7 +11,7 @@ public class ValidationConfiguration {
 	@Bean
 	LocalValidatorFactoryBean validator() {
 		ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
-		messageSource.setBasenames("messages", getClass().getPackage().getName() + ".ValidationMessages");
+		messageSource.setBasenames("messages", "i18n/messages", "ValidationMessages", "i18n/ValidationMessages");
 		messageSource.setDefaultEncoding("UTF-8");
 		LocalValidatorFactoryBean bean = new LocalValidatorFactoryBean();
 		bean.setValidationMessageSource(messageSource);
