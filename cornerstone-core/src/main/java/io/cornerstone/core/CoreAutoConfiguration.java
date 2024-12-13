@@ -11,6 +11,7 @@ import org.springframework.boot.context.TypeExcludeFilter;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.context.annotation.FilterType;
+import org.springframework.context.annotation.ImportRuntimeHints;
 import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
@@ -21,6 +22,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 		@Filter(type = FilterType.CUSTOM, classes = AutoConfigurationExcludeFilter.class) })
 @EntityScan(basePackageClasses = AbstractArrayConverter.class)
 @AutoConfigureBefore(TaskExecutionAutoConfiguration.class)
+@ImportRuntimeHints(CoreRuntimeHintsRegistrar.class)
 public class CoreAutoConfiguration {
 
 }

@@ -26,7 +26,7 @@ import org.springframework.core.io.DefaultResourceLoader;
 
 public class DefaultPropertiesEnvironmentPostProcessor implements EnvironmentPostProcessor, Ordered {
 
-	private static final ConfigDataLocation LOCATION = ConfigDataLocation.of("classpath:default.yml");
+	static final ConfigDataLocation LOCATION = ConfigDataLocation.of("classpath:default.yml");
 
 	// After ConfigDataEnvironmentPostProcessor
 	public static final int ORDER = ConfigDataEnvironmentPostProcessor.ORDER + 1;
