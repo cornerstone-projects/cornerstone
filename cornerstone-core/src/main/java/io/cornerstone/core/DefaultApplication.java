@@ -125,8 +125,7 @@ public class DefaultApplication extends SpringBootServletInitializer implements 
 				ClassUtils.forName(className, cl).getMethod(methodName).invoke(null);
 			}
 		}
-		catch (Throwable ex) {
-			ex.printStackTrace();
+		catch (Throwable ignored) {
 		}
 		try {
 			String className = "com.mysql.jdbc.AbandonedConnectionCleanupThread";
@@ -135,8 +134,7 @@ public class DefaultApplication extends SpringBootServletInitializer implements 
 				ClassUtils.forName(className, cl).getMethod(methodName).invoke(null);
 			}
 		}
-		catch (Throwable ex) {
-			ex.printStackTrace();
+		catch (Throwable ignored) {
 		}
 		super.deregisterJdbcDrivers(servletContext);
 		cancelTimers();
@@ -151,8 +149,7 @@ public class DefaultApplication extends SpringBootServletInitializer implements 
 				}
 			}
 		}
-		catch (Throwable ex) {
-			ex.printStackTrace();
+		catch (Throwable ignored) {
 		}
 	}
 
@@ -178,8 +175,7 @@ public class DefaultApplication extends SpringBootServletInitializer implements 
 				cleanupThreadLocals(thread);
 			}
 		}
-		catch (Throwable ex) {
-			ex.printStackTrace();
+		catch (Throwable ignored) {
 		}
 	}
 
