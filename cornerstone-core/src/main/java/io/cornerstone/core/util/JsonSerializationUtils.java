@@ -27,7 +27,6 @@ import com.fasterxml.jackson.databind.introspect.JacksonAnnotationIntrospector;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import lombok.experimental.UtilityClass;
-import org.apache.logging.log4j.core.util.JsonUtils;
 
 import org.springframework.cache.support.NullValue;
 import org.springframework.security.core.GrantedAuthority;
@@ -107,15 +106,15 @@ public class JsonSerializationUtils {
 				}))
 			.setAnnotationIntrospector(SmartJacksonAnnotationIntrospector.INSTANCE);
 		if (ClassUtils.isPresent("com.fasterxml.jackson.datatype.jsr310.JavaTimeModule",
-				JsonUtils.class.getClassLoader())) {
+				JsonSerializationUtils.class.getClassLoader())) {
 			objectMapper.registerModule(new com.fasterxml.jackson.datatype.jsr310.JavaTimeModule());
 		}
 		if (ClassUtils.isPresent("com.fasterxml.jackson.module.paramnames.ParameterNamesModule",
-				JsonUtils.class.getClassLoader())) {
+				JsonSerializationUtils.class.getClassLoader())) {
 			objectMapper.registerModule(new com.fasterxml.jackson.module.paramnames.ParameterNamesModule());
 		}
 		if (ClassUtils.isPresent("com.fasterxml.jackson.module.mrbean.MrBeanModule",
-				JsonUtils.class.getClassLoader())) {
+				JsonSerializationUtils.class.getClassLoader())) {
 			objectMapper.registerModule(new com.fasterxml.jackson.module.mrbean.MrBeanModule());
 		}
 		return objectMapper;

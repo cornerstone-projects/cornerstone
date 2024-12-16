@@ -5,7 +5,6 @@ plugins {
 }
 
 dependencies {
-	api("org.springframework.boot:spring-boot-starter-log4j2")
 	api("org.springframework.boot:spring-boot-starter-web")
 	api("org.springframework.boot:spring-boot-starter-cache")
 	api("org.springframework.boot:spring-boot-starter-data-redis")
