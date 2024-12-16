@@ -3,7 +3,6 @@ package io.cornerstone.core;
 import java.io.File;
 import java.io.IOException;
 import java.lang.StackWalker.StackFrame;
-import java.lang.invoke.MethodType;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Locale;
@@ -89,9 +88,7 @@ public class DefaultApplication extends SpringBootServletInitializer implements 
 	protected static void start(String[] args, Consumer<ApplicationContext> postStartAction) throws Exception {
 		init(args);
 		Class<?> caller = StackWalker.getInstance(RETAIN_CLASS_REFERENCE)
-			.walk(s -> s
-				.filter(f -> Objects.equals(f.getMethodName(), "main")
-						&& Objects.equals(f.getMethodType(), MethodType.methodType(void.class, String[].class)))
+			.walk(s -> s.filter(f -> Objects.equals(f.getMethodName(), "main"))
 				.findFirst()
 				.map(StackFrame::getDeclaringClass)
 				.orElseThrow(() -> new RuntimeException("start() method should be called in main method")));
