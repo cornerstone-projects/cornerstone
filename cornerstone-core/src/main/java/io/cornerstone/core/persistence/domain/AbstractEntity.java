@@ -3,8 +3,7 @@ package io.cornerstone.core.persistence.domain;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
 import com.fasterxml.jackson.annotation.JsonView;
-import io.cornerstone.core.persistence.id.SnowflakeIdentifierGenerator;
-import jakarta.persistence.GeneratedValue;
+import io.cornerstone.core.persistence.id.SnowflakeIdentifier;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
 import lombok.Getter;
@@ -23,9 +22,7 @@ public abstract class AbstractEntity extends AbstractPersistable<Long> {
 	private static final long serialVersionUID = 3494244656461491770L;
 
 	@Id
-	@GeneratedValue(generator = "snowflake")
-	@SuppressWarnings("deprecation")
-	@org.hibernate.annotations.GenericGenerator(name = "snowflake", type = SnowflakeIdentifierGenerator.class)
+	@SnowflakeIdentifier
 	@JsonProperty(access = Access.WRITE_ONLY)
 	@Setter(PROTECTED)
 	private @Nullable Long id;

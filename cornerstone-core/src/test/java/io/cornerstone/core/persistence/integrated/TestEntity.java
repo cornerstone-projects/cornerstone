@@ -9,11 +9,10 @@ import io.cornerstone.core.persistence.convert.EnumArrayConverter;
 import io.cornerstone.core.persistence.convert.EnumListConverter;
 import io.cornerstone.core.persistence.convert.EnumSetConverter;
 import io.cornerstone.core.persistence.convert.JsonConverter;
-import io.cornerstone.core.persistence.id.SnowflakeIdentifierGenerator;
+import io.cornerstone.core.persistence.id.SnowflakeIdentifier;
 import io.cornerstone.core.persistence.type.JsonType;
 import jakarta.persistence.Converter;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -33,9 +32,7 @@ import org.springframework.lang.Nullable;
 class TestEntity implements Persistable<Long> {
 
 	@Id
-	@GeneratedValue(generator = "snowflake")
-	@SuppressWarnings("deprecation")
-	@org.hibernate.annotations.GenericGenerator(name = "snowflake", type = SnowflakeIdentifierGenerator.class)
+	@SnowflakeIdentifier
 	private @Nullable Long id;
 
 	private String[] stringArray;
