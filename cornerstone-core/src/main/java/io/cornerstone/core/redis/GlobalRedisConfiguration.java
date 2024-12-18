@@ -2,15 +2,13 @@ package io.cornerstone.core.redis;
 
 import java.util.concurrent.Executor;
 
-import io.cornerstone.core.redis.DefaultRedisConfiguration.DefaultRedisProperties;
-import io.cornerstone.core.redis.GlobalRedisConfiguration.GlobalRedisProperties;
 import io.lettuce.core.resource.ClientResources;
 import io.lettuce.core.resource.DefaultClientResources;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.data.redis.ClientResourcesBuilderCustomizer;
 import org.springframework.boot.autoconfigure.data.redis.LettuceClientConfigurationBuilderCustomizer;
@@ -18,7 +16,6 @@ import org.springframework.boot.autoconfigure.data.redis.LettuceClientOptionsBui
 import org.springframework.boot.autoconfigure.data.redis.RedisConnectionDetails;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.ssl.SslBundles;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,68 +29,69 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 
 @Configuration(proxyBeanMethods = false)
-@EnableConfigurationProperties(GlobalRedisProperties.class)
-@ConditionalOnProperty(prefix = GlobalRedisProperties.PREFIX, name = "enabled", havingValue = "true")
+@ConditionalOnBean(RedisProperties.class)
+@ConditionalOnProperty(prefix = GlobalRedisConfiguration.PREFIX, name = "enabled", havingValue = "true")
 public class GlobalRedisConfiguration extends RedisConfigurationSupport {
 
-	@Bean
-	public static RedisConnectionDetails globalRedisConnectionDetails(GlobalRedisProperties properties) {
-		return RedisConfigurationSupport.redisConnectionDetails(properties);
+	public static final String PREFIX = "global.data.redis";
+
+	@Bean(defaultCandidate = false)
+	public static RedisConnectionDetails globalRedisConnectionDetails(
+			@Qualifier("globalRedisProperties") RedisProperties redisProperties) {
+		return createRedisConnectionDetails(redisProperties);
 	}
 
-	GlobalRedisConfiguration(GlobalRedisProperties properties,
+	@ConfigurationProperties(PREFIX)
+	@Bean(defaultCandidate = false)
+	public static RedisProperties globalRedisProperties(RedisProperties redisProperties) {
+		RedisProperties globalRedisProperties = new RedisProperties();
+		// inherit from "spring.data.redis" prefix
+		BeanUtils.copyProperties(redisProperties, globalRedisProperties);
+		return globalRedisProperties;
+	}
+
+	GlobalRedisConfiguration(@Qualifier("globalRedisProperties") RedisProperties redisProperties,
 			ObjectProvider<RedisStandaloneConfiguration> standaloneConfigurationProvider,
 			ObjectProvider<RedisSentinelConfiguration> sentinelConfigurationProvider,
 			ObjectProvider<RedisClusterConfiguration> clusterConfigurationProvider,
-			RedisConnectionDetails globalRedisConnectionDetails, ObjectProvider<SslBundles> sslBundles) {
-		super(properties, standaloneConfigurationProvider, sentinelConfigurationProvider, clusterConfigurationProvider,
-				globalRedisConnectionDetails, sslBundles);
+			@Qualifier("globalRedisConnectionDetails") RedisConnectionDetails redisConnectionDetails,
+			ObjectProvider<SslBundles> sslBundles) {
+		super(redisProperties, standaloneConfigurationProvider, sentinelConfigurationProvider,
+				clusterConfigurationProvider, redisConnectionDetails, sslBundles);
 	}
 
-	@Bean(destroyMethod = "shutdown")
+	@Bean(defaultCandidate = false, destroyMethod = "shutdown")
 	public DefaultClientResources globalLettuceClientResources(
 			ObjectProvider<ClientResourcesBuilderCustomizer> customizers) {
 		return super.lettuceClientResources(customizers);
 	}
 
-	@Bean
+	@Bean(defaultCandidate = false)
 	public LettuceConnectionFactory globalRedisConnectionFactory(
 			ObjectProvider<LettuceClientConfigurationBuilderCustomizer> clientConfigurationBuilderCustomizers,
 			ObjectProvider<LettuceClientOptionsBuilderCustomizer> clientOptionsBuilderCustomizers,
-			ClientResources lettuceClientResources) {
+			@Qualifier("globalLettuceClientResources") ClientResources lettuceClientResources) {
 		return super.redisConnectionFactory(clientConfigurationBuilderCustomizers, clientOptionsBuilderCustomizers,
 				lettuceClientResources);
 	}
 
-	@Bean
-	public RedisTemplate<String, ?> globalRedisTemplate(
+	@Bean(defaultCandidate = false)
+	public RedisTemplate<Object, Object> globalRedisTemplate(
 			@Qualifier("globalRedisConnectionFactory") RedisConnectionFactory redisConnectionFactory) {
 		return super.redisTemplate(redisConnectionFactory);
 	}
 
-	@Bean
+	@Bean(defaultCandidate = false)
 	public StringRedisTemplate globalStringRedisTemplate(
 			@Qualifier("globalRedisConnectionFactory") RedisConnectionFactory redisConnectionFactory) {
 		return super.stringRedisTemplate(redisConnectionFactory);
 	}
 
-	@Bean
+	@Bean(defaultCandidate = false)
 	public RedisMessageListenerContainer globalRedisMessageListenerContainer(
 			@Qualifier("globalRedisConnectionFactory") RedisConnectionFactory redisConnectionFactory,
 			ObjectProvider<Executor> taskExecutor) {
 		return super.redisMessageListenerContainer(redisConnectionFactory, taskExecutor);
-	}
-
-	@ConfigurationProperties(prefix = GlobalRedisProperties.PREFIX)
-	public static class GlobalRedisProperties extends RedisProperties {
-
-		public static final String PREFIX = "global.data.redis";
-
-		@Autowired
-		public GlobalRedisProperties(DefaultRedisProperties defaultRedisProperties) {
-			BeanUtils.copyProperties(defaultRedisProperties, this);
-		}
-
 	}
 
 }

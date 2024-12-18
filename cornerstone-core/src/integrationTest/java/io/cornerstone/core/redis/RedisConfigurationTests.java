@@ -1,7 +1,5 @@
 package io.cornerstone.core.redis;
 
-import io.cornerstone.core.redis.DefaultRedisConfiguration.DefaultRedisProperties;
-import io.cornerstone.core.redis.GlobalRedisConfiguration.GlobalRedisProperties;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.junit.jupiter.Container;
@@ -9,9 +7,12 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
+import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.TestPropertySource;
@@ -23,7 +24,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 		"spring.data.redis.client-name=default", "global.data.redis.enabled=true", "global.data.redis.database=2",
 		"global.data.redis.client-name=global" })
 @Testcontainers
-@SpringJUnitConfig({ DefaultRedisConfiguration.class, GlobalRedisConfiguration.class })
+@SpringJUnitConfig({ RedisAutoConfiguration.class, RedisMessageListenerContainerConfiguration.class,
+		GlobalRedisConfiguration.class })
 class RedisConfigurationTests {
 
 	@Container
@@ -36,17 +38,18 @@ class RedisConfigurationTests {
 	}
 
 	@Autowired
-	private DefaultRedisProperties defaultRedisProperties;
+	private RedisProperties redisProperties;
 
 	@Autowired
-	private GlobalRedisProperties globalRedisProperties;
+	@Qualifier("globalRedisProperties")
+	private RedisProperties globalRedisProperties;
 
 	@Autowired
-	private RedisTemplate<String, Object> redisTemplate;
+	private RedisTemplate<Object, Object> redisTemplate;
 
 	@Autowired
 	@Qualifier("globalRedisTemplate")
-	private RedisTemplate<String, Object> globalRedisTemplate;
+	private RedisTemplate<Object, Object> globalRedisTemplate;
 
 	@Autowired
 	private StringRedisTemplate stringRedisTemplate;
@@ -55,24 +58,32 @@ class RedisConfigurationTests {
 	@Qualifier("globalStringRedisTemplate")
 	private StringRedisTemplate globalStringRedisTemplate;
 
+	@Autowired
+	private RedisMessageListenerContainer redisMessageListenerContainer;
+
+	@Autowired
+	@Qualifier("globalRedisMessageListenerContainer")
+	private RedisMessageListenerContainer globalRedisMessageListenerContainer;
+
 	@Test
 	void testRedisProperties() {
-		assertThat(this.globalRedisProperties.getHost()).isEqualTo(this.defaultRedisProperties.getHost());
-		assertThat(this.globalRedisProperties.getPort()).isEqualTo(this.defaultRedisProperties.getPort());
-		assertThat(this.globalRedisProperties.getDatabase()).isNotEqualTo(this.defaultRedisProperties.getDatabase());
-		assertThat(this.globalRedisProperties.getClientName())
-			.isNotEqualTo(this.defaultRedisProperties.getClientName());
+		assertThat(this.globalRedisProperties.getHost()).isEqualTo(this.redisProperties.getHost());
+		assertThat(this.globalRedisProperties.getPort()).isEqualTo(this.redisProperties.getPort());
+		assertThat(this.globalRedisProperties.getDatabase()).isNotEqualTo(this.redisProperties.getDatabase());
+		assertThat(this.globalRedisProperties.getClientName()).isNotEqualTo(this.redisProperties.getClientName());
 	}
 
 	@Test
 	void testRedisTemplate() {
 		assertThat(this.redisTemplate).isNotSameAs(this.globalRedisTemplate);
 		String key = "test";
-		ValueOperations<String, Object> ops = this.redisTemplate.opsForValue();
-		ValueOperations<String, Object> globalOps = this.globalRedisTemplate.opsForValue();
+		ValueOperations<Object, Object> ops = this.redisTemplate.opsForValue();
+		ValueOperations<Object, Object> globalOps = this.globalRedisTemplate.opsForValue();
 		ops.set(key, "redisTemplate");
 		globalOps.set(key, "globalRedisTemplate");
 		assertThat(ops.get(key)).isNotEqualTo(globalOps.get(key));
+		this.redisTemplate.delete(key);
+		this.globalRedisTemplate.delete(key);
 	}
 
 	@Test
@@ -84,6 +95,13 @@ class RedisConfigurationTests {
 		ops.set(key, "stringRedisTemplate");
 		globalOps.set(key, "globalStringRedisTemplate");
 		assertThat(ops.get(key)).isNotEqualTo(globalOps.get(key));
+		this.stringRedisTemplate.delete(key);
+		this.globalStringRedisTemplate.delete(key);
+	}
+
+	@Test
+	void testRedisMessageListenerContainer() {
+		assertThat(this.redisMessageListenerContainer).isNotSameAs(this.globalRedisMessageListenerContainer);
 	}
 
 }

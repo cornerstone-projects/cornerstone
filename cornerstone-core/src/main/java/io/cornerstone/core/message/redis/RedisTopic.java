@@ -27,11 +27,11 @@ public abstract class RedisTopic<T extends Serializable> implements io.cornersto
 	protected String channelName;
 
 	@Autowired
-	private RedisTemplate<String, T> redisTemplate;
+	private RedisTemplate<Object, Object> redisTemplate;
 
 	@Autowired(required = false)
 	@Qualifier("globalRedisTemplate")
-	private RedisTemplate<String, T> globalRedisTemplate;
+	private RedisTemplate<Object, Object> globalRedisTemplate;
 
 	@Autowired
 	private RedisMessageListenerContainer redisMessageListenerContainer;
@@ -66,7 +66,7 @@ public abstract class RedisTopic<T extends Serializable> implements io.cornersto
 	}
 
 	@SuppressWarnings("unchecked")
-	private void doSubscribe(RedisMessageListenerContainer container, RedisTemplate<String, T> template,
+	private void doSubscribe(RedisMessageListenerContainer container, RedisTemplate<Object, Object> template,
 			Topic... topics) {
 		container.addMessageListener((message, pattern) -> {
 			try {

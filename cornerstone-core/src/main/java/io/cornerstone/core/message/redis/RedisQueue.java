@@ -12,7 +12,9 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.GenericTypeResolver;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.support.collections.DefaultRedisList;
 
 @Slf4j
@@ -20,7 +22,7 @@ public abstract class RedisQueue<T extends Serializable> implements Queue<T> {
 
 	@Autowired
 	@Setter
-	private RedisTemplate<String, T> redisTemplate;
+	private RedisConnectionFactory redisConnectionFactory;
 
 	@Setter
 	private String queueName;
@@ -44,7 +46,11 @@ public abstract class RedisQueue<T extends Serializable> implements Queue<T> {
 
 	@PostConstruct
 	public void afterPropertiesSet() {
-		this.queue = new DefaultRedisList<>(this.queueName, this.redisTemplate);
+		RedisTemplate<String, T> redisTemplate = new RedisTemplate<>();
+		redisTemplate.setConnectionFactory(this.redisConnectionFactory);
+		redisTemplate.setKeySerializer(RedisSerializer.string());
+		redisTemplate.afterPropertiesSet();
+		this.queue = new DefaultRedisList<>(this.queueName, redisTemplate);
 		if (this.consuming) {
 			Runnable task = () -> {
 				while (!this.stopConsuming.get()) {

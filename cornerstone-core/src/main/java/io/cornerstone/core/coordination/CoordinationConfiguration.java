@@ -4,8 +4,8 @@ import io.cornerstone.core.coordination.impl.RedisLockService;
 import io.cornerstone.core.coordination.impl.RedisMembership;
 import io.cornerstone.core.coordination.impl.StandaloneLockService;
 import io.cornerstone.core.coordination.impl.StandaloneMembership;
-import io.cornerstone.core.redis.RedisEnabled;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,13 +15,13 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 public class CoordinationConfiguration {
 
 	@Bean
-	@RedisEnabled
+	@ConditionalOnBean(StringRedisTemplate.class)
 	LockService lockService(StringRedisTemplate stringRedisTemplate) {
 		return new RedisLockService(stringRedisTemplate);
 	}
 
 	@Bean
-	@RedisEnabled
+	@ConditionalOnBean(StringRedisTemplate.class)
 	Membership membership(StringRedisTemplate stringRedisTemplate) {
 		return new RedisMembership(stringRedisTemplate);
 	}

@@ -15,6 +15,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 
@@ -63,6 +64,13 @@ class RedisTopicTests extends TopicTestBase {
 		@Bean
 		Application application() {
 			return new DefaultApplication();
+		}
+
+		@Bean
+		RedisMessageListenerContainer redisMessageListenerContainer(RedisConnectionFactory redisConnectionFactory) {
+			RedisMessageListenerContainer container = new RedisMessageListenerContainer();
+			container.setConnectionFactory(redisConnectionFactory);
+			return container;
 		}
 
 		@Bean

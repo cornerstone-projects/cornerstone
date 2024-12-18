@@ -23,12 +23,13 @@ import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactor
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
-import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.util.ClassUtils;
 
 public class RedisConfigurationSupport {
 
-	private final Object configuration;
+	private static final RedisAutoConfiguration redisAutoConfiguration = new RedisAutoConfiguration();
+
+	private final Object lettuceConnectionConfiguration;
 
 	RedisConfigurationSupport(RedisProperties properties,
 			ObjectProvider<RedisStandaloneConfiguration> standaloneConfigurationProvider,
@@ -42,7 +43,7 @@ public class RedisConfigurationSupport {
 			Constructor<?> ctor = configurationClass.getDeclaredConstructor(
 					RedisConfigurationSupport.class.getDeclaredConstructors()[0].getParameterTypes());
 			ctor.setAccessible(true);
-			this.configuration = ctor.newInstance(properties, standaloneConfigurationProvider,
+			this.lettuceConnectionConfiguration = ctor.newInstance(properties, standaloneConfigurationProvider,
 					sentinelConfigurationProvider, clusterConfigurationProvider, connectionDetails, sslBundles);
 		}
 		catch (Exception ex) {
@@ -53,9 +54,10 @@ public class RedisConfigurationSupport {
 	protected DefaultClientResources lettuceClientResources(
 			ObjectProvider<ClientResourcesBuilderCustomizer> customizers) {
 		try {
-			Method m = this.configuration.getClass().getDeclaredMethod("lettuceClientResources", ObjectProvider.class);
+			Method m = this.lettuceConnectionConfiguration.getClass()
+				.getDeclaredMethod(getCurrentMethodName(), ObjectProvider.class);
 			m.setAccessible(true);
-			return (DefaultClientResources) m.invoke(this.configuration, customizers);
+			return (DefaultClientResources) m.invoke(this.lettuceConnectionConfiguration, customizers);
 		}
 		catch (Exception ex) {
 			throw new RuntimeException(ex.getMessage(), ex);
@@ -67,39 +69,40 @@ public class RedisConfigurationSupport {
 			ObjectProvider<LettuceClientOptionsBuilderCustomizer> clientOptionsBuilderCustomizers,
 			ClientResources clientResources) {
 		try {
-			Method m = this.configuration.getClass()
-				.getDeclaredMethod("redisConnectionFactory", ObjectProvider.class, ObjectProvider.class,
+			Method m = this.lettuceConnectionConfiguration.getClass()
+				.getDeclaredMethod(getCurrentMethodName(), ObjectProvider.class, ObjectProvider.class,
 						ClientResources.class);
 			m.setAccessible(true);
-			return (LettuceConnectionFactory) m.invoke(this.configuration, clientConfigurationBuilderCustomizers,
-					clientOptionsBuilderCustomizers, clientResources);
+			return (LettuceConnectionFactory) m.invoke(this.lettuceConnectionConfiguration,
+					clientConfigurationBuilderCustomizers, clientOptionsBuilderCustomizers, clientResources);
 		}
 		catch (Exception ex) {
 			throw new RuntimeException(ex.getMessage(), ex);
 		}
 	}
 
-	protected RedisTemplate<String, ?> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
-		RedisTemplate<String, Object> template = new RedisTemplate<>();
-		template.setConnectionFactory(redisConnectionFactory);
-		template.setKeySerializer(RedisSerializer.string());
-		template.setHashKeySerializer(RedisSerializer.string());
-		return template;
+	protected RedisTemplate<Object, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
+		return redisAutoConfiguration.redisTemplate(redisConnectionFactory);
 	}
 
 	protected StringRedisTemplate stringRedisTemplate(RedisConnectionFactory redisConnectionFactory) {
-		return new StringRedisTemplate(redisConnectionFactory);
+		return redisAutoConfiguration.stringRedisTemplate(redisConnectionFactory);
 	}
 
 	protected RedisMessageListenerContainer redisMessageListenerContainer(RedisConnectionFactory redisConnectionFactory,
 			ObjectProvider<Executor> taskExecutor) {
+		return createRedisMessageListenerContainer(redisConnectionFactory, taskExecutor);
+	}
+
+	static RedisMessageListenerContainer createRedisMessageListenerContainer(
+			RedisConnectionFactory redisConnectionFactory, ObjectProvider<Executor> taskExecutor) {
 		RedisMessageListenerContainer container = new RedisMessageListenerContainer();
 		container.setConnectionFactory(redisConnectionFactory);
 		taskExecutor.ifAvailable(container::setTaskExecutor);
 		return container;
 	}
 
-	protected static RedisConnectionDetails redisConnectionDetails(RedisProperties properties) {
+	static RedisConnectionDetails createRedisConnectionDetails(RedisProperties properties) {
 		try {
 			Constructor<?> ctor = ClassUtils
 				.forName(RedisProperties.class.getPackageName() + ".PropertiesRedisConnectionDetails",
@@ -111,6 +114,10 @@ public class RedisConfigurationSupport {
 		catch (Exception ex) {
 			throw new RuntimeException(ex.getMessage(), ex);
 		}
+	}
+
+	private static String getCurrentMethodName() {
+		return Thread.currentThread().getStackTrace()[2].getMethodName();
 	}
 
 }
