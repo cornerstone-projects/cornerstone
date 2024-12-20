@@ -90,6 +90,9 @@ testing {
 			}
 			dependencies {
 				implementation(project())
+				configurations.implementation {
+					dependencies.forEach { implementation(it) }
+				}
 				configurations.testImplementation {
 					dependencies.forEach { implementation(it) }
 				}
