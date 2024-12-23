@@ -2,8 +2,6 @@ package io.cornerstone.core.persistence.id.sequence;
 
 import javax.sql.DataSource;
 
-import io.cornerstone.core.persistence.id.SnowflakeProperties;
-import io.cornerstone.core.sequence.CyclicSequence.CycleType;
 import io.cornerstone.core.sequence.Sequence;
 import io.cornerstone.core.sequence.cyclic.DatabaseCyclicSequenceDelegate;
 import io.cornerstone.test.DataJpaTestBase;
@@ -26,9 +24,6 @@ class SequenceTests extends DataJpaTestBase {
 	@Autowired
 	TestEntityRepository repository;
 
-	@Autowired
-	SnowflakeProperties snowflakeProperties;
-
 	@Test
 	void test() {
 		Long id1 = this.repository.save(new TestEntity()).getId();
@@ -43,9 +38,7 @@ class SequenceTests extends DataJpaTestBase {
 
 		@Bean
 		Sequence testSequence(DataSource dataSource) {
-			DatabaseCyclicSequenceDelegate cs = new DatabaseCyclicSequenceDelegate(dataSource);
-			cs.setCycleType(CycleType.MINUTE);
-			return cs;
+			return new DatabaseCyclicSequenceDelegate(dataSource);
 		}
 
 	}

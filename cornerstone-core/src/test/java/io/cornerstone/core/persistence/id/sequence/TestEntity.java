@@ -2,13 +2,11 @@ package io.cornerstone.core.persistence.id.sequence;
 
 import java.io.Serializable;
 
-import io.cornerstone.core.persistence.id.SequenceIdentifierGenerator;
+import io.cornerstone.core.persistence.id.SequenceIdentifier;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.Parameter;
 
 import org.springframework.data.domain.Persistable;
 import org.springframework.lang.Nullable;
@@ -21,10 +19,7 @@ class TestEntity implements Persistable<Long>, Serializable {
 	private static final long serialVersionUID = 6471017006033411659L;
 
 	@Id
-	@GeneratedValue(generator = "sequence")
-	@SuppressWarnings("deprecation")
-	@org.hibernate.annotations.GenericGenerator(name = "sequence", type = SequenceIdentifierGenerator.class,
-			parameters = @Parameter(name = "sequenceName", value = "testSequence"))
+	@SequenceIdentifier("testSequence")
 	private @Nullable Long id;
 
 	@Nullable
