@@ -2,7 +2,6 @@ package io.cornerstone.core.event;
 
 import io.cornerstone.core.domain.Scope;
 import io.cornerstone.test.SpringApplicationTestBase;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -36,7 +35,6 @@ class EventPublisherTests extends SpringApplicationTestBase {
 	@MockitoSpyBean
 	private TestLisenter testListener;
 
-	@Disabled("@MockitoBean is not supported here")
 	@Test
 	@Order(1)
 	void publishApplicationContextEventAsGlobal() {
