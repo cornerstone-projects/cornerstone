@@ -1,5 +1,3 @@
-@file:Suppress("UnstableApiUsage")
-
 plugins {
 	java
 	checkstyle
@@ -51,6 +49,29 @@ dependencyManagement {
 	}
 }
 
+val integrationTest: SourceSet by sourceSets.creating {
+	compileClasspath += sourceSets.test.get().output
+}
+configurations[integrationTest.implementationConfigurationName].extendsFrom(configurations.testImplementation.get())
+configurations[integrationTest.runtimeOnlyConfigurationName].extendsFrom(configurations.testRuntimeOnly.get())
+
+val integrationTestTask = tasks.register<Test>("integrationTest") {
+	description = "Runs integration tests."
+	group = "verification"
+
+	testClassesDirs = integrationTest.output.classesDirs
+	classpath = configurations[integrationTest.runtimeClasspathConfigurationName] + sourceSets.test.get().output + integrationTest.output
+
+	shouldRunAfter(tasks.test)
+}
+
+val integration: String? by rootProject
+if (integration != null) {
+	tasks.check {
+		dependsOn(integrationTestTask)
+	}
+}
+
 val mockitoAgent = configurations.create("mockitoAgent")
 
 dependencies {
@@ -60,6 +81,9 @@ dependencies {
 	testImplementation("org.springframework.security:spring-security-test")
 	testRuntimeOnly("com.h2database:h2")
 	testImplementation(testFixtures(project(":cornerstone-core")))
+	"integrationTestImplementation"(project)
+	"integrationTestImplementation"("org.springframework.boot:spring-boot-testcontainers")
+	"integrationTestImplementation"("org.testcontainers:junit-jupiter")
 	checkstyle("""io.spring.javaformat:spring-javaformat-checkstyle:${property("javaformat-plugin.version")}""")
 	mockitoAgent("org.mockito:mockito-core") { isTransitive = false }
 }
@@ -75,43 +99,6 @@ configurations.all {
 			.because(
 				"See https://github.com/testcontainers/testcontainers-java/issues/970"
 			)
-	}
-}
-
-testing {
-	suites {
-		val test by getting(JvmTestSuite::class)
-		val integrationTest by registering(JvmTestSuite::class) {
-			sources {
-				compileClasspath += sourceSets.test.get().output
-				runtimeClasspath += sourceSets.test.get().output
-			}
-			dependencies {
-				implementation(project())
-				configurations.implementation {
-					dependencies.forEach { implementation(it) }
-				}
-				configurations.testImplementation {
-					dependencies.forEach { implementation(it) }
-				}
-				configurations.testRuntimeOnly {
-					dependencies.forEach { runtimeOnly(it) }
-				}
-			}
-			targets {
-				all {
-					testTask.configure {
-						shouldRunAfter(test)
-					}
-				}
-			}
-		}
-
-		val integration: String? by rootProject
-		if (integration != null) {
-			val check by tasks.existing
-			check.get().dependsOn(integrationTest)
-		}
 	}
 }
 

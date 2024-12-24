@@ -1,5 +1,3 @@
-@file:Suppress("UnstableApiUsage")
-
 plugins {
 	id("io.cornerstone.java-common-conventions")
 	`java-library`
