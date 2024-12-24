@@ -80,9 +80,7 @@ configurations.all {
 
 testing {
 	suites {
-		val test by getting(JvmTestSuite::class) {
-			useJUnitJupiter()
-		}
+		val test by getting(JvmTestSuite::class)
 		val integrationTest by registering(JvmTestSuite::class) {
 			sources {
 				compileClasspath += sourceSets.test.get().output
@@ -146,6 +144,7 @@ tasks.withType<JavaCompile> {
 }
 
 tasks.withType<Test> {
+	useJUnitPlatform()
 	jvmArgs(listOf("-javaagent:${mockitoAgent.asPath}", "-Xshare:off"))
 }
 
