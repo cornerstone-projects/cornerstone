@@ -12,9 +12,12 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.cloud.CloudPlatform;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
+
+import static org.springframework.boot.cloud.CloudPlatform.KUBERNETES;
 
 @Component
 @ConfigurationProperties(SnowflakeProperties.PREFIX)
@@ -29,7 +32,7 @@ public class SnowflakeProperties {
 	@Autowired
 	private Environment env;
 
-	private int workerId;
+	private int workerId = -1;
 
 	private int workerIdBits = 8;
 
@@ -37,11 +40,22 @@ public class SnowflakeProperties {
 
 	@PostConstruct
 	private void init() {
-		if (this.env.containsProperty(PREFIX + ".worker-id")) {
+		if (this.workerId >= 0) {
 			// workerId configured
 			return;
 		}
 		Application.current().ifPresentOrElse(app -> {
+			if (CloudPlatform.getActive(this.env) == KUBERNETES) {
+				String hostName = app.getHostName();
+				if (hostName.matches(".+-\\d+$")) {
+					String ordinal = hostName.substring(hostName.lastIndexOf('-') + 1);
+					this.workerId = Integer.parseInt(ordinal);
+					log.info(
+							"Autoconfigure snowflake workerId {} from host name {}, please configure {}.worker-id if it's not desired.",
+							this.workerId, hostName, PREFIX);
+					return;
+				}
+			}
 			String ip = app.getHostAddress();
 			int index = ip.lastIndexOf('.');
 			String id;
@@ -72,7 +86,7 @@ public class SnowflakeProperties {
 				}
 			}
 			log.info(
-					"Extract snowflake workerId {} from host address {}, please configure {}.worker-id if multiple instances running in the same host",
+					"Autoconfigure snowflake workerId {} from host address {}, please configure {}.worker-id if multiple instances running in the same host.",
 					this.workerId, app.getHostAddress(), PREFIX);
 		}, () -> log.warn("Please configure {}.worker-id if multiple instances running", PREFIX));
 	}

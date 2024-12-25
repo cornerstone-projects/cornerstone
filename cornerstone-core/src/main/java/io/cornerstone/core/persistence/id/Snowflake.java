@@ -26,7 +26,7 @@ public class Snowflake {
 		long maxWorkerId = ~(-1L << workerIdBits);
 		if ((workerId > maxWorkerId) || (workerId < 0)) {
 			throw new IllegalArgumentException(
-					"workerId can't be greater than %d or less than 0".formatted(maxWorkerId));
+					"workerId %d can't be greater than %d or less than 0".formatted(workerId, maxWorkerId));
 		}
 		this.workerId = workerId;
 		this.workerIdBits = workerIdBits;
