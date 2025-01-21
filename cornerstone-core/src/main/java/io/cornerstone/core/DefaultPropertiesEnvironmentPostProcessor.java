@@ -1,12 +1,8 @@
 package io.cornerstone.core;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.apache.commons.logging.Log;
 
@@ -21,7 +17,6 @@ import org.springframework.core.Ordered;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.MapPropertySource;
 import org.springframework.core.env.Profiles;
-import org.springframework.core.env.PropertySource;
 import org.springframework.core.io.DefaultResourceLoader;
 
 public class DefaultPropertiesEnvironmentPostProcessor implements EnvironmentPostProcessor, Ordered {
@@ -46,7 +41,7 @@ public class DefaultPropertiesEnvironmentPostProcessor implements EnvironmentPos
 	public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
 		try {
 			String location = LOCATION.getValue();
-			List<PropertySource<?>> list = new YamlPropertySourceLoader()
+			new YamlPropertySourceLoader()
 				.load(LOCATION.getValue(), new DefaultResourceLoader(getClass().getClassLoader()).getResource(location))
 				.stream()
 				.filter(ps -> {
@@ -61,9 +56,7 @@ public class DefaultPropertiesEnvironmentPostProcessor implements EnvironmentPos
 					}
 					return true;
 				})
-				.collect(Collectors.toCollection(ArrayList::new));
-			Collections.reverse(list);
-			list.forEach(environment.getPropertySources()::addLast);
+				.forEach(environment.getPropertySources()::addLast);
 			this.log.info("Add default properties from " + LOCATION);
 		}
 		catch (IOException ex) {
