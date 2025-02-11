@@ -20,10 +20,12 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.PropertyWriter;
@@ -37,18 +39,9 @@ import org.springframework.core.annotation.AnnotationUtils;
 
 public class JsonSanitizer {
 
-	public static final JsonSanitizer DEFAULT_INSTANCE;
+	public static final JsonSanitizer DEFAULT_INSTANCE = new JsonSanitizer();
 
-	private static final ObjectMapper objectMapper;
-	static {
-		objectMapper = new ObjectMapper();
-		objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-		objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-		objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
-		objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-		objectMapper.setTimeZone(TimeZone.getDefault());
-		DEFAULT_INSTANCE = new JsonSanitizer();
-	}
+	private final ObjectMapper objectMapper;
 
 	@Getter
 	private final Map<BiPredicate<String, Object>, Function<String, String>> mapping;
@@ -154,9 +147,16 @@ public class JsonSanitizer {
 				}
 			}
 		}).setFailOnUnknownId(false);
-		this.objectWriter = objectMapper.enable(SerializationFeature.INDENT_OUTPUT)
-			.addMixIn(Object.class, SanitizerMixIn.class)
-			.writer(filters);
+		JsonMapper.Builder builder = JsonMapper.builder();
+		builder.serializationInclusion(JsonInclude.Include.NON_NULL);
+		builder.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+		builder.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
+		builder.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+		builder.enable(SerializationFeature.INDENT_OUTPUT);
+		builder.enable(MapperFeature.USE_STD_BEAN_NAMING);
+		builder.defaultTimeZone(TimeZone.getDefault());
+		this.objectMapper = builder.build();
+		this.objectWriter = this.objectMapper.addMixIn(Object.class, SanitizerMixIn.class).writer(filters);
 	}
 
 	private static String sanitizeString(String value, String mask, int position) {
@@ -212,9 +212,9 @@ public class JsonSanitizer {
 
 	public String sanitize(String json) {
 		try {
-			JsonNode node = objectMapper.readTree(json);
+			JsonNode node = this.objectMapper.readTree(json);
 			sanitize(null, node, null);
-			return objectMapper.writeValueAsString(node);
+			return this.objectMapper.writeValueAsString(node);
 		}
 		catch (IOException ex) {
 			return json;

@@ -83,13 +83,16 @@ class JsonSanitizerTests {
 	@Test
 	void testToJsonWithAnnotation() {
 		JsonSanitizer sanitizer = new JsonSanitizer();
-		Person p = new Person("test", "13333333333", "13333333333", "13333333333", "13333333333", 12);
+		Person p = new Person("test", "13333333333", "13333333333", "13333333333", "13333333333", "110199012120220",
+				12);
 		String json = sanitizer.toJson(p);
 		assertThat(json).contains("\"1**********\"");
 		assertThat(json).contains("\"****3333333\"");
 		assertThat(json).contains("\"133****3333\"");
 		assertThat(json).contains("\"1333333333****\"");
+		assertThat(json).contains("\"1101990121****0\"");
 		assertThat(json).doesNotContain("age");
+		assertThat(json).doesNotContain("id_NO");
 	}
 
 	@Test
@@ -115,8 +118,9 @@ class JsonSanitizerTests {
 		assertThat(sanitizer.sanitizeValue("test", config)).isEqualTo("\"te**\"");
 		assertThat(sanitizer.sanitizeValue(new BigDecimal("12.3"), config)).isEqualTo("\"**\"");
 
-		String json = sanitizer
-			.sanitizeValue(new Person("test", "13333333333", "13333333333", "13333333333", "13333333333", 12), config);
+		String json = sanitizer.sanitizeValue(
+				new Person("test", "13333333333", "13333333333", "13333333333", "13333333333", "110199012120220", 12),
+				config);
 		assertThat(json).contains("\"1**********\"");
 		assertThat(json).contains("\"****3333333\"");
 		assertThat(json).contains("\"133****3333\"");
@@ -129,9 +133,8 @@ class JsonSanitizerTests {
 		JsonSanitizer sanitizer = new JsonSanitizer();
 		assertThat(sanitizer.sanitizeArray(new Object[] { 1, "test", null }, null)).isEqualTo("[ 1, \"test\", null ]");
 
-		String json = sanitizer.sanitizeArray(
-				new Object[] { 1, "test",
-						new Person("test", "13333333333", "13333333333", "13333333333", "13333333333", 12) },
+		String json = sanitizer.sanitizeArray(new Object[] { 1, "test",
+				new Person("test", "13333333333", "13333333333", "13333333333", "13333333333", "110199012120220", 12) },
 				new JsonSanitize[] { null, new JsonSanitize() {
 					@Override
 					public Class<? extends Annotation> annotationType() {
@@ -188,6 +191,9 @@ class JsonSanitizerTests {
 
 		@JsonSanitize(value = "****", position = 10)
 		private final String phone4;
+
+		@JsonSanitize(value = "****", position = 10)
+		private final String ID_NO;
 
 		@JsonSanitize
 		private final int age;
