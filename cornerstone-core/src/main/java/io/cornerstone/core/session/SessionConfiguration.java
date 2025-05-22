@@ -18,7 +18,6 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.SerializationException;
 import org.springframework.session.config.SessionRepositoryCustomizer;
-import org.springframework.session.config.annotation.web.http.EnableSpringHttpSession;
 import org.springframework.session.data.redis.RedisIndexedSessionRepository;
 import org.springframework.session.data.redis.RedisSessionRepository;
 import org.springframework.session.web.http.CookieHttpSessionIdResolver;
@@ -28,7 +27,6 @@ import org.springframework.session.web.http.HttpSessionIdResolver;
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnClass(RedisSessionRepository.class)
 @ConditionalOnBean(RedisConnectionFactory.class)
-@EnableSpringHttpSession
 public class SessionConfiguration {
 
 	@ConditionalOnProperty(prefix = "spring.session.redis", name = "repository-type", havingValue = "default",
