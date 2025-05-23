@@ -78,6 +78,7 @@ dependencies {
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.springframework.security:spring-security-test")
 	testRuntimeOnly("com.h2database:h2")
+	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 	testImplementation(testFixtures(project(":cornerstone-core")))
 	integrationTestImplementation(project)
 	integrationTestImplementation("org.springframework.boot:spring-boot-testcontainers")
