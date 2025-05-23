@@ -12,6 +12,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 
 public class DefaultDaoAuthenticationProvider extends DaoAuthenticationProvider {
 
@@ -20,6 +21,10 @@ public class DefaultDaoAuthenticationProvider extends DaoAuthenticationProvider 
 
 	@Autowired(required = false)
 	private List<VerificationCodeChecker> verificationCodeCheckers = Collections.emptyList();
+
+	public DefaultDaoAuthenticationProvider(UserDetailsService userDetailsService) {
+		super(userDetailsService);
+	}
 
 	@Override
 	protected Authentication createSuccessAuthentication(Object principal, Authentication authentication,

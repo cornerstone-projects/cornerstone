@@ -47,7 +47,7 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.savedrequest.RequestCache;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
 
 import static jakarta.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
 import static org.springframework.security.config.Customizer.withDefaults;
@@ -74,8 +74,8 @@ public class WebSecurityConfiguration {
 		this.ignoringRequestContributors.forEach(c -> ignoringPathPatterns.add(c.getIgnoringPathPattern()));
 		web.ignoring()
 			.requestMatchers(ignoringPathPatterns.stream()
-				.map(AntPathRequestMatcher::antMatcher)
-				.toArray(AntPathRequestMatcher[]::new));
+				.map((s) -> PathPatternRequestMatcher.withDefaults().matcher(s))
+				.toArray(PathPatternRequestMatcher[]::new));
 	}
 
 	protected void configure(HttpSecurity http) throws Exception {
@@ -94,8 +94,8 @@ public class WebSecurityConfiguration {
 		http.authorizeHttpRequests(configurer -> {
 			configurer
 				.requestMatchers(Stream.of(permitAllPathPatterns)
-					.map(AntPathRequestMatcher::antMatcher)
-					.toArray(AntPathRequestMatcher[]::new))
+					.map((s) -> PathPatternRequestMatcher.withDefaults().matcher(s))
+					.toArray(PathPatternRequestMatcher[]::new))
 				.permitAll();
 			this.properties.getAuthorizeRequestsMapping()
 				.forEach((k, v) -> configurer.requestMatchers(k).hasAnyAuthority(v.split("\\s*,\\s*")));
@@ -201,8 +201,7 @@ public class WebSecurityConfiguration {
 		UserDetailsService uds = userDetailsService.getIfAvailable(() -> username -> {
 			throw new UsernameNotFoundException(username);
 		});
-		DefaultDaoAuthenticationProvider provider = new DefaultDaoAuthenticationProvider();
-		provider.setUserDetailsService(uds);
+		DefaultDaoAuthenticationProvider provider = new DefaultDaoAuthenticationProvider(uds);
 		passwordEncoder.ifAvailable(provider::setPasswordEncoder);
 		userDetailsPasswordService.ifAvailable(provider::setUserDetailsPasswordService);
 		return provider;

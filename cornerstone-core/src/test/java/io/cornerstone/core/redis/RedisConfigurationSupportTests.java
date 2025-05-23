@@ -16,7 +16,8 @@ class RedisConfigurationSupportTests {
 	@Test
 	void test() {
 		RedisProperties properties = new RedisProperties();
-		RedisConnectionDetails connectionDetails = RedisConfigurationSupport.createRedisConnectionDetails(properties);
+		RedisConnectionDetails connectionDetails = RedisConfigurationSupport.createRedisConnectionDetails(properties,
+				null);
 		RedisConfigurationSupport rcs = new RedisConfigurationSupport(properties, mock(ObjectProvider.class),
 				mock(ObjectProvider.class), mock(ObjectProvider.class), connectionDetails, mock(ObjectProvider.class));
 		DefaultClientResources clientResources = rcs.lettuceClientResources(mock(ObjectProvider.class));

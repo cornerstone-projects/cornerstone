@@ -102,14 +102,14 @@ public class RedisConfigurationSupport {
 		return container;
 	}
 
-	static RedisConnectionDetails createRedisConnectionDetails(RedisProperties properties) {
+	static RedisConnectionDetails createRedisConnectionDetails(RedisProperties properties, SslBundles sslBundles) {
 		try {
 			Constructor<?> ctor = ClassUtils
 				.forName(RedisProperties.class.getPackageName() + ".PropertiesRedisConnectionDetails",
 						RedisProperties.class.getClassLoader())
-				.getDeclaredConstructor(RedisProperties.class);
+				.getDeclaredConstructor(RedisProperties.class, SslBundles.class);
 			ctor.setAccessible(true);
-			return (RedisConnectionDetails) ctor.newInstance(properties);
+			return (RedisConnectionDetails) ctor.newInstance(properties, sslBundles);
 		}
 		catch (Exception ex) {
 			throw new RuntimeException(ex.getMessage(), ex);

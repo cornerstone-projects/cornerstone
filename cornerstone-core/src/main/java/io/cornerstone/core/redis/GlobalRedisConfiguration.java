@@ -37,8 +37,9 @@ public class GlobalRedisConfiguration extends RedisConfigurationSupport {
 
 	@Bean(defaultCandidate = false)
 	public static RedisConnectionDetails globalRedisConnectionDetails(
-			@Qualifier("globalRedisProperties") RedisProperties redisProperties) {
-		return createRedisConnectionDetails(redisProperties);
+			@Qualifier("globalRedisProperties") RedisProperties redisProperties,
+			ObjectProvider<SslBundles> sslBundles) {
+		return createRedisConnectionDetails(redisProperties, sslBundles.getIfAvailable());
 	}
 
 	@ConfigurationProperties(PREFIX)
