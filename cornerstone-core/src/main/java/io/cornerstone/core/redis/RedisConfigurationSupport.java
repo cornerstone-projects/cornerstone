@@ -2,7 +2,6 @@ package io.cornerstone.core.redis;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import java.util.concurrent.Executor;
 
 import io.lettuce.core.resource.ClientResources;
 import io.lettuce.core.resource.DefaultClientResources;
@@ -15,6 +14,7 @@ import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
 import org.springframework.boot.autoconfigure.data.redis.RedisConnectionDetails;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.boot.ssl.SslBundles;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.data.redis.connection.RedisClusterConfiguration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisSentinelConfiguration;
@@ -90,12 +90,12 @@ public class RedisConfigurationSupport {
 	}
 
 	protected RedisMessageListenerContainer redisMessageListenerContainer(RedisConnectionFactory redisConnectionFactory,
-			ObjectProvider<Executor> taskExecutor) {
+			ObjectProvider<TaskExecutor> taskExecutor) {
 		return createRedisMessageListenerContainer(redisConnectionFactory, taskExecutor);
 	}
 
 	static RedisMessageListenerContainer createRedisMessageListenerContainer(
-			RedisConnectionFactory redisConnectionFactory, ObjectProvider<Executor> taskExecutor) {
+			RedisConnectionFactory redisConnectionFactory, ObjectProvider<TaskExecutor> taskExecutor) {
 		RedisMessageListenerContainer container = new RedisMessageListenerContainer();
 		container.setConnectionFactory(redisConnectionFactory);
 		taskExecutor.ifAvailable(container::setTaskExecutor);

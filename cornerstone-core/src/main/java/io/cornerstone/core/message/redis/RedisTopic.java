@@ -2,7 +2,6 @@ package io.cornerstone.core.message.redis;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.concurrent.Executor;
 
 import io.cornerstone.core.Application;
 import io.cornerstone.core.domain.Scope;
@@ -14,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.GenericTypeResolver;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
@@ -42,7 +42,8 @@ public abstract class RedisTopic<T extends Serializable> implements io.cornersto
 
 	@Setter
 	@Autowired(required = false)
-	private Executor taskExecutor;
+	@Qualifier("applicationTaskExecutor")
+	private TaskExecutor taskExecutor;
 
 	public RedisTopic() {
 		Class<?> clazz = GenericTypeResolver.resolveTypeArgument(getClass(), RedisTopic.class);

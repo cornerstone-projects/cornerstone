@@ -1,11 +1,11 @@
 package io.cornerstone.core.redis;
 
-import java.util.concurrent.Executor;
-
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 
@@ -15,7 +15,7 @@ public class RedisMessageListenerContainerConfiguration {
 
 	@Bean
 	public RedisMessageListenerContainer redisMessageListenerContainer(RedisConnectionFactory redisConnectionFactory,
-			ObjectProvider<Executor> taskExecutor) {
+			@Qualifier("applicationTaskExecutor") ObjectProvider<TaskExecutor> taskExecutor) {
 		return RedisConfigurationSupport.createRedisMessageListenerContainer(redisConnectionFactory, taskExecutor);
 	}
 

@@ -1,7 +1,5 @@
 package io.cornerstone.core.redis;
 
-import java.util.concurrent.Executor;
-
 import io.lettuce.core.resource.ClientResources;
 import io.lettuce.core.resource.DefaultClientResources;
 
@@ -19,6 +17,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.ssl.SslBundles;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.data.redis.connection.RedisClusterConfiguration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisSentinelConfiguration;
@@ -91,7 +90,7 @@ public class GlobalRedisConfiguration extends RedisConfigurationSupport {
 	@Bean(defaultCandidate = false)
 	public RedisMessageListenerContainer globalRedisMessageListenerContainer(
 			@Qualifier("globalRedisConnectionFactory") RedisConnectionFactory redisConnectionFactory,
-			ObjectProvider<Executor> taskExecutor) {
+			@Qualifier("applicationTaskExecutor") ObjectProvider<TaskExecutor> taskExecutor) {
 		return super.redisMessageListenerContainer(redisConnectionFactory, taskExecutor);
 	}
 

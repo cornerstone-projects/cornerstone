@@ -1,7 +1,6 @@
 package io.cornerstone.core.message.rabbit;
 
 import java.io.Serializable;
-import java.util.concurrent.Executor;
 
 import io.cornerstone.core.Application;
 import io.cornerstone.core.domain.Scope;
@@ -20,8 +19,10 @@ import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.GenericTypeResolver;
+import org.springframework.core.task.TaskExecutor;
 
 public abstract class RabbitTopic<T extends Serializable> implements Topic<T> {
 
@@ -43,7 +44,8 @@ public abstract class RabbitTopic<T extends Serializable> implements Topic<T> {
 
 	@Setter
 	@Autowired(required = false)
-	private Executor taskExecutor;
+	@Qualifier("applicationTaskExecutor")
+	private TaskExecutor taskExecutor;
 
 	public RabbitTopic() {
 		Class<?> clazz = GenericTypeResolver.resolveTypeArgument(getClass(), RabbitTopic.class);
