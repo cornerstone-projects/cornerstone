@@ -99,6 +99,7 @@ logging:
       exclude: ["request", "server"]
 
 management.endpoints.web.exposure.include: [health, prometheus]
+management.observations.annotations.enabled: true
 management.influx.metrics.export:
   enabled: false
   db: metrics
