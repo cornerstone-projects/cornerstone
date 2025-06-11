@@ -26,7 +26,6 @@ dependencies {
 	implementation("io.opentelemetry:opentelemetry-exporter-otlp")
 	implementation("""net.ttddyy.observation:datasource-micrometer-spring-boot:${property("datasource-micrometer.version")}""")
 	implementation("io.micrometer:micrometer-registry-prometheus")
-	implementation("io.prometheus:simpleclient_pushgateway")
 	optional("org.springframework.boot:spring-boot-starter-amqp")
 	testFixturesApi("org.springframework.boot:spring-boot-starter-test")
 	testFixturesApi("org.springframework.security:spring-security-test")
