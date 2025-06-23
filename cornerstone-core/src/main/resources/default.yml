@@ -107,6 +107,7 @@ management.influx.metrics.export:
 
 management.tracing.enabled: false
 jdbc.datasource-proxy.enabled: ${management.tracing.enabled}
+management.otlp.tracing.endpoint: http://localhost:4318/v1/traces
 
 springdoc.swagger-ui.enabled: false
 springdoc.api-docs.enabled: ${springdoc.swagger-ui.enabled}
