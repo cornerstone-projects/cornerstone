@@ -54,10 +54,9 @@ public class GlobalRedisConfiguration extends RedisConfigurationSupport {
 			ObjectProvider<RedisStandaloneConfiguration> standaloneConfigurationProvider,
 			ObjectProvider<RedisSentinelConfiguration> sentinelConfigurationProvider,
 			ObjectProvider<RedisClusterConfiguration> clusterConfigurationProvider,
-			@Qualifier("globalRedisConnectionDetails") RedisConnectionDetails redisConnectionDetails,
-			ObjectProvider<SslBundles> sslBundles) {
+			@Qualifier("globalRedisConnectionDetails") RedisConnectionDetails redisConnectionDetails) {
 		super(redisProperties, standaloneConfigurationProvider, sentinelConfigurationProvider,
-				clusterConfigurationProvider, redisConnectionDetails, sslBundles);
+				clusterConfigurationProvider, redisConnectionDetails);
 	}
 
 	@Bean(defaultCandidate = false, destroyMethod = "shutdown")

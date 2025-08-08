@@ -19,7 +19,7 @@ class RedisConfigurationSupportTests {
 		RedisConnectionDetails connectionDetails = RedisConfigurationSupport.createRedisConnectionDetails(properties,
 				null);
 		RedisConfigurationSupport rcs = new RedisConfigurationSupport(properties, mock(ObjectProvider.class),
-				mock(ObjectProvider.class), mock(ObjectProvider.class), connectionDetails, mock(ObjectProvider.class));
+				mock(ObjectProvider.class), mock(ObjectProvider.class), connectionDetails);
 		DefaultClientResources clientResources = rcs.lettuceClientResources(mock(ObjectProvider.class));
 		RedisConnectionFactory connectionFactory = rcs.redisConnectionFactory(mock(ObjectProvider.class),
 				mock(ObjectProvider.class), clientResources);

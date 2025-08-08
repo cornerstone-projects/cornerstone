@@ -35,7 +35,7 @@ public class RedisConfigurationSupport {
 			ObjectProvider<RedisStandaloneConfiguration> standaloneConfigurationProvider,
 			ObjectProvider<RedisSentinelConfiguration> sentinelConfigurationProvider,
 			ObjectProvider<RedisClusterConfiguration> clusterConfigurationProvider,
-			RedisConnectionDetails connectionDetails, ObjectProvider<SslBundles> sslBundles) {
+			RedisConnectionDetails connectionDetails) {
 		try {
 			Class<?> clazz = RedisAutoConfiguration.class;
 			Class<?> configurationClass = ClassUtils.forName(clazz.getPackageName() + ".LettuceConnectionConfiguration",
@@ -44,7 +44,7 @@ public class RedisConfigurationSupport {
 					RedisConfigurationSupport.class.getDeclaredConstructors()[0].getParameterTypes());
 			ctor.setAccessible(true);
 			this.lettuceConnectionConfiguration = ctor.newInstance(properties, standaloneConfigurationProvider,
-					sentinelConfigurationProvider, clusterConfigurationProvider, connectionDetails, sslBundles);
+					sentinelConfigurationProvider, clusterConfigurationProvider, connectionDetails);
 		}
 		catch (Exception ex) {
 			throw new RuntimeException(ex.getMessage(), ex);
