@@ -10,33 +10,31 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
-import org.springframework.context.event.EventListener;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
+import org.springframework.test.context.event.ApplicationEvents;
+import org.springframework.test.context.event.RecordApplicationEvents;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import static io.cornerstone.core.persistence.event.EntityOperationType.*;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.argThat;
-import static org.mockito.BDDMockito.then;
-import static org.mockito.Mockito.reset;
 
 @ContextConfiguration
 @EnableJpaRepositories(basePackageClasses = TestEntityRepository.class)
 @EntityScan(basePackageClasses = TestEntity.class)
 @Transactional(propagation = Propagation.NOT_SUPPORTED)
+@RecordApplicationEvents
 class PublishAwareTests extends DataJpaTestBase {
+
+	@Autowired
+	ApplicationEvents applicationEvents;
 
 	@Autowired
 	TestEntityRepository repository;
 
 	@Autowired
 	TestService testService;
-
-	@MockitoSpyBean
-	TestListener testListener;
 
 	@AfterEach
 	void cleanup() {
@@ -46,48 +44,34 @@ class PublishAwareTests extends DataJpaTestBase {
 	@Test
 	void cud() {
 		TestEntity entity = this.repository.save(new TestEntity());
-		then(this.testListener).should().on(argThat(event -> {
-			assertThat(event).isNotNull();
-			assertThat(event.getType()).isSameAs(CREATE);
-			return true;
-		}));
-		reset(this.testListener);
+		assertEntityOperationEvent(CREATE);
+		this.applicationEvents.clear();
 
 		entity.setName("test");
 		entity = this.repository.save(entity);
-		then(this.testListener).should().on(argThat(event -> {
-			assertThat(event).isNotNull();
-			assertThat(event.getType()).isSameAs(UPDATE);
-			return true;
-		}));
-		reset(this.testListener);
+		assertEntityOperationEvent(UPDATE);
+		this.applicationEvents.clear();
 
 		this.repository.delete(entity);
-		then(this.testListener).should().on(argThat(event -> {
-			assertThat(event).isNotNull();
-			assertThat(event.getType()).isSameAs(DELETE);
-			return true;
-		}));
+		assertEntityOperationEvent(DELETE);
 	}
 
 	@Test
 	void saveAndUpdate() {
 		this.testService.saveAndUpdate();
-		then(this.testListener).should().on(argThat(event -> {
-			assertThat(event).isNotNull();
-			assertThat(event.getType()).isSameAs(CREATE);
-			return true;
-		}));
+		assertEntityOperationEvent(CREATE);
+
 	}
 
 	@Test
 	void saveAndUpdateAndDelete() {
 		this.testService.saveAndUpdateAndDelete();
-		then(this.testListener).should().on(argThat(event -> {
-			assertThat(event).isNotNull();
-			assertThat(event.getType()).isSameAs(DELETE);
-			return true;
-		}));
+		assertEntityOperationEvent(DELETE);
+	}
+
+	private void assertEntityOperationEvent(EntityOperationType type) {
+		assertThat(this.applicationEvents.stream(EntityOperationEvent.class).findFirst().get()).extracting("type")
+			.isSameAs(type);
 	}
 
 	@Configuration
@@ -114,11 +98,6 @@ class PublishAwareTests extends DataJpaTestBase {
 			return new TestService();
 		}
 
-		@Bean
-		TestListener testListener() {
-			return new TestListener();
-		}
-
 	}
 
 	static class TestService {
@@ -139,15 +118,6 @@ class PublishAwareTests extends DataJpaTestBase {
 			entity.setName("test");
 			entity = this.repository.save(entity);
 			this.repository.delete(entity);
-		}
-
-	}
-
-	static class TestListener {
-
-		@EventListener
-		void on(EntityOperationEvent<TestEntity> event) {
-
 		}
 
 	}

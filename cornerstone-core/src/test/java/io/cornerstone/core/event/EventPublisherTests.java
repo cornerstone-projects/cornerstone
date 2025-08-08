@@ -9,19 +9,22 @@ import org.junit.jupiter.api.TestMethodOrder;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.event.EventListener;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
+import org.springframework.test.context.event.ApplicationEvents;
+import org.springframework.test.context.event.RecordApplicationEvents;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.*;
 
 @TestMethodOrder(OrderAnnotation.class)
 @ContextConfiguration
+@RecordApplicationEvents
 class EventPublisherTests extends SpringApplicationTestBase {
+
+	@Autowired
+	ApplicationEvents applicationEvents;
 
 	@Autowired
 	private ApplicationContext ctx;
@@ -31,9 +34,6 @@ class EventPublisherTests extends SpringApplicationTestBase {
 
 	@MockitoBean
 	private ApplicationEventTopic applicationEventTopic;
-
-	@MockitoSpyBean
-	private TestLisenter testListener;
 
 	@Test
 	@Order(1)
@@ -47,7 +47,7 @@ class EventPublisherTests extends SpringApplicationTestBase {
 		TestEvent event = new TestEvent("");
 		this.eventPublisher.publish(event, Scope.LOCAL);
 		then(this.applicationEventTopic).shouldHaveNoInteractions();
-		then(this.testListener).should().listen(event);
+		assertTestEvent(event);
 	}
 
 	@Test
@@ -60,7 +60,7 @@ class EventPublisherTests extends SpringApplicationTestBase {
 		TestEvent event = new TestEvent("");
 		this.eventPublisher.publish(event, Scope.APPLICATION);
 		then(this.applicationEventTopic).should().publish(eq(event), eq(Scope.APPLICATION));
-		then(this.testListener).should().listen(event);
+		assertTestEvent(event);
 	}
 
 	@Test
@@ -73,25 +73,11 @@ class EventPublisherTests extends SpringApplicationTestBase {
 		TestEvent event = new TestEvent("");
 		this.eventPublisher.publish(event, Scope.GLOBAL);
 		then(this.applicationEventTopic).should().publish(eq(event), eq(Scope.GLOBAL));
-		then(this.testListener).should().listen(event);
+		assertTestEvent(event);
 	}
 
-	@Configuration
-	static class Config {
-
-		@Bean
-		TestLisenter testLisenter() {
-			return new TestLisenter();
-		}
-
-	}
-
-	static class TestLisenter {
-
-		@EventListener
-		void listen(TestEvent event) {
-		}
-
+	private void assertTestEvent(TestEvent event) {
+		assertThat(this.applicationEvents.stream(TestEvent.class).findFirst()).hasValue(event);
 	}
 
 	static class TestEvent extends BaseEvent<String> {
