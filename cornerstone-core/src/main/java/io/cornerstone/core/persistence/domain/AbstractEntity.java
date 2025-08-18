@@ -25,7 +25,7 @@ public abstract class AbstractEntity extends AbstractPersistable<Long> {
 	@SnowflakeIdentifier
 	@JsonProperty(access = Access.WRITE_ONLY)
 	@Setter(PROTECTED)
-	private @Nullable Long id;
+	protected @Nullable Long id;
 
 	@Nullable
 	@JsonProperty("id")

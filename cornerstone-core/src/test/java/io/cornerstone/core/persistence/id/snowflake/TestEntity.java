@@ -8,8 +8,12 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-class TestEntity extends AbstractEntity {
+public class TestEntity extends AbstractEntity {
 
 	private static final long serialVersionUID = 6471017006033411659L;
+
+	public void setId(Long id) {
+		this.id = id;
+	}
 
 }

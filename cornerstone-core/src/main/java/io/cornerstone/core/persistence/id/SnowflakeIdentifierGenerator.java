@@ -1,8 +1,7 @@
 package io.cornerstone.core.persistence.id;
 
-import java.io.Serializable;
-
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
+import org.hibernate.generator.EventType;
 import org.hibernate.id.IdentifierGenerator;
 
 public class SnowflakeIdentifierGenerator implements IdentifierGenerator {
@@ -14,8 +13,22 @@ public class SnowflakeIdentifierGenerator implements IdentifierGenerator {
 	}
 
 	@Override
-	public Serializable generate(SharedSessionContractImplementor session, Object obj) {
+	public Object generate(SharedSessionContractImplementor session, Object obj) {
 		return this.snowflake.nextId();
+	}
+
+	@Override
+	public Object generate(SharedSessionContractImplementor session, Object owner, Object currentValue,
+			EventType eventType) {
+		if (currentValue != null) {
+			return currentValue;
+		}
+		return generate(session, owner);
+	}
+
+	@Override
+	public boolean allowAssignedIdentifiers() {
+		return true;
 	}
 
 }

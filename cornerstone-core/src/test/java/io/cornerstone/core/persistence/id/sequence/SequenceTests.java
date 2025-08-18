@@ -28,6 +28,7 @@ class SequenceTests extends DataJpaTestBase {
 	void test() {
 		Long id1 = this.repository.save(new TestEntity()).getId();
 		Long id2 = this.repository.save(new TestEntity()).getId();
+		assertThat(id1).isNotNull();
 		assertThat(id2).isNotNull();
 		assertThat(id2).isEqualTo(id1 + 1);
 

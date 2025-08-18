@@ -1,6 +1,5 @@
 package io.cornerstone.core.persistence.id;
 
-import java.io.Serializable;
 import java.lang.reflect.Member;
 import java.util.Properties;
 
@@ -28,7 +27,7 @@ public class SequenceIdentifierGenerator implements IdentifierGenerator, Annotat
 	private String sequenceName;
 
 	@Override
-	public Serializable generate(SharedSessionContractImplementor session, Object obj) {
+	public Object generate(SharedSessionContractImplementor session, Object obj) {
 		return (this.type == Integer.class || this.type == int.class) ? this.sequence.nextIntValue()
 				: this.type == String.class ? this.sequence.nextStringValue() : this.sequence.nextLongValue();
 	}
