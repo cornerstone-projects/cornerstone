@@ -230,9 +230,7 @@ public class JsonSanitizer {
 				}
 			});
 			((ObjectNode) node).remove(toBeDropped);
-			Iterator<Map.Entry<String, JsonNode>> iterator = node.fields();
-			while (iterator.hasNext()) {
-				Map.Entry<String, JsonNode> entry = iterator.next();
+			for (Entry<String, JsonNode> entry : node.properties()) {
 				sanitize(entry.getKey(), entry.getValue(), node);
 			}
 		}
