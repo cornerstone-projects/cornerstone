@@ -59,7 +59,7 @@ public class GlobalRedisConfiguration extends RedisConfigurationSupport {
 				clusterConfigurationProvider, redisConnectionDetails);
 	}
 
-	@Bean(defaultCandidate = false, destroyMethod = "shutdown")
+	@Bean(defaultCandidate = false)
 	public DefaultClientResources globalLettuceClientResources(
 			ObjectProvider<ClientResourcesBuilderCustomizer> customizers) {
 		return super.lettuceClientResources(customizers);
