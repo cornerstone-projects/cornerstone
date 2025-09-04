@@ -6,6 +6,7 @@ import org.apache.commons.logging.LogFactory;
 
 import org.springframework.boot.autoconfigure.cache.RedisCacheManagerBuilderCustomizer;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.cache.Cache;
 import org.springframework.cache.annotation.CachingConfigurer;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.interceptor.CacheErrorHandler;
@@ -16,6 +17,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.core.Ordered;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.serializer.RedisSerializationContext.SerializationPair;
+import org.springframework.data.redis.serializer.SerializationException;
 
 @Profile("!test")
 @EnableCaching(order = Ordered.HIGHEST_PRECEDENCE + 3)
@@ -24,7 +26,15 @@ public class CacheConfiguration implements CachingConfigurer {
 
 	@Override
 	public CacheErrorHandler errorHandler() {
-		return new LoggingCacheErrorHandler(LogFactory.getLog(LoggingCacheErrorHandler.class), true);
+		return new LoggingCacheErrorHandler(LogFactory.getLog(LoggingCacheErrorHandler.class), true) {
+			@Override
+			public void handleCacheGetError(RuntimeException exception, Cache cache, Object key) {
+				if (exception instanceof SerializationException) {
+					cache.evict(key);
+				}
+				super.handleCacheGetError(exception, cache, key);
+			}
+		};
 	}
 
 	@Bean
