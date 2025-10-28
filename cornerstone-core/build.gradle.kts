@@ -19,7 +19,7 @@ dependencies {
 	api("com.fasterxml.jackson.dataformat:jackson-dataformat-smile")
 	api("com.fasterxml.jackson.module:jackson-module-mrbean")
 	api("com.fasterxml.jackson.module:jackson-module-parameter-names")
-	api("""io.github.resilience4j:resilience4j-spring-boot2:${property("resilience4j.version")}""")
+	api("""io.github.resilience4j:resilience4j-spring-boot3:${property("resilience4j.version")}""")
 	api("""org.springdoc:springdoc-openapi-starter-webmvc-ui:${property("springdoc.version")}""")
 	api("org.apache.commons:commons-pool2")
 	implementation("io.micrometer:micrometer-tracing-bridge-otel")
