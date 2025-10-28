@@ -42,7 +42,7 @@ public class DefaultPropertiesEnvironmentPostProcessor implements EnvironmentPos
 		try {
 			String location = LOCATION.getValue();
 			new YamlPropertySourceLoader()
-				.load(LOCATION.getValue(), new DefaultResourceLoader(getClass().getClassLoader()).getResource(location))
+				.load(location, new DefaultResourceLoader(getClass().getClassLoader()).getResource(location))
 				.stream()
 				.filter(ps -> {
 					String onProfile = (String) ps.getProperty("spring.config.activate.on-profile");
@@ -56,6 +56,8 @@ public class DefaultPropertiesEnvironmentPostProcessor implements EnvironmentPos
 					}
 					return true;
 				})
+				.toList()
+				.reversed()
 				.forEach(environment.getPropertySources()::addLast);
 			this.log.info("Add default properties from " + LOCATION);
 		}

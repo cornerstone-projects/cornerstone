@@ -33,8 +33,13 @@ class DefaultPropertiesEnvironmentPostProcessorTests extends SpringApplicationTe
 	}
 
 	@Test
+	void defaultYmlWithTestProfileShouldOverrideDefaultYmlWithoutProfile() {
+		assertThat(this.env.getProperty("springdoc.swagger-ui.enabled")).isEqualTo("true");
+	}
+
+	@Test
 	void applicationYmlShouldOverrideDefaultYmlWithTestProfile() {
-		assertThat(this.env.getProperty("spring.springdoc.swagger-ui.enabled")).isEqualTo("false");
+		assertThat(this.env.getProperty("management.tracing.sampling.probability")).isEqualTo("0.5");
 	}
 
 	@Test

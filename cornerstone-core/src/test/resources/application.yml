@@ -1,5 +1,5 @@
 server.error.include-binding-errors: never
-spring.springdoc.swagger-ui.enabled: false
+management.tracing.sampling.probability: 0.5
 mysql.port: 3307
 ---
 spring:
