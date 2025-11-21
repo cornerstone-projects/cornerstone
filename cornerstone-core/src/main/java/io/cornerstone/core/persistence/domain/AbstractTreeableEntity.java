@@ -5,8 +5,6 @@ import java.util.Collection;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.cornerstone.core.domain.Ordered;
 import io.cornerstone.core.domain.Treeable;
 import io.cornerstone.core.domain.View;
@@ -28,6 +26,8 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.OrderBy;
 import lombok.Getter;
 import lombok.Setter;
+import tools.jackson.databind.annotation.JsonDeserialize;
+import tools.jackson.databind.annotation.JsonSerialize;
 
 import org.springframework.data.domain.Persistable;
 import org.springframework.lang.Nullable;

@@ -8,7 +8,7 @@ import io.cornerstone.core.validation.validators.CitizenIdentificationNumberVali
 import io.cornerstone.test.WebMvcWithDataJpaTestBase;
 import org.junit.jupiter.api.Test;
 
-import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.boot.persistence.autoconfigure.EntityScan;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;

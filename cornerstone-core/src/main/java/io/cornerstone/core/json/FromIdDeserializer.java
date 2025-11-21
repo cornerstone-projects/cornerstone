@@ -8,35 +8,25 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
-import com.fasterxml.jackson.databind.BeanProperty;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.deser.ContextualDeserializer;
-import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
+import tools.jackson.core.JsonParser;
+import tools.jackson.core.JsonToken;
+import tools.jackson.databind.BeanProperty;
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.JavaType;
+import tools.jackson.databind.ValueDeserializer;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.core.convert.support.DefaultConversionService;
 
-public class FromIdDeserializer extends StdDeserializer<Object> implements ContextualDeserializer {
-
-	private static final long serialVersionUID = 2685701643083493128L;
+public class FromIdDeserializer extends ValueDeserializer<Object> {
 
 	private JavaType type;
 
 	public FromIdDeserializer() {
-		this((Class<Object>) null);
-	}
-
-	public FromIdDeserializer(Class<Object> t) {
-		super(t);
+		this.type = null;
 	}
 
 	public FromIdDeserializer(JavaType type) {
-		super((Class<Object>) null);
 		this.type = type;
 	}
 
@@ -94,7 +84,7 @@ public class FromIdDeserializer extends StdDeserializer<Object> implements Conte
 					obj = parser.readValueAs(this.type.getRawClass());
 				}
 				else {
-					obj = convert(parser.getText(), this.type);
+					obj = convert(parser.getString(), this.type);
 				}
 				return obj;
 			}
@@ -108,8 +98,7 @@ public class FromIdDeserializer extends StdDeserializer<Object> implements Conte
 	}
 
 	@Override
-	public JsonDeserializer<Object> createContextual(DeserializationContext ctx, BeanProperty beanProperty)
-			throws JsonMappingException {
+	public ValueDeserializer<?> createContextual(DeserializationContext ctxt, BeanProperty beanProperty) {
 		return new FromIdDeserializer(beanProperty.getType());
 	}
 
