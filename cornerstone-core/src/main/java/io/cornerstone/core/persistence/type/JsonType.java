@@ -4,6 +4,7 @@ package io.cornerstone.core.persistence.type;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.sql.Blob;
 import java.sql.SQLException;
@@ -18,13 +19,10 @@ import java.util.Set;
 import java.util.function.BiConsumer;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.HibernateException;
 import org.hibernate.engine.jdbc.BinaryStream;
-import org.hibernate.engine.jdbc.internal.BinaryStreamImpl;
+import org.hibernate.engine.jdbc.internal.StreamBackedBinaryStream;
 import org.hibernate.type.descriptor.WrapperOptions;
 import org.hibernate.type.descriptor.java.AbstractClassJavaType;
 import org.hibernate.type.descriptor.java.BasicJavaType;
@@ -35,9 +33,12 @@ import org.hibernate.type.descriptor.jdbc.JdbcType;
 import org.hibernate.type.descriptor.jdbc.VarcharJdbcType;
 import org.hibernate.usertype.BaseUserTypeSupport;
 import org.hibernate.usertype.DynamicParameterizedType;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.json.JsonMapper;
 
 import org.springframework.beans.BeanUtils;
 
+@SuppressWarnings("removal")
 @Slf4j
 public class JsonType extends BaseUserTypeSupport<Object> implements DynamicParameterizedType {
 
@@ -47,16 +48,17 @@ public class JsonType extends BaseUserTypeSupport<Object> implements DynamicPara
 	public void setParameterValues(Properties parameters) {
 		Object xProperty = parameters.get(DynamicParameterizedType.XPROPERTY);
 		try {
-			Class<?> javaXMember = Class.forName("org.hibernate.annotations.common.reflection.java.JavaXMember");
-			if (javaXMember.isInstance(xProperty)) {
-				this.type = (Type) javaXMember.getMethod("getJavaType").invoke(xProperty);
+			Class<?> jdkFieldDetails = Class.forName("org.hibernate.models.internal.jdk.JdkFieldDetails");
+			if (jdkFieldDetails.isInstance(xProperty)) {
+				this.type = ((Field) jdkFieldDetails.getMethod("toJavaMember").invoke(xProperty)).getGenericType();
 			}
 		}
 		catch (Exception ex) {
 			log.error(ex.getMessage(), ex);
 		}
 		if (this.type == null) {
-			this.type = ((ParameterType) parameters.get(PARAMETER_TYPE)).getReturnedClass();
+			this.type = ((DynamicParameterizedType.ParameterType) parameters
+				.get(DynamicParameterizedType.PARAMETER_TYPE)).getReturnedClass();
 		}
 	}
 
@@ -67,9 +69,10 @@ public class JsonType extends BaseUserTypeSupport<Object> implements DynamicPara
 
 	static class JsonJavaType extends AbstractClassJavaType<Object> {
 
-		private static final ObjectMapper objectMapper = new ObjectMapper()
-			.setSerializationInclusion(JsonInclude.Include.NON_NULL)
-			.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
+		private static final JsonMapper jsonMapper = JsonMapper.builder()
+			.changeDefaultPropertyInclusion(incl -> incl.withValueInclusion(JsonInclude.Include.NON_NULL))
+			.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
+			.build();
 
 		private final Type propertyType;
 
@@ -122,12 +125,7 @@ public class JsonType extends BaseUserTypeSupport<Object> implements DynamicPara
 
 		@Override
 		public String toString(Object value) {
-			try {
-				return objectMapper.writeValueAsString(value);
-			}
-			catch (JsonProcessingException ex) {
-				throw new RuntimeException(ex);
-			}
+			return jsonMapper.writeValueAsString(value);
 		}
 
 		@Override
@@ -135,13 +133,7 @@ public class JsonType extends BaseUserTypeSupport<Object> implements DynamicPara
 			if (String.class == this.propertyType) {
 				return string;
 			}
-			try {
-				return JsonJavaType.objectMapper.readValue(string.toString(),
-						objectMapper.constructType(this.propertyType));
-			}
-			catch (JsonProcessingException ex) {
-				throw new RuntimeException(ex);
-			}
+			return JsonJavaType.jsonMapper.readValue(string.toString(), jsonMapper.constructType(this.propertyType));
 		}
 
 		@SuppressWarnings({ "unchecked" })
@@ -157,8 +149,8 @@ public class JsonType extends BaseUserTypeSupport<Object> implements DynamicPara
 			else if (BinaryStream.class.isAssignableFrom(type) || byte[].class.isAssignableFrom(type)) {
 				String stringValue = (value instanceof String s) ? s : toString(value);
 
-				return (X) new BinaryStreamImpl(
-						DataHelper.extractBytes(new ByteArrayInputStream(stringValue.getBytes())));
+				byte[] bytes = stringValue.getBytes();
+				return (X) new StreamBackedBinaryStream(new ByteArrayInputStream(bytes), bytes.length);
 			}
 			else if (Blob.class.isAssignableFrom(type)) {
 				String stringValue = (value instanceof String s) ? s : toString(value);
@@ -168,12 +160,7 @@ public class JsonType extends BaseUserTypeSupport<Object> implements DynamicPara
 			}
 			else if (Object.class.isAssignableFrom(type)) {
 				String stringValue = (value instanceof String s) ? s : toString(value);
-				try {
-					return (X) objectMapper.readTree(stringValue);
-				}
-				catch (JsonProcessingException ex) {
-					throw new RuntimeException(ex);
-				}
+				return (X) jsonMapper.readTree(stringValue);
 			}
 
 			throw unknownUnwrap(type);

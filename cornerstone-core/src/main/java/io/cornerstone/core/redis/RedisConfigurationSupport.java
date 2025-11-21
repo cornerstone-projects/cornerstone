@@ -7,18 +7,19 @@ import io.lettuce.core.resource.ClientResources;
 import io.lettuce.core.resource.DefaultClientResources;
 
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.boot.autoconfigure.data.redis.ClientResourcesBuilderCustomizer;
-import org.springframework.boot.autoconfigure.data.redis.LettuceClientConfigurationBuilderCustomizer;
-import org.springframework.boot.autoconfigure.data.redis.LettuceClientOptionsBuilderCustomizer;
-import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
-import org.springframework.boot.autoconfigure.data.redis.RedisConnectionDetails;
-import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
+import org.springframework.boot.data.redis.autoconfigure.ClientResourcesBuilderCustomizer;
+import org.springframework.boot.data.redis.autoconfigure.DataRedisAutoConfiguration;
+import org.springframework.boot.data.redis.autoconfigure.DataRedisConnectionDetails;
+import org.springframework.boot.data.redis.autoconfigure.DataRedisProperties;
+import org.springframework.boot.data.redis.autoconfigure.LettuceClientConfigurationBuilderCustomizer;
+import org.springframework.boot.data.redis.autoconfigure.LettuceClientOptionsBuilderCustomizer;
 import org.springframework.boot.ssl.SslBundles;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.data.redis.connection.RedisClusterConfiguration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisSentinelConfiguration;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
+import org.springframework.data.redis.connection.RedisStaticMasterReplicaConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -27,24 +28,24 @@ import org.springframework.util.ClassUtils;
 
 public class RedisConfigurationSupport {
 
-	private static final RedisAutoConfiguration redisAutoConfiguration = new RedisAutoConfiguration();
-
 	private final Object lettuceConnectionConfiguration;
 
-	RedisConfigurationSupport(RedisProperties properties,
+	RedisConfigurationSupport(DataRedisProperties properties,
 			ObjectProvider<RedisStandaloneConfiguration> standaloneConfigurationProvider,
 			ObjectProvider<RedisSentinelConfiguration> sentinelConfigurationProvider,
 			ObjectProvider<RedisClusterConfiguration> clusterConfigurationProvider,
-			RedisConnectionDetails connectionDetails) {
+			ObjectProvider<RedisStaticMasterReplicaConfiguration> masterReplicaConfiguration,
+			DataRedisConnectionDetails connectionDetails) {
 		try {
-			Class<?> clazz = RedisAutoConfiguration.class;
+			Class<?> clazz = DataRedisAutoConfiguration.class;
 			Class<?> configurationClass = ClassUtils.forName(clazz.getPackageName() + ".LettuceConnectionConfiguration",
 					clazz.getClassLoader());
 			Constructor<?> ctor = configurationClass.getDeclaredConstructor(
 					RedisConfigurationSupport.class.getDeclaredConstructors()[0].getParameterTypes());
 			ctor.setAccessible(true);
 			this.lettuceConnectionConfiguration = ctor.newInstance(properties, standaloneConfigurationProvider,
-					sentinelConfigurationProvider, clusterConfigurationProvider, connectionDetails);
+					sentinelConfigurationProvider, clusterConfigurationProvider, masterReplicaConfiguration,
+					connectionDetails);
 		}
 		catch (Exception ex) {
 			throw new RuntimeException(ex.getMessage(), ex);
@@ -82,11 +83,13 @@ public class RedisConfigurationSupport {
 	}
 
 	protected RedisTemplate<Object, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
-		return redisAutoConfiguration.redisTemplate(redisConnectionFactory);
+		RedisTemplate<Object, Object> template = new RedisTemplate<>();
+		template.setConnectionFactory(redisConnectionFactory);
+		return template;
 	}
 
 	protected StringRedisTemplate stringRedisTemplate(RedisConnectionFactory redisConnectionFactory) {
-		return redisAutoConfiguration.stringRedisTemplate(redisConnectionFactory);
+		return new StringRedisTemplate(redisConnectionFactory);
 	}
 
 	protected RedisMessageListenerContainer redisMessageListenerContainer(RedisConnectionFactory redisConnectionFactory,
@@ -102,14 +105,15 @@ public class RedisConfigurationSupport {
 		return container;
 	}
 
-	static RedisConnectionDetails createRedisConnectionDetails(RedisProperties properties, SslBundles sslBundles) {
+	static DataRedisConnectionDetails createRedisConnectionDetails(DataRedisProperties properties,
+			SslBundles sslBundles) {
 		try {
 			Constructor<?> ctor = ClassUtils
-				.forName(RedisProperties.class.getPackageName() + ".PropertiesRedisConnectionDetails",
-						RedisProperties.class.getClassLoader())
-				.getDeclaredConstructor(RedisProperties.class, SslBundles.class);
+				.forName(DataRedisProperties.class.getPackageName() + ".PropertiesDataRedisConnectionDetails",
+						DataRedisProperties.class.getClassLoader())
+				.getDeclaredConstructor(DataRedisProperties.class, SslBundles.class);
 			ctor.setAccessible(true);
-			return (RedisConnectionDetails) ctor.newInstance(properties, sslBundles);
+			return (DataRedisConnectionDetails) ctor.newInstance(properties, sslBundles);
 		}
 		catch (Exception ex) {
 			throw new RuntimeException(ex.getMessage(), ex);

@@ -7,8 +7,8 @@ import org.slf4j.MDC;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.boot.web.client.RestTemplateCustomizer;
+import org.springframework.boot.restclient.RestTemplateBuilder;
+import org.springframework.boot.restclient.RestTemplateCustomizer;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;

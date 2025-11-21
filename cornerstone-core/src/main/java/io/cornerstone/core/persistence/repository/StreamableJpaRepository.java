@@ -4,6 +4,7 @@ import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 import jakarta.persistence.EntityManager;
+import org.jspecify.annotations.Nullable;
 
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Sort;
@@ -11,7 +12,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.NoRepositoryBean;
-import org.springframework.lang.Nullable;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 

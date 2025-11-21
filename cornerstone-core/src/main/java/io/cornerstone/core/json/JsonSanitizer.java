@@ -1,9 +1,7 @@
 package io.cornerstone.core.json;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -17,22 +15,22 @@ import java.util.function.Function;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.MapperFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.json.JsonMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.databind.ser.FilterProvider;
-import com.fasterxml.jackson.databind.ser.PropertyWriter;
-import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
-import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import io.cornerstone.core.util.ReflectionUtils;
 import lombok.Getter;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectWriter;
+import tools.jackson.databind.SerializationContext;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.cfg.DateTimeFeature;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.node.ArrayNode;
+import tools.jackson.databind.node.ObjectNode;
+import tools.jackson.databind.ser.FilterProvider;
+import tools.jackson.databind.ser.PropertyWriter;
+import tools.jackson.databind.ser.std.SimpleBeanPropertyFilter;
+import tools.jackson.databind.ser.std.SimpleFilterProvider;
 
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.core.annotation.AnnotationUtils;
@@ -41,7 +39,7 @@ public class JsonSanitizer {
 
 	public static final JsonSanitizer DEFAULT_INSTANCE = new JsonSanitizer();
 
-	private final ObjectMapper objectMapper;
+	private final JsonMapper jsonMapper;
 
 	@Getter
 	private final Map<BiPredicate<String, Object>, Function<String, String>> mapping;
@@ -72,7 +70,7 @@ public class JsonSanitizer {
 		this.dropping = dropping;
 		FilterProvider filters = new SimpleFilterProvider().setDefaultFilter(new SimpleBeanPropertyFilter() {
 			@Override
-			public void serializeAsField(Object obj, JsonGenerator jgen, SerializerProvider provider,
+			public void serializeAsProperty(Object obj, JsonGenerator jgen, SerializationContext context,
 					PropertyWriter writer) throws Exception {
 				String name = writer.getName();
 				if (include(writer) && dropping.stream().noneMatch(entry -> entry.test(name, obj))) {
@@ -88,15 +86,15 @@ public class JsonSanitizer {
 							String newValue = func.get().apply(value != null ? String.valueOf(value) : null);
 							Class<?> type = bw.getPropertyType(name);
 							if (isNumeric(type) && isNumber(newValue)) {
-								jgen.writeFieldName(name);
+								jgen.writeName(name);
 								jgen.writeNumber(newValue);
 							}
 							else if (((type == Boolean.class) || (type == boolean.class))
 									&& ("true".equals(newValue) || "false".equals(newValue))) {
-								jgen.writeBooleanField(name, Boolean.getBoolean(newValue));
+								jgen.writeBooleanProperty(name, Boolean.getBoolean(newValue));
 							}
 							else {
-								jgen.writeStringField(name, newValue);
+								jgen.writeStringProperty(name, newValue);
 							}
 						}
 						catch (Exception ignore) {
@@ -116,47 +114,47 @@ public class JsonSanitizer {
 
 						}
 						if (annotation == null) {
-							writer.serializeAsField(obj, jgen, provider);
+							writer.serializeAsProperty(obj, jgen, context);
 							return;
 						}
 
 						String newValue = annotation.value();
 						if (newValue.equals(JsonSanitize.DEFAULT_NONE)) {
-							writer.serializeAsOmittedField(obj, jgen, provider);
+							writer.serializeAsOmittedProperty(obj, jgen, context);
 						}
 						else {
 							Class<?> type = bw.getPropertyType(name);
 							if (isNumeric(type) && isNumber(newValue)) {
-								jgen.writeFieldName(name);
+								jgen.writeName(name);
 								jgen.writeNumber(newValue);
 							}
 							else if (((type == Boolean.class) || (type == boolean.class))
 									&& ("true".equals(newValue) || "false".equals(newValue))) {
-								jgen.writeBooleanField(name, Boolean.getBoolean(newValue));
+								jgen.writeBooleanProperty(name, Boolean.getBoolean(newValue));
 							}
 							else {
 								Object value = bw.getPropertyValue(name);
-								jgen.writeStringField(name, sanitizeString(value != null ? value.toString() : null,
+								jgen.writeStringProperty(name, sanitizeString(value != null ? value.toString() : null,
 										newValue, annotation.position()));
 							}
 						}
 					}
 				}
-				else if (!jgen.canOmitFields()) {
-					writer.serializeAsOmittedField(obj, jgen, provider);
+				else if (!jgen.canOmitProperties()) {
+					writer.serializeAsOmittedProperty(obj, jgen, context);
 				}
 			}
 		}).setFailOnUnknownId(false);
 		JsonMapper.Builder builder = JsonMapper.builder();
-		builder.serializationInclusion(JsonInclude.Include.NON_NULL);
+		builder.changeDefaultPropertyInclusion(incl -> incl.withValueInclusion(JsonInclude.Include.NON_NULL));
 		builder.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 		builder.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
-		builder.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+		builder.disable(DateTimeFeature.WRITE_DATES_AS_TIMESTAMPS);
 		builder.enable(SerializationFeature.INDENT_OUTPUT);
-		builder.enable(MapperFeature.USE_STD_BEAN_NAMING);
 		builder.defaultTimeZone(TimeZone.getDefault());
-		this.objectMapper = builder.build();
-		this.objectWriter = this.objectMapper.addMixIn(Object.class, SanitizerMixIn.class).writer(filters);
+		builder.addMixIn(Object.class, SanitizerMixIn.class);
+		this.jsonMapper = builder.build();
+		this.objectWriter = this.jsonMapper.writer(filters);
 	}
 
 	private static String sanitizeString(String value, String mask, int position) {
@@ -211,20 +209,15 @@ public class JsonSanitizer {
 	}
 
 	public String sanitize(String json) {
-		try {
-			JsonNode node = this.objectMapper.readTree(json);
-			sanitize(null, node, null);
-			return this.objectMapper.writeValueAsString(node);
-		}
-		catch (IOException ex) {
-			return json;
-		}
+		JsonNode node = this.jsonMapper.readTree(json);
+		sanitize(null, node, null);
+		return this.jsonMapper.writeValueAsString(node);
 	}
 
 	private void sanitize(String nodeName, JsonNode node, JsonNode parent) {
 		if (node.isObject()) {
 			List<String> toBeDropped = new ArrayList<>();
-			node.fieldNames().forEachRemaining(name -> {
+			node.propertyNames().forEach(name -> {
 				if (this.dropping.stream().anyMatch(p -> p.test(name, node))) {
 					toBeDropped.add(name);
 				}
@@ -234,17 +227,15 @@ public class JsonSanitizer {
 				sanitize(entry.getKey(), entry.getValue(), node);
 			}
 		}
-		else if (node.isArray()) {
-			Iterator<JsonNode> iterator = node.elements();
-			while (iterator.hasNext()) {
-				JsonNode element = iterator.next();
+		else if (node instanceof ArrayNode arrayNode) {
+			for (JsonNode element : arrayNode) {
 				sanitize(null, element, node);
 			}
 		}
 		else if (parent instanceof ObjectNode on) {
 			this.mapping.forEach((k, v) -> {
 				if (k.test(nodeName, parent)) {
-					String value = v.apply(node.isNull() ? null : node.asText());
+					String value = v.apply(node.isNull() ? null : node.asString());
 					try {
 						if (node.isNumber()) {
 							on.put(nodeName, new BigDecimal(value));
