@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.boot.web.error.Error;
 import org.springframework.boot.web.error.ErrorAttributeOptions;
-import org.springframework.boot.web.servlet.error.DefaultErrorAttributes;
+import org.springframework.boot.webmvc.error.DefaultErrorAttributes;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.FieldError;
 import org.springframework.web.context.request.WebRequest;

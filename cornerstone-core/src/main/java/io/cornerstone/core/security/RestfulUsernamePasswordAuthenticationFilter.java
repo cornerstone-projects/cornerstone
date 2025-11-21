@@ -2,10 +2,10 @@ package io.cornerstone.core.security;
 
 import java.util.Map;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.json.JsonMapper;
 
 import org.springframework.http.MediaType;
 import org.springframework.lang.Nullable;
@@ -20,10 +20,10 @@ public class RestfulUsernamePasswordAuthenticationFilter extends UsernamePasswor
 
 	private static final String ATTR_NAME_REQUEST_BODY = "_REQUEST_BODY";
 
-	private final ObjectMapper objectMapper;
+	private final JsonMapper jsonMapper;
 
-	public RestfulUsernamePasswordAuthenticationFilter(ObjectMapper objectMapper) {
-		this.objectMapper = objectMapper;
+	public RestfulUsernamePasswordAuthenticationFilter(JsonMapper jsonMapper) {
+		this.jsonMapper = jsonMapper;
 		setAuthenticationDetailsSource(new WebAuthenticationDetailsSource() {
 
 			@Override
@@ -65,7 +65,7 @@ public class RestfulUsernamePasswordAuthenticationFilter extends UsernamePasswor
 		if (contentType != null) {
 			if (MediaType.parseMediaType(contentType).isCompatibleWith(APPLICATION_JSON)) {
 				try {
-					requestBody = this.objectMapper.readValue(request.getInputStream(), new TypeReference<>() {
+					requestBody = this.jsonMapper.readValue(request.getInputStream(), new TypeReference<>() {
 					});
 					request.setAttribute(ATTR_NAME_REQUEST_BODY, requestBody);
 					return requestBody;

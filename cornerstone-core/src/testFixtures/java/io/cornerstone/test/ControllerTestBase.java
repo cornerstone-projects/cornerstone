@@ -1,9 +1,11 @@
 package io.cornerstone.test;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.boot.resttestclient.TestRestTemplate;
+import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureTestRestTemplate;
 import org.springframework.context.MessageSource;
 
+@AutoConfigureTestRestTemplate
 @SpringApplicationTest
 public abstract class ControllerTestBase extends SpringApplicationTestBase {
 
