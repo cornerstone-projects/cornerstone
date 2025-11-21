@@ -3,8 +3,6 @@ package io.cornerstone.core.tracing;
 import java.time.Duration;
 
 import io.cornerstone.core.Application;
-import io.lettuce.core.tracing.MicrometerTracing;
-import io.micrometer.observation.ObservationRegistry;
 import io.micrometer.tracing.exporter.SpanExportingPredicate;
 import io.opentelemetry.api.common.Attributes;
 import io.opentelemetry.api.common.AttributesBuilder;
@@ -12,16 +10,13 @@ import io.opentelemetry.sdk.resources.Resource;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.actuate.autoconfigure.tracing.ConditionalOnEnabledTracing;
-import org.springframework.boot.actuate.autoconfigure.tracing.SdkTracerProviderBuilderCustomizer;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.autoconfigure.data.redis.ClientResourcesBuilderCustomizer;
+import org.springframework.boot.micrometer.tracing.autoconfigure.ConditionalOnEnabledTracingExport;
+import org.springframework.boot.micrometer.tracing.opentelemetry.autoconfigure.SdkTracerProviderBuilderCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
 
 @Configuration
-@ConditionalOnEnabledTracing
+@ConditionalOnEnabledTracingExport
 public class TracingConfiguration {
 
 	@Autowired
@@ -46,14 +41,6 @@ public class TracingConfiguration {
 			Duration duration = Duration.between(span.getStartTimestamp(), span.getEndTimestamp());
 			return duration.compareTo(minimumDuration) > 0;
 		};
-	}
-
-	@Bean
-	@ConditionalOnClass(MicrometerTracing.class)
-	ClientResourcesBuilderCustomizer clientResourcesBuilderCustomizerForTracing(ObservationRegistry observationRegistry,
-			Environment env) {
-		return builder -> builder
-			.tracing(new MicrometerTracing(observationRegistry, "redis", env.matchesProfiles("dev")));
 	}
 
 }

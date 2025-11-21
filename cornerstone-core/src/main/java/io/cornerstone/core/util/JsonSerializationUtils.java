@@ -13,35 +13,45 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.introspect.AnnotatedMember;
-import com.fasterxml.jackson.databind.introspect.JacksonAnnotationIntrospector;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import lombok.experimental.UtilityClass;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.core.JsonParser;
+import tools.jackson.databind.DatabindContext;
+import tools.jackson.databind.DefaultTyping;
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.JavaType;
+import tools.jackson.databind.SerializationContext;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.ValueDeserializer;
+import tools.jackson.databind.cfg.MapperConfig;
+import tools.jackson.databind.introspect.AnnotatedMember;
+import tools.jackson.databind.introspect.JacksonAnnotationIntrospector;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.jsontype.DefaultBaseTypeLimitingValidator;
+import tools.jackson.databind.module.SimpleModule;
+import tools.jackson.databind.ser.std.StdSerializer;
 
 import org.springframework.cache.support.NullValue;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.jackson2.SimpleGrantedAuthorityMixin;
+import org.springframework.security.jackson.SimpleGrantedAuthorityMixin;
 import org.springframework.util.ClassUtils;
 
 @UtilityClass
 public class JsonSerializationUtils {
 
-	private static final ObjectMapper defaultTypingObjectMapper = createObjectMapper();
-	static {
-		defaultTypingObjectMapper.activateDefaultTyping(defaultTypingObjectMapper.getPolymorphicTypeValidator(),
-				ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
-	}
+	private static final JsonMapper defaultTypingObjectMapper = createJsonMapperBuilder()
+		.activateDefaultTyping(new DefaultBaseTypeLimitingValidator() {
+			@Override
+			public Validity validateBaseType(DatabindContext ctx, JavaType baseType) {
+				if (baseType.getRawClass() == Object.class) {
+					return Validity.ALLOWED;
+				}
+				return super.validateBaseType(ctx, baseType);
+			}
+		}, DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY)
+		.build();
 
 	public static byte[] serialize(Object object) throws IOException {
 		if (object == null) {
@@ -85,39 +95,28 @@ public class JsonSerializationUtils {
 		return defaultTypingObjectMapper.readValue(bytes, Object.class);
 	}
 
-	public static ObjectMapper createObjectMapper() {
-		return createObjectMapper(null);
-	}
-
-	public static ObjectMapper createObjectMapper(JsonFactory jsonFactory) {
-		ObjectMapper objectMapper = new ObjectMapper(jsonFactory)
-			.setSerializationInclusion(JsonInclude.Include.NON_NULL)
+	public static JsonMapper.Builder createJsonMapperBuilder() {
+		JsonMapper.Builder builder = JsonMapper.builder()
+			.changeDefaultPropertyInclusion(incl -> incl.withValueInclusion(JsonInclude.Include.NON_NULL))
 			.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
 			.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
 			.addMixIn(Throwable.class, ThrowableMixin.class)
 			.addMixIn(GrantedAuthority.class, SimpleGrantedAuthorityMixin.class)
 			.addMixIn(SimpleGrantedAuthority.class, SimpleGrantedAuthorityMixin.class)
-			.registerModule(new SimpleModule().addSerializer(new NullValueSerializer())
-				.addDeserializer(NullValue.class, new JsonDeserializer<>() {
+			.addModule(new SimpleModule().addSerializer(new NullValueSerializer())
+				.addDeserializer(NullValue.class, new ValueDeserializer<>() {
 					@Override
 					public NullValue deserialize(JsonParser jsonparser, DeserializationContext deserializationcontext) {
 						return (NullValue) NullValue.INSTANCE;
 					}
 				}))
-			.setAnnotationIntrospector(SmartJacksonAnnotationIntrospector.INSTANCE);
-		if (ClassUtils.isPresent("com.fasterxml.jackson.datatype.jsr310.JavaTimeModule",
+			.annotationIntrospector(SmartJacksonAnnotationIntrospector.INSTANCE);
+
+		if (ClassUtils.isPresent("tools.jackson.module.mrbean.MrBeanModule",
 				JsonSerializationUtils.class.getClassLoader())) {
-			objectMapper.registerModule(new com.fasterxml.jackson.datatype.jsr310.JavaTimeModule());
+			builder.addModule(new tools.jackson.module.mrbean.MrBeanModule());
 		}
-		if (ClassUtils.isPresent("com.fasterxml.jackson.module.paramnames.ParameterNamesModule",
-				JsonSerializationUtils.class.getClassLoader())) {
-			objectMapper.registerModule(new com.fasterxml.jackson.module.paramnames.ParameterNamesModule());
-		}
-		if (ClassUtils.isPresent("com.fasterxml.jackson.module.mrbean.MrBeanModule",
-				JsonSerializationUtils.class.getClassLoader())) {
-			objectMapper.registerModule(new com.fasterxml.jackson.module.mrbean.MrBeanModule());
-		}
-		return objectMapper;
+		return builder;
 	}
 
 	@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
@@ -137,8 +136,6 @@ public class JsonSerializationUtils {
 
 		public static final SmartJacksonAnnotationIntrospector INSTANCE = new SmartJacksonAnnotationIntrospector();
 
-		private static final long serialVersionUID = 412899061519525960L;
-
 		private final Map<Member, Boolean> cache = new ConcurrentHashMap<>(1024);
 
 		private SmartJacksonAnnotationIntrospector() {
@@ -146,7 +143,7 @@ public class JsonSerializationUtils {
 		}
 
 		@Override
-		public boolean hasIgnoreMarker(AnnotatedMember m) {
+		public boolean hasIgnoreMarker(MapperConfig<?> config, AnnotatedMember m) {
 			Member member = m.getMember();
 			Class<?> declaringClass = member.getDeclaringClass();
 			if (GrantedAuthority.class.isAssignableFrom(declaringClass)
@@ -188,16 +185,14 @@ public class JsonSerializationUtils {
 
 	private static class NullValueSerializer extends StdSerializer<NullValue> {
 
-		private static final long serialVersionUID = 1999052150548658808L;
-
 		NullValueSerializer() {
 			super(NullValue.class);
 		}
 
 		@Override
-		public void serialize(NullValue value, JsonGenerator jgen, SerializerProvider provider) throws IOException {
+		public void serialize(NullValue value, JsonGenerator jgen, SerializationContext context) {
 			jgen.writeStartObject();
-			jgen.writeStringField("@class", NullValue.class.getName());
+			jgen.writeStringProperty("@class", NullValue.class.getName());
 			jgen.writeEndObject();
 		}
 

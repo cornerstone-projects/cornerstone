@@ -12,6 +12,7 @@ import java.util.stream.Stream;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
 import com.fasterxml.jackson.annotation.JsonView;
+import jakarta.persistence.Id;
 import lombok.experimental.UtilityClass;
 
 import org.springframework.beans.BeanWrapper;
@@ -39,6 +40,9 @@ public class BeanUtils {
 			String name = pd.getName();
 			Method m = pd.getReadMethod();
 			if (m == null) {
+				continue;
+			}
+			if (findAnnotation(m, name, Id.class) != null) {
 				continue;
 			}
 			JsonView jsonView = findAnnotation(m, name, JsonView.class);

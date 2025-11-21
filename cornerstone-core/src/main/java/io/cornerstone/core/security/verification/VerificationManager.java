@@ -1,6 +1,7 @@
 package io.cornerstone.core.security.verification;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
+
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.util.StringUtils;
 
@@ -20,8 +21,7 @@ public interface VerificationManager {
 				|| isVerificationAware && ((VerificationAware) user).isPasswordRequired();
 	}
 
-	@Nullable
-	default String getReceiver(UserDetails user) {
+	@Nullable default String getReceiver(UserDetails user) {
 		String receiver = null;
 		if (user instanceof VerificationAware va) {
 			receiver = va.getReceiver();

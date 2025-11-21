@@ -19,12 +19,12 @@ class DefaultPropertiesEnvironmentPostProcessorTests extends SpringApplicationTe
 
 	@Test
 	void defaultYmlShouldOverrideSpringBootDefaults() {
-		assertThat(this.env.getProperty("server.error.include-message")).isEqualTo("always");
+		assertThat(this.env.getProperty("spring.web.error.include-message")).isEqualTo("always");
 	}
 
 	@Test
 	void applicationYmlShouldOverrideDefaultYml() {
-		assertThat(this.env.getProperty("server.error.include-binding-errors")).isEqualTo("never");
+		assertThat(this.env.getProperty("spring.web.error.include-binding-errors")).isEqualTo("never");
 	}
 
 	@Test

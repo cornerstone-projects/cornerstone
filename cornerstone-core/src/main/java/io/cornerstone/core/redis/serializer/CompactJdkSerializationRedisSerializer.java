@@ -5,10 +5,11 @@ import java.io.ObjectStreamConstants;
 import java.io.StreamCorruptedException;
 import java.nio.charset.StandardCharsets;
 
+import org.jspecify.annotations.Nullable;
+
 import org.springframework.core.serializer.support.SerializationFailedException;
 import org.springframework.data.redis.serializer.JdkSerializationRedisSerializer;
 import org.springframework.data.redis.serializer.SerializationException;
-import org.springframework.lang.Nullable;
 
 public class CompactJdkSerializationRedisSerializer extends JdkSerializationRedisSerializer {
 

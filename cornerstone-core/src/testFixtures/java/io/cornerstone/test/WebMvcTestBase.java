@@ -5,7 +5,7 @@ import io.cornerstone.core.web.DefaultWebMvcConfigurer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigurationExcludeFilter;
 import org.springframework.boot.context.TypeExcludeFilter;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.ComponentScan.Filter;
@@ -32,6 +32,7 @@ public abstract class WebMvcTestBase {
 	protected RestTemplate restTemplate;
 
 	@Autowired
+	@SuppressWarnings("deprecation")
 	private void setMockMvc(MockMvc mockMvc) {
 		this.mockMvc = mockMvc;
 		this.restTemplate = new RestTemplate(new MockMvcClientHttpRequestFactory(this.mockMvc));
@@ -44,7 +45,7 @@ public abstract class WebMvcTestBase {
 	static class Config {
 
 		@Bean
-		SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+		SecurityFilterChain filterChain(HttpSecurity http) {
 			return http.csrf(CsrfConfigurer::disable).build();
 		}
 

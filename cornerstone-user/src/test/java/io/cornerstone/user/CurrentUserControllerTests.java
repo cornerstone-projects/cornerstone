@@ -3,7 +3,7 @@ package io.cornerstone.user;
 import io.cornerstone.test.ControllerTestBase;
 import org.junit.jupiter.api.Test;
 
-import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.boot.resttestclient.TestRestTemplate;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 

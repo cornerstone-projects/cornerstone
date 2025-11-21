@@ -12,8 +12,10 @@ import io.cornerstone.core.security.verification.VerificationCodeRequirement;
 import io.cornerstone.core.security.verification.impl.DefaultVerificationService;
 import io.cornerstone.test.ControllerTestBase;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -46,6 +48,7 @@ import static org.springframework.http.HttpMethod.*;
 import static org.springframework.http.HttpStatus.*;
 import static org.springframework.http.MediaType.*;
 
+@ExtendWith(MockitoExtension.class)
 @TestPropertySource(properties = { "verification.code.enabled=true" })
 @ContextConfiguration
 class LoginWithVerificationCodeTests extends ControllerTestBase {

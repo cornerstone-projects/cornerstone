@@ -6,7 +6,7 @@ import io.micrometer.observation.ObservationPredicate;
 import io.micrometer.observation.ObservationRegistry;
 import net.ttddyy.observation.tracing.DataSourceBaseContext;
 
-import org.springframework.boot.actuate.autoconfigure.tracing.ConditionalOnEnabledTracing;
+import org.springframework.boot.micrometer.tracing.autoconfigure.ConditionalOnEnabledTracingExport;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.server.observation.ServerRequestObservationContext;
@@ -16,7 +16,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.filter.ServerHttpObservationFilter;
 
 @Configuration
-@ConditionalOnEnabledTracing
+@ConditionalOnEnabledTracingExport
 public class ObservationConfiguration {
 
 	@Bean
