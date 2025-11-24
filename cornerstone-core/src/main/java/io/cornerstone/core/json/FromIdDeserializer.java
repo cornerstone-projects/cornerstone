@@ -1,6 +1,7 @@
 package io.cornerstone.core.json;
 
 import java.lang.reflect.Array;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -14,11 +15,11 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.deser.ContextualDeserializer;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 
 import org.springframework.beans.BeanUtils;
+import org.springframework.core.convert.support.DefaultConversionService;
 
 public class FromIdDeserializer extends StdDeserializer<Object> implements ContextualDeserializer {
 
@@ -72,7 +73,7 @@ public class FromIdDeserializer extends StdDeserializer<Object> implements Conte
 						coll.add(parser.readValueAs(componentType.getRawClass()));
 					}
 					else {
-						coll.add(convert(parser, parser.getText(), componentType));
+						coll.add(convert(parser.getText(), componentType));
 					}
 				}
 				if (this.type.isArrayType()) {
@@ -93,7 +94,7 @@ public class FromIdDeserializer extends StdDeserializer<Object> implements Conte
 					obj = parser.readValueAs(this.type.getRawClass());
 				}
 				else {
-					obj = convert(parser, parser.getText(), this.type);
+					obj = convert(parser.getText(), this.type);
 				}
 				return obj;
 			}
@@ -112,8 +113,16 @@ public class FromIdDeserializer extends StdDeserializer<Object> implements Conte
 		return new FromIdDeserializer(beanProperty.getType());
 	}
 
-	private static Object convert(JsonParser parser, String id, JavaType type) throws Exception {
-		return ((ObjectMapper) parser.getCodec()).readValue("{\"id\":\"" + id + "\"}", type);
+	private static Object convert(String id, JavaType type) throws Exception {
+		Class<?> clazz = type.getRawClass();
+		Method setId = BeanUtils.findMethodWithMinimalParameters(clazz, "setId");
+		if (setId == null) {
+			return null;
+		}
+		setId.setAccessible(true);
+		Object object = BeanUtils.instantiateClass(clazz);
+		setId.invoke(object, DefaultConversionService.getSharedInstance().convert(id, setId.getParameterTypes()[0]));
+		return object;
 	}
 
 }
