@@ -206,6 +206,14 @@ class EntityControllerTests extends WebMvcWithDataJpaTestBase {
 		assertThat(children).hasSize(1);
 		assertThat(children).element(0).extracting("name").isEqualTo(child2.getName());
 
+		children = this.restTemplate
+			.exchange(RequestEntity.method(GET, PATH_CHILDREN + "?name=child1", parent1.getId()).build(),
+					new ParameterizedTypeReference<List<TestEntity>>() {
+					})
+			.getBody();
+		assertThat(children).hasSize(1);
+		assertThat(children).element(0).extracting("name").isEqualTo(child1.getName());
+
 		this.restTemplate.delete(PATH_DETAIL, child1.getId());
 		this.restTemplate.delete(PATH_DETAIL, child2.getId());
 		this.restTemplate.delete(PATH_DETAIL, parent1.getId());

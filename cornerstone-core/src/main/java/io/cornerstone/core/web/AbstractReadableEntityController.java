@@ -71,7 +71,12 @@ public abstract class AbstractReadableEntityController<T, ID> extends BaseRestCo
 			page = this.specificationExecutor.findAll(getQuerySpecification(query), pageable);
 		}
 		else {
-			page = this.repository.findAll(Example.of(example, getExampleMatcher()), pageable);
+			if (example != null) {
+				page = this.repository.findAll(Example.of(example, getExampleMatcher()), pageable);
+			}
+			else {
+				page = this.repository.findAll(pageable);
+			}
 		}
 		afterList(page.getContent());
 		return ResultPage.of(page);

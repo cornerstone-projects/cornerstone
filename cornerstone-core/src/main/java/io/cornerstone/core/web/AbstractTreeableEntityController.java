@@ -44,7 +44,7 @@ public abstract class AbstractTreeableEntityController<T extends AbstractTreeabl
 			if (StringUtils.hasText(query)) {
 				predicate = cb.and(predicate, getQuerySpecification(query).toPredicate(root, cq, cb));
 			}
-			else {
+			else if (example != null) {
 				predicate = PredicateBuilder.andExample(root, cb, predicate, Example.of(example, getExampleMatcher()));
 			}
 			return predicate;
