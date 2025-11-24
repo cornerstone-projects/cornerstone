@@ -146,6 +146,9 @@ spring.main.allow-bean-definition-overriding: true
 
 spring.http.client.redirects: DONT_FOLLOW
 
+logging:
+  config:
+
 ---
 spring:
   config.activate.on-profile: prod
