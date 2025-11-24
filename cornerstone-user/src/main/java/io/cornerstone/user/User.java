@@ -16,6 +16,7 @@ import io.cornerstone.core.security.verification.VerificationAware;
 import io.cornerstone.core.validation.constraints.MobilePhoneNumber;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 import jakarta.persistence.Version;
 import lombok.Getter;
 import lombok.Setter;
@@ -24,6 +25,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+@Table(name = "user")
 @Entity
 @Getter
 @Setter
