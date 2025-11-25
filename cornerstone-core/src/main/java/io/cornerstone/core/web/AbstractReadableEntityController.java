@@ -8,6 +8,7 @@ import io.cornerstone.core.domain.View;
 import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.annotation.PostConstruct;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.core.ResolvableType;
 import org.springframework.data.domain.Example;
@@ -18,6 +19,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,6 +37,8 @@ public abstract class AbstractReadableEntityController<T, ID> extends BaseRestCo
 
 	protected final Class<ID> idClass;
 
+	private final boolean hasNameProperty;
+
 	protected JpaRepository<T, ID> repository;
 
 	protected JpaSpecificationExecutor<T> specificationExecutor;
@@ -44,6 +48,9 @@ public abstract class AbstractReadableEntityController<T, ID> extends BaseRestCo
 		ResolvableType rt = ResolvableType.forClass(getClass()).as(AbstractReadableEntityController.class);
 		this.entityClass = (Class<T>) rt.getGeneric(0).resolve();
 		this.idClass = (Class<ID>) rt.getGeneric(1).resolve();
+		Assert.notNull(this.entityClass, "entityClass should be present");
+		Assert.notNull(this.idClass, "idClass should be present");
+		this.hasNameProperty = BeanUtils.getPropertyDescriptor(this.entityClass, "name") != null;
 	}
 
 	@PostConstruct
@@ -98,12 +105,19 @@ public abstract class AbstractReadableEntityController<T, ID> extends BaseRestCo
 	}
 
 	protected Specification<T> getQuerySpecification(String query) {
+		if (!this.hasNameProperty) {
+			return Specification.unrestricted();
+		}
 		String q = '%' + query + '%';
 		return (root, cq, cb) -> cb.like(root.get("name"), q);
 	}
 
 	protected ExampleMatcher getExampleMatcher() {
-		return ExampleMatcher.matching().withMatcher("name", ExampleMatcher.GenericPropertyMatcher::contains);
+		ExampleMatcher exampleMatcher = ExampleMatcher.matching();
+		if (this.hasNameProperty) {
+			exampleMatcher = exampleMatcher.withMatcher("name", ExampleMatcher.GenericPropertyMatcher::contains);
+		}
+		return exampleMatcher;
 	}
 
 }
