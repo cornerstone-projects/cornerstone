@@ -90,16 +90,9 @@ public class JsonType extends BaseUserTypeSupport<Object> implements DynamicPara
 					if (value instanceof Map<?, ?> map) {
 						return new LinkedHashMap<>(map);
 					}
-					Object obj;
-					try {
-						obj = BeanUtils.instantiateClass(value.getClass());
-						BeanUtils.copyProperties(value, obj);
-						return obj;
-					}
-					catch (Exception ex) {
-						throw new RuntimeException(ex);
-					}
-
+					Object obj = BeanUtils.instantiateClass(value.getClass());
+					BeanUtils.copyProperties(value, obj);
+					return obj;
 				}
 			});
 
