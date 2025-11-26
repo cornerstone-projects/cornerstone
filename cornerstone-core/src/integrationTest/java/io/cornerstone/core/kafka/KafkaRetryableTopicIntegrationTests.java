@@ -38,7 +38,8 @@ import static org.mockito.Mockito.times;
 @TestPropertySource(properties = {
 		"spring.kafka.producer.value-serializer=org.springframework.kafka.support.serializer.JsonSerializer",
 		"spring.kafka.producer.properties.spring.json.add.type.headers=false",
-		"spring.kafka.consumer.value-deserializer=io.cornerstone.core.kafka.PersonDeserializer",
+		"spring.kafka.consumer.value-deserializer=org.springframework.kafka.support.serializer.ErrorHandlingDeserializer",
+		"spring.kafka.properties.spring.deserializer.value.delegate.class=io.cornerstone.core.kafka.PersonDeserializer",
 		"spring.kafka.consumer.auto-offset-reset=earliest", "spring.kafka.consumer.enable-auto-commit=false" })
 @SpringJUnitConfig
 class KafkaRetryableTopicIntegrationTests {
@@ -86,7 +87,7 @@ class KafkaRetryableTopicIntegrationTests {
 		// uncomment @Bean to not reuse TaskScheduler from TaskSchedulingAutoConfiguration
 		RetryTopicSchedulerWrapper retryTopicSchedulerWrapper() {
 			ThreadPoolTaskSchedulerBuilder builder = new ThreadPoolTaskSchedulerBuilder()
-				.threadNamePrefix("retry-tpoic-scheduler");
+				.threadNamePrefix("retry-topic-scheduler");
 			return new RetryTopicSchedulerWrapper(builder.build());
 		}
 

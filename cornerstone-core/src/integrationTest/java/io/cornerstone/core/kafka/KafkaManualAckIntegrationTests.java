@@ -27,7 +27,8 @@ import static org.mockito.BDDMockito.*;
 @TestPropertySource(properties = {
 		"spring.kafka.producer.value-serializer=org.springframework.kafka.support.serializer.JsonSerializer",
 		"spring.kafka.producer.properties.spring.json.add.type.headers=false",
-		"spring.kafka.consumer.value-deserializer=io.cornerstone.core.kafka.PersonDeserializer",
+		"spring.kafka.consumer.value-deserializer=org.springframework.kafka.support.serializer.ErrorHandlingDeserializer",
+		"spring.kafka.properties.spring.deserializer.value.delegate.class=io.cornerstone.core.kafka.PersonDeserializer",
 		"spring.kafka.consumer.auto-offset-reset=earliest", "spring.kafka.consumer.enable-auto-commit=false",
 		"spring.kafka.listener.ack-mode=MANUAL_IMMEDIATE" })
 @SpringJUnitConfig
