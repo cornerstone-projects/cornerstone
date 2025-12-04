@@ -21,6 +21,7 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.task.TaskExecutionAutoConfiguration;
 import org.springframework.core.GenericTypeResolver;
 import org.springframework.core.task.TaskExecutor;
 
@@ -44,7 +45,7 @@ public abstract class RabbitTopic<T extends Serializable> implements Topic<T> {
 
 	@Setter
 	@Autowired(required = false)
-	@Qualifier("applicationTaskExecutor")
+	@Qualifier(TaskExecutionAutoConfiguration.APPLICATION_TASK_EXECUTOR_BEAN_NAME)
 	private TaskExecutor taskExecutor;
 
 	public RabbitTopic() {

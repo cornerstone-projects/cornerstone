@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.task.TaskExecutionAutoConfiguration;
 import org.springframework.core.GenericTypeResolver;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -42,7 +43,7 @@ public abstract class RedisTopic<T extends Serializable> implements io.cornersto
 
 	@Setter
 	@Autowired(required = false)
-	@Qualifier("applicationTaskExecutor")
+	@Qualifier(TaskExecutionAutoConfiguration.APPLICATION_TASK_EXECUTOR_BEAN_NAME)
 	private TaskExecutor taskExecutor;
 
 	public RedisTopic() {
