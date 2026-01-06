@@ -2,6 +2,7 @@ package io.cornerstone.core.kafka;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import io.cornerstone.test.containers.UseKafkaContainer;
 import org.apache.kafka.clients.admin.NewTopic;
@@ -46,7 +47,7 @@ class KafkaManualAckIntegrationTests {
 
 	@Test
 	void sendAndReceive() throws InterruptedException {
-		CountDownLatch latch = new CountDownLatch(2);
+		CountDownLatch latch = new CountDownLatch(3);
 		willAnswer(invocation -> {
 			latch.countDown();
 			return invocation.callRealMethod();
@@ -56,7 +57,7 @@ class KafkaManualAckIntegrationTests {
 		this.kafkaTemplate.send(TEST_TOPIC_NAME, new Person("test2", 20));
 
 		assertThat(latch.await(10, TimeUnit.SECONDS)).isTrue();
-		then(this.testListener).should().receive(eq(new Person("test1", 10)), any());
+		then(this.testListener).should(times(2)).receive(eq(new Person("test1", 10)), any());
 		then(this.testListener).should().receive(eq(new Person("test2", 20)), any());
 	}
 
@@ -77,8 +78,13 @@ class KafkaManualAckIntegrationTests {
 
 	static class TestListener {
 
+		AtomicBoolean ready = new AtomicBoolean();
+
 		@KafkaListener(id = TEST_GROUP_NAME, topics = TEST_TOPIC_NAME)
 		void receive(@Payload Person person, Acknowledgment ack) {
+			if (this.ready.compareAndSet(false, true)) {
+				throw new RuntimeException("Not Ready");
+			}
 			// process message
 			ack.acknowledge();
 		}
