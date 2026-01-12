@@ -77,8 +77,6 @@ if (integration != null) {
 val mockitoAgent by configurations.creating
 
 dependencies {
-	annotationProcessor("org.hibernate.orm:hibernate-jpamodelgen")
-	testAnnotationProcessor("org.hibernate.orm:hibernate-jpamodelgen")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.springframework.security:spring-security-test")
 	testRuntimeOnly("com.h2database:h2")

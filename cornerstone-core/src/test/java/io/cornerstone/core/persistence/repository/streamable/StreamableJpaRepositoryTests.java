@@ -19,7 +19,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import static io.cornerstone.core.persistence.repository.streamable.TestEntity_.*;
 import static org.assertj.core.api.Assertions.*;
 
 @EnableJpaRepositories(basePackageClasses = TestEntityRepository.class)
@@ -66,13 +65,13 @@ class StreamableJpaRepositoryTests extends DataJpaTestBase {
 	}
 
 	private void doStream() {
-		try (Stream<TestEntity> stream = this.repository.stream(Sort.by(INDEX))) {
+		try (Stream<TestEntity> stream = this.repository.stream(Sort.by("index"))) {
 			List<Integer> indexes = stream.peek(this.entityManager::detach).map(TestEntity::getIndex).toList();
 			assertThat(indexes).containsExactly(0, 1, 2, 3, 4);
 		}
 
-		try (Stream<TestEntity> stream = this.repository.stream((root, cq, cb) -> cb.ge(root.get(index), 1),
-				Sort.by(INDEX))) {
+		try (Stream<TestEntity> stream = this.repository.stream((root, cq, cb) -> cb.ge(root.get("index"), 1),
+				Sort.by("index"))) {
 			List<Integer> indexes = stream.peek(this.entityManager::detach).map(TestEntity::getIndex).toList();
 			assertThat(indexes).containsExactly(1, 2, 3, 4);
 		}
@@ -87,13 +86,13 @@ class StreamableJpaRepositoryTests extends DataJpaTestBase {
 
 	private void doForEach() {
 		List<Integer> list = new ArrayList<>();
-		this.repository.forEach(Sort.by(INDEX), e -> {
+		this.repository.forEach(Sort.by("index"), e -> {
 			list.add(e.getIndex());
 		});
 		assertThat(list).containsExactly(0, 1, 2, 3, 4);
 		list.clear();
 
-		this.repository.forEach((root, cq, cb) -> cb.ge(root.get(index), 1), Sort.by(INDEX), e -> {
+		this.repository.forEach((root, cq, cb) -> cb.ge(root.get("index"), 1), Sort.by("index"), e -> {
 			list.add(e.getIndex());
 		});
 		assertThat(list).containsExactly(1, 2, 3, 4);
@@ -111,19 +110,19 @@ class StreamableJpaRepositoryTests extends DataJpaTestBase {
 	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	void forEachModifyWithoutExistingTransaction() {
 		doForEachModify();
-		assertThat(this.repository.findAll(Sort.by(INDEX))).extracting(INDEX).containsExactly(0, 1, 2, 3, 4);
+		assertThat(this.repository.findAll(Sort.by("index"))).extracting("index").containsExactly(0, 1, 2, 3, 4);
 	}
 
 	@Test
 	void forEachModifyInExistingTransaction() {
 		doForEachModify();
-		assertThat(this.repository.findAll(Sort.by(INDEX))).extracting(INDEX).containsExactly(1, 2, 3, 4, 5);
+		assertThat(this.repository.findAll(Sort.by("index"))).extracting("index").containsExactly(1, 2, 3, 4, 5);
 	}
 
 	private void doForEachModify() {
 		AtomicInteger count = new AtomicInteger();
 		int batchSize = 2; // hibernate.jdbc.batch_size
-		this.repository.forEach(Sort.by(INDEX), e -> {
+		this.repository.forEach(Sort.by("index"), e -> {
 			e.setIndex(e.getIndex() + 1);
 			if ((count.incrementAndGet() % batchSize) == 0) {
 				this.repository.flush();
