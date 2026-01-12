@@ -77,6 +77,8 @@ if (integration != null) {
 val mockitoAgent by configurations.creating
 
 dependencies {
+	annotationProcessor("org.hibernate.orm:hibernate-jpamodelgen")
+	testAnnotationProcessor("org.hibernate.orm:hibernate-jpamodelgen")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.springframework.security:spring-security-test")
 	testRuntimeOnly("com.h2database:h2")
@@ -145,4 +147,8 @@ tasks.named("clean") {
 tasks.register("checkstyle") {
 	description = "Run Checkstyle analysis for all classes"
 	sourceSets.map { "checkstyle" + it.name.replaceFirstChar(Char::titlecase) }.forEach(::dependsOn)
+}
+
+tasks.named("checkRules") {
+	dependsOn("compileJava", "compileTestJava")
 }
