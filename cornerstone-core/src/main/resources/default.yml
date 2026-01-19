@@ -29,7 +29,6 @@ spring.jpa:
     order_updates: true
     auto_quote_keyword: true
     xml_mapping_enabled: false
-    cdi.extensions: true
 
 spring.mvc:
   problemdetails.enabled: false
