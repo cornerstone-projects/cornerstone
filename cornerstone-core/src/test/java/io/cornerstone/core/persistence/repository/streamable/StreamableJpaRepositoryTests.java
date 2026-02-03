@@ -86,23 +86,18 @@ class StreamableJpaRepositoryTests extends DataJpaTestBase {
 
 	private void doForEach() {
 		List<Integer> list = new ArrayList<>();
-		this.repository.forEach(Sort.by("index"), e -> {
-			list.add(e.getIndex());
-		});
+		this.repository.forEach(Sort.by("index"), e -> list.add(e.getIndex()));
 		assertThat(list).containsExactly(0, 1, 2, 3, 4);
 		list.clear();
 
-		this.repository.forEach((root, cq, cb) -> cb.ge(root.get("index"), 1), Sort.by("index"), e -> {
-			list.add(e.getIndex());
-		});
+		this.repository.forEach((root, cq, cb) -> cb.ge(root.get("index"), 1), Sort.by("index"),
+				e -> list.add(e.getIndex()));
 		assertThat(list).containsExactly(1, 2, 3, 4);
 		list.clear();
 
 		TestEntity example = new TestEntity();
 		example.setIndex(1);
-		this.repository.forEach(Example.of(example), Sort.unsorted(), e -> {
-			list.add(e.getIndex());
-		});
+		this.repository.forEach(Example.of(example), Sort.unsorted(), e -> list.add(e.getIndex()));
 		assertThat(list).containsExactly(1);
 	}
 
