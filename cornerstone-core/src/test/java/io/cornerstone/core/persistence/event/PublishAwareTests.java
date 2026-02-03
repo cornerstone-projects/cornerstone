@@ -70,7 +70,8 @@ class PublishAwareTests extends DataJpaTestBase {
 	}
 
 	private void assertEntityOperationEvent(EntityOperationType type) {
-		assertThat(this.applicationEvents.stream(EntityOperationEvent.class).findFirst().get()).extracting("type")
+		assertThat(this.applicationEvents.stream(EntityOperationEvent.class).findFirst()).get()
+			.extracting("type")
 			.isSameAs(type);
 	}
 

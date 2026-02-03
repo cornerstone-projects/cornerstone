@@ -108,8 +108,7 @@ public class FromIdDeserializer extends StdDeserializer<Object> implements Conte
 	}
 
 	@Override
-	public JsonDeserializer<Object> createContextual(DeserializationContext ctx, BeanProperty beanProperty)
-			throws JsonMappingException {
+	public JsonDeserializer<Object> createContextual(DeserializationContext ctx, BeanProperty beanProperty) {
 		return new FromIdDeserializer(beanProperty.getType());
 	}
 

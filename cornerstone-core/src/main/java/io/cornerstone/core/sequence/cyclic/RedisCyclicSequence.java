@@ -84,9 +84,6 @@ public class RedisCyclicSequence extends AbstractCyclicSequence {
 			String restart = getStringValue(now, getPaddingLength(), 1);
 			Boolean success = this.stringRedisTemplate.execute(this.compareAndSetScript,
 					Collections.singletonList(this.boundValueOperations.getKey()), stringValue, restart);
-			if (success == null) {
-				throw new RuntimeException("Unexpected null");
-			}
 			if (success) {
 				return restart;
 			}

@@ -62,9 +62,6 @@ public class RedisLockService implements LockService {
 			long delay = this.watchdogTimeout / 3;
 			this.renewalFutures.computeIfAbsent(name, k -> this.scheduler.scheduleWithFixedDelay(() -> {
 				Boolean b = this.stringRedisTemplate.expire(key, this.watchdogTimeout, TimeUnit.MILLISECONDS);
-				if (b == null) {
-					throw new RuntimeException("Unexpected null");
-				}
 				if (!b) {
 					ScheduledFuture<?> future = this.renewalFutures.remove(name);
 					if (future != null) {
@@ -81,11 +78,8 @@ public class RedisLockService implements LockService {
 	public void unlock(String name) {
 		String key = NAMESPACE + name;
 		String holder = holder();
-		Long ret = this.stringRedisTemplate.execute(this.compareAndDeleteScript, Collections.singletonList(key),
+		long ret = this.stringRedisTemplate.execute(this.compareAndDeleteScript, Collections.singletonList(key),
 				holder);
-		if (ret == null) {
-			throw new RuntimeException("Unexpected null");
-		}
 		if (ret == 1) {
 			ScheduledFuture<?> future = this.renewalFutures.remove(name);
 			if (future != null) {

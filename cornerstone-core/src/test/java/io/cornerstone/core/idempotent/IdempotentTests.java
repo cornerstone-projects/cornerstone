@@ -3,7 +3,6 @@ package io.cornerstone.core.idempotent;
 import io.cornerstone.test.DataJpaTestBase;
 import org.junit.jupiter.api.Test;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,7 +16,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.*;
 
@@ -26,9 +24,6 @@ import static org.mockito.Mockito.*;
 @EntityScan(basePackageClasses = TestEntity.class)
 @Transactional(propagation = Propagation.NOT_SUPPORTED)
 class IdempotentTests extends DataJpaTestBase {
-
-	@Autowired
-	TestEntityRepository testEntityRepository;
 
 	@MockitoSpyBean
 	IdempotentTestEntityService testEntityService;

@@ -9,7 +9,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.context.properties.bind.Bindable;
 import org.springframework.boot.context.properties.bind.Binder;
 import org.springframework.boot.env.EnvironmentPostProcessor;
-import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.MapPropertySource;
@@ -17,7 +16,7 @@ import org.springframework.core.env.MapPropertySource;
 /**
  * original author tmoschou@github
  */
-@Order(Ordered.LOWEST_PRECEDENCE)
+@Order
 public class AutoConfigureExclusionEnvironmentPostProcessor implements EnvironmentPostProcessor {
 
 	// see AutoConfigurationImportSelector.PROPERTY_NAME_AUTOCONFIGURE_EXCLUDE
