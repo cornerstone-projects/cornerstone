@@ -7,7 +7,7 @@ import java.util.stream.Stream;
 import io.cornerstone.test.ControllerTestBase;
 import org.junit.jupiter.api.Test;
 
-import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.boot.resttestclient.TestRestTemplate;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -89,9 +89,10 @@ class WebSecurityTests extends ControllerTestBase {
 	void testRestfulFormLoginFailure() {
 		ResponseEntity<Map<String, Object>> response = restfulFormLogin("invalid_user", "*******");
 		assertThat(response.getStatusCode()).isSameAs(UNAUTHORIZED);
-		assertThat(response.getBody().get("status")).isEqualTo(UNAUTHORIZED.value());
-		assertThat(response.getBody().get("message")).isNotEqualTo(UNAUTHORIZED.getReasonPhrase());
-		assertThat(response.getBody().get("path")).isEqualTo(TEST_LOGIN_PROCESSING_URL);
+		Map<String, Object> body = response.getBody();
+		assertThat(body.get("status")).isEqualTo(UNAUTHORIZED.value());
+		assertThat(body.get("message")).isNotEqualTo(UNAUTHORIZED.getReasonPhrase());
+		assertThat(body.get("path")).isEqualTo(TEST_LOGIN_PROCESSING_URL);
 	}
 
 	@Test
@@ -118,10 +119,11 @@ class WebSecurityTests extends ControllerTestBase {
 				new ParameterizedTypeReference<>() {
 				});
 		assertThat(response.getStatusCode()).isSameAs(UNAUTHORIZED);
-		assertThat(response.getBody().get("status")).isEqualTo(UNAUTHORIZED.value());
-		assertThat(response.getBody().get("message")).isEqualTo(this.messageSource.getMessage(
+		Map<String, Object> body = response.getBody();
+		assertThat(body.get("status")).isEqualTo(UNAUTHORIZED.value());
+		assertThat(body.get("message")).isEqualTo(this.messageSource.getMessage(
 				"ExceptionTranslationFilter.insufficientAuthentication", null, LocaleContextHolder.getLocale()));
-		assertThat(response.getBody().get("path")).isEqualTo(TEST_DEFAULT_SUCCESS_URL);
+		assertThat(body.get("path")).isEqualTo(TEST_DEFAULT_SUCCESS_URL);
 	}
 
 	@Test

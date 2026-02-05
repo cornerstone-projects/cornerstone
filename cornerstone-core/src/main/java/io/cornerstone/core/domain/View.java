@@ -17,7 +17,8 @@ public interface View {
 
 	}
 
-	interface List extends Persistable<Long>, Pageable, Creation, Update {
+	@SuppressWarnings("rawtypes")
+	interface List extends Persistable, Pageable, Creation, Update {
 
 	}
 

@@ -1,4 +1,4 @@
-server.error.include-binding-errors: never
+spring.web.error.include-binding-errors: never
 management.tracing.sampling.probability: 0.5
 mysql.port: 3307
 ---

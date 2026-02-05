@@ -4,7 +4,6 @@ import java.lang.reflect.Method;
 import java.util.concurrent.CompletionStage;
 
 import io.micrometer.common.KeyValues;
-import io.micrometer.common.lang.Nullable;
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -64,7 +63,7 @@ public abstract class AbstractObservationAspect implements Ordered {
 		}
 	}
 
-	private void stopObservation(Observation observation, Observation.Scope scope, @Nullable Throwable error) {
+	private void stopObservation(Observation observation, Observation.Scope scope, Throwable error) {
 		if (error != null) {
 			observation.error(error);
 		}

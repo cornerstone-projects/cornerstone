@@ -11,17 +11,19 @@ import java.util.Map;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import jakarta.persistence.AttributeConverter;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.json.JsonMapper;
 
 import org.springframework.core.ResolvableType;
 
 public abstract class JsonConverter<T> implements AttributeConverter<T, String> {
 
-	private static final ObjectMapper objectMapper = new ObjectMapper()
-		.setSerializationInclusion(JsonInclude.Include.NON_NULL)
-		.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
+	private static final JsonMapper jsonMapper = JsonMapper.builder()
+		.changeDefaultPropertyInclusion((value) -> value.withValueInclusion(JsonInclude.Include.NON_NULL)
+			.withContentInclusion(JsonInclude.Include.NON_NULL))
+		.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
+		.build();
 
 	private final Type type;
 
@@ -39,7 +41,7 @@ public abstract class JsonConverter<T> implements AttributeConverter<T, String> 
 			return "";
 		}
 		try {
-			return objectMapper.writeValueAsString(obj);
+			return jsonMapper.writeValueAsString(obj);
 		}
 		catch (Exception ex) {
 			throw new IllegalArgumentException(obj + " cannot be serialized as json ", ex);
@@ -67,7 +69,7 @@ public abstract class JsonConverter<T> implements AttributeConverter<T, String> 
 			return null;
 		}
 		try {
-			return objectMapper.readValue(string, objectMapper.constructType(this.type));
+			return jsonMapper.readValue(string, jsonMapper.constructType(this.type));
 		}
 		catch (Exception ex) {
 			throw new IllegalArgumentException(string + " is not valid json ", ex);

@@ -3,8 +3,8 @@ package io.cornerstone.test.containers;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.postgresql.PostgreSQLContainer;
 
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 
@@ -20,7 +20,7 @@ public @interface UsePostgreSQLContainer {
 
 		@Container
 		@ServiceConnection
-		static PostgreSQLContainer<?> database = new PostgreSQLContainer<>("postgres");
+		static PostgreSQLContainer database = new PostgreSQLContainer("postgres");
 
 	}
 

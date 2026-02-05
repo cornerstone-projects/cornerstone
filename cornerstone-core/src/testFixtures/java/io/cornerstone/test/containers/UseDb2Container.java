@@ -3,7 +3,7 @@ package io.cornerstone.test.containers;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import org.testcontainers.containers.Db2Container;
+import org.testcontainers.db2.Db2Container;
 import org.testcontainers.junit.jupiter.Container;
 
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;

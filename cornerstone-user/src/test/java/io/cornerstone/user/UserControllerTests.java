@@ -13,7 +13,7 @@ import io.cornerstone.core.domain.ResultPage;
 import io.cornerstone.test.ControllerTestBase;
 import org.junit.jupiter.api.Test;
 
-import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.boot.resttestclient.TestRestTemplate;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.io.Resource;

@@ -7,9 +7,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.Setter;
+import org.jspecify.annotations.Nullable;
 
 import org.springframework.data.domain.Persistable;
-import org.springframework.lang.Nullable;
 
 @Entity
 @Getter

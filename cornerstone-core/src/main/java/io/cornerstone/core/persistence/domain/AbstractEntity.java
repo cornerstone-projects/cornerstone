@@ -8,9 +8,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
 import lombok.Getter;
 import lombok.Setter;
+import org.jspecify.annotations.Nullable;
 
 import org.springframework.data.domain.Persistable;
-import org.springframework.lang.Nullable;
 
 import static lombok.AccessLevel.PROTECTED;
 
