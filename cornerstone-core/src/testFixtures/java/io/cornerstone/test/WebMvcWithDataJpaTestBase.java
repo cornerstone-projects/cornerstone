@@ -3,11 +3,11 @@ package io.cornerstone.test;
 import io.cornerstone.core.persistence.convert.AbstractArrayConverter;
 import io.cornerstone.core.persistence.id.SnowflakeProperties;
 
-import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureDataJpa;
-import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureTestEntityManager;
+import org.springframework.boot.data.jpa.test.autoconfigure.AutoConfigureDataJpa;
+import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase;
+import org.springframework.boot.jpa.test.autoconfigure.AutoConfigureTestEntityManager;
+import org.springframework.boot.persistence.autoconfigure.EntityScan;
 
 @AutoConfigureDataJpa
 @AutoConfigureTestDatabase

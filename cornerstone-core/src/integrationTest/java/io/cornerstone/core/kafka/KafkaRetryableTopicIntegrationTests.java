@@ -15,6 +15,7 @@ import org.springframework.boot.autoconfigure.task.TaskSchedulingAutoConfigurati
 import org.springframework.boot.task.ThreadPoolTaskSchedulerBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.kafka.annotation.BackOff;
 import org.springframework.kafka.annotation.DltHandler;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.annotation.RetryableTopic;
@@ -23,7 +24,6 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.retrytopic.RetryTopicConfigurationSupport;
 import org.springframework.kafka.retrytopic.RetryTopicSchedulerWrapper;
 import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.retry.annotation.Backoff;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
@@ -105,7 +105,7 @@ class KafkaRetryableTopicIntegrationTests {
 
 		Logger logger = LoggerFactory.getLogger(getClass());
 
-		@RetryableTopic(kafkaTemplate = "kafkaTemplate", backoff = @Backoff(multiplier = 2))
+		@RetryableTopic(kafkaTemplate = "kafkaTemplate", backOff = @BackOff(multiplier = 2))
 		@KafkaListener(id = TEST_GROUP_NAME, topics = TEST_TOPIC_NAME)
 		void receive(@Payload Person person) {
 			this.logger.warn("Try process: {}", person);

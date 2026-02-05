@@ -3,8 +3,8 @@ package io.cornerstone.test.containers;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.mysql.MySQLContainer;
 
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 
@@ -20,7 +20,7 @@ public @interface UseMySQLContainer {
 
 		@Container
 		@ServiceConnection
-		static MySQLContainer<?> database = new MySQLContainer<>("mysql");
+		static MySQLContainer database = new MySQLContainer("mysql");
 
 	}
 

@@ -3,8 +3,8 @@ package io.cornerstone.core.cache;
 import io.cornerstone.core.redis.serializer.CompactJdkSerializationRedisSerializer;
 import org.apache.commons.logging.LogFactory;
 
-import org.springframework.boot.autoconfigure.cache.RedisCacheManagerBuilderCustomizer;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.cache.autoconfigure.RedisCacheManagerBuilderCustomizer;
 import org.springframework.cache.Cache;
 import org.springframework.cache.annotation.CachingConfigurer;
 import org.springframework.cache.annotation.EnableCaching;

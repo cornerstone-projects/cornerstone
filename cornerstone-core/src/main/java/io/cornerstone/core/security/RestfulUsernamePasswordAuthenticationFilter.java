@@ -2,13 +2,13 @@ package io.cornerstone.core.security;
 
 import java.util.Map;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.Nullable;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.json.JsonMapper;
 
 import org.springframework.http.MediaType;
-import org.springframework.lang.Nullable;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -20,10 +20,10 @@ public class RestfulUsernamePasswordAuthenticationFilter extends UsernamePasswor
 
 	private static final String ATTR_NAME_REQUEST_BODY = "_REQUEST_BODY";
 
-	private final ObjectMapper objectMapper;
+	private final JsonMapper jsonMapper;
 
-	public RestfulUsernamePasswordAuthenticationFilter(ObjectMapper objectMapper) {
-		this.objectMapper = objectMapper;
+	public RestfulUsernamePasswordAuthenticationFilter(JsonMapper jsonMapper) {
+		this.jsonMapper = jsonMapper;
 		setAuthenticationDetailsSource(new WebAuthenticationDetailsSource() {
 
 			@Override
@@ -35,8 +35,7 @@ public class RestfulUsernamePasswordAuthenticationFilter extends UsernamePasswor
 	}
 
 	@Override
-	@Nullable
-	protected String obtainUsername(HttpServletRequest request) {
+	@Nullable protected String obtainUsername(HttpServletRequest request) {
 		Map<String, String> requestBody = body(request);
 		if (requestBody != null) {
 			return requestBody.get(getUsernameParameter());
@@ -45,8 +44,7 @@ public class RestfulUsernamePasswordAuthenticationFilter extends UsernamePasswor
 	}
 
 	@Override
-	@Nullable
-	protected String obtainPassword(HttpServletRequest request) {
+	@Nullable protected String obtainPassword(HttpServletRequest request) {
 		Map<String, String> requestBody = body(request);
 		if (requestBody != null) {
 			return requestBody.get(getPasswordParameter());
@@ -55,8 +53,7 @@ public class RestfulUsernamePasswordAuthenticationFilter extends UsernamePasswor
 	}
 
 	@SuppressWarnings("unchecked")
-	@Nullable
-	private Map<String, String> body(HttpServletRequest request) {
+	@Nullable private Map<String, String> body(HttpServletRequest request) {
 		Map<String, String> requestBody = (Map<String, String>) request.getAttribute(ATTR_NAME_REQUEST_BODY);
 		if (requestBody != null) {
 			return requestBody;
@@ -65,7 +62,7 @@ public class RestfulUsernamePasswordAuthenticationFilter extends UsernamePasswor
 		if (contentType != null) {
 			if (MediaType.parseMediaType(contentType).isCompatibleWith(APPLICATION_JSON)) {
 				try {
-					requestBody = this.objectMapper.readValue(request.getInputStream(), new TypeReference<>() {
+					requestBody = this.jsonMapper.readValue(request.getInputStream(), new TypeReference<>() {
 					});
 					request.setAttribute(ATTR_NAME_REQUEST_BODY, requestBody);
 					return requestBody;
