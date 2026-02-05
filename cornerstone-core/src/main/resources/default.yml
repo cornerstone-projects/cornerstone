@@ -1,6 +1,8 @@
 server:
   shutdown: graceful
   forward-headers-strategy: framework
+
+spring.web:
   error:
     include-message: always
     include-binding-errors: always
@@ -99,13 +101,14 @@ logging:
 
 management.endpoints.web.exposure.include: [health, prometheus]
 management.observations.annotations.enabled: true
+management.otlp.metrics.export.enabled: false
 management.influx.metrics.export:
   enabled: false
   db: metrics
   step: 10s
 
-management.tracing.enabled: false
-jdbc.datasource-proxy.enabled: ${management.tracing.enabled}
+management.tracing.export.enabled: false
+jdbc.datasource-proxy.enabled: ${management.tracing.export.enabled}
 management.otlp.tracing.endpoint: http://localhost:4318/v1/traces
 
 springdoc.swagger-ui.enabled: false
@@ -143,7 +146,7 @@ spring.security.user.password: "{bcrypt}$2a$10$g1WqDyVfiD4vEOQZr.yRZOnWlzuAs2gMi
 
 spring.main.allow-bean-definition-overriding: true
 
-spring.http.client.redirects: DONT_FOLLOW
+spring.http.clients.redirects: DONT_FOLLOW
 
 logging:
   config:

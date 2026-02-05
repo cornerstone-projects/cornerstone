@@ -3,7 +3,7 @@ package io.cornerstone.test;
 import io.cornerstone.core.DefaultApplication;
 
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.context.annotation.Primary;
 import org.springframework.test.context.ContextConfiguration;

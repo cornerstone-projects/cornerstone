@@ -3,8 +3,8 @@ package io.cornerstone.test.containers;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import org.testcontainers.containers.MSSQLServerContainer;
 import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.mssqlserver.MSSQLServerContainer;
 
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 
@@ -20,7 +20,7 @@ public @interface UseSQLServerContainer {
 
 		@Container
 		@ServiceConnection
-		static MSSQLServerContainer<?> database = new MSSQLServerContainer<>("mcr.microsoft.com/mssql/server");
+		static MSSQLServerContainer database = new MSSQLServerContainer("mcr.microsoft.com/mssql/server");
 
 	}
 

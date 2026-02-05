@@ -9,14 +9,15 @@ import io.cornerstone.core.persistence.domain.AbstractTreeableEntity;
 import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.annotation.PostConstruct;
 import jakarta.persistence.criteria.Predicate;
+import org.jspecify.annotations.Nullable;
 
 import org.springframework.data.domain.Example;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
-import org.springframework.lang.Nullable;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -35,7 +36,7 @@ public abstract class AbstractTreeableEntityController<T extends AbstractTreeabl
 	@GetMapping(PATH_DETAIL + "/children")
 	@JsonView(View.List.class)
 	public List<T> children(@PathVariable Long id, @RequestParam(required = false) String query,
-			@Parameter(hidden = true) T example) {
+			@ModelAttribute @Parameter(hidden = true) T example) {
 		Specification<T> spec = (root, cq, cb) -> {
 			Predicate predicate = ((id == null) || (id < 1)) ? cb.isNull(root.get("parent"))
 					: cb.equal(root.get("parent").get("id"), id);

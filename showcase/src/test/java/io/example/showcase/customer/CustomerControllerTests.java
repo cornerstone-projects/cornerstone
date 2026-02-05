@@ -8,7 +8,7 @@ import io.cornerstone.core.validation.validators.CitizenIdentificationNumberVali
 import io.example.showcase.BaseControllerTests;
 import org.junit.jupiter.api.Test;
 
-import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.boot.resttestclient.TestRestTemplate;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;

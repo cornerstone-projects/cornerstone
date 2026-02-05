@@ -3,7 +3,7 @@ package io.cornerstone.core.idempotent;
 import io.cornerstone.test.DataJpaTestBase;
 import org.junit.jupiter.api.Test;
 
-import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.boot.persistence.autoconfigure.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;

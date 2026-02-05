@@ -5,28 +5,24 @@ import java.util.Collection;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.jspecify.annotations.Nullable;
 
-import org.springframework.lang.Nullable;
 import org.springframework.util.CollectionUtils;
 
 @SuppressWarnings("unchecked")
 public interface Treeable<T extends Treeable<T, ID>, ID> {
 
-	@Nullable
-	default ID getId() {
+	@Nullable default ID getId() {
 		return null;
 	}
 
-	@Nullable
-	String getName();
+	@Nullable String getName();
 
-	@Nullable
-	T getParent();
+	@Nullable T getParent();
 
 	void setParent(@Nullable T parent);
 
-	@Nullable
-	Collection<T> getChildren();
+	@Nullable Collection<T> getChildren();
 
 	void setChildren(@Nullable Collection<T> children);
 

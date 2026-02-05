@@ -7,8 +7,7 @@ import org.hibernate.dialect.Dialect;
 import org.hibernate.dialect.MySQLDialect;
 import org.hibernate.dialect.OracleDialect;
 import org.hibernate.dialect.PostgreSQLDialect;
-import org.hibernate.engine.jdbc.spi.JdbcServices;
-import org.hibernate.query.sqm.internal.SqmCriteriaNodeBuilder;
+import org.hibernate.query.sqm.NodeBuilder;
 import org.hibernate.query.sqm.tree.expression.SqmLiteral;
 import org.hibernate.query.sqm.tree.predicate.SqmBooleanExpressionPredicate;
 import org.hibernate.query.sqm.tree.predicate.SqmNegatedPredicate;
@@ -16,7 +15,6 @@ import org.hibernate.query.sqm.tree.predicate.SqmNullnessPredicate;
 
 import org.springframework.data.domain.Example;
 import org.springframework.data.jpa.convert.QueryByExamplePredicateBuilder;
-import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 
 public class PredicateBuilder {
@@ -139,10 +137,9 @@ public class PredicateBuilder {
 				Boolean.TRUE);
 	}
 
-	@Nullable
 	private static Dialect getDialect(CriteriaBuilder cb) {
-		if (cb instanceof SqmCriteriaNodeBuilder scnb) {
-			return scnb.getServiceRegistry().getService(JdbcServices.class).getDialect();
+		if (cb instanceof NodeBuilder nb) {
+			return nb.getQueryEngine().getDialect();
 		}
 		return null;
 	}

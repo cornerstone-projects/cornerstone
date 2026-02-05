@@ -9,12 +9,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.cornerstone.core.Application;
 import io.cornerstone.core.security.password.MixedPasswordEncoder;
 import io.cornerstone.core.util.RequestUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import tools.jackson.databind.json.JsonMapper;
 
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,7 +67,7 @@ public class WebSecurityConfiguration {
 	private List<PermitAllRequestContributor> permitAllRequestContributors = Collections.emptyList();
 
 	@Autowired
-	private ObjectMapper objectMapper;
+	private JsonMapper jsonMapper;
 
 	public void configure(WebSecurity web) {
 		List<String> ignoringPathPatterns = new ArrayList<>(this.properties.getIgnoringPathPatterns());
@@ -118,7 +118,7 @@ public class WebSecurityConfiguration {
 			}, request -> !RequestUtils.isRequestedFromApi(request)));
 
 		http.formLogin(configurer -> {
-			setAuthenticationFilter(configurer, new RestfulUsernamePasswordAuthenticationFilter(this.objectMapper));
+			setAuthenticationFilter(configurer, new RestfulUsernamePasswordAuthenticationFilter(this.jsonMapper));
 			configurer.loginPage(this.properties.getLoginPage())
 				.loginProcessingUrl(this.properties.getLoginProcessingUrl())
 				.usernameParameter(this.properties.getUsernameParameter())
@@ -152,7 +152,7 @@ public class WebSecurityConfiguration {
 				}
 				if (RequestUtils.isRequestedFromApi(request)) {
 					response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-					WebSecurityConfiguration.this.objectMapper.writeValue(response.getWriter(), Collections
+					WebSecurityConfiguration.this.jsonMapper.writeValue(response.getWriter(), Collections
 						.singletonMap(WebSecurityConfiguration.this.properties.getTargetUrlParameter(), url));
 				}
 				else {

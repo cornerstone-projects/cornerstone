@@ -7,8 +7,8 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
-import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
+import org.springframework.boot.data.redis.autoconfigure.DataRedisAutoConfiguration;
+import org.springframework.boot.data.redis.autoconfigure.DataRedisProperties;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
@@ -24,7 +24,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 		"spring.data.redis.client-name=default", "global.data.redis.enabled=true", "global.data.redis.database=2",
 		"global.data.redis.client-name=global" })
 @Testcontainers
-@SpringJUnitConfig({ RedisAutoConfiguration.class, RedisMessageListenerContainerConfiguration.class,
+@SpringJUnitConfig({ DataRedisAutoConfiguration.class, RedisMessageListenerContainerConfiguration.class,
 		GlobalRedisConfiguration.class })
 class RedisConfigurationTests {
 
@@ -38,11 +38,11 @@ class RedisConfigurationTests {
 	}
 
 	@Autowired
-	private RedisProperties redisProperties;
+	private DataRedisProperties redisProperties;
 
 	@Autowired
 	@Qualifier("globalRedisProperties")
-	private RedisProperties globalRedisProperties;
+	private DataRedisProperties globalRedisProperties;
 
 	@Autowired
 	private RedisTemplate<Object, Object> redisTemplate;

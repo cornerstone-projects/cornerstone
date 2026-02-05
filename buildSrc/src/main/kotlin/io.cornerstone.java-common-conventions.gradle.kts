@@ -60,8 +60,8 @@ if (providers.gradleProperty("integration").isPresent) {
 val mockitoAgent = configurations.create("mockitoAgent")
 
 dependencies {
-	annotationProcessor("org.hibernate.orm:hibernate-jpamodelgen")
-	testAnnotationProcessor("org.hibernate.orm:hibernate-jpamodelgen")
+	annotationProcessor("org.hibernate.orm:hibernate-processor")
+	testAnnotationProcessor("org.hibernate.orm:hibernate-processor")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.springframework.security:spring-security-test")
 	testRuntimeOnly("com.h2database:h2")
@@ -69,7 +69,7 @@ dependencies {
 	testImplementation(testFixtures(project(":cornerstone-core")))
 	integrationTestImplementation(project())
 	integrationTestImplementation("org.springframework.boot:spring-boot-testcontainers")
-	integrationTestImplementation("org.testcontainers:junit-jupiter")
+	integrationTestImplementation("org.testcontainers:testcontainers-junit-jupiter")
 	archRules(project(":cornerstone-archrules"))
 	checkstyle("""io.spring.javaformat:spring-javaformat-checkstyle:${property("javaformat-plugin.version")}""")
 	mockitoAgent("org.mockito:mockito-core") { isTransitive = false }

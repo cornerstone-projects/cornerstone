@@ -10,8 +10,6 @@ import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.generator.AnnotationBasedGenerator;
 import org.hibernate.generator.GeneratorCreationContext;
 import org.hibernate.id.IdentifierGenerator;
-import org.hibernate.service.ServiceRegistry;
-import org.hibernate.type.Type;
 
 import org.springframework.beans.factory.BeanFactory;
 
@@ -33,8 +31,8 @@ public class SequenceIdentifierGenerator implements IdentifierGenerator, Annotat
 	}
 
 	@Override
-	public void configure(Type type, Properties params, ServiceRegistry serviceRegistry) throws MappingException {
-		this.type = type.getReturnedClass();
+	public void configure(GeneratorCreationContext creationContext, Properties params) throws MappingException {
+		this.type = creationContext.getType().getReturnedClass();
 		if (this.sequenceName == null) {
 			this.sequenceName = (String) params.get("sequenceName");
 			if (this.sequenceName == null) {
