@@ -32,7 +32,7 @@ public class AutoConfigureExclusionEnvironmentPostProcessor implements Environme
 		binder.bind(PROPERTY_NAME_AUTOCONFIGURE_EXCLUSIONS, Bindable.mapOf(String.class, Boolean.class))
 			.orElseGet(Collections::emptyMap)
 			.forEach((key, value) -> {
-				if (value != null && value) {
+				if (value) {
 					toBeExcluded.add(key);
 				}
 				else {

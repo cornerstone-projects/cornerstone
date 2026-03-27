@@ -43,7 +43,7 @@ public interface Application {
 		String name = getContext().getEnvironment().getProperty("spring.application.name");
 		if (name == null) {
 			name = getContext().getId();
-			if ((name == null) || (name.indexOf('@') > 0)) {
+			if (name.indexOf('@') > 0) {
 				name = StringUtils.uncapitalize(getClass().getSimpleName());
 			}
 		}

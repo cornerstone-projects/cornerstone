@@ -239,9 +239,6 @@ class LoginWithVerificationCodeTests extends ControllerTestBase {
 		@Override
 		public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 			UserDetails user = super.loadUserByUsername(username);
-			if (user == null) {
-				throw new UsernameNotFoundException(username);
-			}
 			return new SimpleUser(user.getUsername(), user.getPassword(), user.isEnabled(), user.isAccountNonExpired(),
 					user.isCredentialsNonExpired(), user.isAccountNonLocked(), user.getAuthorities());
 		}

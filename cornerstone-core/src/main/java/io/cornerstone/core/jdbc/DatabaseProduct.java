@@ -107,7 +107,7 @@ public enum DatabaseProduct {
 			}
 			sb.append("/").append(databaseName);
 			if (StringUtils.hasLength(params)) {
-				params = params.replaceAll("&", ";");
+				params = params.replace('&', ';');
 				if (!params.startsWith(":")) {
 					sb.append(":");
 				}
@@ -168,7 +168,7 @@ public enum DatabaseProduct {
 			}
 			sb.append("/").append(databaseName);
 			if (StringUtils.hasLength(params)) {
-				params = params.replaceAll("&", ":");
+				params = params.replace('&', ':');
 				if (!params.startsWith(":")) {
 					sb.append(":");
 				}
@@ -203,7 +203,7 @@ public enum DatabaseProduct {
 			}
 			sb.append(";DatabaseName=").append(databaseName);
 			if (StringUtils.hasLength(params)) {
-				params = params.replaceAll("&", ";");
+				params = params.replace('&', ';');
 				if (!params.startsWith(";")) {
 					sb.append(";");
 				}
@@ -293,7 +293,7 @@ public enum DatabaseProduct {
 			}
 			sb.append("/").append(databaseName);
 			if (StringUtils.hasLength(params)) {
-				params = params.replaceAll("&", ";");
+				params = params.replace('&', ';');
 				if (!params.startsWith(";")) {
 					sb.append(";");
 				}
@@ -328,7 +328,7 @@ public enum DatabaseProduct {
 			}
 			sb.append("/").append(databaseName);
 			if (StringUtils.hasLength(params)) {
-				params = params.replaceAll("&", ";");
+				params = params.replace('&', ';');
 				if (!params.startsWith(";")) {
 					sb.append(";");
 				}
@@ -363,7 +363,7 @@ public enum DatabaseProduct {
 			}
 			sb.append("/").append(databaseName);
 			if (StringUtils.hasLength(params)) {
-				params = params.replaceAll("&", ";");
+				params = params.replace('&', ';');
 				if (!params.startsWith(";")) {
 					sb.append(";");
 				}
