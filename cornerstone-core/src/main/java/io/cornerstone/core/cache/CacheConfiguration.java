@@ -1,7 +1,6 @@
 package io.cornerstone.core.cache;
 
 import io.cornerstone.core.redis.serializer.CompactJdkSerializationRedisSerializer;
-import io.cornerstone.core.util.ReflectionUtils;
 import org.apache.commons.logging.LogFactory;
 
 import org.springframework.boot.autoconfigure.cache.RedisCacheManagerBuilderCustomizer;
@@ -15,7 +14,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.Ordered;
-import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.serializer.RedisSerializationContext.SerializationPair;
 import org.springframework.data.redis.serializer.SerializationException;
 
@@ -38,15 +36,10 @@ public class CacheConfiguration implements CachingConfigurer {
 	}
 
 	@Bean
-	@ConditionalOnClass(name = "org.springframework.data.redis.cache.RedisCacheConfiguration")
+	@ConditionalOnClass(name = "org.springframework.data.redis.cache.RedisCacheManager")
 	RedisCacheManagerBuilderCustomizer redisCacheManagerBuilderCustomizer() {
-		return builder -> {
-			RedisCacheConfiguration oldDefaultCacheConfiguration = ReflectionUtils.getFieldValue(builder,
-					"defaultCacheConfiguration");
-			RedisCacheConfiguration newDefaultCacheConfiguration = oldDefaultCacheConfiguration
-				.serializeValuesWith(SerializationPair.fromSerializer(new CompactJdkSerializationRedisSerializer()));
-			builder.cacheDefaults(newDefaultCacheConfiguration);
-		};
+		return builder -> builder.cacheDefaults(builder.cacheDefaults()
+			.serializeValuesWith(SerializationPair.fromSerializer(new CompactJdkSerializationRedisSerializer())));
 	}
 
 }
