@@ -13,7 +13,6 @@ import org.springframework.boot.autoconfigure.data.redis.LettuceClientConfigurat
 import org.springframework.boot.autoconfigure.data.redis.LettuceClientOptionsBuilderCustomizer;
 import org.springframework.boot.autoconfigure.data.redis.RedisConnectionDetails;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
-import org.springframework.boot.autoconfigure.task.TaskExecutionAutoConfiguration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.ssl.SslBundles;
 import org.springframework.context.annotation.Bean;
@@ -90,8 +89,8 @@ public class GlobalRedisConfiguration extends RedisConfigurationSupport {
 	@Bean(defaultCandidate = false)
 	public RedisMessageListenerContainer globalRedisMessageListenerContainer(
 			@Qualifier("globalRedisConnectionFactory") RedisConnectionFactory redisConnectionFactory,
-			@Qualifier(TaskExecutionAutoConfiguration.APPLICATION_TASK_EXECUTOR_BEAN_NAME) ObjectProvider<TaskExecutor> taskExecutor) {
-		return super.redisMessageListenerContainer(redisConnectionFactory, taskExecutor);
+			ObjectProvider<TaskExecutor> applicationTaskExecutor) {
+		return super.redisMessageListenerContainer(redisConnectionFactory, applicationTaskExecutor);
 	}
 
 }

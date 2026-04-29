@@ -19,9 +19,7 @@ import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.task.TaskExecutionAutoConfiguration;
 import org.springframework.core.GenericTypeResolver;
 import org.springframework.core.task.TaskExecutor;
 
@@ -45,8 +43,7 @@ public abstract class RabbitTopic<T extends Serializable> implements Topic<T> {
 
 	@Setter
 	@Autowired(required = false)
-	@Qualifier(TaskExecutionAutoConfiguration.APPLICATION_TASK_EXECUTOR_BEAN_NAME)
-	private TaskExecutor taskExecutor;
+	private TaskExecutor applicationTaskExecutor;
 
 	public RabbitTopic() {
 		Class<?> clazz = GenericTypeResolver.resolveTypeArgument(getClass(), RabbitTopic.class);
@@ -90,8 +87,8 @@ public abstract class RabbitTopic<T extends Serializable> implements Topic<T> {
 		log.info("Publishing {} message: {}", scope.name(), message);
 		if (scope == Scope.LOCAL) {
 			Runnable task = () -> subscribe(message);
-			if (this.taskExecutor != null) {
-				this.taskExecutor.execute(task);
+			if (this.applicationTaskExecutor != null) {
+				this.applicationTaskExecutor.execute(task);
 			}
 			else {
 				task.run();

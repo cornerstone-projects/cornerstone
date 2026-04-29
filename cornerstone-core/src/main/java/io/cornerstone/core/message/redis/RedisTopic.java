@@ -12,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.task.TaskExecutionAutoConfiguration;
 import org.springframework.core.GenericTypeResolver;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -43,8 +42,7 @@ public abstract class RedisTopic<T extends Serializable> implements io.cornersto
 
 	@Setter
 	@Autowired(required = false)
-	@Qualifier(TaskExecutionAutoConfiguration.APPLICATION_TASK_EXECUTOR_BEAN_NAME)
-	private TaskExecutor taskExecutor;
+	private TaskExecutor applicationTaskExecutor;
 
 	public RedisTopic() {
 		Class<?> clazz = GenericTypeResolver.resolveTypeArgument(getClass(), RedisTopic.class);
@@ -101,8 +99,8 @@ public abstract class RedisTopic<T extends Serializable> implements io.cornersto
 		log.info("Publishing {} message: {}", scope.name(), message);
 		if (scope == Scope.LOCAL) {
 			Runnable task = () -> subscribe(message);
-			if (this.taskExecutor != null) {
-				this.taskExecutor.execute(task);
+			if (this.applicationTaskExecutor != null) {
+				this.applicationTaskExecutor.execute(task);
 			}
 			else {
 				task.run();
