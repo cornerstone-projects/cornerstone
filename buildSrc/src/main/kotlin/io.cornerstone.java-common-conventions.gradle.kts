@@ -4,29 +4,13 @@ plugins {
 	id("io.freefair.lombok")
 	id("io.spring.dependency-management")
 	id("io.spring.javaformat")
-	id("com.societegenerale.commons.arch-unit-gradle-plugin")
+	id("com.netflix.nebula.archrules.runner")
 }
 
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(21)
     }
-}
-
-archUnit {
-	if (project.name.endsWith("-bom")) {
-		isSkip = true
-	}
-	preConfiguredRules = listOf(
-		"com.societegenerale.commons.plugin.rules.NoInjectedFieldTest",
-		"com.societegenerale.commons.plugin.rules.NoTestIgnoreWithoutCommentRuleTest",
-		"com.societegenerale.commons.plugin.rules.NoPrefixForInterfacesRuleTest",
-		"com.societegenerale.commons.plugin.rules.NoPowerMockRuleTest",
-		"com.societegenerale.commons.plugin.rules.NoJodaTimeRuleTest",
-		"com.societegenerale.commons.plugin.rules.NoJunitAssertRuleTest",
-		"com.societegenerale.commons.plugin.rules.StringFieldsThatAreActuallyDatesRuleTest",
-		"io.cornerstone.build.architecture.ArchitectureRuleTest"
-	)
 }
 
 repositories {
@@ -87,6 +71,7 @@ dependencies {
 	integrationTestImplementation(project)
 	integrationTestImplementation("org.springframework.boot:spring-boot-testcontainers")
 	integrationTestImplementation("org.testcontainers:junit-jupiter")
+	archRules(project(":cornerstone-archrules"))
 	checkstyle("""io.spring.javaformat:spring-javaformat-checkstyle:${property("javaformat-plugin.version")}""")
 	mockitoAgent("org.mockito:mockito-core") { isTransitive = false }
 }
@@ -103,6 +88,12 @@ configurations.all {
 				"See https://github.com/testcontainers/testcontainers-java/issues/970"
 			)
 	}
+}
+
+archRules {
+	consoleReportEnabled = false
+	skipPassingSummaries = true
+	failureThreshold("MEDIUM")
 }
 
 java {
@@ -147,8 +138,4 @@ tasks.named("clean") {
 tasks.register("checkstyle") {
 	description = "Run Checkstyle analysis for all classes"
 	sourceSets.map { "checkstyle" + it.name.replaceFirstChar(Char::titlecase) }.forEach(::dependsOn)
-}
-
-tasks.named("checkRules") {
-	dependsOn("compileJava", "compileTestJava")
 }
