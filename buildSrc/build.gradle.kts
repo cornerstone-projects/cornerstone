@@ -17,7 +17,7 @@ ext {
 }
 
 repositories {
-	val repoUrlPrefix: String? by project
+	val repoUrlPrefix: String? = providers.gradleProperty("repoUrlPrefix").orNull
 	if (repoUrlPrefix != null) {
 		maven {
 			url = uri("${repoUrlPrefix}/maven-public/")

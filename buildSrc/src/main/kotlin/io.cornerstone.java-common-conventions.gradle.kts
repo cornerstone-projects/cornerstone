@@ -14,7 +14,7 @@ java {
 }
 
 repositories {
-	val repoUrlPrefix: String? by rootProject
+	val repoUrlPrefix: String? = providers.gradleProperty("repoUrlPrefix").orNull
 	if (repoUrlPrefix != null) {
 		maven {
 			url = uri("${repoUrlPrefix}/maven-public/")
@@ -37,10 +37,10 @@ dependencyManagement {
 	}
 }
 
-val integrationTest: SourceSet by sourceSets.creating {
+val integrationTest: SourceSet = sourceSets.create("integrationTest") {
 	compileClasspath += sourceSets.test.get().output
 }
-val integrationTestImplementation by configurations.getting {
+val integrationTestImplementation = configurations.getByName("integrationTestImplementation") {
 	extendsFrom(configurations.testImplementation.get())
 }
 configurations[integrationTest.runtimeOnlyConfigurationName].extendsFrom(configurations.testRuntimeOnly.get())
@@ -51,14 +51,13 @@ val integrationTestTask = tasks.register<Test>(integrationTest.name) {
 	classpath = configurations[integrationTest.runtimeClasspathConfigurationName] + sourceSets.test.get().output + integrationTest.output
 	shouldRunAfter(tasks.test)
 }
-val integration: String? by rootProject
-if (integration != null) {
+if (providers.gradleProperty("integration").isPresent) {
 	tasks.check {
 		dependsOn(integrationTestTask)
 	}
 }
 
-val mockitoAgent by configurations.creating
+val mockitoAgent = configurations.create("mockitoAgent")
 
 dependencies {
 	annotationProcessor("org.hibernate.orm:hibernate-jpamodelgen")
@@ -68,7 +67,7 @@ dependencies {
 	testRuntimeOnly("com.h2database:h2")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 	testImplementation(testFixtures(project(":cornerstone-core")))
-	integrationTestImplementation(project)
+	integrationTestImplementation(project())
 	integrationTestImplementation("org.springframework.boot:spring-boot-testcontainers")
 	integrationTestImplementation("org.testcontainers:junit-jupiter")
 	archRules(project(":cornerstone-archrules"))
@@ -113,7 +112,7 @@ tasks.jar {
 }
 
 tasks.named<Jar>("sourcesJar") {
-	val delombok by tasks.existing
+	val delombok = tasks.named("delombok")
 	dependsOn(delombok)
 	from("build/generated/sources/delombok/java/main/")
 	duplicatesStrategy = DuplicatesStrategy.INCLUDE
