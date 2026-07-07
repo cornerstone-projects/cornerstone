@@ -11,7 +11,9 @@ import jakarta.persistence.MappedSuperclass;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.annotations.CurrentTimestamp;
+import org.hibernate.annotations.SourceType;
+import org.hibernate.generator.EventType;
 
 @MappedSuperclass
 @Getter
@@ -25,7 +27,7 @@ public abstract class AbstractAuditableEntity extends AbstractEntity implements 
 	@Column(updatable = false)
 	private LocalDateTime createdDate;
 
-	@UpdateTimestamp
+	@CurrentTimestamp(event = EventType.UPDATE, source = SourceType.VM)
 	@JsonView(Auditable.class)
 	@Column(insertable = false)
 	private LocalDateTime lastModifiedDate;
