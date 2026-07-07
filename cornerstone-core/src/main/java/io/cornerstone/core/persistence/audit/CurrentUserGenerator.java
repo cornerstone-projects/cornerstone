@@ -25,13 +25,13 @@ public class CurrentUserGenerator implements BeforeExecutionGenerator {
 	@Getter
 	private final EnumSet<EventType> eventTypes;
 
-	public CurrentUserGenerator(CreationUser annotation, Member member, GeneratorCreationContext context) {
-		this.propertyType = getPropertyType(member);
+	public CurrentUserGenerator(CreationUser annotation, GeneratorCreationContext context) {
+		this.propertyType = getPropertyType(context);
 		this.eventTypes = EventTypeSets.INSERT_ONLY;
 	}
 
-	public CurrentUserGenerator(UpdateUser annotation, Member member, GeneratorCreationContext context) {
-		this.propertyType = getPropertyType(member);
+	public CurrentUserGenerator(UpdateUser annotation, GeneratorCreationContext context) {
+		this.propertyType = getPropertyType(context);
 		this.eventTypes = EventTypeSets.INSERT_AND_UPDATE;
 	}
 
@@ -52,7 +52,8 @@ public class CurrentUserGenerator implements BeforeExecutionGenerator {
 		}
 	}
 
-	static Class<?> getPropertyType(Member member) {
+	static Class<?> getPropertyType(GeneratorCreationContext context) {
+		Member member = context.getMemberDetails().toJavaMember();
 		if (member instanceof Field field) {
 			return field.getType();
 		}
