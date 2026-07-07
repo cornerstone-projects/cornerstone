@@ -22,6 +22,7 @@ dependencies {
     api("""io.github.resilience4j:resilience4j-spring-boot3:${property("resilience4j.version")}""")
     api("""org.springdoc:springdoc-openapi-starter-webmvc-ui:${property("springdoc.version")}""")
     api("org.apache.commons:commons-pool2")
+    implementation("org.hibernate.models:hibernate-models")
     implementation("org.springframework.security:spring-security-access")
     implementation("io.micrometer:micrometer-tracing-bridge-otel")
     implementation("io.opentelemetry:opentelemetry-exporter-otlp")

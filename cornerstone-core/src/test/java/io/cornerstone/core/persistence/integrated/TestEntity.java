@@ -10,7 +10,8 @@ import io.cornerstone.core.persistence.convert.EnumListConverter;
 import io.cornerstone.core.persistence.convert.EnumSetConverter;
 import io.cornerstone.core.persistence.convert.JsonConverter;
 import io.cornerstone.core.persistence.id.SnowflakeIdentifier;
-import io.cornerstone.core.persistence.type.JsonType;
+import io.cornerstone.core.persistence.type.Json;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Converter;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -19,7 +20,6 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.Type;
 import org.jspecify.annotations.Nullable;
 
 import org.springframework.data.domain.Persistable;
@@ -61,7 +61,8 @@ class TestEntity implements Persistable<Long> {
 
 	private List<TestComponent> testComponentList;
 
-	@Type(JsonType.class)
+	@Json
+	@Convert(converter = TestComponentListConverter.class)
 	private List<AnotherComponent> anotherComponentList;
 
 	@Override
