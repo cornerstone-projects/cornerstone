@@ -1,6 +1,5 @@
 package io.cornerstone.core.persistence.id;
 
-import java.lang.reflect.Member;
 import java.util.Properties;
 
 import io.cornerstone.core.sequence.Sequence;
@@ -43,8 +42,7 @@ public class SequenceIdentifierGenerator implements IdentifierGenerator, Annotat
 	}
 
 	@Override
-	public void initialize(SequenceIdentifier annotation, Member member,
-			GeneratorCreationContext generatorCreationContext) {
+	public void initialize(SequenceIdentifier annotation, GeneratorCreationContext generatorCreationContext) {
 		this.sequenceName = annotation.value();
 	}
 

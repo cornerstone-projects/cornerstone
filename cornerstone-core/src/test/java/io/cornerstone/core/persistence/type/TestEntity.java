@@ -6,7 +6,6 @@ import io.cornerstone.core.persistence.domain.AbstractEntity;
 import jakarta.persistence.Entity;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.Type;
 
 @Entity
 @Getter
@@ -15,7 +14,7 @@ class TestEntity extends AbstractEntity {
 
 	private static final long serialVersionUID = 6471017006033411659L;
 
-	@Type(JsonType.class)
+	@Json
 	private List<TestComponent> testComponentList;
 
 }

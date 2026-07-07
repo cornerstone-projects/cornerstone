@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.data.redis.core.script.RedisScript;
+import org.springframework.data.redis.core.types.Expiration;
 
 public class RedisLockService implements LockService {
 
@@ -54,14 +55,15 @@ public class RedisLockService implements LockService {
 		String key = NAMESPACE + name;
 		String holder = holder();
 		Boolean success = this.stringRedisTemplate.opsForValue()
-			.setIfAbsent(key, holder, this.watchdogTimeout, TimeUnit.MILLISECONDS);
+			.setIfAbsent(key, holder, Expiration.from(this.watchdogTimeout, TimeUnit.MILLISECONDS));
 		if (success == null) {
 			throw new RuntimeException("Unexpected null");
 		}
 		if (success) {
 			long delay = this.watchdogTimeout / 3;
 			this.renewalFutures.computeIfAbsent(name, k -> this.scheduler.scheduleWithFixedDelay(() -> {
-				Boolean b = this.stringRedisTemplate.expire(key, this.watchdogTimeout, TimeUnit.MILLISECONDS);
+				Boolean b = this.stringRedisTemplate.expire(key,
+						Expiration.from(this.watchdogTimeout, TimeUnit.MILLISECONDS));
 				if (!b) {
 					ScheduledFuture<?> future = this.renewalFutures.remove(name);
 					if (future != null) {
