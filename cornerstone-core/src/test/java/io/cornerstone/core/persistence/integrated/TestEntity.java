@@ -16,7 +16,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -28,7 +27,6 @@ import org.springframework.data.domain.Persistable;
 @Entity
 @Getter
 @Setter
-@EqualsAndHashCode
 class TestEntity implements Persistable<Long> {
 
 	@Id

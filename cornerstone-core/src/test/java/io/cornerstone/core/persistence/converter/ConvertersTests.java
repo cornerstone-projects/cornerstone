@@ -64,7 +64,7 @@ class ConvertersTests extends DataJpaTestBase {
 		assertThat(id).isNotNull();
 		TestEntity savedEntity = this.repository.findById(id).orElseThrow(IllegalStateException::new);
 		assertThat(savedEntity).isNotSameAs(entity);
-		assertThat(savedEntity).isEqualTo(entity);
+		assertThat(savedEntity).usingRecursiveComparison().isEqualTo(entity);
 	}
 
 }

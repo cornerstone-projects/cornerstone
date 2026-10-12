@@ -51,7 +51,7 @@ class IntegratedEntityTests extends DataJpaTestBase {
 		assertThat(id).isGreaterThan(100000000L);
 		TestEntity savedEntity = this.repository.findById(id).orElseThrow(IllegalStateException::new);
 		assertThat(savedEntity).isNotSameAs(entity);
-		assertThat(savedEntity).isEqualTo(entity);
+		assertThat(savedEntity).usingRecursiveComparison().isEqualTo(entity);
 
 	}
 
