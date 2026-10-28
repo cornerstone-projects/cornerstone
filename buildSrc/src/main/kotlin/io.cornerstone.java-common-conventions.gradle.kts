@@ -120,7 +120,7 @@ tasks.named<Jar>("sourcesJar") {
 
 tasks.withType<JavaCompile> {
 	options.encoding = "UTF-8"
-	options.compilerArgs.add("-parameters")
+	options.compilerArgs.addAll(listOf("-parameters", "-proc:full"))
 }
 
 tasks.withType<Test> {
